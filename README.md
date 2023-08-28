@@ -1,4 +1,4 @@
-# Python grscheller.datastructure package
+# Python grscheller.datastructures package
 
 Unlike the standard library versions of some of these data structures,
 these data structures will not throw exceptions. Why not just use Python
