@@ -1,0 +1,15 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "datastructures"
+authors = [{name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com"}]
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: Apache Software License"]
+dynamic = ["version", "description"]
+
+[project.urls]
+Documentation = "https://github.com/grscheller/datastructures/README.md"
+Source = "https://github.com/grscheller/datastructures"
+Changelog = "https://github.com/grscheller/datastructures/CHANGELOG.md"
