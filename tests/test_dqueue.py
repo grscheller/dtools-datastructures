@@ -1,23 +1,29 @@
-from grscheller.datastructures.dqueue import *
+from grscheller.datastructures.dqueue import Dqueue
 
 class TestStack:
     def test_push_then_pop(self):
         dq = Dqueue()
-        pushed = dq.pushL(42)
+        pushed = 42; dq.pushL(pushed)
         popped = dq.popL()
-        assert pushed == popped == 42
+        assert pushed == popped
         assert dq.isEmpty()
-        pushed = dq.pushL(0)
+        pushed = 0; dq.pushL(pushed)
         popped = dq.popR()
         assert pushed == popped == 0
         assert dq.isEmpty()
-        pushed = dq.pushR('foo')
+        pushed = 0; dq.pushR(pushed)
         popped = dq.popL()
-        assert pushed == popped == 'foo'
+        assert pushed == popped
         assert dq.isEmpty()
-        pushed = dq.pushR('')
+        pushed = ''; dq.pushR(pushed)
         popped = dq.popR()
-        assert pushed == popped == ''
+        assert pushed == popped
+        assert dq.isEmpty()
+        dq.pushR('first').pushR('second').pushR('last')
+        assert dq.popL() == 'first'
+        assert dq.popR() == 'last'
+        assert not dq.isEmpty()
+        dq.popL()
         assert dq.isEmpty()
 
     def test_iterators(self):

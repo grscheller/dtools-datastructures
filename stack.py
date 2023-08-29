@@ -79,7 +79,7 @@ class Stack:
         node = _Node(data, self._head)
         self._head = node
         self._count += 1
-        return data
+        return self
 
     def pop(self):
         """Pop data off of top of stack."""

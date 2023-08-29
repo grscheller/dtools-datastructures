@@ -1,9 +1,9 @@
-from grscheller.datastructures.stack import *
+from grscheller.datastructures.stack import Stack
 
 class TestStack:
     def test_push_then_pop(self):
         q1 = Stack()
-        pushed = q1.push(42)
+        pushed = 42; q1.push(pushed)
         popped = q1.pop()
         assert pushed == popped == 42
 
@@ -33,10 +33,7 @@ class TestStack:
 
     def test_tail(self):
         q1 = Stack()
-        q1.push("fum")
-        q1.push("fo")
-        q1.push("fi")
-        q1.push("fe")
+        q1.push("fum").push("fo").push("fi").push("fe")
         q2 = q1.tail()
         q3 = q1.copy()
         assert q2 is not None

@@ -102,7 +102,7 @@ class Dqueue:
         self._rear = (self._rear + 1) % self._capacity
         self._queue[self._rear] = data
         self._count += 1
-        return data
+        return self
 
     def pushL(self, data):
         """Push data on front of dqueue. Return the value being pushed."""
@@ -111,7 +111,7 @@ class Dqueue:
         self._front = (self._front - 1) % self._capacity
         self._queue[self._front] = data
         self._count += 1
-        return data
+        return self
 
     def popR(self):
         """Pop data off rear of dqueue."""
