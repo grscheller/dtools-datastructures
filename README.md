@@ -1,17 +1,17 @@
 # Python grscheller.datastructures package
 
 Unlike the standard library versions of some of these data structures,
-these data structures will not throw exceptions. Why not just use Python
+these data structures do not throw exceptions. Why not just use Python
 builtin data structures like lists and dictionaries? These data
-structures internalize the "bit fiddling" and allow you to concentrate
-on the algorithms you are using them to support.
+structures in this package internalize the "bit fiddling" and allow you
+to concentrate on the algorithms you are using them to support.
 
-The None "value" is consistently used as a sentinel value to indicate the
-absence of a value. If None is pushed onto these data structures, some
-additional care may be needed. If you do so, then the len() function or
-isEmpty() methods are the best way to determine when one of these
-data structures no longer contains data. In this case, you can repurpose
-None as your own sentinel value.
+The None "value" is consistently used as a sentinel value to indicate
+the absence of a value. If None is pushed onto these data structures,
+some additional care may be needed. If you do so, then the len()
+function or isEmpty() methods are the best ways to determine when one of
+these data structures no longer contains data. In this case, you can
+repurpose None as your own sentinel value.
 
 So that these data structures don't throw exceptions and can be reliably
 used as iterators, some compromises were taken in regards to functional
