@@ -9,13 +9,14 @@ authors = [
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Development Status :: 3 - Alpha"
 ]
-requires-python = ">=3.10"
+dependencies = ["pytest >=7.4"]
 dynamic = ["version", "description"]
 
 [project.urls]
