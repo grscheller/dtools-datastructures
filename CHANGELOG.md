@@ -1,8 +1,28 @@
 ## Changelog: grscheller.datastrucures
 
-### Version v1.0.0.0 - date: TBD
+### Version v0.2.1.0 - date: 2023-09-03
 
-* First Version which will be uploaded to PyPI
+* first Version uploaded to PyPI
+* https://pypi.org/project/grscheller.datastructures/
+* Installable from PyPI
+  * $ pip install grscheller.datastructures==0.2.1.0
+  * $ pip install grscheller.datastructures # for top level version
+* Installable from GitHub
+  * $ pip install git+https://github.com/grscheller/datastructures@v0.2.1.0
+* pytest made a dependency
+  * useful & less confusing to developers and endusers
+    * good for systems I have not tested on
+    * prevents another pytest from being picked up from shell $PATH
+      * using a different python version
+      * giving "package not found" errors
+    * for CI/CD pipelines requiring unit testing
+
+### Version v0.2.0.2 - date: 2023-08-29
+* First version installable from GitHub with pip
+* $ pip install git+https://github.com/grscheller/datastructures@v0.2.0.2
+
+### Version v0.2.0.1 - date: 2023-08-29
+* First failed attempt to make package installable from GitHub with pip
 
 ### Version v0.2.0.0 - date: 2023-08-29
 
