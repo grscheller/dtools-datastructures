@@ -1,5 +1,13 @@
 ## Changelog: grscheller.datastrucures
 
+### Version v0.2.2.0 - date: 2023-09-04
+* decided base package should have no dependencies other than
+  * Python version (>=2.10 due to use of Python match statement)
+  * Python standard libraries
+* made pytest an optional test dependency
+* added src/ and test/ top level directories as per
+  * https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
 ### Version v0.2.1.0 - date: 2023-09-03
 
 * first Version uploaded to PyPI
@@ -49,13 +57,12 @@
   * stack - implements a LIFO stack class Stack
 * Single maintainer project
   * semantic versioning
-    * first digit signifies major feature additions
-    * second digit signifies API breaking changes
-    * third digit signifies API additions or substantial changes
-    * fourth digit signifies signifies bugfixes or minor changes
-      * uploaded to PyPI
-      * tagged on GitHub
-      * a "+" after version number signifies development only changes
+    * first digit signifies a major paradigm change
+    * second digit means API breaking changes or minor paradigm change
+    * third digit means API additions or substantial changes
+    * fourth digit means bugfixes or minor changes
+    * a "+" after version signifies development post-release changes
+    * a "-" after version signifies development pre-release changes
   * rolling release model
     * maintainer will not back port bugfixes to previous versions
     * main will be the only tracking branch on GitHub

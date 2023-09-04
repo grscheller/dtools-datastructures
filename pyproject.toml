@@ -16,10 +16,12 @@ classifiers = [
     "Operating System :: OS Independent",
     "Development Status :: 3 - Alpha"
 ]
-dependencies = ["pytest >=7.4"]
+dependencies = []
 dynamic = ["version", "description"]
 
+[project.optional-dependencies]
+test = ["pytest >=7.4"]
+
 [project.urls]
-Documentation = "https://github.com/grscheller/datastructures/README.md"
 Source = "https://github.com/grscheller/datastructures"
-Changelog = "https://github.com/grscheller/datastructures/CHANGELOG.md"
+Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
