@@ -1,12 +1,13 @@
 ## Changelog: grscheller.datastrucures
 
-### Version v0.2.2.0 - date: 2023-09-04
+### Version v0.2.2.2 - date: 2023-09-04
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
   * Python standard libraries
-* made pytest an optional test dependency
-* added src/ and test/ top level directories as per
+* made pytest an optional \[test\] dependency
+* added src/ top level directories as per
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
+  * could not do the same for tests/ if end users are to have access
 
 ### Version v0.2.1.0 - date: 2023-09-03
 
