@@ -64,3 +64,13 @@ class TestStack:
         assert giantTalk == "Fe, Fi, Fo, Fum"
         assert len(giantStack) == 4
 
+    def test_equality(self):
+        q1 = Stack(range(3))
+        q2 = q1.cons(42)
+        assert q1 is not q2
+        assert q1 is not q2.tail()
+        assert q1 != q2
+        assert q1 == q2.tail()
+
+        assert q2.head() == 42
+        assert q2 != 42

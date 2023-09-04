@@ -1,12 +1,20 @@
 ## Changelog: grscheller.datastrucures
 
-### Version v0.2.2.0 - date: 2023-09-04
+### Version v0.2.3.0 - date: 2023-09-06
+* added __eq__ method to Stack class
+* added some preliminary tests
+  * more tests are needed
+* worst case O(n)
+  * will short circuit fast if possible
+
+### Version v0.2.2.2 - date: 2023-09-04
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
   * Python standard libraries
-* made pytest an optional test dependency
-* added src/ and test/ top level directories as per
+* made pytest an optional \[test\] dependency
+* added src/ as a top level directories as per
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
+  * could not do the same for tests/ if end users are to have access
 
 ### Version v0.2.1.0 - date: 2023-09-03
 
@@ -51,7 +59,7 @@
 ### Version v0.1.0.0 - date: 2023-08-27
 
 * Package implementing data structures which do not throw exceptions
-* Pre-release versions (0.X.Y.Z) won't be pushed to PyPI
+* Won't try to pushed to PyPI until version 0.2
 * Python submodules:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack

@@ -55,6 +55,36 @@ class Stack:
             self._head = node
             self._count += 1
 
+    def __eq__(self, other):
+        """
+        Returns True if all the data stored on the two stacks are the same.
+        Worst case is O(n) behavior which happens when all the corresponding
+        data elements on the two stacks are equal, in whatever sense they define
+        equality, and none of the nodes making up the stacks are the same.
+
+        Parameters
+        ----------
+            other : 'any'
+        """
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        left = self
+        right = other
+        nn = self._count
+        while nn > 0:
+            if left._head is right._head:
+                return True
+            if left.head() != right.head():
+                return False
+            left = left.tail()
+            right = right.tail()
+            nn -= 1
+        return True
+
     def __len__(self):
         """Returns current number of values on the stack"""
         return self._count
@@ -112,7 +142,7 @@ class Stack:
 
         Returns
         -------
-        stack : 'Stack' | 'None'
+        stack : 'Stack'
         """
         stack = Stack()
         if self._head is not None:
