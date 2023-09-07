@@ -1,22 +1,24 @@
 ## Changelog: grscheller.datastrucures
 
-### Version v0.2.3.0 - date: 2023-09-06
+### Version v0.2.3.0 - commit date: 2023-09-06
+
 * added __eq__ method to Stack class
 * added some preliminary tests
   * more tests are needed
 * worst case O(n)
   * will short circuit fast if possible
 
-### Version v0.2.2.2 - date: 2023-09-04
+### Version v0.2.2.2 - release date: 2023-09-04
+
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
   * Python standard libraries
 * made pytest an optional \[test\] dependency
-* added src/ as a top level directories as per
+* added src/ as a top level directory as per
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
   * could not do the same for tests/ if end users are to have access
 
-### Version v0.2.1.0 - date: 2023-09-03
+### Version v0.2.1.0 - release date: 2023-09-03
 
 * first Version uploaded to PyPI
 * https://pypi.org/project/grscheller.datastructures/
@@ -33,14 +35,16 @@
       * giving "package not found" errors
     * for CI/CD pipelines requiring unit testing
 
-### Version v0.2.0.2 - date: 2023-08-29
+### Version v0.2.0.2 - github only release date: 2023-08-29
+
 * First version installable from GitHub with pip
 * $ pip install git+https://github.com/grscheller/datastructures@v0.2.0.2
 
-### Version v0.2.0.1 - date: 2023-08-29
+### Version v0.2.0.1 - commit date: 2023-08-29
+
 * First failed attempt to make package installable from GitHub with pip
 
-### Version v0.2.0.0 - date: 2023-08-29
+### Version v0.2.0.0 - commit date: 2023-08-29
 
 * BREAKING API CHANGE!!!
 * Stack push method now returns reference to self
@@ -50,16 +54,16 @@
 * Updated tests - before making API changes
 * First version to be "released" on GitHub
 
-### Version v0.1.1.0 - date: 2023-08-27
+### Version v0.1.1.0 - commit date: 2023-08-27
 
 * grscheller.datastructures moved to its own GitHub repo
 * https://github.com/grscheller/datastructures
   * GitHub and PyPI user names just a happy coincidence
 
-### Version v0.1.0.0 - date: 2023-08-27
+### Version v0.1.0.0 - initial version: 2023-08-27
 
 * Package implementing data structures which do not throw exceptions
-* Won't try to pushed to PyPI until version 0.2
+* Did not push to PyPI until version 0.2
 * Python submodules:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack
@@ -69,9 +73,7 @@
     * second digit means API breaking changes or minor paradigm change
     * third digit means API additions or substantial changes
     * fourth digit means bugfixes or minor changes
-    * a "+" after version signifies development post-release changes
-    * a "-" after version signifies development pre-release changes
   * rolling release model
     * maintainer will not back port bugfixes to previous versions
     * main will be the only tracking branch on GitHub
-    * branches named "*_temp" are subject to deletion without notice 
+    * github branches named "*_temp" are subject to deletion without notice 
