@@ -108,7 +108,6 @@ class TestStack:
         ducks.append("lewey")
         assert s7 == s8
         assert s7 != s9
-        foo = s9.head()
-        assert foo is not None
-        foo.append("lewey")
+        if s9.head() is not None:
+            s9.head().append("lewey")
         assert s7 == s9

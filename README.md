@@ -1,6 +1,6 @@
 # Python grscheller.datastructures package
 
-Unlike the standard library versions of some of these data structures,
+Unlike the standard library versions of similar type data structures,
 these data structures do not throw exceptions. Why not just use Python
 builtin data structures like lists and dictionaries directly? The data
 structures in this package internalize the "bit fiddling" and allow you
@@ -17,9 +17,9 @@ So that these data structures don't throw exceptions and can be reliably
 used as iterators, some compromises were taken in regards to functional
 purity.
 
-## This package contains the follow modules
+### This package contains the follow modules
 
-### dqueue
+#### dqueue
 Implements double ended queue. The queue is implemented with a circular
 array and will resize itself as needed.
 
@@ -28,7 +28,7 @@ array and will resize itself as needed.
   * O(1) length determination
   * O(n) copy
 
-### stack
+#### stack
 A LIFO stack data structure implemented with singularly linked
 nodes. The Stack objects themselves are light weight and have only two
 attributes, a count containing the number of elements on the stack, and
@@ -41,3 +41,28 @@ designed to be shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
+
+## Future directions
+
+This package is alpha software. I am not coding to requirements, I am
+still developing the requirements.
+
+* Initial (Alpha - 0.X.Y.Z) development phase
+  * Design features trump backward compatibility
+    * Will try to keep backward compatible in outward functionality
+    * Expect to see "subtle" but "fundamental" API changes
+    * Could substantially rework internals, or not
+    * Want a more FP style and less C style paradigm
+  * Seeing problems using None as a sentinel value
+    * None is too real
+      * None has no methods, duh...
+      * Python throws exceptions when calling methods on None
+        * Replace with _None
+          * Private, implementation detail
+          * Could subclass it for each of my data structures???
+          * Returns itself when called with a data structure method
+      * LSP servers complain too much
+        * When a value "could" be None
+          * Even after checking that it is not
+          * Unless working with an assign value & assert is used
+  * Make the data structures more monadic???
