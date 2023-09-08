@@ -1,10 +1,12 @@
 # Python grscheller.datastructures package
 
 Unlike the standard library versions of similar type data structures,
-these data structures do not throw exceptions. Why not just use Python
-builtin data structures like lists and dictionaries directly? The data
-structures in this package internalize the "bit fiddling" and allow you
-to concentrate on the algorithms for which they are taylored.
+these data structures do not throw exceptions, except for ones like
+"SyntaxError", "AttributeError" or "TypeError".
+
+Why not just use Python builtins like lists and dictionaries directly?
+The data structures in this package internalize the "bit fiddling" and
+allow you to concentrate on the algorithms for which they are taylored.
 
 The None "value" is consistently used as a sentinel value to indicate
 the absence of a value. If None is pushed onto one of these data
@@ -47,12 +49,12 @@ designed to be shared between different Stack instances.
 This package is alpha software. I am not coding to requirements, I am
 still developing the requirements.
 
-* Initial (Alpha - 0.X.Y.Z) development phase
+* Initial (Alpha & Beta - 0.X.Y.Z) development phase
   * Design features trump backward compatibility
     * Will try to keep backward compatible in outward functionality
     * Expect to see "subtle" but "fundamental" API changes
-    * Could substantially rework internals, or not
-    * Want a more FP style and less C style paradigm
+    * Could substantially rework internals, ... or not
+    * Aiming for a more FP style and less a C coding style
   * Seeing problems using None as a sentinel value
     * None is too real
       * None has no methods, duh...
