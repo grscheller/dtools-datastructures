@@ -18,27 +18,29 @@ Module implementing a LIFO stack using a singularly linked list whose data
 can be shared between different Stack instances. Pushing to, popping from,
 and getting the length of the stack are all O(1) operations.
 """
+from ._none import _None, _none
+
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
+
 class _Node:
     """Node that contains data and the next node."""
-    def __init__(self, datum, nodeNext=None):
+    def __init__(self, datum, nodeNext=_none):
         self._data = datum
         self._next = nodeNext
 
 class Stack:
     """Last In, First Out (LIFO) stack datastructure. The stack is implemented
     as a singularly linked list of nodes. The stack points to either the first
-    node in the list, or to None to indicate an empty stack.
+    node in the list, or to _none to indicate an empty stack.
 
     Exceptions
     ----------
-    Does not throw exceptions. The Stack class consistently uses None to
-    represent the absence of a value. Therefore 'None' is not a ligitamate
-    data value and should not be stored in a Stack object.
+    Does not throw exceptions. The Stack class consistently uses NONE to
+    represent the absence of a value.
     """
     def __init__(self, *data):
         """
@@ -48,7 +50,7 @@ class Stack:
                 Any type data to prepopulate the stack.
                 The data is pushed onto the stack left to right.
         """
-        self._head = None
+        self._head = _None(_Node)
         self._count = 0
         for datum in data:
             node = _Node(datum, self._head)
@@ -92,7 +94,7 @@ class Stack:
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
         node = self._head
-        while node is not None:
+        while node is not NONE:
             yield node._data
             node = node._next
 
@@ -101,7 +103,7 @@ class Stack:
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
-        dataListStrs.append("None")
+        dataListStrs.append("NONE")
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
     def push(self, data):
@@ -113,7 +115,7 @@ class Stack:
 
     def pop(self):
         """Pop data off of top of stack."""
-        if self._head is None:
+        if self._head is NONE:
             return None
         else:
             data = self._head._data
@@ -130,7 +132,7 @@ class Stack:
         -------
         data : 'any' | 'None'
         """
-        if self._head is not None:
+        if self._head is not _None(_Node):
             return self._head._data
         else:
             return None
