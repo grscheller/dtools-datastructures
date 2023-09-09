@@ -58,8 +58,8 @@ class Stack:
         """
         Returns True if all the data stored on the two stacks are the same.
         Worst case is O(n) behavior which happens when all the corresponding
-        data elements on the two stacks are equal, in whatever sense they define
-        equality, and none of the nodes making up the stacks are the same.
+        data elements on the two stacks are equal, in whatever sense they
+        define equality, and none of the nodes are shared.
 
         Parameters
         ----------
@@ -84,6 +84,14 @@ class Stack:
             nn -= 1
         return True
 
+    def __repr__(self):
+        """Display the data in the stack."""
+        dataListStrs = []
+        for data in self:
+            dataListStrs.append(repr(data))
+        dataListStrs.append("None")
+        return "[ " + " -> ".join(dataListStrs) + " ]"
+
     def __len__(self):
         """Returns current number of values on the stack"""
         return self._count
@@ -95,14 +103,6 @@ class Stack:
             assert node is not None
             yield node._data
             node = node._next
-
-    def __repr__(self):
-        """Display the data in the stack."""
-        dataListStrs = []
-        for data in self:
-            dataListStrs.append(repr(data))
-        dataListStrs.append("None")
-        return "[ " + " -> ".join(dataListStrs) + " ]"
 
     def push(self, data):
         """Push data onto top of stack, return data pushed."""

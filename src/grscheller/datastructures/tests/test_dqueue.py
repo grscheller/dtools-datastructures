@@ -40,7 +40,7 @@ class TestStack:
         data.append(42)
         dq.pushR(42)
         ii=0
-        for item in iter(dq):
+        for item in dq:
             assert data[ii] == item
             ii += 1
         assert ii == 5
@@ -60,3 +60,28 @@ class TestStack:
         assert dq.fractionFilled() == 5/5
         dq.resize(20)
         assert dq.fractionFilled() == 5/25
+
+    def testequality(self):
+        dq1 = Dqueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
+        assert dq1 == dq2
+
+        tup2 = dq2.popR()
+        assert dq1 != dq2
+
+        dq2.pushR((42, 'foofoo'))
+        assert dq1 != dq2
+
+        dq1.popR()
+        dq1.pushR((42, 'foofoo')).pushR(tup2)
+        dq2.pushR(tup2)
+        assert dq1 == dq2
+
+        holdA = dq1.popL()
+        dq1.resize(42)
+        holdB = dq1.popL()
+        holdC = dq1.popR()
+        dq1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
+        dq2.pushL(200)
+        assert dq1 == dq2
+

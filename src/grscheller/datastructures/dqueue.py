@@ -149,6 +149,35 @@ class Dqueue:
                 pos = (pos + 1) % self._capacity
             yield self._queue[pos]
 
+    def __eq__(self, other):
+        """
+        Returns True if all the data stored on the two dqueues are the same.
+        Worst case is O(n) behavior for the True case.
+
+        Parameters
+        ----------
+            other : 'all'
+        """
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        cnt = self._count
+        left = self
+        frontL = self._front
+        capL = self._capacity
+        right = other
+        frontR = other._front
+        capR = other._capacity
+        nn = 0
+        while nn < cnt:
+            if left._queue[(frontL+nn)%capL] != right._queue[(frontR+nn)%capR]:
+                return False
+            nn += 1
+        return True
+
     def __repr__(self):
         """Display data in dqueue."""
         dataListStrs = []
