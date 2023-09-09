@@ -1,12 +1,9 @@
 ## Changelog: grscheller.datastrucures
 
-### Version 0.3.1.0 - release date: 2023-09-09
+### Version 0.3.0.2 - release date: 2023-09-09
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
-
-### Version 0.3.0.2 - commit date: 2023-09-09
-
 * created main_devel branch on GitHub
   * gives me a place to commit untested/broken code
   * allows for main branch to remain usable & unbroken
