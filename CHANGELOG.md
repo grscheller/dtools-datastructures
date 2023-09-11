@@ -1,12 +1,40 @@
-## Changelog: grscheller.datastrucures
+# Changelog: grscheller.datastrucures
+
+## Overview
+
+* Single maintainer project
+  * semantic versioning
+    * first digit signifies a major paradigm change or event
+    * second digit means API breaking changes or minor paradigm change
+    * third digit means API additions or substantial changes
+    * fourth digit means bugfixes or minor changes
+  * rolling release model
+    * maintainer will not back port bugfixes to previous versions
+    * main branch will be the only tracking branch on GitHub
+      * attempt to keep stable, but may contain not fully tested code
+    * main_devel branch just a place to commit potentially broken code
+        * for bug fixes
+        * for short term feature enhancements
+    * PyPI releases are taged with a leading "v" on GitHub
+      * semantic versioning more strict between PyPI releases
+      * semantic versioning between GitHub commits a bit more subjective
+        * might only bump a version number at the beginning of an effort
+        * only meaningfull GitHub versions will be listed below
+
+## Versions
+
+### Version 0.4.0.0 - commit date: 2023-09-11
+* subtle paradigm shift for Stack class
+  * empty Stacks no longer returned for nonexistent stacks
+    * like the tail of an empty stack
+    * singleton Stack.stackNONE class object returned instead
+  * Stack & _StackNONE classes inherit from _StackBase
+  * still working out the API
 
 ### Version 0.3.0.2 - release date: 2023-09-09
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
-* created main_devel branch on GitHub
-  * gives me a place to commit untested/broken code
-  * allows for main branch to remain usable & unbroken
 * improved docstrings
 
 ### Version 0.2.3.0 - commit date: 2023-09-06
@@ -73,16 +101,6 @@
 
 * Package implementing data structures which do not throw exceptions
 * Did not push to PyPI until version 0.2
-* Python submodules:
+* Initial Python Datastructures for 0.1.0.0:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack
-* Single maintainer project
-  * semantic versioning
-    * first digit signifies a major paradigm change or event
-    * second digit means API breaking changes or minor paradigm change
-    * third digit means API additions or substantial changes
-    * fourth digit means bugfixes or minor changes
-  * rolling release model
-    * maintainer will not back port bugfixes to previous versions
-    * main will be the only tracking branch on GitHub
-    * github branches named "*_temp" are subject to deletion without notice 

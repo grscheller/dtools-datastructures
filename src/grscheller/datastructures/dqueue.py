@@ -35,6 +35,7 @@ class Dqueue:
     represent the absence of a value. Therefore care needs to be taken when
     None "values" are stored in Dqueue objects.
     """
+
     def __init__(self, *data):
         """
         Parameters
@@ -96,7 +97,7 @@ class Dqueue:
                 self._rear = self._capacity - 1
 
     def pushR(self, data):
-        """Push data on rear of dqueue. Return the value being pushed."""
+        """Push data on rear of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -105,7 +106,7 @@ class Dqueue:
         return self
 
     def pushL(self, data):
-        """Push data on front of dqueue. Return the value being pushed."""
+        """Push data on front of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -134,6 +135,18 @@ class Dqueue:
             self._front = (self._front + 1) % self._capacity
             self._count -= 1
             return data
+
+    def headR(self):
+        """Return rear element of dqueue without consuming it"""
+        if self._count == 0:
+            return None
+        return self._queue[self._rear]
+
+    def headL(self):
+        """Return front element of dqueue without consuming it"""
+        if self._count == 0:
+            return None
+        return self._queue[self._front]
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.

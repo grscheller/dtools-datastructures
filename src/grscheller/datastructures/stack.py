@@ -29,7 +29,39 @@ class _Node:
         self._data = datum
         self._next = nodeNext
 
-class Stack:
+class _StackBase:
+    def __init__(self):
+        self._head = None
+        self._count = 0
+
+    def __len__(self):
+        """Returns current number of values on the stack"""
+        return self._count
+
+    def isEmpty(self):
+        """Test if stack is empty"""
+        return self._count == 0
+
+class _StackNONE(_StackBase):
+    """Class for the Stack.StackNONE singleton object."""
+    def __init__(self):
+        super().__init__()
+
+    def __eq__(self, other):
+        if other is self:
+            return True
+        return False
+
+    def head(self):
+        return None
+
+    def tail(self):
+        return self
+
+    def isNONE(self):
+        return True
+
+class Stack(_StackBase):
     """Last In, First Out (LIFO) stack datastructure. The stack is implemented
     as a singularly linked list of nodes. The stack points to either the first
     node in the list, or to None to indicate an empty stack.
@@ -37,8 +69,12 @@ class Stack:
     Exceptions
     ----------
     Does not throw exceptions. The Stack class consistently uses None to
-    represent the absence of a value.
+    represent the absence of a data value.
     """
+
+    """Singleton class variable representing a nonexistant stack object."""
+    stackNONE = _StackNONE()
+
     def __init__(self, *data):
         """
         Parameters
@@ -47,8 +83,7 @@ class Stack:
                 Any data to prepopulate the stack.
                 The data is pushed onto the stack left to right.
         """
-        self._head = None
-        self._count = 0
+        super().__init__()
         for datum in data:
             node = _Node(datum, self._head)
             self._head = node
@@ -71,6 +106,9 @@ class Stack:
         if self._count != other._count:
             return False
 
+        if other is self.stackNONE:
+            return False
+
         left = self
         right = other
         nn = self._count
@@ -91,10 +129,6 @@ class Stack:
             dataListStrs.append(repr(data))
         dataListStrs.append("None")
         return "[ " + " -> ".join(dataListStrs) + " ]"
-
-    def __len__(self):
-        """Returns current number of values on the stack"""
-        return self._count
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
@@ -130,10 +164,9 @@ class Stack:
         -------
         data : 'any' | 'None'
         """
-        if self._head is not None:
-            return self._head._data
-        else:
+        if self._head is None:
             return None
+        return self._head._data
 
     def tail(self):
         """Get the tail of the stack. In the case of an empty stack,
@@ -144,10 +177,11 @@ class Stack:
         -------
         stack : 'Stack'
         """
+        if self._head is None:
+            return self.stackNONE
         stack = Stack()
-        if self._head is not None:
-            stack._head = self._head._next
-            stack._count = self._count - 1
+        stack._head = self._head._next
+        stack._count = self._count - 1
         return stack
 
     def cons(self, data):
@@ -169,9 +203,8 @@ class Stack:
         stack._count = self._count
         return stack
 
-    def isEmpty(self):
-        """Test if stack is empty"""
-        return self._count == 0
+    def isNONE(self):
+        return False
 
 if __name__ == "__main__":
     pass

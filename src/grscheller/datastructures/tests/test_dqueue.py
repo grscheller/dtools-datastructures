@@ -61,7 +61,7 @@ class TestStack:
         dq.resize(20)
         assert dq.fractionFilled() == 5/25
 
-    def testequality(self):
+    def test_equality(self):
         dq1 = Dqueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
         assert dq1 == dq2
