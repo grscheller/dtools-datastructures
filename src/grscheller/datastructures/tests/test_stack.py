@@ -36,7 +36,7 @@ class TestStack:
         s1.push("fum").push("fo").push("fi").push("fe")
         s2 = s1.tail()
         s3 = s1.copy()
-        assert s2 is not None
+        assert s2 is not Stack.stackNONE
         s4 = s2.copy()
 
         if s2 is None:
@@ -46,7 +46,7 @@ class TestStack:
             assert s1.pop() == s2.pop()
         assert s2.isEmpty()
         assert s1.pop() is None
-        assert s1.tail().isEmpty()
+        assert s1.tail() is Stack.stackNONE
         
         s4.push(s3.head())
         assert s3 is not s4

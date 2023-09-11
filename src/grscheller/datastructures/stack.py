@@ -30,6 +30,8 @@ class _Node:
         self._next = nodeNext
 
 class _StackBase:
+    _verbose = False
+
     def __init__(self):
         self._head = None
         self._count = 0
@@ -42,8 +44,21 @@ class _StackBase:
         """Test if stack is empty"""
         return self._count == 0
 
+    @classmethod
+    def verbose(cls):
+        cls._verbose = True
+
+    @classmethod
+    def quiet(cls):
+        cls._verbose = False
+
 class _StackNONE(_StackBase):
-    """Class for the Stack.StackNONE singleton object."""
+    """
+    Class for the Stack.stackNONE singleton object. The singleton represents
+    a "non-existant" stack. Can't just use None for this, None has no methods.
+
+    These methods make more sense in the context of what Stack does.
+    """
     def __init__(self):
         super().__init__()
 
@@ -52,10 +67,43 @@ class _StackNONE(_StackBase):
             return True
         return False
 
+    def __repr__(self):
+        """Display the non-existance of the stack"""
+        return "stackNONE"
+
+    def __iter__(self):
+        """Iterator yielding no elements for non-existant stack"""
+        pass
+
+    def push(self, data):
+        """Push data onto top of non-existant stack, just return self."""
+        if self._verbose:
+            print(f'Warning: tried to push "{data}" onto stackNONE')
+        return self
+
+    def pop(self):
+        """Pop data off of top off non-existant stack, just return None."""
+        if self._verbose:
+            print('Warning: tried to pop() data off of stackNONE')
+        return None
+
     def head(self):
+        if self._verbose:
+            print('Warning: called head() on stackNONE')
         return None
 
     def tail(self):
+        if self._verbose:
+            print('Warning: called tail() on stackNONE')
+        return self
+
+    def cons(self, data):
+        if self._verbose:
+            print(f'Warning: "{data}" cons with stackNONE')
+        return self
+
+    def copy(self):
+        """Just return a reference to itself (stackNONE)"""
         return self
 
     def isNONE(self):
@@ -178,6 +226,8 @@ class Stack(_StackBase):
         stack : 'Stack'
         """
         if self._head is None:
+            if self._verbose:
+                print('Warning: called tail() on an empty stack')
             return self.stackNONE
         stack = Stack()
         stack._head = self._head._next
