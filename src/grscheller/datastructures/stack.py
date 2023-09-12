@@ -23,17 +23,42 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class _Node:
+class _NONE:
+    def isNONE(self):
+        return True
+
+    def __eq__(self, other):
+        if other is self:
+            return True
+        return False
+
+    def __bool__(self):
+        return False
+
+NONE = _NONE()
+
+class _NodeBase:
     """Node that contains data and the next node."""
-    def __init__(self, datum, nodeNext=None):
+    def __init__(self, datum, nodeNext=NONE):
         self._data = datum
         self._next = nodeNext
+
+class _NodeNONE(_NodeBase, _NONE):
+    """Represents the absense of a Node."""
+    def __init__(self):
+        super().__init__(NONE, NONE)
+
+class _Node(_NodeBase):
+    """Node that contains data and the next node."""
+    nodeNONE = _NodeNONE()
+    def __init__(self, datum, nodeNext=nodeNONE):
+        super().__init__(datum, nodeNext)
 
 class _StackBase:
     _verbose = False
 
     def __init__(self):
-        self._head = None
+        self._head = NONE
         self._count = 0
 
     def __len__(self):
@@ -52,20 +77,15 @@ class _StackBase:
     def quiet(cls):
         cls._verbose = False
 
-class _StackNONE(_StackBase):
+class _StackNONE(_StackBase, _NONE):
     """
     Class for the Stack.stackNONE singleton object. The singleton represents
-    a "non-existant" stack. Can't just use None for this, None has no methods.
+    a "non-existant" stack.
 
     These methods make more sense in the context of what Stack does.
     """
     def __init__(self):
         super().__init__()
-
-    def __eq__(self, other):
-        if other is self:
-            return True
-        return False
 
     def __repr__(self):
         """Display the non-existance of the stack"""
@@ -82,15 +102,15 @@ class _StackNONE(_StackBase):
         return self
 
     def pop(self):
-        """Pop data off of top off non-existant stack, just return None."""
+        """Pop data off of top off non-existant stack, just return NONE."""
         if self._verbose:
             print('Warning: tried to pop() data off of stackNONE')
-        return None
+        return NONE
 
     def head(self):
         if self._verbose:
             print('Warning: called head() on stackNONE')
-        return None
+        return NONE
 
     def tail(self):
         if self._verbose:
@@ -106,17 +126,14 @@ class _StackNONE(_StackBase):
         """Just return a reference to itself (stackNONE)"""
         return self
 
-    def isNONE(self):
-        return True
-
 class Stack(_StackBase):
     """Last In, First Out (LIFO) stack datastructure. The stack is implemented
     as a singularly linked list of nodes. The stack points to either the first
-    node in the list, or to None to indicate an empty stack.
+    node in the list, or to NONE to indicate an empty stack.
 
     Exceptions
     ----------
-    Does not throw exceptions. The Stack class consistently uses None to
+    Does not throw exceptions. The Stack class consistently uses NONE to
     represent the absence of a data value.
     """
 
@@ -175,14 +192,13 @@ class Stack(_StackBase):
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
-        dataListStrs.append("None")
+        dataListStrs.append("NONE")
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
         node = self._head
-        while node is not None:
-            assert node is not None
+        while node:
             yield node._data
             node = node._next
 
@@ -195,7 +211,7 @@ class Stack(_StackBase):
 
     def pop(self):
         """Pop data off of top of stack."""
-        if self._head is None:
+        if self._head is NONE:
             return None
         else:
             data = self._head._data
@@ -204,28 +220,28 @@ class Stack(_StackBase):
             return data
 
     def head(self):
-        """Get data at head of stack without consuming it. Returns 'None' if
-        the stack is empty. Care should be taken if None "values" are pushed
+        """Get data at head of stack without consuming it. Returns 'NONE' if
+        the stack is empty.
         on the stack.
 
         Returns
         -------
-        data : 'any' | 'None'
+        data : 'any' | 'NONE'
         """
-        if self._head is None:
-            return None
+        if self._head is NONE:
+            return NONE
         return self._head._data
 
     def tail(self):
         """Get the tail of the stack. In the case of an empty stack,
-        return an empty stack in lieu of None. This will allow the returned
-        value to be used as an iterator.
+        return a stackNONE. This will allow the returned value to be
+        used as an iterator.
 
         Returns
         -------
         stack : 'Stack'
         """
-        if self._head is None:
+        if self._head is NONE:
             if self._verbose:
                 print('Warning: called tail() on an empty stack')
             return self.stackNONE
