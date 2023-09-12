@@ -18,39 +18,26 @@ Module implementing a LIFO stack using a singularly linked linear tree of nodes.
 The nodes can be safely shared between different Stack instances. Pushing to,
 popping from, and getting the length of the stack are all O(1) operations.
 """
-__all__ = ['Stack']
+__all__ = ['Stack', 'stackNONE']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class _NONE:
-    def isNONE(self):
-        return True
-
-    def __eq__(self, other):
-        if other is self:
-            return True
-        return False
-
-    def __bool__(self):
-        return False
-
-NONE = _NONE()
+from .core import _NONE, NONE
 
 class _NodeBase:
-    """Node that contains data and the next node."""
     def __init__(self, datum, nodeNext=NONE):
         self._data = datum
         self._next = nodeNext
 
 class _NodeNONE(_NodeBase, _NONE):
-    """Represents the absense of a Node."""
     def __init__(self):
         super().__init__(NONE, NONE)
 
+"""Singleton representing the absense of a Node."""
+nodeNONE = _NodeNONE()
+
 class _Node(_NodeBase):
-    """Node that contains data and the next node."""
-    nodeNONE = _NodeNONE()
     def __init__(self, datum, nodeNext=nodeNONE):
         super().__init__(datum, nodeNext)
 
@@ -79,21 +66,10 @@ class _StackBase:
 
 class _StackNONE(_StackBase, _NONE):
     """
-    Class for the Stack.stackNONE singleton object. The singleton represents
-    a "non-existant" stack.
-
-    These methods make more sense in the context of what Stack does.
+    Class implementing a singleton object representing a "non-existant" stack.
     """
     def __init__(self):
         super().__init__()
-
-    def __repr__(self):
-        """Display the non-existance of the stack"""
-        return "stackNONE"
-
-    def __iter__(self):
-        """Iterator yielding no elements for non-existant stack"""
-        pass
 
     def push(self, data):
         """Push data onto top of non-existant stack, just return self."""
@@ -126,6 +102,9 @@ class _StackNONE(_StackBase, _NONE):
         """Just return a reference to itself (stackNONE)"""
         return self
 
+"""Singleton class variable representing a nonexistant stack object."""
+stackNONE = _StackNONE()
+
 class Stack(_StackBase):
     """Last In, First Out (LIFO) stack datastructure. The stack is implemented
     as a singularly linked list of nodes. The stack points to either the first
@@ -136,9 +115,6 @@ class Stack(_StackBase):
     Does not throw exceptions. The Stack class consistently uses NONE to
     represent the absence of a data value.
     """
-
-    """Singleton class variable representing a nonexistant stack object."""
-    stackNONE = _StackNONE()
 
     def __init__(self, *data):
         """
@@ -171,7 +147,7 @@ class Stack(_StackBase):
         if self._count != other._count:
             return False
 
-        if other is self.stackNONE:
+        if other is stackNONE:
             return False
 
         left = self
@@ -244,7 +220,7 @@ class Stack(_StackBase):
         if self._head is NONE:
             if self._verbose:
                 print('Warning: called tail() on an empty stack')
-            return self.stackNONE
+            return stackNONE
         stack = Stack()
         stack._head = self._head._next
         stack._count = self._count - 1
@@ -268,9 +244,6 @@ class Stack(_StackBase):
         stack._head = self._head
         stack._count = self._count
         return stack
-
-    def isNONE(self):
-        return False
 
 if __name__ == "__main__":
     pass
