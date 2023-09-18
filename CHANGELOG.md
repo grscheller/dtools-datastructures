@@ -7,19 +7,19 @@
     * first digit signifies a major paradigm change or event
     * second digit means API breaking changes or minor paradigm change
     * third digit means API additions or substantial changes
-    * fourth digit means bugfixes or minor changes
+    * fourth digit either means
+      * bugfixes or minor changes (with PyPI releases)
+      * github only thrashing and experimentation
   * rolling release model
     * maintainer will not back port bugfixes to previous versions
     * main branch will be the only tracking branch on GitHub
-      * attempt to keep stable, but may contain not fully tested code
-    * main_devel branch just a place to commit potentially broken code
-        * for bug fixes
-        * for short term feature enhancements
+      * attempt to keep realatvely stable, but not fully tested
+    * main_devel branch a place to commit potentially broken code
     * PyPI releases are taged with a leading "v" on GitHub
       * semantic versioning more strict between PyPI releases
       * semantic versioning between GitHub commits a bit more subjective
-        * might only bump a version number at the beginning of an effort
-        * only meaningfull GitHub versions will be listed below
+        * only meaningfull GitHub commits will be listed below
+        * all non-pulled PyPI releases will be listed below
 
 ## Versions
 

@@ -18,7 +18,7 @@ Module implementing a LIFO stack using a singularly linked linear tree of nodes.
 The nodes can be safely shared between different Stack instances. Pushing to,
 popping from, and getting the length of the stack are all O(1) operations.
 """
-__all__ = ['Stack', 'stackNONE']
+__all__ = ['Stack', 'stackNONE', 'nodeNONE']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -26,7 +26,7 @@ __license__ = "Appache License 2.0"
 from .core import _NONE, NONE
 
 class _NodeBase:
-    def __init__(self, datum, nodeNext=NONE):
+    def __init__(self, datum, nodeNext):
         self._data = datum
         self._next = nodeNext
 
@@ -70,6 +70,13 @@ class _StackNONE(_StackBase, _NONE):
     """
     def __init__(self):
         super().__init__()
+
+    def __iter__(self):
+        """Iterator yielding data stored in the stack, does not consume data."""
+        node = self._head
+        while node:
+            yield NONE
+            node = nodeNONE
 
     def push(self, data):
         """Push data onto top of non-existant stack, just return self."""
@@ -130,6 +137,13 @@ class Stack(_StackBase):
             self._head = node
             self._count += 1
 
+    def __iter__(self):
+        """Iterator yielding data stored in the stack, does not consume data."""
+        node = self._head
+        while node:
+            yield node._data
+            node = node._next
+
     def __eq__(self, other):
         """
         Returns True if all the data stored on the two stacks are the same.
@@ -170,13 +184,6 @@ class Stack(_StackBase):
             dataListStrs.append(repr(data))
         dataListStrs.append("NONE")
         return "[ " + " -> ".join(dataListStrs) + " ]"
-
-    def __iter__(self):
-        """Iterator yielding data stored in the stack, does not consume data."""
-        node = self._head
-        while node:
-            yield node._data
-            node = node._next
 
     def push(self, data):
         """Push data onto top of stack, return data pushed."""
