@@ -4,9 +4,9 @@
 
 * Single maintainer project
   * semantic versioning
-    * first digit signifies a major paradigm change or event
-    * second digit means API breaking changes or minor paradigm change
-    * third digit means API additions or substantial changes
+    * first digit signifies a event
+    * second digit - API breaking changes or paradigm change
+    * third digit - API additions or minor paradigm changes
     * fourth digit either means
       * bugfixes or minor changes (with PyPI releases)
       * github only thrashing and experimentation
@@ -14,14 +14,31 @@
     * maintainer will not back port bugfixes to previous versions
     * main branch will be the only tracking branch on GitHub
       * attempt to keep realatvely stable, but not fully tested
-    * main_devel branch a place to commit potentially broken code
+    * feature branch begin with "feature_" & are places to
+      * explore new directions
+      * commit potentially broken code
+      * could be deleted from GitHub WITHOUT WARNING
     * PyPI releases are taged with a leading "v" on GitHub
       * semantic versioning more strict between PyPI releases
       * semantic versioning between GitHub commits a bit more subjective
         * only meaningfull GitHub commits will be listed below
-        * all non-pulled PyPI releases will be listed below
+        * all non-pulled PyPI releases will be tagged & listed below
 
 ## Versions
+
+### Version 0.5.0.0 - commit date: 2023-09-20
+* begin work on a more functional approach
+  * Create a monadic Option class
+  * Drop the subclassing of NONE
+  * put this effort on a new branch: feature_maybe
+* some flaws with previous approach
+  * the OO redirection not best
+    * for a class used in computationally intense contexts
+    * adds way too much complexity to the design
+  * some Python library probably already implemented this
+    * without looking, probably throws tons of exceptions
+    * more fun implementing it myself
+      * then being dissatified with someone else's design
 
 ### Version 0.4.0.0 - commit date: 2023-09-11
 * subtle paradigm shift for Stack class

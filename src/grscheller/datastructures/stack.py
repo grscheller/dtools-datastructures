@@ -18,101 +18,19 @@ Module implementing a LIFO stack using a singularly linked linear tree of nodes.
 The nodes can be safely shared between different Stack instances. Pushing to,
 popping from, and getting the length of the stack are all O(1) operations.
 """
-__all__ = ['Stack', 'stackNONE', 'nodeNONE']
+__all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .core import _NONE, NONE
+# from .core import Option
 
-class _NodeBase:
-    def __init__(self, datum, nodeNext):
+class _Node:
+    def __init__(self, datum, nodeNext=None):
         self._data = datum
         self._next = nodeNext
 
-class _NodeNONE(_NodeBase, _NONE):
-    def __init__(self):
-        super().__init__(NONE, NONE)
-
-"""Singleton representing the absense of a Node."""
-nodeNONE = _NodeNONE()
-
-class _Node(_NodeBase):
-    def __init__(self, datum, nodeNext=nodeNONE):
-        super().__init__(datum, nodeNext)
-
-class _StackBase:
-    _verbose = False
-
-    def __init__(self):
-        self._head = NONE
-        self._count = 0
-
-    def __len__(self):
-        """Returns current number of values on the stack"""
-        return self._count
-
-    def isEmpty(self):
-        """Test if stack is empty"""
-        return self._count == 0
-
-    @classmethod
-    def verbose(cls):
-        cls._verbose = True
-
-    @classmethod
-    def quiet(cls):
-        cls._verbose = False
-
-class _StackNONE(_StackBase, _NONE):
-    """
-    Class implementing a singleton object representing a "non-existant" stack.
-    """
-    def __init__(self):
-        super().__init__()
-
-    def __iter__(self):
-        """Iterator yielding data stored in the stack, does not consume data."""
-        node = self._head
-        while node:
-            yield NONE
-            node = nodeNONE
-
-    def push(self, data):
-        """Push data onto top of non-existant stack, just return self."""
-        if self._verbose:
-            print(f'Warning: tried to push "{data}" onto stackNONE')
-        return self
-
-    def pop(self):
-        """Pop data off of top off non-existant stack, just return NONE."""
-        if self._verbose:
-            print('Warning: tried to pop() data off of stackNONE')
-        return NONE
-
-    def head(self):
-        if self._verbose:
-            print('Warning: called head() on stackNONE')
-        return NONE
-
-    def tail(self):
-        if self._verbose:
-            print('Warning: called tail() on stackNONE')
-        return self
-
-    def cons(self, data):
-        if self._verbose:
-            print(f'Warning: "{data}" cons with stackNONE')
-        return self
-
-    def copy(self):
-        """Just return a reference to itself (stackNONE)"""
-        return self
-
-"""Singleton class variable representing a nonexistant stack object."""
-stackNONE = _StackNONE()
-
-class Stack(_StackBase):
+class Stack():
     """Last In, First Out (LIFO) stack datastructure. The stack is implemented
     as a singularly linked list of nodes. The stack points to either the first
     node in the list, or to NONE to indicate an empty stack.
@@ -131,11 +49,28 @@ class Stack(_StackBase):
                 Any data to prepopulate the stack.
                 The data is pushed onto the stack left to right.
         """
-        super().__init__()
+        self._head = None
+        self._count = 0
         for datum in data:
             node = _Node(datum, self._head)
             self._head = node
             self._count += 1
+
+    def __len__(self):
+        """Returns current number of values on the stack"""
+        return self._count
+
+    def isEmpty(self):
+        """Test if stack is empty"""
+        return self._count == 0
+
+    @classmethod
+    def verbose(cls):
+        cls._verbose = True
+
+    @classmethod
+    def quiet(cls):
+        cls._verbose = False
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
@@ -161,13 +96,15 @@ class Stack(_StackBase):
         if self._count != other._count:
             return False
 
-        if other is stackNONE:
-            return False
-
         left = self
         right = other
         nn = self._count
         while nn > 0:
+            # TODO: change since tail & head will return Options
+            if left is None:
+                return True
+            if right is None:  # 2nd check redundant, just to make pyright happy
+                return True
             if left._head is right._head:
                 return True
             if left.head() != right.head():
@@ -194,7 +131,8 @@ class Stack(_StackBase):
 
     def pop(self):
         """Pop data off of top of stack."""
-        if self._head is NONE:
+        # TODO: chenge to return an Option
+        if self._head is None:
             return None
         else:
             data = self._head._data
@@ -211,8 +149,9 @@ class Stack(_StackBase):
         -------
         data : 'any' | 'NONE'
         """
-        if self._head is NONE:
-            return NONE
+        # TODO: chenge to return an Option
+        if self._head is None:
+            return None
         return self._head._data
 
     def tail(self):
@@ -224,10 +163,9 @@ class Stack(_StackBase):
         -------
         stack : 'Stack'
         """
-        if self._head is NONE:
-            if self._verbose:
-                print('Warning: called tail() on an empty stack')
-            return stackNONE
+        # TODO: chenge to return an Option
+        if self._head is None:
+            return None
         stack = Stack()
         stack._head = self._head._next
         stack._count = self._count - 1
@@ -246,7 +184,7 @@ class Stack(_StackBase):
         return stack
 
     def copy(self):
-        """Return a shallow copy of the stack"""
+        """Return a shallow copy of the stack in O(1) time & space complexity"""
         stack = Stack()
         stack._head = self._head
         stack._count = self._count

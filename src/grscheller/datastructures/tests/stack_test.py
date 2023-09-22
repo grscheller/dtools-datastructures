@@ -1,4 +1,4 @@
-from grscheller.datastructures.stack import Stack, stackNONE, nodeNONE
+from grscheller.datastructures.stack import Stack
 
 class TestStack:
     def test_push_then_pop(self):
@@ -36,7 +36,7 @@ class TestStack:
         s1.push("fum").push("fo").push("fi").push("fe")
         s2 = s1.tail()
         s3 = s1.copy()
-        assert s2 is not stackNONE
+        assert s2 is not None
         s4 = s2.copy()
 
         if s2 is None:
@@ -46,7 +46,7 @@ class TestStack:
             assert s1.pop() == s2.pop()
         assert s2.isEmpty()
         assert s1.pop() is None
-        assert s1.tail() is stackNONE
+        assert s1.tail() is None
         
         s4.push(s3.head())
         assert s3 is not s4
@@ -108,7 +108,7 @@ class TestStack:
         ducks.append("lewey")
         assert s7 == s8
         assert s7 != s9
-        if s9.head() is not nodeNONE:
+        if s9.head() is not None:
             s9.head().append("lewey")
         assert s7 == s9
 

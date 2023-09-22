@@ -24,7 +24,7 @@ The testsuite can be either run against
    $ pip install grscheller.datastructures[test]
    $ pytest --pyargs grscheller.datastructures
 
-The pytest package was made an project.optional-dependency of the datastructures
+The pytest package was made a project.optional-dependency of the datastructures
 package. To ensure the correct matching version of pytest is used to run the
 tests, pytest needs to be installed into the virtual environment, either
 manually or via the [test] optional-dependency. Otherwise, the

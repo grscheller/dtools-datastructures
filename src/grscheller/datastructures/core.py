@@ -13,32 +13,17 @@
 # limitations under the License.
 
 """Core infrastructure used by grscheller.datastructures package
-
-Module containing support classes, functions and objects used by various
-datastructure implementations.
 """
-__all__ = ['_NONE', 'NONE']
+__all__ = ['Option']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class _NONE:
+class Option:
     """
-    Class representing the absence of a value.
-
-    - Creates surrogates for Python None.
-
-    - A datastructure derived from _NONE represents "non-existant" values for
-      a similar datastructure not derived from _NONE. Such a "NONE" type can be
-      given methods that make sense in the context of a missing value for the
-      similar datastrucure. Both the _NONE type and similar type should be
-      derived from a common base class.
-
-    - Should only be used to create singletons.
-
-    - Allows the user to safely store Python None values in any of the package's
-      datastructures.
+    Class representing a potentially missing value.
     """
+    # TODO: Implement class, below are holdovers from NONE implementation
     def __bool__(self):
         return False
 
@@ -48,40 +33,10 @@ class _NONE:
         return False
 
     def __repr__(self):
-        return 'NONE'
+        return 'Option'
 
     def __iter__(self):
         pass
 
-NONE = _NONE()
-
 if __name__ == "__main__":
     pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
