@@ -14,91 +14,58 @@
 
 """Core infrastructure used by grscheller.datastructures package
 """
-__all__ = ['Maybe', 'MaybeMutable']
+__all__ = ['Maybe']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class _Maybe:
+class Maybe():
     """
-    Base class for classes representing a potentially missing value.
+    Class representing a potentially missing value.
 
-    = instances represent either
-      - Some(value) - internally a one-tuple
-      - Nothing     - internally the empty tuple () singleton
+    - Some(value) constructed via Maybe(value)
+    - Nothing constructed via Maybe() or Maybe(None)
+    - uses immutable semantics
     """
-    def __init__(self, value):
-        if value is None:
-            self._valueT = ()
-        else:
-            self._valueT = value,
+    def __init__(self, value=None):
+        self._value = value
 
     def __bool__(self):
-        return self._valueT != ()
+        return self._value != None
 
     def __eq__(self, other):
-        return self._valueT == other._valueT
+        return self._value == other._value
 
     def __repr__(self):
-        if self._valueT != ():
-            return 'Some(' + repr(self._valueT) + ')'
+        if self:
+            return 'Some(' + repr(self._value) + ')'
         else:
             return 'Nothing'
 
     def __iter__(self):
         if self:
-            yield self._valueT[0]
+            yield self._value
+
+    def map(self, f):
+        if self:
+            return Maybe(f(self._value))
+        else:
+            return Maybe()
+
+    def flatMap(self, f):
+        if self:
+            return f(self._value)
+        else:
+            return Maybe()
 
     def get(self):
+        return self._value
+
+    def getOrElse(self, default):
         if self:
-            return self._valueT[0]
+            return self._value
         else:
-            return None
-
-class Maybe(_Maybe):
-    """
-    Class representing a potentially missing value.
-
-    - Some(value) constructed via Maybe(value)
-    - Nothing constructed via Maybe(None)
-    - uses immutable semantics
-    """
-    def __init__(self, value=None):
-        super().__init__(value)
-
-    def map(self, f):
-        if self:
-            return Maybe(f(self._valueT[0]))
-        else:
-            return Maybe()
-
-    def flatMap(self, f):
-        if self:
-            return f(self._valueT[0])
-        else:
-            return Maybe()
-
-class MaybeMutable(_Maybe):
-    """
-    Class representing a potentially missing value.
-
-    - Some(value) constructed via Maybe(value)
-    - Nothing constructed via Maybe(None)
-    - uses mutable semantics
-    """
-    def __init__(self, value=None):
-        super().__init__(value)
-
-    def map(self, f):
-        if self:
-            self._valueT = f(self._valueT[0]),
-        return self
-
-    def flatMap(self, f):
-        if self:
-            return f(self._valueT[0])
-        else:
-            return self
+            return default
 
 if __name__ == "__main__":
     pass

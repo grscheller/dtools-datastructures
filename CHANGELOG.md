@@ -4,7 +4,7 @@
 
 * Single maintainer project
   * semantic versioning
-    * first digit signifies a event
+    * first digit signifies an event or epoch
     * second digit - API breaking changes or paradigm change
     * third digit - API additions or minor paradigm changes
     * fourth digit either means
@@ -36,7 +36,7 @@
     * for a class used in computationally intense contexts
     * adds way too much complexity to the design
   * some Python library probably already implemented this
-    * without looking, probably throws tons of exceptions
+    * without looking, these probably throw tons of exceptions
     * more fun implementing it myself
       * then being dissatified with someone else's design
 

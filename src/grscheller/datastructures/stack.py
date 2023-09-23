@@ -23,7 +23,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-# from .core import Option
+from .core import Maybe
 
 class _Node:
     def __init__(self, datum, nodeNext=None):
