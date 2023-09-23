@@ -14,29 +14,91 @@
 
 """Core infrastructure used by grscheller.datastructures package
 """
-__all__ = ['Option']
+__all__ = ['Maybe', 'MaybeMutable']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class Option:
+class _Maybe:
     """
-    Class representing a potentially missing value.
+    Base class for classes representing a potentially missing value.
+
+    = instances represent either
+      - Some(value) - internally a one-tuple
+      - Nothing     - internally the empty tuple () singleton
     """
-    # TODO: Implement class, below are holdovers from NONE implementation
+    def __init__(self, value):
+        if value is None:
+            self._valueT = ()
+        else:
+            self._valueT = value,
+
     def __bool__(self):
-        return False
+        return self._valueT != ()
 
     def __eq__(self, other):
-        if other is self:
-            return True
-        return False
+        return self._valueT == other._valueT
 
     def __repr__(self):
-        return 'Option'
+        if self._valueT != ():
+            return 'Some(' + repr(self._valueT) + ')'
+        else:
+            return 'Nothing'
 
     def __iter__(self):
-        pass
+        if self:
+            yield self._valueT[0]
+
+    def get(self):
+        if self:
+            return self._valueT[0]
+        else:
+            return None
+
+class Maybe(_Maybe):
+    """
+    Class representing a potentially missing value.
+
+    - Some(value) constructed via Maybe(value)
+    - Nothing constructed via Maybe(None)
+    - uses immutable semantics
+    """
+    def __init__(self, value=None):
+        super().__init__(value)
+
+    def map(self, f):
+        if self:
+            return Maybe(f(self._valueT[0]))
+        else:
+            return Maybe()
+
+    def flatMap(self, f):
+        if self:
+            return f(self._valueT[0])
+        else:
+            return Maybe()
+
+class MaybeMutable(_Maybe):
+    """
+    Class representing a potentially missing value.
+
+    - Some(value) constructed via Maybe(value)
+    - Nothing constructed via Maybe(None)
+    - uses mutable semantics
+    """
+    def __init__(self, value=None):
+        super().__init__(value)
+
+    def map(self, f):
+        if self:
+            self._valueT = f(self._valueT[0]),
+        return self
+
+    def flatMap(self, f):
+        if self:
+            return f(self._valueT[0])
+        else:
+            return self
 
 if __name__ == "__main__":
     pass
