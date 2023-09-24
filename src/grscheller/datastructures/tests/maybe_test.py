@@ -1,4 +1,4 @@
-from grscheller.datastructures.core import Maybe
+from grscheller.datastructures.functional import Maybe, Nothing
 
 def add2(x):
     return x + 2
@@ -55,3 +55,14 @@ class TestMaybe:
         assert n1.getOrElse(42) == 42
         assert o1.get() == 1
         assert n1.get() is None
+
+    def test_nothing(self):
+        o1 = Maybe(42)
+        n1 = Maybe()
+        n2 = n1
+        assert o1 != Nothing
+        assert n1 == Nothing
+        assert n1 is not Nothing
+        assert n1 is n1
+        assert n1 is n2
+        assert Nothing is Nothing

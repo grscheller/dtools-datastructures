@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""LIFO stack
+from __future__ import annotations
+
+"""LIFO stack:
 
 Module implementing a LIFO stack using a singularly linked linear tree of nodes.
 The nodes can be safely shared between different Stack instances. Pushing to,
@@ -23,22 +25,26 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .core import Maybe
+from .functional import Maybe, Nothing
 
 class _Node:
-    def __init__(self, datum, nodeNext=None):
-        self._data = datum
+    """Class implementing nodes that can be linked together to form a singularly
+    linked list. A node always contain data. It either has a reference to the
+    next _Node object or None to indicate the bottom of linked list.
+    """
+    def __init__(self, data, nodeNext: _Node | None):
+        self._data = data
         self._next = nodeNext
 
-class Stack():
-    """Last In, First Out (LIFO) stack datastructure. The stack is implemented
-    as a singularly linked list of nodes. The stack points to either the first
-    node in the list, or to NONE to indicate an empty stack.
+    def __bool__(self):
+        if self._next is None:
+            return False
+        return True
 
-    Exceptions
-    ----------
-    Does not throw exceptions. The Stack class consistently uses NONE to
-    represent the absence of a data value.
+class Stack():
+    """Class implementing a Last In, First Out (LIFO) stack datastructure. The
+    stack contains a singularly linked list of nodes. The stack points
+    to either the top node in the list, or to None to indicate an empty stack.
     """
 
     def __init__(self, *data):
@@ -48,29 +54,23 @@ class Stack():
             *data : 'any'
                 Any data to prepopulate the stack.
                 The data is pushed onto the stack left to right.
+                None values are ignored and not pushed on stack.
         """
         self._head = None
         self._count = 0
         for datum in data:
-            node = _Node(datum, self._head)
-            self._head = node
-            self._count += 1
+            if datum is not None:
+                node = _Node(datum, self._head)
+                self._head = node
+                self._count += 1
 
     def __len__(self):
         """Returns current number of values on the stack"""
         return self._count
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         """Test if stack is empty"""
         return self._count == 0
-
-    @classmethod
-    def verbose(cls):
-        cls._verbose = True
-
-    @classmethod
-    def quiet(cls):
-        cls._verbose = False
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
@@ -100,10 +100,7 @@ class Stack():
         right = other
         nn = self._count
         while nn > 0:
-            # TODO: change since tail & head will return Options
-            if left is None:
-                return True
-            if right is None:  # 2nd check redundant, just to make pyright happy
+            if left is None or right is None:
                 return True
             if left._head is right._head:
                 return True
@@ -122,56 +119,56 @@ class Stack():
         dataListStrs.append("NONE")
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
-    def push(self, data):
-        """Push data onto top of stack, return data pushed."""
-        node = _Node(data, self._head)
-        self._head = node
-        self._count += 1
+    def push(self, data) -> Stack:
+        """Push data that is not NONE onto top of stack,
+        return stack being pushed.
+        """
+        if data is not None:
+            node = _Node(data, self._head)
+            self._head = node
+            self._count += 1
         return self
 
-    def pop(self):
+    def pop(self) -> Maybe:
         """Pop data off of top of stack."""
         # TODO: chenge to return an Option
         if self._head is None:
-            return None
+            return Nothing
         else:
             data = self._head._data
             self._head = self._head._next
             self._count -= 1
-            return data
+            return Maybe(data)
 
-    def head(self):
-        """Get data at head of stack without consuming it. Returns 'NONE' if
-        the stack is empty.
-        on the stack.
+    def head(self) -> Maybe:
+        """Returns on option for data at head of stack.
+        Does not consume the data if it exists.
 
         Returns
         -------
-        data : 'any' | 'NONE'
+        data : Some(~None) | Nothing
         """
-        # TODO: chenge to return an Option
         if self._head is None:
-            return None
-        return self._head._data
+            return Nothing
+        return Maybe(self._head._data)
 
-    def tail(self):
+    def tail(self) -> Maybe:
         """Get the tail of the stack. In the case of an empty stack,
         return a stackNONE. This will allow the returned value to be
         used as an iterator.
 
         Returns
         -------
-        stack : 'Stack'
+        stack : 'Maybe(Stack)'
         """
-        # TODO: chenge to return an Option
-        if self._head is None:
-            return None
-        stack = Stack()
-        stack._head = self._head._next
-        stack._count = self._count - 1
-        return stack
+        if self._head:
+            stack = Stack()
+            stack._head = self._head._next
+            stack._count = self._count - 1
+            return Maybe(stack)
+        return Nothing
 
-    def cons(self, data):
+    def cons(self, data) -> Stack:
         """Return a new stack with data as head and self as tail.
 
         Returns
@@ -183,7 +180,7 @@ class Stack():
         stack._count = self._count + 1
         return stack
 
-    def copy(self):
+    def copy(self) -> Stack:
         """Return a shallow copy of the stack in O(1) time & space complexity"""
         stack = Stack()
         stack._head = self._head

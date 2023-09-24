@@ -1,27 +1,30 @@
 from grscheller.datastructures.dqueue import Dqueue
+from grscheller.datastructures.functional import Maybe
 
 class TestStack:
     def test_push_then_pop(self):
         dq = Dqueue()
         pushed = 42; dq.pushL(pushed)
-        popped = dq.popL()
+        popped = dq.popL().get()
         assert pushed == popped
         assert dq.isEmpty()
+        assert dq.popL().getOrElse(42) == 42
         pushed = 0; dq.pushL(pushed)
-        popped = dq.popR()
+        popped = dq.popR().getOrElse(42)
         assert pushed == popped == 0
         assert dq.isEmpty()
         pushed = 0; dq.pushR(pushed)
-        popped = dq.popL()
+        popped = dq.popL().get()
+        assert popped is not None
         assert pushed == popped
         assert dq.isEmpty()
         pushed = ''; dq.pushR(pushed)
-        popped = dq.popR()
+        popped = dq.popR().get()
         assert pushed == popped
         assert dq.isEmpty()
         dq.pushR('first').pushR('second').pushR('last')
-        assert dq.popL() == 'first'
-        assert dq.popR() == 'last'
+        assert dq.popL().get() == 'first'
+        assert dq.popR().get() == 'last'
         assert not dq.isEmpty()
         dq.popL()
         assert dq.isEmpty()
@@ -77,11 +80,17 @@ class TestStack:
         dq2.pushR(tup2)
         assert dq1 == dq2
 
-        holdA = dq1.popL()
+        holdA = dq1.popL().get()
         dq1.resize(42)
-        holdB = dq1.popL()
-        holdC = dq1.popR()
+        holdB = dq1.popL().get()
+        holdC = dq1.popR().get()
         dq1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
         dq2.pushL(200)
         assert dq1 == dq2
 
+    def test_maybe(self):
+        m42 = Dqueue().pushL(42).popR()
+        assert m42 == Maybe(42)
+        assert m42 != Maybe(21)
+        assert m42.getOrElse(21) == 42
+        assert m42.getOrElse(21) != 21

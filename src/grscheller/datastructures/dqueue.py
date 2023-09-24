@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 """Double sided queue
 
 Module implementing a Queue with amortized O(1) insertions & deletions from
@@ -24,6 +26,8 @@ __all__ = ['Dqueue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
+
+from .functional import Maybe
 
 class Dqueue:
     """
@@ -54,7 +58,7 @@ class Dqueue:
         self._queue.append(None)
         self._queue.append(None)
 
-    def _isFull(self):
+    def _isFull(self) -> bool:
         """Returns true if dqueue is full."""
         return self._count == self._capacity
 
@@ -96,7 +100,7 @@ class Dqueue:
                 self._front = 0
                 self._rear = self._capacity - 1
 
-    def pushR(self, data):
+    def pushR(self, data) -> Dqueue:
         """Push data on rear of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
@@ -105,7 +109,7 @@ class Dqueue:
         self._count += 1
         return self
 
-    def pushL(self, data):
+    def pushL(self, data) -> Dqueue:
         """Push data on front of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
@@ -114,39 +118,39 @@ class Dqueue:
         self._count += 1
         return self
 
-    def popR(self):
+    def popR(self) -> Maybe:
         """Pop data off rear of dqueue."""
         if self._count == 0:
-            return None
+            return Maybe()
         else:
             data = self._queue[self._rear]
             self._queue[self._rear] = None
             self._rear = (self._rear - 1) % self._capacity
             self._count -= 1
-            return data
+            return Maybe(data)
 
-    def popL(self):
+    def popL(self) -> Maybe:
         """Pop data off front of dqueue."""
         if self._count == 0:
-            return None
+            return Maybe()
         else:
             data = self._queue[self._front]
             self._queue[self._front] = None
             self._front = (self._front + 1) % self._capacity
             self._count -= 1
-            return data
+            return Maybe(data)
 
-    def headR(self):
+    def headR(self) -> Maybe:
         """Return rear element of dqueue without consuming it"""
         if self._count == 0:
-            return None
-        return self._queue[self._rear]
+            return Maybe()
+        return Maybe(self._queue[self._rear])
 
-    def headL(self):
+    def headL(self) -> Maybe:
         """Return front element of dqueue without consuming it"""
         if self._count == 0:
-            return None
-        return self._queue[self._front]
+            return Maybe()
+        return Maybe(self._queue[self._front])
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.
@@ -202,7 +206,7 @@ class Dqueue:
         """Returns current number of values in dequeue."""
         return self._count
 
-    def __getitem__(self, ii):
+    def __getitem__(self, ii) -> any:
         """Together with __len__ method, allows reversed() function to return
         a reverse iterator. Also allows for fetching values via indexing
         Dqueue objects, but not assigning to them. Valid indexes are from
@@ -220,15 +224,15 @@ class Dqueue:
         else:
             return None
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         """Returns true if the dqueue is empty."""
         return self._count == 0
 
-    def capacity(self):
+    def capacity(self) -> int:
         """Returns current capacity of dqueue."""
         return self._capacity
 
-    def fractionFilled(self):
+    def fractionFilled(self) -> float:
         """Returns current capacity of dqueue."""
         return self._count/self._capacity
 

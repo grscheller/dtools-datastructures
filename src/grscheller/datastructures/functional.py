@@ -12,60 +12,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Core infrastructure used by grscheller.datastructures package
+from __future__ import annotations
+
+"""Functional Programming Library
+
+Without being too "pure," datastructures supporting a functional style of
+programming in Python.
 """
-__all__ = ['Maybe']
+__all__ = ['Maybe', 'Nothing']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
+
+from typing import Callable
 
 class Maybe():
     """
     Class representing a potentially missing value.
 
-    - Some(value) constructed via Maybe(value)
-    - Nothing constructed via Maybe() or Maybe(None)
-    - uses immutable semantics
+    - Some(value) constructed by Maybe(value)
+    - Nothing constructed either by Maybe() or Maybe(None)
+    - Uses immutable semantics
     """
     def __init__(self, value=None):
         self._value = value
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self._value != None
-
-    def __eq__(self, other):
-        return self._value == other._value
-
-    def __repr__(self):
-        if self:
-            return 'Some(' + repr(self._value) + ')'
-        else:
-            return 'Nothing'
 
     def __iter__(self):
         if self:
             yield self._value
 
-    def map(self, f):
+    def __repr__(self) -> str:
+        if self:
+            return 'Some(' + repr(self._value) + ')'
+        else:
+            return 'Nothing'
+
+    def __eq__(self, other: Maybe) -> bool:
+        return self._value == other._value
+
+    def map(self, f) -> Maybe:
         if self:
             return Maybe(f(self._value))
         else:
             return Maybe()
 
-    def flatMap(self, f):
+    def flatMap(self, f: Callable[..., Maybe]) -> Maybe:
         if self:
             return f(self._value)
         else:
             return Maybe()
 
-    def get(self):
-        return self._value
-
-    def getOrElse(self, default):
+    def getOrElse(self, default=()):
         if self:
             return self._value
         else:
             return default
+
+Nothing = Maybe()
 
 if __name__ == "__main__":
     pass
