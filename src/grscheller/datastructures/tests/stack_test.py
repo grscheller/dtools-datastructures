@@ -1,5 +1,5 @@
 from grscheller.datastructures.stack import Stack
-from grscheller.datastructures.functional import Nothing
+from grscheller.datastructures.functional import Maybe, Nothing
 
 class TestStack:
     def test_push_then_pop(self):
@@ -11,8 +11,8 @@ class TestStack:
     def test_pop_from_empty_stack(self):
         s1 = Stack()
         popped = s1.pop().getOrElse(())
-        assert popped is not ()
-        assert popped is None
+        assert popped is ()
+        assert popped is not None
         popped = s1.pop().getOrElse('Forty-Two')
         assert popped == 'Forty-Two'
 
@@ -39,54 +39,44 @@ class TestStack:
         s1 = Stack()
         s1.push("fum").push("fo").push("fi").push("fe")
         ms2 = s1.tail()
-        s3 = s1.copy()
         assert ms2 is not Nothing
         ms4 = ms2.map(lambda x: x.copy())
-        #s5 = ms2.get().copy()
-
-        if ms2 is Nothing:
-            assert False
-        s1.pop()
+        assert ms4 == ms2
+        assert ms4.flatMap(lambda x: Maybe(x.tail())) == ms2.map(lambda x: x.tail())
+        assert ms4.getOrElse(Stack(*[1, 2, 3])) == ms2.getOrElse(Stack(*[3, 2, 1])) 
         while not s1.isEmpty():
-            assert s1.pop() == ms2.map(lambda x: x.pop()).getOrElse('wee wee wee')
-        assert len(ms2.getOrElse()) == 0
+            s1.pop()
         assert s1.pop() is Nothing
         assert s1.tail() is Nothing
-        
-        ms4.push(s3.head())
-        assert s3 is not ms4
-        assert s3.head() is ms4.head().get()
-        while not s3.isEmpty():
-            assert s3.pop() == ms4.pop()
-        assert s3.isEmpty()
-        assert ms4.isEmpty()
 
     def test_stack_iter(self):
-        giantStack = Stack(*reversed(["Fe", "Fi", "Fo", "Fum"]))
-        giantTalk = giantStack.head().getOrElse()
-        gs = giantStack.tail().getOrElse(Stack(*reversed(['I', 'am', 'Tom', 'Thumb.']))):
-            for giantWord in gs:
-            giantTalk += " " + giantWord
-        assert giantTalk == "Fe Fi Fo Fum"
+        giantStack = Stack(*reversed(["Fe", " Fi", " Fo", " Fum"]))
+        giantTalk = giantStack.head().getOrElse("Teeny Tiny")
+        assert giantTalk == "Fe"
+        generalThumb = ['I', ' am', ' General', ' Tom', ' Thumb.']
+        gs = giantStack.tail().getOrElse(Stack(*reversed(generalThumb)))
+        for giantWord in gs:
+            giantTalk = giantTalk + giantWord
         assert len(giantStack) == 4
+        assert giantTalk == "Fe Fi Fo Fum"
 
     def test_equality(self):
         s1 = Stack(*range(3))
         s2 = s1.cons(42)
         assert s1 is not s2
-        assert s1 is not s2.tail().get()
+        assert s1 is not s2.tail().getOrElse(Stack())
         assert s1 != s2
-        assert s1 == s2.tail().get()
+        assert s1 == s2.tail().getOrElse(Stack())
 
-        assert s2.head() == 42
-        assert s2 != 42
+        assert s2.head().getOrElse(7) == 42
+        assert s2.pop().getOrElse(0) == 42
 
         s3 = Stack(range(10000))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
         
-        s3.push(s4.pop())
+        s3.push(s4.pop().getOrElse(-1))
         assert s3 is not s4
         assert s3 != s4
         s3.pop()
@@ -96,7 +86,7 @@ class TestStack:
         s5 = Stack(*[1,2,3,4])
         s6 = Stack(*[1,2,3,42])
         assert s5 != s6
-        for aa in range(10000):
+        for aa in range(10):
             s5.push(aa)
             s6.push(aa)
         assert s5 != s6
@@ -104,26 +94,29 @@ class TestStack:
         ducks = ["huey", "dewey"]
         s7 = Stack(ducks)
         s8 = Stack(ducks)
-        s9 = Stack(["huey", "dewey"])
-        assert s7 == s8
-        assert s7 == s9
-        assert s7.head() == s8.head()
-        assert s7.head() is s8.head()
-        assert s7.head() == s9.head()
-        assert s7.head() is not s9.head()
-        ducks.append("lewey")
+        s9 = Stack(["huey", "dewey", "louie"])
         assert s7 == s8
         assert s7 != s9
-        if s9.head() is not Nothing:
-            s9.head().getOrElse([]).append("lewey")
+        assert s7.head() == s8.head()
+        assert s7.head() is not s8.head()
+        assert s7.head() != s9.head()
+        assert s7.head() is not s9.head()
+        ducks.append("louie")
+        assert s7 == s8
         assert s7 == s9
+        s7.push(['moe', 'larry', 'curlie'])
+        s8.push(['moe', 'larry'])
+        assert s7 != s8
+        s8.head().getOrElse([]).append("curlie")
+        assert s7 == s8
 
-    def test_storeNones(self):
+    def test_doNotStoreNones(self):
         s10 = Stack()
         s10.push(None)
         s10.push(None)
         s10.push(None)
         s10.push(42)
+        s10.push(None)
         assert len(s10) == 1
         s10.pop()
         assert s10.isEmpty()

@@ -32,7 +32,7 @@ class Maybe():
 
     - Some(value) constructed by Maybe(value)
     - Nothing constructed either by Maybe() or Maybe(None)
-    - Uses immutable semantics
+    - Immutable semantics - map & flatMap return modified copies
     """
     def __init__(self, value=None):
         self._value = value

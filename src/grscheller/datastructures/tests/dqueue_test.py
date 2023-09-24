@@ -5,7 +5,7 @@ class TestStack:
     def test_push_then_pop(self):
         dq = Dqueue()
         pushed = 42; dq.pushL(pushed)
-        popped = dq.popL().get()
+        popped = dq.popL().getOrElse()
         assert pushed == popped
         assert dq.isEmpty()
         assert dq.popL().getOrElse(42) == 42
@@ -14,17 +14,17 @@ class TestStack:
         assert pushed == popped == 0
         assert dq.isEmpty()
         pushed = 0; dq.pushR(pushed)
-        popped = dq.popL().get()
+        popped = dq.popL().getOrElse()
         assert popped is not None
         assert pushed == popped
         assert dq.isEmpty()
         pushed = ''; dq.pushR(pushed)
-        popped = dq.popR().get()
+        popped = dq.popR().getOrElse()
         assert pushed == popped
         assert dq.isEmpty()
         dq.pushR('first').pushR('second').pushR('last')
-        assert dq.popL().get() == 'first'
-        assert dq.popR().get() == 'last'
+        assert dq.popL().getOrElse() == 'first'
+        assert dq.popR().getOrElse() == 'last'
         assert not dq.isEmpty()
         dq.popL()
         assert dq.isEmpty()
@@ -69,21 +69,21 @@ class TestStack:
         dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
         assert dq1 == dq2
 
-        tup2 = dq2.popR()
+        tup2 = dq2.popR().getOrElse((42, 'Hitchhiker'))
         assert dq1 != dq2
 
         dq2.pushR((42, 'foofoo'))
         assert dq1 != dq2
 
-        dq1.popR()
+        dq1.popR().getOrElse((38, 'Nami'))
         dq1.pushR((42, 'foofoo')).pushR(tup2)
         dq2.pushR(tup2)
         assert dq1 == dq2
 
-        holdA = dq1.popL().get()
+        holdA = dq1.popL().getOrElse(666)
         dq1.resize(42)
-        holdB = dq1.popL().get()
-        holdC = dq1.popR().get()
+        holdB = dq1.popL().getOrElse(777)
+        holdC = dq1.popR().getOrElse(888)
         dq1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
         dq2.pushL(200)
         assert dq1 == dq2

@@ -53,8 +53,11 @@ class TestMaybe:
         n1 = Maybe()
         assert o1.getOrElse(42) == 1
         assert n1.getOrElse(42) == 42
-        assert o1.get() == 1
-        assert n1.get() is None
+        assert o1.getOrElse() == 1
+        assert n1.getOrElse() is ()
+        assert n1.getOrElse() == ()
+        assert n1.getOrElse(None) is None
+        assert n1.getOrElse(None) == None
 
     def test_nothing(self):
         o1 = Maybe(42)

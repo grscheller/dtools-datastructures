@@ -30,21 +30,24 @@ from .functional import Maybe, Nothing
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
     linked list. A node always contain data. It either has a reference to the
-    next _Node object or None to indicate the bottom of linked list.
+    next _Node object or None to indicate the bottom of the linked list.
     """
     def __init__(self, data, nodeNext: _Node | None):
         self._data = data
         self._next = nodeNext
 
     def __bool__(self):
-        if self._next is None:
-            return False
         return True
 
 class Stack():
     """Class implementing a Last In, First Out (LIFO) stack datastructure. The
-    stack contains a singularly linked list of nodes. The stack points
-    to either the top node in the list, or to None to indicate an empty stack.
+    stack contains a singularly linked list of nodes.
+
+    - The stack points to either the top node in the list, or to None to
+      indicate an empty stack.
+    - Stacks are stateful objects where values can be pushed on & popped off.
+    - None represents the absence of a value and are ignored if pushed on the 
+      stack.
     """
 
     def __init__(self, *data):
@@ -106,8 +109,8 @@ class Stack():
                 return True
             if left.head() != right.head():
                 return False
-            left = left.tail()
-            right = right.tail()
+            left = left.tail().getOrElse(Stack())
+            right = right.tail().getOrElse(Stack())
             nn -= 1
         return True
 
@@ -116,7 +119,7 @@ class Stack():
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
-        dataListStrs.append("NONE")
+        dataListStrs.append("None")
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
     def push(self, data) -> Stack:
