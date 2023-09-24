@@ -26,9 +26,15 @@
 
 ## Versions
 
+### Version 0.5.2.1 - PyPI release date: 2023-09-09
+* data structures now support a much more FP style for Python 
+  * implemented Maybe monad
+  * introduces the use of type annotations for this effort
+  * much better test coverage
+
 ### Version 0.5.0.0 - commit date: 2023-09-20
 * begin work on a more functional approach
-  * Create a monadic Option class
+  * create a monadic Option class
   * Drop the subclassing of NONE
   * put this effort on a new branch: feature_maybe
 * some flaws with previous approach
@@ -48,7 +54,7 @@
   * Stack & _StackNONE classes inherit from _StackBase
   * still working out the API
 
-### Version 0.3.0.2 - release date: 2023-09-09
+### Version 0.3.0.2 - PyPI release date: 2023-09-09
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
@@ -62,7 +68,7 @@
 * worst case O(n)
   * will short circuit fast if possible
 
-### Version 0.2.2.2 - release date: 2023-09-04
+### Version 0.2.2.2 - PyPI release date: 2023-09-04
 
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
@@ -72,7 +78,7 @@
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
   * could not do the same for tests/ if end users are to have access
 
-### Version 0.2.1.0 - release date: 2023-09-03
+### Version 0.2.1.0 - PyPI release date: 2023-09-03
 
 * first Version uploaded to PyPI
 * https://pypi.org/project/grscheller.datastructures/

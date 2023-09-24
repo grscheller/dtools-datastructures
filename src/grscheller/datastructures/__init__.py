@@ -14,7 +14,7 @@
   - Modules can be imported individually,
     - see the testing module for examples. 
 """
-__version__ = "0.5.2.0"
+__version__ = "0.5.2.1"
 
 from .functional import *
 from .dqueue import *

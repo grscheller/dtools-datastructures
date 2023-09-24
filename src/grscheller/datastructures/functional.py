@@ -32,8 +32,7 @@ class Maybe():
     - Some(value) constructed by Maybe(value)
     - Nothing constructed either by Maybe() or Maybe(None)
     - immutable semantics - map & flatMap return modified copies
-    - None is always treated as a non-existance value
-      - can not store 
+    - None is always treated as a non-existance value, can not stored
     """
     def __init__(self, value=None):
         self._value = value
