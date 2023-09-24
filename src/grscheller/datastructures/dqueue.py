@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .functional import Maybe
+from .functional import Maybe, Nothing, Some
 
 class Dqueue:
     """
@@ -121,36 +121,36 @@ class Dqueue:
     def popR(self) -> Maybe:
         """Pop data off rear of dqueue."""
         if self._count == 0:
-            return Maybe()
+            return Nothing
         else:
             data = self._queue[self._rear]
             self._queue[self._rear] = None
             self._rear = (self._rear - 1) % self._capacity
             self._count -= 1
-            return Maybe(data)
+            return Some(data)
 
     def popL(self) -> Maybe:
         """Pop data off front of dqueue."""
         if self._count == 0:
-            return Maybe()
+            return Nothing
         else:
             data = self._queue[self._front]
             self._queue[self._front] = None
             self._front = (self._front + 1) % self._capacity
             self._count -= 1
-            return Maybe(data)
+            return Some(data)
 
     def headR(self) -> Maybe:
         """Return rear element of dqueue without consuming it"""
         if self._count == 0:
-            return Maybe()
-        return Maybe(self._queue[self._rear])
+            return Nothing
+        return Some(self._queue[self._rear])
 
     def headL(self) -> Maybe:
         """Return front element of dqueue without consuming it"""
         if self._count == 0:
-            return Maybe()
-        return Maybe(self._queue[self._front])
+            return Nothing
+        return Some(self._queue[self._front])
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.

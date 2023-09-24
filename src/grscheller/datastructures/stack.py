@@ -25,7 +25,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .functional import Maybe, Nothing
+from .functional import Maybe, Some, Nothing
 
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
@@ -141,7 +141,7 @@ class Stack():
             data = self._head._data
             self._head = self._head._next
             self._count -= 1
-            return Maybe(data)
+            return Some(data)
 
     def head(self) -> Maybe:
         """Returns on option for data at head of stack.
@@ -153,7 +153,7 @@ class Stack():
         """
         if self._head is None:
             return Nothing
-        return Maybe(self._head._data)
+        return Some(self._head._data)
 
     def tail(self) -> Maybe:
         """Get the tail of the stack. In the case of an empty stack,
@@ -162,26 +162,31 @@ class Stack():
 
         Returns
         -------
-        stack : 'Maybe(Stack)'
+        stack : 'Maybe[Stack]'
         """
         if self._head:
             stack = Stack()
             stack._head = self._head._next
             stack._count = self._count - 1
-            return Maybe(stack)
+            return Some(stack)
         return Nothing
 
     def cons(self, data) -> Stack:
         """Return a new stack with data as head and self as tail.
+        Note that trying to push None on the stack results in a shallow
+        copy of the original stack.
 
         Returns
         -------
         stack : 'stack'
         """
-        stack = Stack()
-        stack._head = _Node(data, self._head)
-        stack._count = self._count + 1
-        return stack
+        if data is not None:
+            stack = Stack()
+            stack._head = _Node(data, self._head)
+            stack._count = self._count + 1
+            return stack
+        else:
+            return self.copy()
 
     def copy(self) -> Stack:
         """Return a shallow copy of the stack in O(1) time & space complexity"""

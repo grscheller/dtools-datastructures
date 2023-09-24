@@ -16,10 +16,9 @@ from __future__ import annotations
 
 """Functional Programming Library
 
-Without being too "pure," datastructures supporting a functional style of
-programming in Python.
+Datastructures supporting a functional style of programming in Python.
 """
-__all__ = ['Maybe', 'Nothing']
+__all__ = ['Maybe', 'Nothing', 'Some']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -32,7 +31,9 @@ class Maybe():
 
     - Some(value) constructed by Maybe(value)
     - Nothing constructed either by Maybe() or Maybe(None)
-    - Immutable semantics - map & flatMap return modified copies
+    - immutable semantics - map & flatMap return modified copies
+    - None is always treated as a non-existance value
+      - can not store 
     """
     def __init__(self, value=None):
         self._value = value
@@ -71,7 +72,14 @@ class Maybe():
         else:
             return default
 
-Nothing = Maybe()
+# Convenience features at like "unit" and "Nil" or "()" in FP-languages.
+
+def Some(value=None):
+    """Convenience function for creating a Maybe containing a value (unit)"""
+    return Maybe(value)
+
+"""Maybe with no value. Not a singleton. Test via equality, not identity."""
+Nothing = Some()
 
 if __name__ == "__main__":
     pass
