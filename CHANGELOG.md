@@ -26,7 +26,7 @@
 
 ## Versions
 
-### Version 0.5.2.1 - PyPI release date: 2023-09-09
+### Version 0.5.2.1 - PyPI release date: 2023-09-24
 * data structures now support a much more FP style for Python 
   * implemented Maybe monad
   * introduces the use of type annotations for this effort
