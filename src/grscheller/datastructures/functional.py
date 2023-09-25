@@ -44,14 +44,16 @@ class Maybe():
         if self:
             yield self._value
 
+    def __eq__(self, other: Maybe) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+        return self._value == other._value
+
     def __repr__(self) -> str:
         if self:
             return 'Some(' + repr(self._value) + ')'
         else:
             return 'Nothing'
-
-    def __eq__(self, other: Maybe) -> bool:
-        return self._value == other._value
 
     def map(self, f) -> Maybe:
         if self:
@@ -65,11 +67,20 @@ class Maybe():
         else:
             return Maybe()
 
-    def getOrElse(self, default=()):
+    def getOrElse(self, default):
+        """
+        Get constents if they exist, otherwise return provided default value
+        """
         if self:
             return self._value
         else:
             return default
+
+    def get(self):
+        """
+        Get constents if they exist, otherwise return None
+        """
+        return self._value
 
 # Convenience features at like "unit" and "Nil" or "()" in FP-languages.
 

@@ -27,18 +27,9 @@ See PEP-563 & PEP-649. These features are slated for Python 3.13
 but work now in Python 3.11 by including the annotations module from
 the `__future__` package.
 
-### This package contains the follow modules
+## Package modules
 
-#### grscheller.datastructes.dqueue
-Implements double ended queue. The queue is implemented with a circular
-array and will resize itself as needed.
-
-* Class Dqueue
-  * O(1) pushes & pops either end
-  * O(1) length determination
-  * O(n) copy
-
-#### grscheller.datastructes.functional
+### grscheller.datastructes.functional
 Datastructures supporting a functional style of programming in Python.
 
 * Class Maybe
@@ -47,7 +38,16 @@ Datastructures supporting a functional style of programming in Python.
     * Some(value)
     * Nothing
 
-#### grscheller.datastructes.stack
+### grscheller.datastructes.dqueue
+Implements double ended queue. The queue is implemented with a circular
+array and will resize itself as needed.
+
+* Class Dqueue
+  * O(1) pushes & pops either end
+  * O(1) length determination
+  * O(n) copy
+
+### grscheller.datastructes.stack
 A LIFO stack data structure implemented with singularly linked
 nodes. The Stack objects themselves are light weight and have only two
 attributes, a count containing the number of elements on the stack, and

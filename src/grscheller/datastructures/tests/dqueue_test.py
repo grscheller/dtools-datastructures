@@ -5,7 +5,7 @@ class TestStack:
     def test_push_then_pop(self):
         dq = Dqueue()
         pushed = 42; dq.pushL(pushed)
-        popped = dq.popL().getOrElse()
+        popped = dq.popL().get()
         assert pushed == popped
         assert dq.isEmpty()
         assert dq.popL().getOrElse(42) == 42
@@ -14,17 +14,17 @@ class TestStack:
         assert pushed == popped == 0
         assert dq.isEmpty()
         pushed = 0; dq.pushR(pushed)
-        popped = dq.popL().getOrElse()
+        popped = dq.popL().get()
         assert popped is not None
         assert pushed == popped
         assert dq.isEmpty()
         pushed = ''; dq.pushR(pushed)
-        popped = dq.popR().getOrElse()
+        popped = dq.popR().get()
         assert pushed == popped
         assert dq.isEmpty()
         dq.pushR('first').pushR('second').pushR('last')
-        assert dq.popL().getOrElse() == 'first'
-        assert dq.popR().getOrElse() == 'last'
+        assert dq.popL().get() == 'first'
+        assert dq.popR().get() == 'last'
         assert not dq.isEmpty()
         dq.popL()
         assert dq.isEmpty()

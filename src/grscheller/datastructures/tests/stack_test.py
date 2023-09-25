@@ -18,10 +18,13 @@ class TestStack:
 
         s2 = Stack(1, 2, 3, 42)
         while not s2.isEmpty():
-            assert s2.head().getOrElse() is not Nothing
+            assert s2.head().get() != Nothing
             s2.pop()
         assert s2.isEmpty()
-        assert s2.pop() is Nothing
+        ms2 = s2.pop()
+        assert ms2 == Nothing
+        assert ms2.get() is None
+        assert not ms2
 
     def test_stack_len(self):
         s0 = Stack()
@@ -39,15 +42,15 @@ class TestStack:
         s1 = Stack()
         s1.push("fum").push("fo").push("fi").push("fe")
         ms2 = s1.tail()
-        assert ms2 is not Nothing
+        assert ms2 != Nothing
         ms4 = ms2.map(lambda x: x.copy())
         assert ms4 == ms2
         assert ms4.flatMap(lambda x: Maybe(x.tail())) == ms2.map(lambda x: x.tail())
         assert ms4.getOrElse(Stack(*[1, 2, 3])) == ms2.getOrElse(Stack(*[3, 2, 1])) 
         while not s1.isEmpty():
             s1.pop()
-        assert s1.pop() is Nothing
-        assert s1.tail() is Nothing
+        assert s1.pop() == Nothing
+        assert s1.tail() == Nothing
 
     def test_stack_iter(self):
         giantStack = Stack(*reversed(["Fe", " Fi", " Fo", " Fum"]))
@@ -56,7 +59,7 @@ class TestStack:
         generalThumb = ['I', ' am', ' General', ' Tom', ' Thumb.']
         gs = giantStack.tail().getOrElse(Stack(*reversed(generalThumb)))
         for giantWord in gs:
-            giantTalk = giantTalk + giantWord
+            giantTalk += giantWord
         assert len(giantStack) == 4
         assert giantTalk == "Fe Fi Fo Fum"
 
