@@ -12,12 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
-
 """Functional Programming Library
 
 Datastructures supporting a functional style of programming in Python.
 """
+from __future__ import annotations
+from typing import TypeVar, Any
+
+T = TypeVar('T')
+
 __all__ = ['Maybe', 'Nothing', 'Some']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
@@ -29,10 +32,14 @@ class Maybe():
     """
     Class representing a potentially missing value.
 
-    - Some(value) constructed by Maybe(value)
-    - Nothing constructed either by Maybe() or Maybe(None)
+    - Implements the Optional Monad
+    - Maybe(value) constructs "Some(value)" 
+    - Both Maybe() or Maybe(None) construct "Nothing"
     - immutable semantics - map & flatMap return modified copies
-    - None is always treated as a non-existance value, can not stored
+    - None is always treated as a non-existance value
+      - cannot be stored in an object of type Maybe
+      - semantically None does not exist
+      - None only has any real existance as an implementration detail
     """
     def __init__(self, value=None):
         self._value = value
@@ -67,22 +74,30 @@ class Maybe():
         else:
             return Maybe()
 
-    def getOrElse(self, default):
+    def get(self) -> Any | None:
         """
-        Get constents if they exist, otherwise return provided default value
+        Get constents if they exist, otherwise return None. Caller is
+        responsible with dealing with a None return value.
         """
+        return self._value
+
+    def getOrElse(self, default) -> Any:
+        """
+        Get constents if they exist, otherwise return provided default value,
+        which is guarnteed never to be None. If the caller sets it to None,
+        swap it for the empty tuple (). () was choosen since it is iterable and
+        "does the right thing" in an iterable context.
+        """
+        if default is None:
+            default = ()
         if self:
             return self._value
         else:
             return default
 
-    def get(self):
-        """
-        Get constents if they exist, otherwise return None
-        """
-        return self._value
-
-# Convenience features at like "unit" and "Nil" or "()" in FP-languages.
+# Maybe convenience features. Like "unit", "Nil" or "()" in FP-languages.
+# These are not necessary to ues Maybe, but gives Maybe the flavor of a Union
+# type without using either inheritance or unnecessary internal state.
 
 def Some(value=None):
     """Convenience function for creating a Maybe containing a value (unit)"""

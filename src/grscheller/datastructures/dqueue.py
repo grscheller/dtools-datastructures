@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from __future__ import annotations
+from typing import TypeVar, Any
+
+T = TypeVar('T')
 
 """Double sided queue
 
@@ -202,11 +205,11 @@ class Dqueue:
             dataListStrs.append(repr(data))
         return ">< " + " | ".join(dataListStrs) + " ><"
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns current number of values in dequeue."""
         return self._count
 
-    def __getitem__(self, ii) -> any:
+    def __getitem__(self, ii: int) -> Any | None:
         """Together with __len__ method, allows reversed() function to return
         a reverse iterator. Also allows for fetching values via indexing
         Dqueue objects, but not assigning to them. Valid indexes are from
