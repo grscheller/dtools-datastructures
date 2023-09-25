@@ -123,3 +123,24 @@ class TestStack:
         assert len(s10) == 1
         s10.pop()
         assert s10.isEmpty()
+
+import grscheller.datastructures.stack as stack
+
+class Test_Node:
+    def test_bool(self):
+        n1 = stack._Node(1, None)
+        n2 = stack._Node(2, n1)
+        assert n1
+        assert n2
+
+    def test_linking(self):
+        n1 = stack._Node(1, None)
+        n2 = stack._Node(2, n1)
+        n3 = stack._Node(3, n2)
+        assert n3._data == 3
+        assert n2._data == n3._next._data == 2
+        assert n1._data == n2._next._data == n3._next._next._data == 1
+        assert n3._next != None
+        assert n3._next._next != None
+        assert n3._next._next._next == None
+        assert n3._next._next == n2._next

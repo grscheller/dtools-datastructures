@@ -1,7 +1,7 @@
 from grscheller.datastructures.dqueue import Dqueue
 from grscheller.datastructures.functional import Maybe
 
-class TestStack:
+class TestDqueue:
     def test_push_then_pop(self):
         dq = Dqueue()
         pushed = 42; dq.pushL(pushed)
