@@ -5,11 +5,13 @@
 * Single maintainer project
   * semantic versioning
     * first digit signifies an event or epoch
-    * second digit - API breaking changes or paradigm change
-    * third digit - API additions or minor paradigm changes
+    * second digit means breaking API changes (between PyPI releases)
+    * third digit either means
+      * API breaking changes (between GitHub commits)
+      * API additions (between PyPI releases)
     * fourth digit either means
-      * bugfixes or minor changes (with PyPI releases)
-      * github only thrashing and experimentation
+      * bugfixes or minor changes (between PyPI releases)
+      * GitHub only thrashing and experimentation
   * rolling release model
     * maintainer will not back port bugfixes to previous versions
     * main branch will be the only tracking branch on GitHub

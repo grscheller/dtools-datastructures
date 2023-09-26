@@ -17,16 +17,21 @@
 Datastructures supporting a functional style of programming in Python.
 """
 from __future__ import annotations
-from typing import TypeVar, Any
 
-T = TypeVar('T')
-
-__all__ = ['Maybe', 'Nothing', 'Some']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Callable
+__all__ = [
+    'Maybe', 'Nothing', 'Some',
+    'Either', 'Left', 'Right'
+]
+
+from typing import TypeVar, Any, Callable
+
+T = TypeVar('T')
+U = TypeVar('U')
+V = TypeVar('V')
 
 class Maybe():
     """
@@ -34,7 +39,7 @@ class Maybe():
 
     - Implements the Optional Monad
     - Maybe(value) constructs "Some(value)" 
-    - Both Maybe() or Maybe(None) construct "Nothing"
+    - Both Maybe() or Maybe(None) constructs a "Nothing"
     - immutable semantics - map & flatMap return modified copies
     - None is always treated as a non-existance value
       - cannot be stored in an object of type Maybe
@@ -45,13 +50,22 @@ class Maybe():
         self._value = value
 
     def __bool__(self) -> bool:
+        """Return false if a Nothing, otherwise true."""
         return self._value != None
+
+    def __len__(self) -> int:
+        if self:
+            return 1
+        return 0
 
     def __iter__(self):
         if self:
             yield self._value
 
     def __eq__(self, other: Maybe) -> bool:
+        """Returns true if both sides are Nothings, or if both sides are Somes
+        contining values which compare as equal.
+        """
         if not isinstance(other, type(self)):
             return False
         return self._value == other._value
@@ -100,11 +114,52 @@ class Maybe():
 # type without using either inheritance or unnecessary internal state.
 
 def Some(value=None):
-    """Convenience function for creating a Maybe containing a value (unit)"""
+    """Convenience function for creating a Maybe containing a value (unit)."""
     return Maybe(value)
 
 """Maybe with no value. Not a singleton. Test via equality, not identity."""
 Nothing = Some()
+
+class Either():
+    """Class that either contains a Left value or Right value, but not both.
+
+    This version is biased to the Left, which is intended as the "happy path."
+    """
+    def __init__(self, left, right=Nothing):
+        if left == Nothing or left is None:
+            self._isLeft = False
+            self._value = right
+        else:
+            self._isLeft = True
+            self._value = left
+
+    def __bool__(self) -> bool:
+        """Return true if a Left, false if a Right."""
+        return self._isLeft
+
+    def copy(self) -> Either:
+        if self:
+            return Either(self._value)
+        return Either(None, self._value)
+
+    def map(self, f, right=Nothing) -> Either:
+        if self:
+            return Either(f(self._value), right)
+        return self.copy()
+
+    def mapRight(self, g):
+        if self:
+            return self.copy()
+        return Either(Nothing, g(self._value))
+
+# Either convenience functions. Not necessary
+# to use Either, but more intuitive,
+
+def Left(left):
+    return Either(left, right=Nothing)
+
+def Right(right):
+    return Either(Nothing, right)
 
 if __name__ == "__main__":
     pass

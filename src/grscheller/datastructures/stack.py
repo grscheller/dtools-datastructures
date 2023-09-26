@@ -49,7 +49,6 @@ class Stack():
     - None represents the absence of a value and are ignored if pushed on the 
       stack.
     """
-
     def __init__(self, *data):
         """
         Parameters
@@ -67,13 +66,13 @@ class Stack():
                 self._head = node
                 self._count += 1
 
-    def __len__(self):
-        """Returns current number of values on the stack"""
-        return self._count
+    def __bool__(self) -> bool:
+        """Returns true if stack is not empty."""
+        return self._count > 0
 
-    def isEmpty(self) -> bool:
-        """Test if stack is empty"""
-        return self._count == 0
+    def __len__(self) -> int:
+        """Returns current number of values on the stack."""
+        return self._count
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data."""
@@ -83,8 +82,7 @@ class Stack():
             node = node._next
 
     def __eq__(self, other):
-        """
-        Returns True if all the data stored on the two stacks are the same.
+        """Returns True if all the data stored on the two stacks are the same.
         Worst case is O(n) behavior which happens when all the corresponding
         data elements on the two stacks are equal, in whatever sense they
         define equality, and none of the nodes are shared.
@@ -189,7 +187,7 @@ class Stack():
             return self.copy()
 
     def copy(self) -> Stack:
-        """Return a shallow copy of the stack in O(1) time & space complexity"""
+        """Return a shallow copy of the stack in O(1) time & space complexity."""
         stack = Stack()
         stack._head = self._head
         stack._count = self._count
