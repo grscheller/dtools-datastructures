@@ -26,6 +26,12 @@
 
 ## Versions
 
+### Version 0.6.1.0 - commit date: 2023-09-25
+* Maybe get and getOrElse API changes
+* getting a better handle on type annotation
+  * work-in-progress
+  * erroneous LSP error messages greatly reduced
+
 ### Version 0.5.2.1 - PyPI release date: 2023-09-24
 * data structures now support a much more FP style for Python 
   * implemented Maybe monad
