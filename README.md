@@ -1,11 +1,13 @@
 # Python grscheller.datastructures package
 
-Data structures supporting a more functional style of programming.
+Data structures supporting a functional style of programming and
+avoiding the throwing of exceptions. 
 
 Why not just use Python builtin data structures like lists and
 dictionaries directly? The data structures in this package internalize
-the "bit fiddling" and allow you to concentrate on the algorithms for
-which they are tailored.
+the "bit fiddling" allowing your code to follow the "happy path" and
+letting you to concentrate on the algorithms for which these data
+structures are tailored.
 
 Unlike the standard library, and other similar "functional" data
 structures, these data structures do not throw exceptions, except for
