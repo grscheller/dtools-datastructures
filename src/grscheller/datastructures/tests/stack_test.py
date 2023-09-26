@@ -17,10 +17,10 @@ class TestStack:
         assert popped == 'Forty-Two'
 
         s2 = Stack(1, 2, 3, 42)
-        while not s2.isEmpty():
+        while s2:
             assert s2.head().get() != Nothing
             s2.pop()
-        assert s2.isEmpty()
+        assert not s2
         ms2 = s2.pop()
         assert ms2 == Nothing
         assert ms2.get() is None
@@ -47,7 +47,7 @@ class TestStack:
         assert ms4 == ms2
         assert ms4.flatMap(lambda x: Maybe(x.tail())) == ms2.map(lambda x: x.tail())
         assert ms4.getOrElse(Stack(*[1, 2, 3])) == ms2.getOrElse(Stack(*[3, 2, 1])) 
-        while not s1.isEmpty():
+        while s1:
             s1.pop()
         assert s1.pop() == Nothing
         assert s1.tail() == Nothing
@@ -122,7 +122,7 @@ class TestStack:
         s10.push(None)
         assert len(s10) == 1
         s10.pop()
-        assert s10.isEmpty()
+        assert not s10
 
 import grscheller.datastructures.stack as stack
 
