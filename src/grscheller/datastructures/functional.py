@@ -140,14 +140,13 @@ class Either():
         else:
             return 'Right(' + repr(self._value) + ')'
 
-    def __eq__(self, other: Maybe) -> bool:
-        """Returns true if both sides are of the same type and compare as equal.
-        """
+    def __eq__(self, other: Either) -> bool:
+        """True if both sides are same "type" and values compare as equal."""
         if not isinstance(other, type(self)):
             return False
 
         if (self and other) or (not self and not other):
-            return self._value == self._value
+            return self._value == other._value
         return False
 
     def copy(self) -> Either:
