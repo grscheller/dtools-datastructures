@@ -22,7 +22,7 @@
       * bugfixes or minor changes (between PyPI releases)
       * GitHub only thrashing and experimentation
 """
-__version__ = "0.6.2.0"
+__version__ = "0.6.2.1"
 
 from .functional import *
 from .dqueue import *

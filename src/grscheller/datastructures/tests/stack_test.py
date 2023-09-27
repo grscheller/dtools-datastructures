@@ -138,6 +138,9 @@ class Test_Node:
         n2 = stack._Node(2, n1)
         n3 = stack._Node(3, n2)
         assert n3._data == 3
+        assert n3._next is not None
+        assert n3._next._next is not None
+        assert n2._next is not None
         assert n2._data == n3._next._data == 2
         assert n1._data == n2._next._data == n3._next._next._data == 1
         assert n3._next != None

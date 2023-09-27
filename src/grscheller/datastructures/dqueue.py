@@ -33,8 +33,7 @@ __license__ = "Appache License 2.0"
 from .functional import Maybe, Nothing, Some
 
 class Dqueue:
-    """
-    Double sided queue datastructure. Will resize itself as needed.
+    """Double sided queue datastructure. Will resize itself as needed.
 
     Exceptions
     ----------
@@ -170,8 +169,7 @@ class Dqueue:
             yield self._queue[pos]
 
     def __eq__(self, other):
-        """
-        Returns True if all the data stored on the two dqueues are the same.
+        """Returns True if all the data stored on the two dqueues are the same.
         Worst case is O(n) behavior for the True case.
 
         Parameters

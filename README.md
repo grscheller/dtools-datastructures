@@ -23,7 +23,7 @@ As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
 value in a real datastructure? Implemented in CPython as
 C language datastructures, the Python None "singleton" builtin object
-does has a sort of real existence to it. Unless documented otherwise,
+does have a sort of real existence to it. Unless documented otherwise,
 None is never "pushed" to any of these data structures. Dqueue is an
 example of such an exception.
 

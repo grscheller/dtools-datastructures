@@ -34,10 +34,9 @@ U = TypeVar('U')
 V = TypeVar('V')
 
 class Maybe():
-    """
-    Class representing a potentially missing value.
+    """Class representing a potentially missing value.
 
-    - Implements the Optional Monad
+    - Implements the Option Monad
     - Maybe(value) constructs "Some(value)" 
     - Both Maybe() or Maybe(None) constructs a "Nothing"
     - immutable semantics - map & flatMap return modified copies
@@ -62,6 +61,12 @@ class Maybe():
         if self:
             yield self._value
 
+    def __repr__(self) -> str:
+        if self:
+            return 'Some(' + repr(self._value) + ')'
+        else:
+            return 'Nothing'
+
     def __eq__(self, other: Maybe) -> bool:
         """Returns true if both sides are Nothings, or if both sides are Somes
         contining values which compare as equal.
@@ -70,13 +75,7 @@ class Maybe():
             return False
         return self._value == other._value
 
-    def __repr__(self) -> str:
-        if self:
-            return 'Some(' + repr(self._value) + ')'
-        else:
-            return 'Nothing'
-
-    def map(self, f) -> Maybe:
+    def map(self, f: Callable[[Any], Any]) -> Maybe:
         if self:
             return Maybe(f(self._value))
         else:
@@ -89,15 +88,13 @@ class Maybe():
             return Maybe()
 
     def get(self) -> Any | None:
-        """
-        Get constents if they exist, otherwise return None. Caller is
+        """Get constents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
         """
         return self._value
 
     def getOrElse(self, default) -> Any:
-        """
-        Get constents if they exist, otherwise return provided default value,
+        """Get constents if they exist, otherwise return provided default value,
         which is guarnteed never to be None. If the caller sets it to None,
         swap it for the empty tuple (). () was choosen since it is iterable and
         "does the right thing" in an iterable context.
@@ -137,28 +134,54 @@ class Either():
         """Return true if a Left, false if a Right."""
         return self._isLeft
 
+    def __repr__(self) -> str:
+        if self:
+            return 'Left(' + repr(self._value) + ')'
+        else:
+            return 'Right(' + repr(self._value) + ')'
+
+    def __eq__(self, other: Maybe) -> bool:
+        """Returns true if both sides are of the same type and compare as equal.
+        """
+        if not isinstance(other, type(self)):
+            return False
+
+        if (self and other) or (not self and not other):
+            return self._value == self._value
+        return False
+
     def copy(self) -> Either:
         if self:
             return Either(self._value)
         return Either(None, self._value)
 
-    def map(self, f, right=Nothing) -> Either:
+    def map(self, f: Callable[[Any], Any], right=Nothing) -> Either:
         if self:
             return Either(f(self._value), right)
         return self.copy()
 
-    def mapRight(self, g):
+    def mapRight(self, g: Callable[[Any], Any]) -> Either:
         if self:
             return self.copy()
         return Either(Nothing, g(self._value))
 
+    def flatMap(self, f: Callable[[Any], Either]) -> Either:
+        if self:
+            return f(self._value)
+        return self.copy()
+
+    def toMaybe(self) -> Maybe:
+        if self:
+            return Maybe(self._value)
+        return Nothing
+
 # Either convenience functions. Not necessary
 # to use Either, but more intuitive,
 
-def Left(left):
-    return Either(left, right=Nothing)
+def Left(left, right=Nothing) -> Either:
+    return Either(left, right)
 
-def Right(right):
+def Right(right) -> Either:
     return Either(Nothing, right)
 
 if __name__ == "__main__":
