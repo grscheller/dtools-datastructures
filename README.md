@@ -31,24 +31,9 @@ Type annotations are necessary to help external tooling work well. See
 PEP-563 & PEP-649. These features are slated for Python 3.13 but work
 now in Python 3.11 by including *annotations* from `__future__`.
 
-## Package modules
+# Package contents
 
-### grscheller.datastructes.functional
-
-FP Datastructures supporting a functional style of programming in Python.
-
-* Class **Maybe**
-  * Represents a possible non-existent value
-  * Implements the Option Monad
-  * Functionally a Union type
-    * Some(value)
-    * Nothing
-
-* Class **Either**
-  * Represents a single value in one of two mutually exclusive contexts
-  * Implements a Left biased Either Monad
-    * Left(value)
-    * Right(value)
+## grscheller.datastructes package level modules
 
 ### grscheller.datastructes.dqueue
 
@@ -79,3 +64,48 @@ shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
+
+## grscheller.datastructes.functional package
+
+FP Datastructures supporting a functional style of programming in Python.
+
+### grscheller.datastructes.functional.maybe module
+
+* Class **Maybe**
+  * Represents a possible non-existent value
+  * Implements the Option Monad
+  * Functions like a Union type
+    * Some(value)
+    * Nothing
+
+* Function **Some(value)**
+  * creates a Maybe which contains a value
+  * if value = None, then a Maybe Nothing object created
+
+* Object **Nothing**
+  * Maybe object representing the absence of a value
+  * A Nothing is not a singleton, created by Some() or Some(None)
+    * in tests use equality semantics, not identity semantics
+
+### grscheller.datastructes.functional.either module
+
+* Class **Either**
+  * Represents a single value in one of two mutually exclusive contexts
+  * Implements a Left biased Either Monad
+  * Functions like a Union type
+    * Left(value)
+    * Right(value)
+
+* Function **Left(value, right=None)**
+  * Creates a left type of Either, unless value=None or is missing
+    * Otherwise returns a right type Either with value right
+  * Typically containing an intermediate value of an ongoing calculation
+
+* Function **Right(value=None)**
+  * Creates a right type of Either
+  * Typically containing a str type for an error message
+
+### grscheller.datastructes.functional.util module
+
+* Function **maybeToEither**
+* Function **EitherTomaybe**

@@ -28,12 +28,21 @@
 
 ## Versions
 
+### Version 0.6.3.2 - commit date: 2023-09-30
+* Made funtional module into a sub package of datastructures
+* Improved comments and type annotations
+* Removed isEmpty method from Dqueue class
+* Both Dqueue & Stack objects evaluate true when non-empty
+* Beginning preparations for the next PyPI release
+  * Want to make next PyPI release a Beta release
+  * Need to improve test suite first
+
 ### Version 0.6.2.0 - commit date: 2023-09-25
 * Started work on a Left biased Either Monad
 * removed isEmpty method from Stack class
 
 ### Version 0.6.1.0 - commit date: 2023-09-25
-* Maybe get and getOrElse API changes
+* Maybe get() and getOrElse() API changes
 * getting a better handle on type annotation
   * work-in-progress
   * erroneous LSP error messages greatly reduced
