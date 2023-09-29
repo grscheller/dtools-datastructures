@@ -1,5 +1,20 @@
+# Copyright 2023 Geoffrey R. Scheller
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from grscheller.datastructures.stack import Stack
-from grscheller.datastructures.functional import Maybe, Nothing
+from grscheller.datastructures.functional import Maybe, Nothing, Some
+import grscheller.datastructures.stack as stack
 
 class TestStack:
     def test_push_then_pop(self):
@@ -123,8 +138,6 @@ class TestStack:
         assert len(s10) == 1
         s10.pop()
         assert not s10
-
-import grscheller.datastructures.stack as stack
 
 class Test_Node:
     def test_bool(self):

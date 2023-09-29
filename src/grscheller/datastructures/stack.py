@@ -13,19 +13,21 @@
 # limitations under the License.
 
 from __future__ import annotations
+from typing import Any
 
-"""LIFO stack:
-
-Module implementing a LIFO stack using a singularly linked linear tree of nodes.
-The nodes can be safely shared between different Stack instances. Pushing to,
-popping from, and getting the length of the stack are all O(1) operations.
-"""
+# Module grscheller.datastructure.stack - LIFO stack:
+#
+# Module implementing a LIFO stack using a singularly linked linear tree of
+# nodes. The nodes can be safely shared between different Stack instances.
+# Pushing to, popping from, and getting the length of the stack are all O(1)
+# operations.
+#
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .functional import Maybe, Some, Nothing
+from .functional.maybe import Maybe, Some, Nothing
 
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
@@ -50,14 +52,6 @@ class Stack():
       stack.
     """
     def __init__(self, *data):
-        """
-        Parameters
-        ----------
-            *data : 'any'
-                Any data to prepopulate the stack.
-                The data is pushed onto the stack left to right.
-                None values are ignored and not pushed on stack.
-        """
         self._head = None
         self._count = 0
         for datum in data:
@@ -81,15 +75,11 @@ class Stack():
             yield node._data
             node = node._next
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
         Worst case is O(n) behavior which happens when all the corresponding
         data elements on the two stacks are equal, in whatever sense they
         define equality, and none of the nodes are shared.
-
-        Parameters
-        ----------
-            other : 'any'
         """
         if not isinstance(other, type(self)):
             return False
@@ -120,7 +110,14 @@ class Stack():
         dataListStrs.append("None")
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
-    def push(self, data) -> Stack:
+    def copy(self) -> Stack:
+        """Return shallow copy of the stack in O(1) time & space complexity."""
+        stack = Stack()
+        stack._head = self._head
+        stack._count = self._count
+        return stack
+
+    def push(self, data: Any) -> Stack:
         """Push data that is not NONE onto top of stack,
         return stack being pushed.
         """
@@ -132,7 +129,6 @@ class Stack():
 
     def pop(self) -> Maybe:
         """Pop data off of top of stack."""
-        # TODO: chenge to return an Option
         if self._head is None:
             return Nothing
         else:
@@ -154,13 +150,8 @@ class Stack():
         return Some(self._head._data)
 
     def tail(self) -> Maybe:
-        """Get the tail of the stack. In the case of an empty stack,
-        return a stackNONE. This will allow the returned value to be
-        used as an iterator.
-
-        Returns
-        -------
-        stack : 'Maybe[Stack]'
+        """Return Some(tail) of the stack. In the case of an empty stack,
+        return a Nothing.
         """
         if self._head:
             stack = Stack()
@@ -169,7 +160,7 @@ class Stack():
             return Some(stack)
         return Nothing
 
-    def cons(self, data) -> Stack:
+    def cons(self, data: Any) -> Stack:
         """Return a new stack with data as head and self as tail.
         Note that trying to push None on the stack results in a shallow
         copy of the original stack.
@@ -185,13 +176,6 @@ class Stack():
             return stack
         else:
             return self.copy()
-
-    def copy(self) -> Stack:
-        """Return a shallow copy of the stack in O(1) time & space complexity."""
-        stack = Stack()
-        stack._head = self._head
-        stack._count = self._count
-        return stack
 
 if __name__ == "__main__":
     pass

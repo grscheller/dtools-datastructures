@@ -1,11 +1,11 @@
 # Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,43 +13,32 @@
 # limitations under the License.
 
 from __future__ import annotations
-from typing import TypeVar, Any
+from typing import Any
 
-T = TypeVar('T')
-
-"""Double sided queue
-
-Module implementing a Queue with amortized O(1) insertions & deletions from
-either end. Obtaining length (number of elements) of a Dqueue is also a O(1)
-operation.
-
-Implemented with a Python List based circular array.
-"""
+# Module grscheller.datastructure.dqueue - Double sided queue
+#
+# Module implementing a double sided queue with amortized O(1) insertions
+# & deletions from either end. Obtaining length (number of elements) of a
+# Dqueue is also a O(1) operation.
+#
+# Implemented with a Python List based circular array.
+#
 __all__ = ['Dqueue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .functional import Maybe, Nothing, Some
+from .functional.maybe import Maybe, Nothing, Some
 
 class Dqueue:
     """Double sided queue datastructure. Will resize itself as needed.
 
-    Exceptions
-    ----------
     Does not throw exceptions. The Dqueue class consistently uses None to
-    represent the absence of a value. Therefore care needs to be taken when
-    None "values" are stored in Dqueue objects.
+    represent the absence of a value. Therefore some care needs to be taken
+    when Python None is pushed onto Dqueues objects.
     """
-
     def __init__(self, *data):
-        """
-        Parameters
-        ----------
-            *data : 'any'
-                Any type data, except 'None', to prepopulate the stack.
-                The data is pushed onto the stack left to right.
-        """
+        """Construct a double sided queue"""
         size = len(data)
         capacity = size + 2
         self._capacity = capacity
@@ -102,7 +91,7 @@ class Dqueue:
                 self._front = 0
                 self._rear = self._capacity - 1
 
-    def pushR(self, data) -> Dqueue:
+    def pushR(self, data: Any) -> Dqueue:
         """Push data on rear of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
@@ -111,7 +100,7 @@ class Dqueue:
         self._count += 1
         return self
 
-    def pushL(self, data) -> Dqueue:
+    def pushL(self, data: Any) -> Dqueue:
         """Push data on front of dqueue. Return the dqueue pushed to."""
         if self._isFull():
             self._double()
@@ -204,8 +193,12 @@ class Dqueue:
         return ">< " + " | ".join(dataListStrs) + " ><"
 
     def __len__(self) -> int:
-        """Returns current number of values in dequeue."""
+        """Returns current number of values in dqueue."""
         return self._count
+
+    def __bool__(self):
+        """Returns true if dqueue is not empty"""
+        return self._count > 0
 
     def __getitem__(self, ii: int) -> Any | None:
         """Together with __len__ method, allows reversed() function to return
@@ -225,9 +218,9 @@ class Dqueue:
         else:
             return None
 
-    def isEmpty(self) -> bool:
-        """Returns true if the dqueue is empty."""
-        return self._count == 0
+    def copy(self) -> Dqueue:
+        """Return shallow copy of the dqueue in O(n) time & space complexity"""
+        return Dqueue(*self)
 
     def capacity(self) -> int:
         """Returns current capacity of dqueue."""

@@ -1,3 +1,17 @@
+# Copyright 2023 Geoffrey R. Scheller
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from grscheller.datastructures.dqueue import Dqueue
 from grscheller.datastructures.functional import Maybe
 
@@ -7,27 +21,27 @@ class TestDqueue:
         pushed = 42; dq.pushL(pushed)
         popped = dq.popL().get()
         assert pushed == popped
-        assert dq.isEmpty()
+        assert len(dq) == 0
         assert dq.popL().getOrElse(42) == 42
         pushed = 0; dq.pushL(pushed)
         popped = dq.popR().getOrElse(42)
         assert pushed == popped == 0
-        assert dq.isEmpty()
+        assert not dq
         pushed = 0; dq.pushR(pushed)
         popped = dq.popL().get()
         assert popped is not None
         assert pushed == popped
-        assert dq.isEmpty()
+        assert len(dq) == 0
         pushed = ''; dq.pushR(pushed)
         popped = dq.popR().get()
         assert pushed == popped
-        assert dq.isEmpty()
+        assert len(dq) == 0
         dq.pushR('first').pushR('second').pushR('last')
         assert dq.popL().get() == 'first'
         assert dq.popR().get() == 'last'
-        assert not dq.isEmpty()
+        assert dq
         dq.popL()
-        assert dq.isEmpty()
+        assert len(dq) == 0
 
     def test_iterators(self):
         data = [1, 2, 3, 4]
