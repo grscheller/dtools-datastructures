@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""grscheller.datastructures.maybe module
+
+   Module implementing the Option Monad. Sometimes called Maybe or Optional.
+"""
 from __future__ import annotations
 from typing import Any, Callable
 
@@ -68,7 +72,7 @@ class Maybe():
         else:
             return Maybe()
 
-    def flatMap(self, f: Callable[..., Maybe]) -> Maybe:
+    def flatMap(self, f: Callable[[Any], Maybe]) -> Maybe:
         if self:
             return f(self._value)
         else:

@@ -1,11 +1,11 @@
 # Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,15 +13,17 @@
 # limitations under the License.
 
 from __future__ import annotations
+
+"""Module grscheller.datastructure.stack - LIFO stack:
+
+   Module implementing a LIFO stack using a singularly linked linear tree of
+   nodes. The nodes can be safely shared between different Stack instances.
+   Pushing to, popping from, and getting the length of the stack are all O(1)
+   operations.
+"""
+
 from typing import Any
 
-# Module grscheller.datastructure.stack - LIFO stack:
-#
-# Module implementing a LIFO stack using a singularly linked linear tree of
-# nodes. The nodes can be safely shared between different Stack instances.
-# Pushing to, popping from, and getting the length of the stack are all O(1)
-# operations.
-#
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
@@ -48,7 +50,7 @@ class Stack():
     - The stack points to either the top node in the list, or to None to
       indicate an empty stack.
     - Stacks are stateful objects where values can be pushed on & popped off.
-    - None represents the absence of a value and are ignored if pushed on the 
+    - None represents the absence of a value and are ignored if pushed on the
       stack.
     """
     def __init__(self, *data):
@@ -61,15 +63,15 @@ class Stack():
                 self._count += 1
 
     def __bool__(self) -> bool:
-        """Returns true if stack is not empty."""
+        """Returns true if stack is not empty"""
         return self._count > 0
 
     def __len__(self) -> int:
-        """Returns current number of values on the stack."""
+        """Returns current number of values on the stack"""
         return self._count
 
     def __iter__(self):
-        """Iterator yielding data stored in the stack, does not consume data."""
+        """Iterator yielding data stored in the stack, does not consume data"""
         node = self._head
         while node:
             yield node._data
@@ -103,7 +105,7 @@ class Stack():
         return True
 
     def __repr__(self):
-        """Display the data in the stack."""
+        """Display the data in the stack"""
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
@@ -111,7 +113,7 @@ class Stack():
         return "[ " + " -> ".join(dataListStrs) + " ]"
 
     def copy(self) -> Stack:
-        """Return shallow copy of the stack in O(1) time & space complexity."""
+        """Return shallow copy of the stack in O(1) time & space complexity"""
         stack = Stack()
         stack._head = self._head
         stack._count = self._count
@@ -119,7 +121,7 @@ class Stack():
 
     def push(self, data: Any) -> Stack:
         """Push data that is not NONE onto top of stack,
-        return stack being pushed.
+        return the stack being pushed.
         """
         if data is not None:
             node = _Node(data, self._head)
@@ -128,7 +130,7 @@ class Stack():
         return self
 
     def pop(self) -> Maybe:
-        """Pop data off of top of stack."""
+        """Pop data off of top of stack"""
         if self._head is None:
             return Nothing
         else:
@@ -140,10 +142,6 @@ class Stack():
     def head(self) -> Maybe:
         """Returns on option for data at head of stack.
         Does not consume the data if it exists.
-
-        Returns
-        -------
-        data : Some(~None) | Nothing
         """
         if self._head is None:
             return Nothing
@@ -164,10 +162,6 @@ class Stack():
         """Return a new stack with data as head and self as tail.
         Note that trying to push None on the stack results in a shallow
         copy of the original stack.
-
-        Returns
-        -------
-        stack : 'stack'
         """
         if data is not None:
             stack = Stack()

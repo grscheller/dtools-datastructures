@@ -1,4 +1,4 @@
-# Python grscheller.datastructures package
+## Python grscheller.datastructures package
 
 Data structures supporting a functional style of programming and
 avoiding the throwing of exceptions. 
@@ -31,14 +31,12 @@ Type annotations are necessary to help external tooling work well. See
 PEP-563 & PEP-649. These features are slated for Python 3.13 but work
 now in Python 3.11 by including *annotations* from `__future__`.
 
-# Package contents
-
 ## grscheller.datastructes package level modules
 
-### grscheller.datastructes.dqueue
+### grscheller.datastructes.dqueue module
 
-Double ended queue. The queue is implemented with a circular array and
-will resize itself as needed. 
+Implements a double ended queue. The queue is implemented with
+a circular array and will resize itself as needed. 
 
 * Class **Dqueue**
   * O(1) pushes & pops either end
@@ -50,7 +48,7 @@ taken when extracting them. Popping a None from a dqueue is
 indestinguishable from popping from an empty dqueue. Empty Tuples ()
 make for good sentinel values.
 
-### grscheller.datastructes.stack
+### grscheller.datastructes.stack module
 
 LIFO stack data structure implemented with singularly linked nodes. The
 Stack objects themselves are light weight and have only two attributes,
@@ -65,7 +63,7 @@ shared between different Stack instances.
   * O(1) length determination
   * O(1) copy
 
-## grscheller.datastructes.functional package
+## grscheller.datastructes.functional subpackage
 
 FP Datastructures supporting a functional style of programming in Python.
 
@@ -84,8 +82,11 @@ FP Datastructures supporting a functional style of programming in Python.
 
 * Object **Nothing**
   * Maybe object representing the absence of a value
-  * A Nothing is not a singleton, created by Some() or Some(None)
-    * in tests use equality semantics, not identity semantics
+  * A Nothing is not a singleton
+    * instances can be created by Some() or Some(None)
+    * in tests
+      * use equality semantics
+      * not identity semantics
 
 ### grscheller.datastructes.functional.either module
 
@@ -108,4 +109,18 @@ FP Datastructures supporting a functional style of programming in Python.
 ### grscheller.datastructes.functional.util module
 
 * Function **maybeToEither**
-* Function **EitherTomaybe**
+* Function **EitherToMaybe**
+
+## grscheller.datastructes.mutate subpackage
+
+Mutable versions of grscheller.datastructures. Returns None for missing
+values instead of monadic error values. The map and flatMap methods
+mutate the data structures instead of returning new instance. Still
+designed not to throw exceptions.
+
+### grscheller.datastructes.dqueue_mut module
+
+Implements a double ended queue. The queue is implemented with
+a circular array and will resize itself as needed. 
+
+* Class **Dqueue**

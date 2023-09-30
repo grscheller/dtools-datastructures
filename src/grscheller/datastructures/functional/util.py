@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Utility functions for use with grscheller.datastructures.functional package
-#
+"""Utility functions for the grscheller.datastructures.functional package"""
+
 from __future__ import annotations
 from typing import Any
 

@@ -12,29 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# grscheller.datastructures package
-#
-# Data structures supporting a functional sytle of programming which
-#
-# 1. don't throw exceptions - when used syntactically properly,
-# 2. avoid mutation, or pushing mutation to innermost scopes,
-# 3. employ annotations, see PEP-649,
-#     - needs annotations module from __future__ package,
-#     - useful for LSP and other external tooling, and
-#     - runtime applications (not too familiar with these).
-# 4. have semantics which consistently use None for "non-existent" values
-# 5. modules can be imported individually - see the testing module for examples.
-# 6. semantic versioning
-#     - first digit signifies an event or epoch
-#     - second digit means breaking API changes (between PyPI releases)
-#     - third digit either means
-#       - API breaking changes (between GitHub commits)
-#       - API additions (between PyPI releases)
-#     - fourth digit either means
-#       - bugfixes or minor changes (between PyPI releases)
-#       - GitHub only thrashing and experimentation
-#
-__version__ = "0.6.3.2"
+"""grscheller.datastructures package
+
+   Data structures supporting a functional sytle of programming which
+
+   1. don't throw exceptions - when used syntactically properly,
+   2. avoid mutation, or pushing mutation to innermost scopes,
+   3. employ annotations, see PEP-649,
+       - needs annotations module from __future__ package,
+       - useful for LSP and other external tooling, and
+       - runtime applications (not too familiar with these).
+   4. have semantics which consistently use None for "non-existent" values
+   5. modules can be imported individually - see the testing module for examples.
+   6. semantic versioning
+       - first digit signifies an event or epoch
+       - second digit means breaking API changes (between PyPI releases)
+       - third digit either means
+         - API breaking changes (between GitHub commits)
+         - API additions (between PyPI releases)
+       - fourth digit either means
+         - bugfixes or minor changes (between PyPI releases)
+         - GitHub only thrashing and experimentation
+"""
+
+__version__ = "0.6.4.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

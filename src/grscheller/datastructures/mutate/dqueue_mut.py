@@ -12,30 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.dqueue - Double sided queue
+"""Module grscheller.datastructure.mutate.dqueue_mut - Double sided queue
 
 Double sided queue with amortized O(1) insertions & deletions from either end.
-Obtaining length (number of elements) of a Dqueue is also a O(1) operation.
+Obtaining length (number of elements) of a Dqueue_mut is also a O(1) operation.
+Mutable version of grscheller.datastructures.dqueue.
 
 Implemented with a Python List based circular array.
 """
-
 from __future__ import annotations
 
-__all__ = ['Dqueue']
+__all__ = ['Dqueue_mut']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from .functional.maybe import Maybe, Nothing, Some
 
-class Dqueue:
+class Dqueue_mut:
     """Double sided queue datastructure. Will resize itself as needed.
 
-    Does not throw exceptions. The Dqueue class consistently uses None to
+    Does not throw exceptions. The Dqueue_mut class consistently uses None to
     represent the absence of a value. Therefore some care needs to be taken
-    when Python None is pushed onto Dqueue objects.
+    when Python None is pushed onto Dqueue_mut objects.
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
@@ -50,11 +49,11 @@ class Dqueue:
         self._queue.append(None)
 
     def _isFull(self) -> bool:
-        """Returns true if dqueue is full"""
+        """Returns true if dqueue_mut is full"""
         return self._count == self._capacity
 
     def _double(self):
-        """Double capacity of dqueue"""
+        """Double capacity of dqueue_mut"""
         if self._front > self._rear:
             frontPart = self._queue[self._front:]
             rearPart = self._queue[:self._rear+1]
@@ -91,8 +90,8 @@ class Dqueue:
                 self._front = 0
                 self._rear = self._capacity - 1
 
-    def pushR(self, data: Any) -> Dqueue:
-        """Push data on rear of dqueue, return the dqueue pushed to"""
+    def pushR(self, data: Any) -> Dqueue_mut:
+        """Push data on rear of dqueue_mut, return the dqueue_mut pushed to"""
         if self._isFull():
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -100,8 +99,8 @@ class Dqueue:
         self._count += 1
         return self
 
-    def pushL(self, data: Any) -> Dqueue:
-        """Push data on front of dqueue, return the dqueue pushed to"""
+    def pushL(self, data: Any) -> Dqueue_mut:
+        """Push data on front of dqueue_mut, return the dqueue_mut pushed to"""
         if self._isFull():
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -109,54 +108,52 @@ class Dqueue:
         self._count += 1
         return self
 
-    def popR(self) -> Maybe:
-        """Pop data off rear of dqueue"""
+    def popR(self) -> Any | None:
+        """Pop data off rear of dqueue_mut"""
         if self._count == 0:
-            return Nothing
+            return None
         else:
             data = self._queue[self._rear]
             self._queue[self._rear] = None
             self._rear = (self._rear - 1) % self._capacity
             self._count -= 1
-            return Some(data)
+            return data
 
-    def popL(self) -> Maybe:
-        """Pop data off front of dqueue"""
+    def popL(self) -> Any | None:
+        """Pop data off front of dqueue_mut"""
         if self._count == 0:
-            return Nothing
+            return None
         else:
             data = self._queue[self._front]
             self._queue[self._front] = None
             self._front = (self._front + 1) % self._capacity
             self._count -= 1
-            return Some(data)
+            return data
 
-    def headR(self) -> Maybe:
-        """Return rear element of dqueue without consuming it"""
+    def headR(self) -> Any | None:
+        """Return rear element of dqueue_mut without consuming it"""
         if self._count == 0:
-            return Nothing
-        return Some(self._queue[self._rear])
+            return None
+        return self._queue[self._rear]
 
-    def headL(self) -> Maybe:
-        """Return front element of dqueue without consuming it"""
+    def headL(self) -> Any | None:
+        """Return front element of dqueue_mut without consuming it"""
         if self._count == 0:
-            return Nothing
-        return Some(self._queue[self._front])
+            return None
+        return self._queue[self._front]
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.
 
-        To export contents of the Dqueue to a list, do
-            myList = list(myDqueue)
+        To export contents of the dqueue_mut to a list, do
+            myList = list(myDqueue-mut)
 
         """
         if self._count > 0:
-            cap = self._capacity
-            rear = self._rear
             pos = self._front
-            while pos != rear:
+            while pos != self._rear:
                 yield self._queue[pos]
-                pos = (pos + 1) % cap
+                pos = (pos + 1) % self._capacity
             yield self._queue[pos]
 
     def __eq__(self, other):
@@ -184,18 +181,18 @@ class Dqueue:
         return True
 
     def __repr__(self):
-        """Display data in dqueue"""
+        """Display data in dqueue_mut"""
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
         return ">< " + " | ".join(dataListStrs) + " ><"
 
     def __len__(self) -> int:
-        """Returns current number of values in dqueue"""
+        """Returns current number of values in dqueue_mut"""
         return self._count
 
     def __bool__(self):
-        """Returns true if dqueue is not empty"""
+        """Returns true if dqueue_mut is not empty"""
         return self._count > 0
 
     def __getitem__(self, ii: int) -> Any | None:
@@ -208,20 +205,20 @@ class Dqueue:
         else:
             return None
 
-    def copy(self) -> Dqueue:
-        """Return shallow copy of the dqueue in O(n) time & space complexity"""
-        return Dqueue(*self)
+    def copy(self) -> Dqueue_mut:
+        """Return shallow copy of the dqueue_mut in O(n) time & space complexity"""
+        return Dqueue_mut(*self)
 
     def capacity(self) -> int:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of dqueue_mut"""
         return self._capacity
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of dqueue_mut"""
         return self._count/self._capacity
 
     def resize(self, addCapacity = 0):
-        """Compact dqueue and add extra capacity"""
+        """Compact dqueue_mut and add extra capacity"""
         self._compact()
         if addCapacity > 0:
             self._queue = self._queue + [None]*addCapacity
@@ -229,12 +226,11 @@ class Dqueue:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents, return new instance"""
-        newQueue = Dqueue()
-        for nn in range(self._count):
-            newQueue.pushR(f(self[nn]))
-        return newQueue
+    def map(self, f: Callable[[Any], Any]) -> Dqueue_mut:
+        """Map function over dqueue_mut contents, return same instance"""
+        for _ in range(self._count):
+            self.pushR(f(self.popL()))
+        return self
 
 if __name__ == "__main__":
     pass

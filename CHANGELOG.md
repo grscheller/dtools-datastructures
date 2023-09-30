@@ -27,6 +27,12 @@
         * all non-pulled PyPI releases will be tagged & listed below
 
 ## Versions
+### Version 0.6.4.0 - commit date: 2023-09-30
+* Started work on grscheller.datastructures.mutate
+  * less "pure" versions of the datastructures
+  * map & flatMap mutate object instead of returning new instance
+  * None is returned for missing values instead of a modadic Nothing
+* Updated comment strings
 
 ### Version 0.6.3.2 - commit date: 2023-09-30
 * Made funtional module into a sub package of datastructures

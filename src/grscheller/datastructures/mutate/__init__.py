@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""grscheller.datastructures.functional package
+"""grscheller.datastructures.mutable subpackage
 
-   Data structures supporting a functional style of programming in Python
-   - immutable semantics - map & flatMap return modified copies
-   - None is always treated as a non-existance value
-     - Python None value cannot be stored in any these objects
-     - semantically None does not exist
-     - None only has any real existance as an implementration detail
+   Mutable version of Data structures supporting a functional sytle of programming which
+   
+   1. don't throw exceptions - when used syntactically properly,
+   2. mutable takes on grscheller.datastructures data structures
+   3. employ annotations, see PEP-649,
+       - needs annotations module from __future__ package
+       - useful for LSP and other external tooling
+   4. return None for "non-existent" values, does not return error monads
+
 """
-
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .maybe import *
-from .either import *
-from .util import *
+from .dqueue_mut import *
