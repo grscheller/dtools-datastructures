@@ -29,6 +29,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
 from .functional.maybe import Maybe, Nothing, Some
+from .core import concatIters, mapIter
 
 class Dqueue:
     """Double sided queue datastructure. Will resize itself as needed.
@@ -148,7 +149,6 @@ class Dqueue:
 
         To export contents of the Dqueue to a list, do
             myList = list(myDqueue)
-
         """
         if self._count > 0:
             cap = self._capacity
@@ -160,7 +160,7 @@ class Dqueue:
             yield self._queue[pos]
 
     def __eq__(self, other):
-        """Returns True if all the data stored on both are the same.
+        """Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
         """
         if not isinstance(other, type(self)):
@@ -199,9 +199,11 @@ class Dqueue:
         return self._count > 0
 
     def __getitem__(self, ii: int) -> Any | None:
-        """Together with __len__ method, allows reversed() function to return
-        a reverse iterator. Otherwise, indexing Dqueue objects should be
-        considered private to the class.
+        """Together with __len__ method, allows the reversed() function to
+        return a reverse iterator.
+
+        Otherwise, the indexing of Dqueue objects should be considered private
+        to the class.
         """
         if 0 <= ii < self._count:
             return self._queue[(self._front + ii) % self._capacity]
@@ -229,12 +231,24 @@ class Dqueue:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents, return new instance"""
+    def map1(self, f: Callable[[Any], Any]) -> Dqueue:
+        """Apply function over dqueue contents, returns new instance"""
         newQueue = Dqueue()
         for nn in range(self._count):
             newQueue.pushR(f(self[nn]))
         return newQueue
+
+    def map2(self, f: Callable[[Any], Any]) -> Dqueue:
+        """Apply function over dqueue contents, returns new instance"""
+        return Dqueue(*mapIter(iter(self), f))
+
+    def flatMap(self, f: Callable[[Any], Dqueue]) -> Dqueue:
+        """Apply function and flatten result, returns new instance"""
+        return Dqueue(
+            *concatIters(
+                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
+            )
+        )
 
 if __name__ == "__main__":
     pass

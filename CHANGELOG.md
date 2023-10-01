@@ -18,7 +18,7 @@
       * attempt to keep realatvely stable, but not fully tested
     * feature branch begin with "feature_" & are places to
       * explore new directions
-      * commit potentially broken code
+      * commit potentially very broken code
       * could be deleted from GitHub WITHOUT WARNING
     * PyPI releases are taged with a leading "v" on GitHub
       * semantic versioning more strict between PyPI releases
@@ -27,12 +27,17 @@
         * all non-pulled PyPI releases will be tagged & listed below
 
 ## Versions
-### Version 0.6.4.0 - commit date: 2023-09-30
-* Started work on grscheller.datastructures.mutate
-  * less "pure" versions of the datastructures
-  * map & flatMap mutate object instead of returning new instance
-  * None is returned for missing values instead of a modadic Nothing
-* Updated comment strings
+
+### Version 0.6.4.1 - commit date: 2023-10-01
+* Initial prototypes for map and flatMap for Dqueue class
+* Started grscheller.datastructures.core module
+  * used for grscheller.datastructures implementation
+  * no particular need to indicate them to be _private
+  * exports the following functions so far
+    * concatIters - sequentually concatenate multiple iterators
+    * mergeIters - merge multiple iterators until one is exhausted
+    * mapIter - lazily map a function over an iterator stream
+* Decided to keep Alpha for next PyPI release
 
 ### Version 0.6.3.2 - commit date: 2023-09-30
 * Made funtional module into a sub package of datastructures
@@ -54,7 +59,7 @@
   * erroneous LSP error messages greatly reduced
 
 ### Version 0.5.2.1 - PyPI release date: 2023-09-24
-* data structures now support a much more FP style for Python 
+* data structures now support a much more FP style for Python
   * implemented Maybe monad
   * introduces the use of type annotations for this effort
   * much better test coverage
@@ -62,7 +67,7 @@
 ### Version 0.5.0.0 - commit date: 2023-09-20
 * begin work on a more functional approach
   * create a monadic Option class
-  * Drop the subclassing of NONE
+  * drop the subclassing of NONE
   * put this effort on a new branch: feature_maybe
 * some flaws with previous approach
   * the OO redirection not best

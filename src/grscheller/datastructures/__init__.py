@@ -16,14 +16,13 @@
 
    Data structures supporting a functional sytle of programming which
 
-   1. don't throw exceptions - when used syntactically properly,
-   2. avoid mutation, or pushing mutation to innermost scopes,
-   3. employ annotations, see PEP-649,
+   1. don't throw uncaught exceptions - when used syntactically properly,
+   2. avoid mutation and mutable shared state,
+   3. push mutation to innermost scopes,
+   4. employ annotations, see PEP-649,
        - needs annotations module from __future__ package,
-       - useful for LSP and other external tooling, and
-       - runtime applications (not too familiar with these).
-   4. have semantics which consistently use None for "non-existent" values
-   5. modules can be imported individually - see the testing module for examples.
+       - useful for LSP external tooling, allows types to drive development
+   5. have semantics which consistently use None for "non-existent" values
    6. semantic versioning
        - first digit signifies an event or epoch
        - second digit means breaking API changes (between PyPI releases)
@@ -35,7 +34,7 @@
          - GitHub only thrashing and experimentation
 """
 
-__version__ = "0.6.4.0"
+__version__ = "0.6.4.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

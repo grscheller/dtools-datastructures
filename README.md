@@ -111,16 +111,3 @@ FP Datastructures supporting a functional style of programming in Python.
 * Function **maybeToEither**
 * Function **EitherToMaybe**
 
-## grscheller.datastructes.mutate subpackage
-
-Mutable versions of grscheller.datastructures. Returns None for missing
-values instead of monadic error values. The map and flatMap methods
-mutate the data structures instead of returning new instance. Still
-designed not to throw exceptions.
-
-### grscheller.datastructes.dqueue_mut module
-
-Implements a double ended queue. The queue is implemented with
-a circular array and will resize itself as needed. 
-
-* Class **Dqueue**
