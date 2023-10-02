@@ -231,14 +231,7 @@ class Dqueue:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map1(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents, returns new instance"""
-        newQueue = Dqueue()
-        for nn in range(self._count):
-            newQueue.pushR(f(self[nn]))
-        return newQueue
-
-    def map2(self, f: Callable[[Any], Any]) -> Dqueue:
+    def map(self, f: Callable[[Any], Any]) -> Dqueue:
         """Apply function over dqueue contents, returns new instance"""
         return Dqueue(*mapIter(iter(self), f))
 

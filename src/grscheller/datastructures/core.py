@@ -49,4 +49,5 @@ def mergeIters(*iters: Iterator[Any]) -> Iterator[Any]:
 
 def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
     """Lazily map a function over an iterator stream"""
-    return iter([f(x) for x in iterator])
+    # return iter([f(x) for x in iterator])
+    return (f(x) for x in iterator)

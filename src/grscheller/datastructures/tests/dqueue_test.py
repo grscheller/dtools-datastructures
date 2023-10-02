@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from grscheller.datastructures.dqueue import Dqueue
-from grscheller.datastructures.functional import Maybe
+from grscheller.datastructures.functional import Maybe, Nothing
 
 class TestDqueue:
     def test_push_then_pop(self):
@@ -103,8 +103,23 @@ class TestDqueue:
         assert dq1 == dq2
 
     def test_maybe(self):
-        m42 = Dqueue().pushL(42).popR()
+        dq1 = Dqueue()
+        m42 = dq1.pushL(42).popR()
+        mNot = dq1.popR()
         assert m42 == Maybe(42)
         assert m42 != Maybe(21)
         assert m42.getOrElse(21) == 42
         assert m42.getOrElse(21) != 21
+        assert m42.get() == 42
+        assert m42.get() != 21
+        assert mNot.getOrElse(21) == 21
+        assert mNot == Nothing
+        assert mNot.get() == None
+
+    def test_mapAndFlatMap(self):
+        dq1 = Dqueue(1,2,3,10)
+        dq1_answers = Dqueue(0,3,8,99)
+        assert dq1.map(lambda x: x*x-1) == dq1_answers
+        dq2 = dq1.flatMap(lambda x: Dqueue(1, x, x*x+1))
+        dq2_answers = Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
+        assert dq2 == dq2_answers
