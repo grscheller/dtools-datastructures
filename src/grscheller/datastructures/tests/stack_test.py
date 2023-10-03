@@ -66,6 +66,7 @@ class TestStack:
     def test_stack_len(self):
         s0 = Stack()
         s1 = Stack(*range(0,2000))
+#        s1 = Stack(range(0,2000))
 
         assert len(s0) == 0
         assert len(s1) == 2000
@@ -90,7 +91,7 @@ class TestStack:
         assert s1.tail() == Nothing
 
     def test_stack_iter(self):
-        giantStack = Stack(*reversed(["Fe", " Fi", " Fo", " Fum"]))
+        giantStack = Stack(*["Fe", " Fi", " Fo", " Fum"])
         giantTalk = giantStack.head().getOrElse("Teeny Tiny")
         assert giantTalk == "Fe"
         generalThumb = ['I', ' am', ' General', ' Tom', ' Thumb.']

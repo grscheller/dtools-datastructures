@@ -30,6 +30,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .functional.maybe import Maybe, Some, Nothing
+from .dqueue import Dqueue
 
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
@@ -56,9 +57,12 @@ class Stack():
     def __init__(self, *data):
         self._head = None
         self._count = 0
-        for datum in data:
-            if datum is not None:
-                node = _Node(datum, self._head)
+        dqData = Dqueue(*data)
+        cnt = len(dqData)
+        for _ in range(cnt):
+            mbDatum = dqData.popR()
+            if mbDatum is not Nothing:
+                node = _Node(mbDatum.get(), self._head)
                 self._head = node
                 self._count += 1
 
@@ -76,20 +80,17 @@ class Stack():
         with __len__ method, allows the reversed() function to return a reverse
         iterator.
         """
-        cnt = self._count
-        if cnt < 1:
-            return None
-
-        bward = []
+        dqData = Dqueue()
         node = self._head
         while node is not None:
-            bward.append(node._data)
+            dqData.pushL(node._data)
             node = node._next
 
+        cnt = len(dqData)
         if 0 <= ii < cnt:
-            return bward[cnt-ii-1]
+            return dqData[ii]
         elif -(cnt) <= ii < 0:
-            return bward[-ii-1]
+            return dqData[cnt+ii]
         else:
             return None
 
@@ -129,10 +130,10 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack"""
-        dataListStrs = [ "None" ]
-        for data in reversed(self):
+        dataListStrs = []
+        for data in self:
             dataListStrs.append(repr(data))
-        return "[ " + " <- ".join(dataListStrs) + " ]"
+        return "|> " + " -> ".join(dataListStrs) + " ||"
 
     def copy(self) -> Stack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
