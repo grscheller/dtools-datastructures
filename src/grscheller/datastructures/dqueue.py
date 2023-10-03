@@ -92,6 +92,72 @@ class Dqueue:
                 self._front = 0
                 self._rear = self._capacity - 1
 
+    def __bool__(self):
+        """Returns true if dqueue is not empty"""
+        return self._count > 0
+
+    def __len__(self) -> int:
+        """Returns current number of values in dqueue"""
+        return self._count
+
+    def __getitem__(self, ii: int) -> Any | None:
+        """Together with __len__ method, allows the reversed() function to
+        return a reverse iterator.
+        """
+        if 0 <= ii < self._count:
+            return self._queue[(self._front + ii) % self._capacity]
+        return None
+
+    def __iter__(self):
+        """Iterator yielding data stored in dequeue, does not consume data.
+
+        To export contents of the Dqueue to a list, do
+            myList = list(myDqueue)
+        """
+        if self._count > 0:
+            cap = self._capacity
+            rear = self._rear
+            pos = self._front
+            while pos != rear:
+                yield self._queue[pos]
+                pos = (pos + 1) % cap
+            yield self._queue[pos]
+
+    def __eq__(self, other):
+        """Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        """
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        cnt = self._count
+        left = self
+        frontL = self._front
+        capL = self._capacity
+        right = other
+        frontR = other._front
+        capR = other._capacity
+        nn = 0
+        while nn < cnt:
+            if left._queue[(frontL+nn)%capL] != right._queue[(frontR+nn)%capR]:
+                return False
+            nn += 1
+        return True
+
+    def __repr__(self):
+        """Display data in dqueue"""
+        dataListStrs = []
+        for data in self:
+            dataListStrs.append(repr(data))
+        return ">< " + " | ".join(dataListStrs) + " ><"
+
+    def copy(self) -> Dqueue:
+        """Return shallow copy of the dqueue in O(n) time & space complexity"""
+        return Dqueue(*self)
+
     def pushR(self, data: Any) -> Dqueue:
         """Push data on rear of dqueue, return the dqueue pushed to"""
         if self._isFull():
@@ -143,76 +209,6 @@ class Dqueue:
         if self._count == 0:
             return Nothing
         return Some(self._queue[self._front])
-
-    def __iter__(self):
-        """Iterator yielding data stored in dequeue, does not consume data.
-
-        To export contents of the Dqueue to a list, do
-            myList = list(myDqueue)
-        """
-        if self._count > 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            while pos != rear:
-                yield self._queue[pos]
-                pos = (pos + 1) % cap
-            yield self._queue[pos]
-
-    def __eq__(self, other):
-        """Returns True if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
-        """
-        if not isinstance(other, type(self)):
-            return False
-
-        if self._count != other._count:
-            return False
-
-        cnt = self._count
-        left = self
-        frontL = self._front
-        capL = self._capacity
-        right = other
-        frontR = other._front
-        capR = other._capacity
-        nn = 0
-        while nn < cnt:
-            if left._queue[(frontL+nn)%capL] != right._queue[(frontR+nn)%capR]:
-                return False
-            nn += 1
-        return True
-
-    def __repr__(self):
-        """Display data in dqueue"""
-        dataListStrs = []
-        for data in self:
-            dataListStrs.append(repr(data))
-        return ">< " + " | ".join(dataListStrs) + " ><"
-
-    def __len__(self) -> int:
-        """Returns current number of values in dqueue"""
-        return self._count
-
-    def __bool__(self):
-        """Returns true if dqueue is not empty"""
-        return self._count > 0
-
-    def __getitem__(self, ii: int) -> Any | None:
-        """Together with __len__ method, allows the reversed() function to
-        return a reverse iterator.
-
-        Otherwise, the indexing of Dqueue objects should be considered private
-        to the class.
-        """
-        if 0 <= ii < self._count:
-            return self._queue[(self._front + ii) % self._capacity]
-        else:
-            return None
-
-    def copy(self) -> Dqueue:
-        """Return shallow copy of the dqueue in O(n) time & space complexity"""
-        return Dqueue(*self)
 
     def capacity(self) -> int:
         """Returns current capacity of dqueue"""

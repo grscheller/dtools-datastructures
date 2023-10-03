@@ -16,6 +16,28 @@ from grscheller.datastructures.stack import Stack
 from grscheller.datastructures.functional import Maybe, Nothing, Some
 import grscheller.datastructures.stack as stack
 
+class Test_Node:
+    def test_bool(self):
+        n1 = stack._Node(1, None)
+        n2 = stack._Node(2, n1)
+        assert n1
+        assert n2
+
+    def test_linking(self):
+        n1 = stack._Node(1, None)
+        n2 = stack._Node(2, n1)
+        n3 = stack._Node(3, n2)
+        assert n3._data == 3
+        assert n3._next is not None
+        assert n3._next._next is not None
+        assert n2._next is not None
+        assert n2._data == n3._next._data == 2
+        assert n1._data == n2._next._data == n3._next._next._data == 1
+        assert n3._next != None
+        assert n3._next._next != None
+        assert n3._next._next._next == None
+        assert n3._next._next == n2._next
+
 class TestStack:
     def test_push_then_pop(self):
         s1 = Stack()
@@ -139,24 +161,36 @@ class TestStack:
         s10.pop()
         assert not s10
 
-class Test_Node:
-    def test_bool(self):
-        n1 = stack._Node(1, None)
-        n2 = stack._Node(2, n1)
-        assert n1
-        assert n2
+    def test_index(self):
+        # Check indexing, first item pushed is indexed by 0
+        s1 = Stack().push(0).push(1).push(2).push(3)
+        assert s1[0] == 0
+        assert s1[1] == 1
+        assert s1[2] == 2
+        assert s1[3] == 3
+        assert s1[4] == None
+        assert s1[5] == None
+        assert s1[-1] == 3
+        assert s1[-2] == 2
+        assert s1[-3] == 1
+        assert s1[-4] == 0
+        assert s1[-5] == None
 
-    def test_linking(self):
-        n1 = stack._Node(1, None)
-        n2 = stack._Node(2, n1)
-        n3 = stack._Node(3, n2)
-        assert n3._data == 3
-        assert n3._next is not None
-        assert n3._next._next is not None
-        assert n2._next is not None
-        assert n2._data == n3._next._data == 2
-        assert n1._data == n2._next._data == n3._next._next._data == 1
-        assert n3._next != None
-        assert n3._next._next != None
-        assert n3._next._next._next == None
-        assert n3._next._next == n2._next
+        # Check push does not change non-negative indices of previous values
+        s2 = s1.copy().push(42)
+        assert s2[0] == s1[0]
+        assert s2[1] == s1[1]
+        assert s2[2] == s1[2]
+        assert s2[3] == s1[3]
+        assert s2[4] == 42
+        assert s2[5] == None
+        assert s2[-1] == 42
+        assert s2[-2] == 3
+        assert s2[-3] == 2
+        assert s2[-4] == 1
+        assert s2[-5] == 0
+        assert s2[-6] == None
+        assert s2[-2] == s1[-1]
+        assert s2[-3] == s1[-2]
+        assert s2[-4] == s1[-3]
+        assert s2[-5] == s1[-4]

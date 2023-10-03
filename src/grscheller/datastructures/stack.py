@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
-
 """Module grscheller.datastructure.stack - LIFO stack:
 
    Module implementing a LIFO stack using a singularly linked linear tree of
@@ -21,6 +19,8 @@ from __future__ import annotations
    Pushing to, popping from, and getting the length of the stack are all O(1)
    operations.
 """
+
+from __future__ import annotations
 
 from typing import Any
 
@@ -70,6 +70,29 @@ class Stack():
         """Returns current number of values on the stack"""
         return self._count
 
+    def __getitem__(self, ii: int) -> Any | None:
+        """By starting indexing at bottom, pushing values onto the stack does
+        not change the indices for the rest of the values on the stack. Together
+        with __len__ method, allows the reversed() function to return a reverse
+        iterator.
+        """
+        cnt = self._count
+        if cnt < 1:
+            return None
+
+        bward = []
+        node = self._head
+        while node is not None:
+            bward.append(node._data)
+            node = node._next
+
+        if 0 <= ii < cnt:
+            return bward[cnt-ii-1]
+        elif -(cnt) <= ii < 0:
+            return bward[-ii-1]
+        else:
+            return None
+
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data"""
         node = self._head
@@ -106,11 +129,10 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack"""
-        dataListStrs = []
-        for data in self:
+        dataListStrs = [ "None" ]
+        for data in reversed(self):
             dataListStrs.append(repr(data))
-        dataListStrs.append("None")
-        return "[ " + " -> ".join(dataListStrs) + " ]"
+        return "[ " + " <- ".join(dataListStrs) + " ]"
 
     def copy(self) -> Stack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
