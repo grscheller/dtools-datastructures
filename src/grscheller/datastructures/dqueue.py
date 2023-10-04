@@ -104,9 +104,13 @@ class Dqueue:
         """Together with __len__ method, allows the reversed() function to
         return a reverse iterator.
         """
-        if 0 <= ii < self._count:
+        cnt = self._count
+        if 0 <= ii < cnt:
             return self._queue[(self._front + ii) % self._capacity]
-        return None
+        elif -cnt <= ii < 0:
+            return self._queue[(self._front + cnt + ii) % self._capacity]
+        else:
+            return None
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.

@@ -87,12 +87,9 @@ class Stack():
             node = node._next
 
         cnt = len(dqData)
-        if 0 <= ii < cnt:
+        if -cnt <= ii < cnt:
             return dqData[ii]
-        elif -(cnt) <= ii < 0:
-            return dqData[cnt+ii]
-        else:
-            return None
+        return None
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data"""
