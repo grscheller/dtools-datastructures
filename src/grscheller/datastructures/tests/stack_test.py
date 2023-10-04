@@ -66,7 +66,6 @@ class TestStack:
     def test_stack_len(self):
         s0 = Stack()
         s1 = Stack(*range(0,2000))
-#        s1 = Stack(range(0,2000))
 
         assert len(s0) == 0
         assert len(s1) == 2000

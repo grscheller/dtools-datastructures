@@ -42,6 +42,7 @@ __license__ = "Appache License 2.0"
 from .functional.maybe import *
 from .functional.either import *
 from .functional.util import *
-from .cqueue import *
+from .carray import *
 from .dqueue import *
 from .stack import *
+from .core import *

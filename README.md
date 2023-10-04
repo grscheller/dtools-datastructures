@@ -7,13 +7,17 @@ Why not just use Python builtin data structures like lists and
 dictionaries directly? The data structures in this package internalize
 the "bit fiddling" allowing your code to follow the "happy path" and
 letting you concentrate on the algorithms for which these data
-structures were tailored to support.
+structures were tailored to support. Sometimes the real power of a data
+structure comes not from what it enables you to do, but from what it
+does not allow you to do.
 
-Unlike the data structures in the standard library, these data
-structures do not throw exceptions, except for ones like "SyntaxError",
-"AttributeError" and "TypeError". This package supports the writing of
-code that avoids the throwing of exceptions. Exceptions do have their
-place, but only for "exceptional" events.
+Unlike many of the data structures in the standard library, these data
+structures avoid throwing uncaught exceptions. Exceptions indicating
+possible coding errors like "SyntaxError", "AttributeError", "TypeError"
+and "IndexError" are permitted. Monadic data structures like Maybe and
+Either are provided to deal with the "unhappy path." Exceptions do have
+their place for "exceptional" events, but not in the basic building
+blocks of a code base.
 
 Mutation is either avoided or pushed to the innermost scopes. Functional
 methods like map and flatMap return copies instead of mutating the
@@ -21,15 +25,17 @@ originals.
 
 As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
-value in a real datastructure? Implemented in CPython as
-C language datastructures, the Python None "singleton" builtin object
-does have a sort of real existence to it. Unless documented otherwise,
-None is never "pushed" to any of these data structures. Dqueue is an
-example of such an exception.
+value in a very real datastructure? Implemented in CPython as C language
+data structure, the Python None "singleton" builtin "object" does have
+a sort of real existence to it. Unless specifically documented
+otherwise, None values are not stored in these data structures.
 
-Type annotations are necessary to help external tooling work well. See
-PEP-563 & PEP-649. These features are slated for Python 3.13 but work
-now in Python 3.11 by including *annotations* from `__future__`.
+Type annotations used in this package are extremely useful in helping
+external tooling work well. See PEP-563 & PEP-649. These features are
+slated for Python 3.13 but work now in Python 3.11 by including
+*annotations* from `__future__`. This package was developed using
+Pyright to provide LSP information to Neovim. This allowed the types
+to guide the design of this package.
 
 ## grscheller.datastructes package level modules
 
@@ -62,6 +68,19 @@ shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
+
+### grscheller.datastructuses.carray module
+
+Double sided circular array with amortized O(1) insertions & deletions
+from either end and O(1) length determination. Implemented with a Python
+List. This datastructure automatically resizes itself as needed.
+
+Mainly used to help implement other data structures in this package,
+this class is not opinionated regarding None as a value. It freely
+stores and returns None values. Therfore, don't rely on using None as
+a sentital value to determine if a carray is empty or not. Instead, if
+used in a boolean context, a carray returns false if empty and true
+if not empty.
 
 ## grscheller.datastructes.functional subpackage
 
@@ -109,5 +128,58 @@ FP Datastructures supporting a functional style of programming in Python.
 ### grscheller.datastructes.functional.util module
 
 * Function **maybeToEither**
+
 * Function **EitherToMaybe**
 
+## grscheller.datastructes.core module
+
+Module of functions used in the implementation of this package. Below
+are some functions from this module that may be of interest for their
+own sake.
+
+### Functions for interators
+
+* Funtion **concatIters**
+  * Sequentually concatenate multiple iterators into one
+
+* Funtion **mergeIters**
+  * Merge multiple iterator streams until one is exhausted
+
+* Funtion **mapIter**
+  * Lazily map a function over an iterator stream
+
+#### Examples
+
+```python
+   In [1]: from grscheller.datastructures.core import *
+   
+   In [2]: for aa in concatIters(iter([1,2,3,4,5]), iter(['a','b','c'])):
+      ...:     print(aa)
+      ...:
+   1
+   2
+   3
+   4
+   5
+   a
+   b
+   c
+   
+   In [3]: for aa in mergeIters(iter([1,2,3,4,5]), iter(['a','b','c'])):
+      ...:     print(aa)
+      ...:
+   1
+   a
+   2
+   b
+   3
+   c
+
+   In [4]: for aa in mapIter(iter([1,2,3,42]), lambda x: x*x):
+      ...:     print(aa)
+      ...:
+   1
+   4
+   9
+   1764
+```   

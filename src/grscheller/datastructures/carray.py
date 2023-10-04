@@ -17,17 +17,16 @@
 Double sided circular array with amortized O(1) insertions & deletions from
 either end and O(1) length determination. Implemented with a Python List.
 
-Mainy used as an implementation detail for other grscheller.datastructure
-classes, but not marked private since it could be useful to use in itself. This
-class is not opinionated regarding None as a value. It freely stores None values
-and will return None to indicate the absence of a value. Therfore don't rely on
-using None as a sentital value to determine if a carray is empty or not, use it
-in a boolean context instead. Returns false if empty, otherwise true.
+Mainly used to implement other grscheller.datastructure classes. This class is
+not opinionated regarding None as a value. It freely stores and returns None
+values. Therfore don't rely on using None as a sentital value to determine if
+a carray is empty or not. Instead, if used in a boolean context, a carray
+returns false if empty and true otherwise.
 """
 
 from __future__ import annotations
 
-__all__ = ['Cqueue']
+__all__ = ['Carray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -35,7 +34,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from .core import concatIters, mergeIters, mapIter
 
-class Cqueue:
+class Carray:
     """Double sided queue datastructure. Will resize itself as needed. Does not
     throw exceptions.
     """
@@ -175,11 +174,11 @@ class Cqueue:
             dataListStrs.append(repr(data))
         return "[[ " + " | ".join(dataListStrs) + " ]]"
 
-    def copy(self) -> Cqueue:
+    def copy(self) -> Carray:
         """Return shallow copy of the carray in O(n) time & space complexity"""
-        return Cqueue(*self)
+        return Carray(*self)
 
-    def pushR(self, data: Any) -> Cqueue:
+    def pushR(self, data: Any) -> Carray:
         """Push data on rear of carray, return the carray pushed to"""
         if self._isFull():
             self._double()
@@ -188,7 +187,7 @@ class Cqueue:
         self._count += 1
         return self
 
-    def pushL(self, data: Any) -> Cqueue:
+    def pushL(self, data: Any) -> Carray:
         """Push data on front of carray, return the carray pushed to"""
         if self._isFull():
             self._double()
@@ -236,21 +235,21 @@ class Cqueue:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> Cqueue:
+    def map(self, f: Callable[[Any], Any]) -> Carray:
         """Apply function over carray contents, returns new instance"""
-        return Cqueue(*mapIter(iter(self), f))
+        return Carray(*mapIter(iter(self), f))
 
-    def flatMap(self, f: Callable[[Any], Cqueue]) -> Cqueue:
+    def flatMap(self, f: Callable[[Any], Carray]) -> Carray:
         """Apply function and flatten result, returns new instance"""
-        return Cqueue(
+        return Carray(
             *concatIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
 
-    def mergeMap(self, f: Callable[[Any], Cqueue]) -> Cqueue:
+    def mergeMap(self, f: Callable[[Any], Carray]) -> Carray:
         """Apply function and flatten result, returns new instance"""
-        return Cqueue(
+        return Carray(
             *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
