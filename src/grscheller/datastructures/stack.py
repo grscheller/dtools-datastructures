@@ -61,7 +61,7 @@ class Stack():
         cnt = len(dqData)
         for _ in range(cnt):
             mbDatum = dqData.popR()
-            if mbDatum is not Nothing:
+            if mbDatum != Nothing:
                 node = _Node(mbDatum.get(), self._head)
                 self._head = node
                 self._count += 1
@@ -130,10 +130,12 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack"""
-        dataListStrs = []
-        for data in self:
-            dataListStrs.append(repr(data))
-        return "|> " + " -> ".join(dataListStrs) + " ||"
+        dqData = Dqueue(*self).map(lambda x: repr(x)) 
+        repStr = '|| ' + dqData.popR().getOrElse('')
+        while dqData:
+            repStr = repStr + ' <- ' + dqData.popR().get()
+        repStr += ' <|'
+        return repStr
 
     def copy(self) -> Stack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
