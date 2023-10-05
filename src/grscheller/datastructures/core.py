@@ -22,19 +22,19 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-def concatIters(*iters: Iterator[Any]) -> Iterator[Any]:
+def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one"""
-    for iter in iters:
+    for iterator in iterators:
         while True:
             try:
-                value = next(iter)
+                value = next(iterator)
                 yield value
             except StopIteration:
                 break
 
-def mergeIters(*iters: Iterator[Any]) -> Iterator[Any]:
+def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted"""
-    iterList = list(iters)
+    iterList = list(iterators)
     numIters = len(iterList)
     values = []
     while True:

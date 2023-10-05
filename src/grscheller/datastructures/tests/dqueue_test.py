@@ -64,7 +64,7 @@ class TestDqueue:
 
     def test_capacity(self):
         dq = Dqueue(1, 2)
-        assert dq.fractionFilled() == 2/4
+        assert dq.fractionFilled() == 2/2
         dq.pushL(0)
         assert dq.fractionFilled() == 3/4
         dq.pushR(3)

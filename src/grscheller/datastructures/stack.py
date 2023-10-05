@@ -76,7 +76,7 @@ class Stack():
         """Returns current number of values on the stack"""
         return self._count
 
-    def __getitem__(self, ii: int) -> Any | None:
+    def __getitem__(self, idx: int) -> Any | None:
         """By starting indexing at bottom, pushing/popping values to/from the
         stack does not change the indices for the remaining values on the stack.
         Together with __len__ method, allows the reversed() function to return
@@ -84,12 +84,12 @@ class Stack():
         """
         node = self._head
         cnt = self._count
-        if 0 <= ii < cnt:
-            for _ in range(cnt - ii - 1):
+        if 0 <= idx < cnt:
+            for _ in range(cnt - idx - 1):
                 node = node._next
             return node._data
-        elif -cnt <= ii < 0:
-            for _ in range(-ii - 1):
+        elif -cnt <= idx < 0:
+            for _ in range(-idx - 1):
                 node = node._next
             return node._data
         else:
@@ -145,14 +145,15 @@ class Stack():
         stack._count = self._count
         return stack
 
-    def push(self, data: Any) -> Stack:
+    def push(self, *data: Any) -> Stack:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
-        if data is not None:
-            node = _Node(data, self._head)
-            self._head = node
-            self._count += 1
+        for datum in data:
+            if datum != None:
+                node = _Node(datum, self._head)
+                self._head = node
+                self._count += 1
         return self
 
     def pop(self) -> Maybe:

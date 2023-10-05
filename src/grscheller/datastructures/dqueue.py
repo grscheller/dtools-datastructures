@@ -41,8 +41,10 @@ class Dqueue:
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
-        # TODO: scrub None values
-        self._carray = Carray(*data)
+        self._carray = Carray()
+        for datum in data:
+            if datum != None:
+                self._carray.pushR(datum)
 
     def __bool__(self) -> bool:
         """Returns true if dqueue is not empty"""
@@ -57,7 +59,6 @@ class Dqueue:
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data"""
-        # TODO: Not sure what I am doing here
         if self._carray:
             for pos in range(len(self._carray)):
                 yield self._carray[pos]
@@ -81,18 +82,18 @@ class Dqueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity"""
         return Dqueue(*self)
 
-    def pushR(self, data: Any) -> Dqueue:
+    def pushR(self, *data: Any) -> Dqueue:
         """Push data on rear of dqueue & return reference to self"""
-        # TODO: Scrub None values
-        # TODO: Allow multiple valsue, data -> *data
-        self._carray.pushR(data)
+        for datum in data:
+            if datum != None:
+                self._carray.pushR(datum)
         return self
 
-    def pushL(self, data: Any) -> Dqueue:
+    def pushL(self, *data: Any) -> Dqueue:
         """Push data on front of dqueue, return the dqueue pushed to"""
-        # TODO: Scrub None values
-        # TODO: Allow multiple valsue, data -> *data
-        self._carray.pushL(data)
+        for datum in data:
+            if datum != None:
+                self._carray.pushL(datum)
         return self
 
     def popR(self) -> Maybe:
