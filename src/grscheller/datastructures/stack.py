@@ -30,7 +30,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .functional.maybe import Maybe, Some, Nothing
-from .dqueue import Dqueue
+from .carray import Carray
 
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
@@ -46,23 +46,25 @@ class _Node:
 
 class Stack():
     """Class implementing a Last In, First Out (LIFO) stack datastructure. The
-    stack contains a singularly linked list of nodes.
+    stack contains a singularly linked list of nodes. Class designed to share
+    nodes wit other Stack instances.
 
     - The stack points to either the top node in the list, or to None to
       indicate an empty stack.
     - Stacks are stateful objects where values can be pushed on & popped off.
     - None represents the absence of a value and are ignored if pushed on the
-      stack.
+      stack. Use a grscheller.functional.Maybe to indicate an assent value or
+      another sentital value such as the empty tuple ().
+    - No map or flatMap methods defined due to node sharing nature of the class.
     """
     def __init__(self, *data):
         self._head = None
         self._count = 0
-        dqData = Dqueue(*data)
-        cnt = len(dqData)
-        for _ in range(cnt):
-            mbDatum = dqData.popR()
-            if mbDatum != Nothing:
-                node = _Node(mbDatum.get(), self._head)
+        data = Carray(*data)
+        for _ in range(len(data)):
+            datum = data.popR()
+            if datum != None:
+                node = _Node(datum, self._head)
                 self._head = node
                 self._count += 1
 
@@ -75,20 +77,20 @@ class Stack():
         return self._count
 
     def __getitem__(self, ii: int) -> Any | None:
-        """By starting indexing at bottom, pushing values onto the stack does
-        not change the indices for the rest of the values on the stack. Together
-        with __len__ method, allows the reversed() function to return a reverse
-        iterator.
+        """By starting indexing at bottom, pushing/popping values to/from the
+        stack does not change the indices for the remaining values on the stack.
+        Together with __len__ method, allows the reversed() function to return
+        a reverse iterator.
         """
-        dqData = Dqueue()
+        caData = Carray()
         node = self._head
         while node is not None:
-            dqData.pushL(node._data)
+            caData.pushL(node._data)
             node = node._next
 
-        cnt = len(dqData)
+        cnt = len(caData)
         if -cnt <= ii < cnt:
-            return dqData[ii]
+            return caData[ii]
         return None
 
     def __iter__(self):
@@ -127,10 +129,10 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack"""
-        dqData = Dqueue(*self).map(lambda x: repr(x)) 
-        repStr = '|| ' + dqData.popR().getOrElse('')
-        while dqData:
-            repStr = repStr + ' <- ' + dqData.popR().get()
+        caData = Carray(*self).map(lambda x: repr(x)) 
+        repStr = '|| ' + caData.popR()
+        while caData:
+            repStr = repStr + ' <- ' + caData.popR()
         repStr += ' <|'
         return repStr
 

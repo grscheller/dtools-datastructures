@@ -114,11 +114,12 @@ class Carray:
         else:
             return None
 
-    def __setitem__(self, idx: int, value) -> bool:
+    def __setitem__(self, idx: int, value):
         """Set value at a valid index and return true, otherwise return false.
 
         TODO: is silently doing nothing the right thing, or do I throw some sort
-        of index out of bound exception? It is a "exceptional" event.
+        of index out of bound exception? It is an "exceptional" event indicating
+        some sort of coding issue.
         """
         cnt = self._count
         if 0 <= idx < cnt:
@@ -126,8 +127,7 @@ class Carray:
         elif -cnt <= idx < 0:
             self._queue[(self._front + cnt + idx) % self._capacity] = value
         else:
-            return False
-        return True
+            pass
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.
@@ -196,7 +196,7 @@ class Carray:
         self._count += 1
         return self
 
-    def popR(self) -> Any|None:
+    def popR(self) -> Any:
         """Pop data off rear of carray"""
         if self._count == 0:
             return None
@@ -207,7 +207,7 @@ class Carray:
             self._count -= 1
             return data
 
-    def popL(self) -> Any|None:
+    def popL(self) -> Any:
         """Pop data off front of carray"""
         if self._count == 0:
             return None
