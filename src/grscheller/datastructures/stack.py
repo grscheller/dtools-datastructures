@@ -82,16 +82,18 @@ class Stack():
         Together with __len__ method, allows the reversed() function to return
         a reverse iterator.
         """
-        caData = Carray()
         node = self._head
-        while node is not None:
-            caData.pushL(node._data)
-            node = node._next
-
-        cnt = len(caData)
-        if -cnt <= ii < cnt:
-            return caData[ii]
-        return None
+        cnt = self._count
+        if 0 <= ii < cnt:
+            for _ in range(cnt - ii - 1):
+                node = node._next
+            return node._data
+        elif -cnt <= ii < 0:
+            for _ in range(-ii - 1):
+                node = node._next
+            return node._data
+        else:
+            return None
 
     def __iter__(self):
         """Iterator yielding data stored in the stack, does not consume data"""

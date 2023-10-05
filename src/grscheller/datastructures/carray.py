@@ -96,7 +96,7 @@ class Carray:
         """Returns true if carray is not empty"""
         return self._count > 0
 
-    def __len__(self) -> int:
+    def __len__(self):
         """Returns current number of values in carray"""
         return self._count
 

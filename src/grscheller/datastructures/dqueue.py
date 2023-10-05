@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
+from .carray import Carray
 from .functional.maybe import Maybe, Nothing, Some
 from .core import concatIters, mapIter
 
@@ -40,92 +41,26 @@ class Dqueue:
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
-        size = len(data)
-        capacity = size + 2
-        self._capacity = capacity
-        self._count = size
-        self._front = 0
-        self._rear = (size - 1) % capacity
-        self._queue = list(data)
-        self._queue.append(None)
-        self._queue.append(None)
+        # TODO: scrub None values
+        self._carray = Carray(*data)
 
-    def _isFull(self) -> bool:
-        """Returns true if dqueue is full"""
-        return self._count == self._capacity
-
-    def _double(self):
-        """Double capacity of dqueue"""
-        if self._front > self._rear:
-            frontPart = self._queue[self._front:]
-            rearPart = self._queue[:self._rear+1]
-        else:
-            frontPart = self._queue
-            rearPart = []
-        self._queue = frontPart + rearPart + [None]*(self._capacity)
-        self._capacity *= 2
-        self._front = 0
-        self._rear = self._count - 1
-
-    def _compact(self):
-        """Compact the datastructure as much as possible"""
-        match self._count:
-            case 0:
-                self._queue = [None]*2
-                self._capacity = 2
-                self._front = 0
-                self._rear = 1
-            case 1:
-                self._queue = [self._queue[self._front], None]
-                self._capacity = 2
-                self._front = 0
-                self._rear = 0
-            case _:
-                if self._front > self._rear:
-                    frontPart = self._queue[self._front:]
-                    rearPart = self._queue[:self._rear+1]
-                else:
-                    frontPart = self._queue[self._front:self._rear+1]
-                    rearPart = []
-                self._queue = frontPart + rearPart
-                self._capacity = self._count
-                self._front = 0
-                self._rear = self._capacity - 1
-
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns true if dqueue is not empty"""
-        return self._count > 0
+        return len(self._carray) != 0
 
     def __len__(self) -> int:
         """Returns current number of values in dqueue"""
-        return self._count
+        return len(self._carray)
 
-    def __getitem__(self, ii: int) -> Any | None:
-        """Together with __len__ method, allows the reversed() function to
-        return a reverse iterator.
-        """
-        cnt = self._count
-        if 0 <= ii < cnt:
-            return self._queue[(self._front + ii) % self._capacity]
-        elif -cnt <= ii < 0:
-            return self._queue[(self._front + cnt + ii) % self._capacity]
-        else:
-            return None
+    def __getitem__(self, ii: int) -> Any:
+        return self._carray[ii]
 
     def __iter__(self):
-        """Iterator yielding data stored in dequeue, does not consume data.
-
-        To export contents of the Dqueue to a list, do
-            myList = list(myDqueue)
-        """
-        if self._count > 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            while pos != rear:
-                yield self._queue[pos]
-                pos = (pos + 1) % cap
-            yield self._queue[pos]
+        """Iterator yielding data stored in dequeue, does not consume data"""
+        # TODO: Not sure what I am doing here
+        if self._carray:
+            for pos in range(len(self._carray)):
+                yield self._carray[pos]
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -133,28 +68,12 @@ class Dqueue:
         """
         if not isinstance(other, type(self)):
             return False
-
-        if self._count != other._count:
-            return False
-
-        cnt = self._count
-        left = self
-        frontL = self._front
-        capL = self._capacity
-        right = other
-        frontR = other._front
-        capR = other._capacity
-        nn = 0
-        while nn < cnt:
-            if left._queue[(frontL+nn)%capL] != right._queue[(frontR+nn)%capR]:
-                return False
-            nn += 1
-        return True
+        return self._carray == other._carray
 
     def __repr__(self):
         """Display data in dqueue"""
         dataListStrs = []
-        for data in self:
+        for data in self._carray:
             dataListStrs.append(repr(data))
         return ">< " + " | ".join(dataListStrs) + " ><"
 
@@ -163,73 +82,58 @@ class Dqueue:
         return Dqueue(*self)
 
     def pushR(self, data: Any) -> Dqueue:
-        """Push data on rear of dqueue, return the dqueue pushed to"""
-        if self._isFull():
-            self._double()
-        self._rear = (self._rear + 1) % self._capacity
-        self._queue[self._rear] = data
-        self._count += 1
+        """Push data on rear of dqueue & return reference to self"""
+        # TODO: Scrub None values
+        # TODO: Allow multiple valsue, data -> *data
+        self._carray.pushR(data)
         return self
 
     def pushL(self, data: Any) -> Dqueue:
         """Push data on front of dqueue, return the dqueue pushed to"""
-        if self._isFull():
-            self._double()
-        self._front = (self._front - 1) % self._capacity
-        self._queue[self._front] = data
-        self._count += 1
+        # TODO: Scrub None values
+        # TODO: Allow multiple valsue, data -> *data
+        self._carray.pushL(data)
         return self
 
     def popR(self) -> Maybe:
         """Pop data off rear of dqueue"""
-        if self._count == 0:
-            return Nothing
+        if len(self._carray) > 0:
+            return Some(self._carray.popR())
         else:
-            data = self._queue[self._rear]
-            self._queue[self._rear] = None
-            self._rear = (self._rear - 1) % self._capacity
-            self._count -= 1
-            return Some(data)
+            return Nothing
 
     def popL(self) -> Maybe:
         """Pop data off front of dqueue"""
-        if self._count == 0:
-            return Nothing
+        if len(self._carray) > 0:
+            return Some(self._carray.popL())
         else:
-            data = self._queue[self._front]
-            self._queue[self._front] = None
-            self._front = (self._front + 1) % self._capacity
-            self._count -= 1
-            return Some(data)
+            return Nothing
 
     def headR(self) -> Maybe:
         """Return rear element of dqueue without consuming it"""
-        if self._count == 0:
+        if len(self._carray) > 0:
+            return Some(self._carray[-1])
+        else:
             return Nothing
-        return Some(self._queue[self._rear])
 
     def headL(self) -> Maybe:
         """Return front element of dqueue without consuming it"""
-        if self._count == 0:
+        if len(self._carray) > 0:
+            return Some(self._carray[0])
+        else:
             return Nothing
-        return Some(self._queue[self._front])
 
     def capacity(self) -> int:
         """Returns current capacity of dqueue"""
-        return self._capacity
+        return self._carray.capacity()
 
     def fractionFilled(self) -> float:
         """Returns current capacity of dqueue"""
-        return self._count/self._capacity
+        return self._carray.fractionFilled()
 
     def resize(self, addCapacity = 0):
         """Compact dqueue and add extra capacity"""
-        self._compact()
-        if addCapacity > 0:
-            self._queue = self._queue + [None]*addCapacity
-            self._capacity += addCapacity
-            if self._count == 0:
-                self._rear = self._capacity - 1
+        return self._carray.resize(addCapacity)
 
     def map(self, f: Callable[[Any], Any]) -> Dqueue:
         """Apply function over dqueue contents, returns new instance"""
