@@ -30,7 +30,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .functional.maybe import Maybe, Some, Nothing
-from .carray import Carray
+from .circle import Circle
 
 class _Node:
     """Class implementing nodes that can be linked together to form a singularly
@@ -38,10 +38,12 @@ class _Node:
     next _Node object or None to indicate the bottom of the linked list.
     """
     def __init__(self, data, nodeNext: _Node | None):
+        """Construct an element of a linked list, semantically immutable"""
         self._data = data
         self._next = nodeNext
 
     def __bool__(self):
+        """Always return true, None will return as false"""
         return True
 
 class Stack():
@@ -90,31 +92,16 @@ class Stack():
         """Returns current number of values on the stack"""
         return self._count
 
-    def __getitem__(self, idx: int) -> Any | None:
-        """By starting indexing at bottom, pushing/popping values to/from the
-        stack does not change the indices for the remaining values on the stack.
-        Together with __len__ method, allows the reversed() function to return
-        a reverse iterator.
-        """
-        node = self._head
-        cnt = self._count
-        if 0 <= idx < cnt:
-            for _ in range(cnt - idx - 1):
-                node = node._next
-            return node._data
-        elif -cnt <= idx < 0:
-            for _ in range(-idx - 1):
-                node = node._next
-            return node._data
-        else:
-            return None
-
     def __iter__(self):
-        """Iterator yielding data stored in the stack, does not consume data"""
+        """Iterator yielding data stored in the stack, starting """
         node = self._head
         while node:
             yield node._data
             node = node._next
+
+    def __reversed__(self):
+        """Reverse iterate over the current state of the stack"""
+        return iter(Stack(*self, r2l=False))
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
@@ -144,8 +131,8 @@ class Stack():
         return True
 
     def __repr__(self):
-        """Display the data in the stack"""
-        caData = Carray(*self).map(lambda x: repr(x)) 
+        """Display the data in the stack, left to right starting at bottom"""
+        caData = Circle(*self).map(lambda x: repr(x)) 
         repStr = '|| ' + caData.popR()
         while caData:
             repStr = repStr + ' <- ' + caData.popR()
@@ -159,13 +146,13 @@ class Stack():
         stack._count = self._count
         return stack
 
-    def push(self, *data: Any) -> Stack:
+    def push(self, *ds: Any) -> Stack:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
-        for datum in data:
-            if datum != None:
-                node = _Node(datum, self._head)
+        for d in ds:
+            if d != None:
+                node = _Node(d, self._head)
                 self._head = node
                 self._count += 1
         return self

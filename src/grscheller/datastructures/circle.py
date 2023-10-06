@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.carray - Double sided queue
+"""Module grscheller.datastructure.circle - Double sided queue
 
 Double sided circular array with amortized O(1) insertions & deletions from
 either end and O(1) length determination. Implemented with a Python List.
@@ -20,13 +20,13 @@ either end and O(1) length determination. Implemented with a Python List.
 Mainly used to implement other grscheller.datastructure classes. This class is
 not opinionated regarding None as a value. It freely stores and returns None
 values. Therfore don't rely on using None as a sentital value to determine if
-a carray is empty or not. Instead, if used in a boolean context, a carray
+a circle is empty or not. Instead, if used in a boolean context, a circle
 returns false if empty and true otherwise.
 """
 
 from __future__ import annotations
 
-__all__ = ['Carray']
+__all__ = ['Circle']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -34,7 +34,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from .core import concatIters, mergeIters, mapIter
 
-class Carray:
+class Circle:
     """Double sided queue datastructure. Will resize itself as needed. Does not
     throw exceptions.
     """
@@ -51,11 +51,11 @@ class Carray:
         self._queue.append(None)
 
     def _isFull(self) -> bool:
-        """Returns true if cArray is full"""
+        """Returns true if circle array is full"""
         return self._count == self._capacity
 
     def _double(self):
-        """Double capacity of carray"""
+        """Double capacity of circle array"""
         if self._front > self._rear:
             frontPart = self._queue[self._front:]
             rearPart = self._queue[:self._rear+1]
@@ -93,11 +93,11 @@ class Carray:
                 self._rear = self._capacity - 1
 
     def __bool__(self):
-        """Returns true if carray is not empty"""
+        """Returns true if circle array is not empty"""
         return self._count > 0
 
     def __len__(self):
-        """Returns current number of values in carray"""
+        """Returns current number of values in the circlular array"""
         return self._count
 
     def __getitem__(self, idx: int) -> Any | None:
@@ -132,7 +132,7 @@ class Carray:
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data.
 
-        To export contents of the carray to a list: myList = list(myCarray)
+        To export contents of the circle array to a list: myList = list(myCircle)
         """
         if self._count > 0:
             cap = self._capacity
@@ -168,18 +168,18 @@ class Carray:
         return True
 
     def __repr__(self):
-        """Display data in the carray"""
+        """Display data in the circle array"""
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
         return "[[ " + " | ".join(dataListStrs) + " ]]"
 
-    def copy(self) -> Carray:
-        """Return shallow copy of the carray in O(n) time & space complexity"""
-        return Carray(*self)
+    def copy(self) -> Circle:
+        """Return shallow copy of the circle array in O(n) time/space complexity"""
+        return Circle(*self)
 
-    def pushR(self, data: Any) -> Carray:
-        """Push data on rear of carray, return the carray pushed to"""
+    def pushR(self, data: Any) -> Circle:
+        """Push data on rear of circle, return the circle pushed to"""
         if self._isFull():
             self._double()
         self._rear = (self._rear + 1) % self._capacity
@@ -187,8 +187,8 @@ class Carray:
         self._count += 1
         return self
 
-    def pushL(self, data: Any) -> Carray:
-        """Push data on front of carray, return the carray pushed to"""
+    def pushL(self, data: Any) -> Circle:
+        """Push data on front of circle, return the circle pushed to"""
         if self._isFull():
             self._double()
         self._front = (self._front - 1) % self._capacity
@@ -197,7 +197,7 @@ class Carray:
         return self
 
     def popR(self) -> Any:
-        """Pop data off rear of carray"""
+        """Pop data off rear of circle array"""
         if self._count == 0:
             return None
         else:
@@ -208,7 +208,7 @@ class Carray:
             return data
 
     def popL(self) -> Any:
-        """Pop data off front of carray"""
+        """Pop data off front of circle array"""
         if self._count == 0:
             return None
         else:
@@ -219,15 +219,15 @@ class Carray:
             return data
 
     def capacity(self) -> int:
-        """Returns current capacity of carray"""
+        """Returns current capacity of circle array"""
         return self._capacity
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of carray"""
+        """Returns current capacity of circle array"""
         return self._count/self._capacity
 
     def resize(self, addCapacity = 0):
-        """Compact carray and add extra capacity"""
+        """Compact circle array and add extra capacity"""
         self._compact()
         if addCapacity > 0:
             self._queue = self._queue + [None]*addCapacity
@@ -235,21 +235,21 @@ class Carray:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> Carray:
-        """Apply function over carray contents, returns new instance"""
-        return Carray(*mapIter(iter(self), f))
+    def map(self, f: Callable[[Any], Any]) -> Circle:
+        """Apply function over circle array contents, returns new instance"""
+        return Circle(*mapIter(iter(self), f))
 
-    def flatMap(self, f: Callable[[Any], Carray]) -> Carray:
+    def flatMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
-        return Carray(
+        return Circle(
             *concatIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
 
-    def mergeMap(self, f: Callable[[Any], Carray]) -> Carray:
+    def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
-        return Carray(
+        return Circle(
             *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )

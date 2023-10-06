@@ -160,37 +160,3 @@ class TestStack:
         assert len(s10) == 1
         s10.pop()
         assert not s10
-
-    def test_index(self):
-        # Check indexing, first item pushed is indexed by 0
-        s1 = Stack().push(0).push(1).push(2).push(3)
-        assert s1[0] == 0
-        assert s1[1] == 1
-        assert s1[2] == 2
-        assert s1[3] == 3
-        assert s1[4] == None
-        assert s1[5] == None
-        assert s1[-1] == 3
-        assert s1[-2] == 2
-        assert s1[-3] == 1
-        assert s1[-4] == 0
-        assert s1[-5] == None
-
-        # Check push does not change non-negative indices of previous values
-        s2 = s1.copy().push(42)
-        assert s2[0] == s1[0]
-        assert s2[1] == s1[1]
-        assert s2[2] == s1[2]
-        assert s2[3] == s1[3]
-        assert s2[4] == 42
-        assert s2[5] == None
-        assert s2[-1] == 42
-        assert s2[-2] == 3
-        assert s2[-3] == 2
-        assert s2[-4] == 1
-        assert s2[-5] == 0
-        assert s2[-6] == None
-        assert s2[-2] == s1[-1]
-        assert s2[-3] == s1[-2]
-        assert s2[-4] == s1[-3]
-        assert s2[-5] == s1[-4]

@@ -28,7 +28,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from .carray import Carray
+from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
 from .core import concatIters, mapIter
 
@@ -39,29 +39,29 @@ class Dqueue:
     represent the absence of a value. Therefore some care needs to be taken
     when Python None is pushed onto Dqueue objects.
     """
-    def __init__(self, *data):
+    def __init__(self, *ds):
         """Construct a double sided queue"""
-        self._carray = Carray()
-        for datum in data:
-            if datum != None:
-                self._carray.pushR(datum)
+        self._circle = Circle()
+        for d in ds:
+            if d != None:
+                self._circle.pushR(d)
 
     def __bool__(self) -> bool:
         """Returns true if dqueue is not empty"""
-        return len(self._carray) != 0
+        return len(self._circle) != 0
 
     def __len__(self) -> int:
         """Returns current number of values in dqueue"""
-        return len(self._carray)
+        return len(self._circle)
 
     def __getitem__(self, ii: int) -> Any:
-        return self._carray[ii]
+        return self._circle[ii]
 
     def __iter__(self):
         """Iterator yielding data stored in dequeue, does not consume data"""
-        if self._carray:
-            for pos in range(len(self._carray)):
-                yield self._carray[pos]
+        if self._circle:
+            for pos in range(len(self._circle)):
+                yield self._circle[pos]
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -69,12 +69,12 @@ class Dqueue:
         """
         if not isinstance(other, type(self)):
             return False
-        return self._carray == other._carray
+        return self._circle == other._circle
 
     def __repr__(self):
         """Display data in dqueue"""
         dataListStrs = []
-        for data in self._carray:
+        for data in self._circle:
             dataListStrs.append(repr(data))
         return ">< " + " | ".join(dataListStrs) + " ><"
 
@@ -82,59 +82,59 @@ class Dqueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity"""
         return Dqueue(*self)
 
-    def pushR(self, *data: Any) -> Dqueue:
+    def pushR(self, *ds: Any) -> Dqueue:
         """Push data on rear of dqueue & return reference to self"""
-        for datum in data:
-            if datum != None:
-                self._carray.pushR(datum)
+        for d in ds:
+            if d != None:
+                self._circle.pushR(d)
         return self
 
-    def pushL(self, *data: Any) -> Dqueue:
+    def pushL(self, *ds: Any) -> Dqueue:
         """Push data on front of dqueue, return the dqueue pushed to"""
-        for datum in data:
-            if datum != None:
-                self._carray.pushL(datum)
+        for d in ds:
+            if d != None:
+                self._circle.pushL(d)
         return self
 
     def popR(self) -> Maybe:
         """Pop data off rear of dqueue"""
-        if len(self._carray) > 0:
-            return Some(self._carray.popR())
+        if len(self._circle) > 0:
+            return Some(self._circle.popR())
         else:
             return Nothing
 
     def popL(self) -> Maybe:
         """Pop data off front of dqueue"""
-        if len(self._carray) > 0:
-            return Some(self._carray.popL())
+        if len(self._circle) > 0:
+            return Some(self._circle.popL())
         else:
             return Nothing
 
     def headR(self) -> Maybe:
         """Return rear element of dqueue without consuming it"""
-        if len(self._carray) > 0:
-            return Some(self._carray[-1])
+        if len(self._circle) > 0:
+            return Some(self._circle[-1])
         else:
             return Nothing
 
     def headL(self) -> Maybe:
         """Return front element of dqueue without consuming it"""
-        if len(self._carray) > 0:
-            return Some(self._carray[0])
+        if len(self._circle) > 0:
+            return Some(self._circle[0])
         else:
             return Nothing
 
     def capacity(self) -> int:
         """Returns current capacity of dqueue"""
-        return self._carray.capacity()
+        return self._circle.capacity()
 
     def fractionFilled(self) -> float:
         """Returns current capacity of dqueue"""
-        return self._carray.fractionFilled()
+        return self._circle.fractionFilled()
 
     def resize(self, addCapacity = 0):
         """Compact dqueue and add extra capacity"""
-        return self._carray.resize(addCapacity)
+        return self._circle.resize(addCapacity)
 
     def map(self, f: Callable[[Any], Any]) -> Dqueue:
         """Apply function over dqueue contents, returns new instance"""
