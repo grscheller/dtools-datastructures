@@ -47,24 +47,38 @@ class _Node:
 class Stack():
     """Class implementing a Last In, First Out (LIFO) stack datastructure. The
     stack contains a singularly linked list of nodes. Class designed to share
-    nodes wit other Stack instances.
+    nodes with other Stack instances.
 
-    - The stack points to either the top node in the list, or to None to
-      indicate an empty stack.
+    - The stack points to either the top node in the list, or to None which
+      indicates an empty stack.
     - Stacks are stateful objects where values can be pushed on & popped off.
     - None represents the absence of a value and are ignored if pushed on the
       stack. Use a grscheller.functional.Maybe to indicate an assent value or
       another sentital value such as the empty tuple ().
     - No map or flatMap methods defined due to node sharing nature of the class.
     """
-    def __init__(self, *data):
+    def __init__(self, *ds, r2l=True):
+        """Construct a LIFO Stack.
+
+        - push parameters right to left if r2l true (default)
+        - push parameters left to right if r2l false
+        """
+        cnt = len(ds)
+        if r2l:
+            start = cnt - 1
+            step = -1
+            stop = -1
+        else:
+            start = 0
+            step = 1
+            stop = cnt
+
         self._head = None
         self._count = 0
-        data = Carray(*data)
-        for _ in range(len(data)):
-            datum = data.popR()
-            if datum != None:
-                node = _Node(datum, self._head)
+        for ii in range(start, stop, step):
+            d = ds[ii]
+            if d != None:
+                node = _Node(d, self._head)
                 self._head = node
                 self._count += 1
 
@@ -135,7 +149,7 @@ class Stack():
         repStr = '|| ' + caData.popR()
         while caData:
             repStr = repStr + ' <- ' + caData.popR()
-        repStr += ' <|'
+        repStr += ' ><'
         return repStr
 
     def copy(self) -> Stack:
