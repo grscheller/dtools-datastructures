@@ -28,6 +28,25 @@
 
 ## Versions
 
+### Version 0.6.8.3 - commit date: 2023-10-06
+* Stack now works with Python Reversed builtin function
+  * using a __reversed__ method which is O(n)
+  * never figured out why reversed() failed with __getitems__ & __len__
+    * this would have been O(n^2) anyway
+* Stack no longer implements the __getitems__ method
+* class Carray renamed to Circle
+  * implements a circular array based on a Python List
+  * resizes itself as needed
+  * will handle None values being pushed and popped from it
+  * implemented in the grscheller.datastructures.circle module
+    * in the src/grscheller/datastructures/circle.py file
+  * O(1) pushing/popping to/from either end
+  * O(1) length determination
+  * O(1) indexing for setting and getting values.
+* Dqueue implemented with Circle class instead of List class directly
+* Ensured that None is never pushed to Stack & Dqueue objects
+
+
 ### Version 0.6.4.1 - commit date: 2023-10-01
 * Initial prototypes for map and flatMap for Dqueue class
 * Started grscheller.datastructures.core module

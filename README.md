@@ -39,6 +39,20 @@ to guide the design of this package.
 
 ## grscheller.datastructes package level modules
 
+### grscheller.datastructuses.circle module
+
+Double sided circular array with amortized O(1) pushing/popping to/from
+either end, O(1) length determination, and O(1) indexing for setting and
+getting values. Implemented with a Python List. This datastructure
+automatically resizes itself as needed.
+
+Mainly used to help implement other data structures in this package,
+this class is not opinionated regarding None as a value. It freely
+stores and returns None values. Therfore, don't rely on using None as
+a sentital value to determine if a circle circular array is empty or
+not. Instead, if used in a boolean context, a circle returns false if
+empty and true if not empty.
+
 ### grscheller.datastructes.dqueue module
 
 Implements a double ended queue. The queue is implemented with
@@ -68,19 +82,6 @@ shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
-
-### grscheller.datastructuses.carray module
-
-Double sided circular array with amortized O(1) insertions & deletions
-from either end and O(1) length determination. Implemented with a Python
-List. This datastructure automatically resizes itself as needed.
-
-Mainly used to help implement other data structures in this package,
-this class is not opinionated regarding None as a value. It freely
-stores and returns None values. Therfore, don't rely on using None as
-a sentital value to determine if a carray is empty or not. Instead, if
-used in a boolean context, a carray returns false if empty and true
-if not empty.
 
 ## grscheller.datastructes.functional subpackage
 
@@ -139,13 +140,13 @@ own sake.
 
 ### Functions for interators
 
-* Funtion **concatIters**
+* Function **concatIters**
   * Sequentually concatenate multiple iterators into one
 
-* Funtion **mergeIters**
+* Function **mergeIters**
   * Merge multiple iterator streams until one is exhausted
 
-* Funtion **mapIter**
+* Function **mapIter**
   * Lazily map a function over an iterator stream
 
 #### Examples
