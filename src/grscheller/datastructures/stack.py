@@ -32,7 +32,7 @@ __license__ = "Appache License 2.0"
 from .functional.maybe import Maybe, Some, Nothing
 from .circle import Circle
 
-class _Node:
+class _Node():
     """Class implementing nodes that can be linked together to form a singularly
     linked list. A node always contain data. It either has a reference to the
     next _Node object or None to indicate the bottom of the linked list.

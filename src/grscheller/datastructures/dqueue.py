@@ -32,7 +32,7 @@ from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
 from .core import concatIters, mapIter
 
-class Dqueue:
+class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
 
     Does not throw exceptions. The Dqueue class consistently uses None to

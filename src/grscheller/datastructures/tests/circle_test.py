@@ -103,13 +103,34 @@ class TestCircle:
         c2.pushL(200)
         assert c1 == c2
 
-    def test_mapAndFlatMap(self):
+    def test_map(self):
         c1 = Circle(1,2,3,10)
+        c2 = c1.map(lambda x: x*x-1)
+        c2_answers = Circle(0,3,8,99)
+        assert c2 == c2_answers
+        assert c1 is not c2
+        assert len(c1) == len(c2) == 4
+
+    def test_mapSelf(self):
+        c1 = Circle(1,2,3,10)
+        c1.mapSelf(lambda x: x*x-1)
         c1_answers = Circle(0,3,8,99)
-        assert c1.map(lambda x: x*x-1) == c1_answers
+        assert c1 == c1_answers
+        assert len(c1) == 4
+
+    def test_flatMap(self):
+        c1 = Circle(1,2,3,10)
         c2 = c1.flatMap(lambda x: Circle(1, x, x*x+1))
         c2_answers = Circle(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert c2 == c2_answers
+        assert len(c2) == 3*len(c1) == 12
+
+    def test_flatMapSelf(self):
+        c1 = Circle(1,2,3,5,10)
+        c1.flatMapSelf(lambda x: Circle(1, x, x*x+1))
+        c1_answers = Circle(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
+        assert c1 == c1_answers
+        assert len(c1) == 5*3
 
     def test_mergeMap(self):
         c1 = Circle(5, 4, 7)
@@ -119,10 +140,21 @@ class TestCircle:
         assert c2[0] == c2[3] == c2[6] == c2[9] == 'EEEEE'
         assert c2[1] == c2[4] == c2[7] == c2[10] == 'DDDD'
         assert c2[2] == c2[5] == c2[8] == c2[11] == 'GGGGGGG'
-        c2 = c1.flatMap(lambda x: Circle(*([chr(0o100+x)*x]*x)))
-        assert len(c2) == 5 + 4 + 7
-        assert c2[0] == 'EEEEE'
         assert c2[-1] == 'GGGGGGG'
+        assert len(c2) == len(c1)*min(*c1) == 3*4
+
+    def test_mergeMapSelf(self):
+        c1 = Circle(5, 4, 7)
+        c1_orig_len = len(c1)
+        c1_orig_min = min(*c1)
+        assert len(c1) == 3
+        c1.mergeMapSelf(lambda x: Circle(*([chr(0o100+x)*x]*x)))
+        assert len(c1) == 3*4
+        assert c1[0] == c1[3] == c1[6] == c1[9] == 'EEEEE'
+        assert c1[1] == c1[4] == c1[7] == c1[10] == 'DDDD'
+        assert c1[2] == c1[5] == c1[8] == c1[11] == 'GGGGGGG'
+        assert c1[-1] == 'GGGGGGG'
+        assert len(c1) == c1_orig_len*c1_orig_min == 3*4
 
     def test_get_set_items(self):
         c1 = Circle('a', 'b', 'c', 'd')
@@ -133,7 +165,14 @@ class TestCircle:
         assert c2.popR() == 'd'
         assert c2.popR() == 'c'
         c2.pushR('cat')
-        c2[3] = 'dog'       # no such index
+        try:
+            c2[3] = 'dog'       # no such index
+        except IndexError:
+            assert True
+        except:
+            assert False
+        else:
+            assert False
         assert c1 != c2
         c2.pushR('dog')
         assert c1 == c2

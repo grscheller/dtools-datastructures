@@ -16,7 +16,7 @@
     * maintainer will not back port bugfixes to previous versions
     * main branch will be the only tracking branch on GitHub
       * attempt to keep realatvely stable, but not fully tested
-    * feature branch begin with "feature_" & are places to
+    * feature branch begin with "feature_" and are places to
       * explore new directions
       * commit potentially very broken code
       * could be deleted from GitHub WITHOUT WARNING
@@ -27,6 +27,18 @@
         * all non-pulled PyPI releases will be tagged & listed below
 
 ## Versions
+
+### Version 0.6.8.5 - commit date: 2023-10-08
+* 3 new methods for class Circle (formally Carray, formally Cqueue)
+  * mapSelf, flatMapSelf, mergeMapSelf
+    * these correspond to map, flatMap, mergeMap
+    * except they act on the Circle object itself, not a new instance
+* these new methods will NOT be added to the Stack class
+  * they would distroy node sharing
+* probably will add them to the Dqueue class too
+  * not worth the maintenance effort mainting two version of Dqueue
+    * one returning new instances
+    * the other modifying the object in place
 
 ### Version 0.6.8.3 - commit date: 2023-10-06
 * Stack now works with Python Reversed builtin function

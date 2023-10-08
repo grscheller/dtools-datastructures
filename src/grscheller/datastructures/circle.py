@@ -14,14 +14,13 @@
 
 """Module grscheller.datastructure.circle - Double sided queue
 
-Double sided circular array with amortized O(1) insertions & deletions from
-either end and O(1) length determination. Implemented with a Python List.
+Circular array with amortized O(1) indexing, prepending & appending values, and
+length determination. Implemented with a Python List.
 
-Mainly used to implement other grscheller.datastructure classes. This class is
+Mainly used to implement other grscheller.datastructure classes where
+functionality is more likely restricted than augmented. This class is
 not opinionated regarding None as a value. It freely stores and returns None
-values. Therfore don't rely on using None as a sentital value to determine if
-a circle is empty or not. Instead, if used in a boolean context, a circle
-returns false if empty and true otherwise.
+values. Use in a boolean context to determine if empty.
 """
 
 from __future__ import annotations
@@ -31,30 +30,28 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Self, Never, Union
 from .core import concatIters, mergeIters, mapIter
 
 class Circle:
-    """Double sided queue datastructure. Will resize itself as needed. Does not
-    throw exceptions.
+    """Circular array with amortized O(1) indexing, prepending & appending
+    values, and length determination.
+
+    Raises IndexError excetions.
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
         size = len(data)
         capacity = size + 2
-        self._capacity = capacity
         self._count = size
+        self._capacity = capacity
         self._front = 0
         self._rear = (size - 1) % capacity
         self._queue = list(data)
         self._queue.append(None)
         self._queue.append(None)
 
-    def _isFull(self) -> bool:
-        """Returns true if circle array is full"""
-        return self._count == self._capacity
-
-    def _double(self):
+    def _double(self) -> None:
         """Double capacity of circle array"""
         if self._front > self._rear:
             frontPart = self._queue[self._front:]
@@ -67,7 +64,7 @@ class Circle:
         self._front = 0
         self._rear = self._count - 1
 
-    def _compact(self):
+    def _compact(self) -> None:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
@@ -92,6 +89,13 @@ class Circle:
                 self._front = 0
                 self._rear = self._capacity - 1
 
+    def _empty(self) -> Self:
+        """Empty circle array, keep current capacity"""
+        self._queue = [None]*self._capacity
+        self._front = 0
+        self._rear = self._capacity - 1
+        return self
+
     def __bool__(self):
         """Returns true if circle array is not empty"""
         return self._count > 0
@@ -100,40 +104,43 @@ class Circle:
         """Returns current number of values in the circlular array"""
         return self._count
 
-    def __getitem__(self, idx: int) -> Any | None:
-        """Get value at a valid index, otherwise return None.
-
-        Together with __len__ method, allows the reversed() function to return
-        a reverse iterator.
-        """
+    # def __getitem__(self, index: int) -> Any | Never: # annotation module or pyright bug?
+    def __getitem__(self, index: int) -> Union[Any, Never]:
+        """Get value at a valid index, otherwise raise IndexError"""
         cnt = self._count
-        if 0 <= idx < cnt:
-            return self._queue[(self._front + idx) % self._capacity]
-        elif -cnt <= idx < 0:
-            return self._queue[(self._front + cnt + idx) % self._capacity]
+        if 0 <= index < cnt:
+            return self._queue[(self._front + index) % self._capacity]
+        elif -cnt <= index < 0:
+            return self._queue[(self._front + cnt + index) % self._capacity]
         else:
-            return None
+            l = -cnt
+            h = cnt - 1
+            msg = f'Circle array index = {index} not between {l} and {h} while getting value'
+            msg0 = 'Circle array trying to index an empty circle array while getting value'
+            if cnt > 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
 
-    def __setitem__(self, idx: int, value):
-        """Set value at a valid index and return true, otherwise return false.
-
-        TODO: is silently doing nothing the right thing, or do I throw some sort
-        of index out of bound exception? It is an "exceptional" event indicating
-        some sort of coding issue.
-        """
+    def __setitem__(self, index: int, value) -> None | Never:
+        """Set value at a valid index, otherwise raise IndexError"""
         cnt = self._count
-        if 0 <= idx < cnt:
-            self._queue[(self._front + idx) % self._capacity] = value
-        elif -cnt <= idx < 0:
-            self._queue[(self._front + cnt + idx) % self._capacity] = value
+        if 0 <= index < cnt:
+            self._queue[(self._front + index) % self._capacity] = value
+        elif -cnt <= index < 0:
+            self._queue[(self._front + cnt + index) % self._capacity] = value
         else:
-            pass
+            l = -cnt
+            h = cnt - 1
+            msg = f'Circle array index = {index} not between {l} and {h} while setting value'
+            msg0 = 'Circle array trying to index an empty circle array while setting value'
+            if cnt > 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
 
     def __iter__(self):
-        """Iterator yielding data stored in dequeue, does not consume data.
-
-        To export contents of the circle array to a list: myList = list(myCircle)
-        """
+        """Iterator yielding contents of circle array, does not consume data"""
         if self._count > 0:
             cap = self._capacity
             rear = self._rear
@@ -178,18 +185,18 @@ class Circle:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
         return Circle(*self)
 
-    def pushR(self, data: Any) -> Circle:
-        """Push data on rear of circle, return the circle pushed to"""
-        if self._isFull():
+    def pushR(self, data: Any) -> Self:
+        """Push data on rear of circle"""
+        if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
         self._queue[self._rear] = data
         self._count += 1
         return self
 
-    def pushL(self, data: Any) -> Circle:
-        """Push data on front of circle, return the circle pushed to"""
-        if self._isFull():
+    def pushL(self, data: Any) -> Self:
+        """Push data on front of circle"""
+        if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
         self._queue[self._front] = data
@@ -197,7 +204,7 @@ class Circle:
         return self
 
     def popR(self) -> Any:
-        """Pop data off rear of circle array"""
+        """Pop data off rear of circle array, returns None if empty"""
         if self._count == 0:
             return None
         else:
@@ -208,7 +215,7 @@ class Circle:
             return data
 
     def popL(self) -> Any:
-        """Pop data off front of circle array"""
+        """Pop data off front of circle array, returns None if empty"""
         if self._count == 0:
             return None
         else:
@@ -226,7 +233,7 @@ class Circle:
         """Returns current capacity of circle array"""
         return self._count/self._capacity
 
-    def resize(self, addCapacity = 0):
+    def resize(self, addCapacity = 0) -> None:
         """Compact circle array and add extra capacity"""
         self._compact()
         if addCapacity > 0:
@@ -239,6 +246,12 @@ class Circle:
         """Apply function over circle array contents, returns new instance"""
         return Circle(*mapIter(iter(self), f))
 
+    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
+        """Apply function over circle array contents"""
+        for idx in range(self._count):
+            self[idx] = f(self[idx])
+        return self
+
     def flatMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
         return Circle(
@@ -247,6 +260,17 @@ class Circle:
             )
         )
 
+    def flatMapSelf(self, f: Callable[[Any], Circle]) -> Self:
+        """Apply function to contents and flatten result"""
+        copy = self.flatMap(f)
+        self._count = copy._count
+        self._capacity = copy._capacity
+        self._front = copy._front
+        self._rear = copy._rear
+        self._queue = copy._queue
+        del copy
+        return self
+
     def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
         return Circle(
@@ -254,6 +278,17 @@ class Circle:
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
+
+    def mergeMapSelf(self, f: Callable[[Any], Circle]) -> Self:
+        """Apply function and flatten result, returns new instance"""
+        copy = self.mergeMap(f)
+        self._count = copy._count
+        self._capacity = copy._capacity
+        self._front = copy._front
+        self._rear = copy._rear
+        self._queue = copy._queue
+        del copy
+        return self
 
 if __name__ == "__main__":
     pass

@@ -103,11 +103,12 @@ class Maybe():
 # type without using either inheritance or unnecessary internal state.
 
 def Some(value=None):
-    """Function for creating a Maybe from a value."""
+    """Function for creating a Maybe from a value. If value is None or missing,
+    returns a Nothing.
+    """
     return Maybe(value)
 
-"""Missing value Maybe, not a singleton - test via equality, not identity."""
-Nothing = Some()
+Nothing = Some()  # Nothing is not a singleton, test via equality not identity.
 
 if __name__ == "__main__":
     pass
