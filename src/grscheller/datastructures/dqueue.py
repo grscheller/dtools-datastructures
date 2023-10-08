@@ -43,8 +43,7 @@ class Dqueue():
         """Construct a double sided queue"""
         self._circle = Circle()
         for d in ds:
-            if d != None:
-                self._circle.pushR(d)
+            self._circle.pushR(d)
 
     def __bool__(self) -> bool:
         """Returns true if dqueue is not empty"""
@@ -54,14 +53,16 @@ class Dqueue():
         """Returns current number of values in dqueue"""
         return len(self._circle)
 
-    def __getitem__(self, ii: int) -> Any:
-        return self._circle[ii]
-
     def __iter__(self):
-        """Iterator yielding data stored in dequeue, does not consume data"""
-        if self._circle:
-            for pos in range(len(self._circle)):
-                yield self._circle[pos]
+        """Iterator yielding data currently stored in dqueue"""
+        currCircle = self._circle.copy()
+        for pos in range(len(currCircle)):
+            yield currCircle[pos]
+
+    def __reversed__(self):
+        """Reverse iterate over the current state of the dqueue"""
+        for data in reversed(self._circle.copy()):
+            yield data
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -80,7 +81,9 @@ class Dqueue():
 
     def copy(self) -> Dqueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity"""
-        return Dqueue(*self)
+        new_dqueue = Dqueue()
+        new_dqueue._circle = self._circle.copy()
+        return new_dqueue
 
     def pushR(self, *ds: Any) -> Dqueue:
         """Push data on rear of dqueue & return reference to self"""
@@ -90,7 +93,7 @@ class Dqueue():
         return self
 
     def pushL(self, *ds: Any) -> Dqueue:
-        """Push data on front of dqueue, return the dqueue pushed to"""
+        """Push data on front of dqueue, return reference to self"""
         for d in ds:
             if d != None:
                 self._circle.pushL(d)
@@ -139,6 +142,12 @@ class Dqueue():
     def map(self, f: Callable[[Any], Any]) -> Dqueue:
         """Apply function over dqueue contents, returns new instance"""
         return Dqueue(*mapIter(iter(self), f))
+
+    def mapSelf(self, f: Callable[[Any], Any]) -> Dqueue:
+        """Apply function over dqueue contents"""
+        copy = Dqueue(*mapIter(iter(self), f))
+        self._circle = copy._circle
+        return self
 
     def flatMap(self, f: Callable[[Any], Dqueue]) -> Dqueue:
         """Apply function and flatten result, returns new instance"""

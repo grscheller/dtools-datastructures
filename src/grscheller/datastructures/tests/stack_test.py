@@ -100,6 +100,10 @@ class TestStack:
         assert len(giantStack) == 4
         assert giantTalk == "Fe Fi Fo Fum"
 
+        es = Stack()
+        for _ in es:
+            assert False
+
     def test_equality(self):
         s1 = Stack(*range(3))
         s2 = s1.cons(42)
@@ -151,12 +155,22 @@ class TestStack:
         assert s7 == s8
 
     def test_doNotStoreNones(self):
-        s10 = Stack()
-        s10.push(None)
-        s10.push(None)
-        s10.push(None)
-        s10.push(42)
-        s10.push(None)
-        assert len(s10) == 1
-        s10.pop()
-        assert not s10
+        s1 = Stack()
+        s1.push(None)
+        s1.push(None)
+        s1.push(None)
+        s1.push(42)
+        s1.push(None)
+        assert len(s1) == 1
+        s1.pop()
+        assert not s1
+
+    def test_map(self):
+        s1 = Stack(5,4,3,2,1)
+        s2 = s1.map(lambda x: 2*x+1)
+        assert s1.head().get() == 5
+        assert s2.head().get() == 11
+        s3 = s2.map(lambda y: (y-1)//2)
+        assert s1 == s3
+        assert s1 is not s3
+

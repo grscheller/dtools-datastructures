@@ -46,21 +46,33 @@ class TestDqueue:
     def test_iterators(self):
         data = [1, 2, 3, 4]
         dq = Dqueue(*data)
+        ii = 0
+        for item in dq:
+            assert data[ii] == item
+            ii += 1
+        assert ii == 4
+
+        data.append(5)
+        dq = Dqueue(*data)
         data.reverse()
         ii = 0
         for item in reversed(dq):
             assert data[ii] == item
             ii += 1
-        assert ii == 4
-
-        data.reverse()
-        data.append(42)
-        dq.pushR(42)
-        ii=0
-        for item in dq:
-            assert data[ii] == item
-            ii += 1
         assert ii == 5
+
+        dq0 = Dqueue()
+        for _ in dq0:
+            assert False
+        for _ in reversed(dq0):
+            assert False
+
+        data = ()
+        dq0 = Dqueue(*data)
+        for _ in dq0:
+            assert False
+        for _ in reversed(dq0):
+            assert False
 
     def test_capacity(self):
         dq = Dqueue(1, 2)

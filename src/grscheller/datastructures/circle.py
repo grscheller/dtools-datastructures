@@ -37,7 +37,7 @@ class Circle:
     """Circular array with amortized O(1) indexing, prepending & appending
     values, and length determination.
 
-    Raises IndexError excetions.
+    Raises IndexError exceptions.
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
@@ -47,19 +47,19 @@ class Circle:
         self._capacity = capacity
         self._front = 0
         self._rear = (size - 1) % capacity
-        self._queue = list(data)
-        self._queue.append(None)
-        self._queue.append(None)
+        self._list = list(data)
+        self._list.append(None)
+        self._list.append(None)
 
     def _double(self) -> None:
         """Double capacity of circle array"""
         if self._front > self._rear:
-            frontPart = self._queue[self._front:]
-            rearPart = self._queue[:self._rear+1]
+            frontPart = self._list[self._front:]
+            rearPart = self._list[:self._rear+1]
         else:
-            frontPart = self._queue
+            frontPart = self._list
             rearPart = []
-        self._queue = frontPart + rearPart + [None]*(self._capacity)
+        self._list = frontPart + rearPart + [None]*(self._capacity)
         self._capacity *= 2
         self._front = 0
         self._rear = self._count - 1
@@ -68,30 +68,30 @@ class Circle:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
-                self._queue = [None]*2
+                self._list = [None]*2
                 self._capacity = 2
                 self._front = 0
                 self._rear = 1
             case 1:
-                self._queue = [self._queue[self._front], None]
+                self._list = [self._list[self._front], None]
                 self._capacity = 2
                 self._front = 0
                 self._rear = 0
             case _:
                 if self._front > self._rear:
-                    frontPart = self._queue[self._front:]
-                    rearPart = self._queue[:self._rear+1]
+                    frontPart = self._list[self._front:]
+                    rearPart = self._list[:self._rear+1]
                 else:
-                    frontPart = self._queue[self._front:self._rear+1]
+                    frontPart = self._list[self._front:self._rear+1]
                     rearPart = []
-                self._queue = frontPart + rearPart
+                self._list = frontPart + rearPart
                 self._capacity = self._count
                 self._front = 0
                 self._rear = self._capacity - 1
 
     def _empty(self) -> Self:
         """Empty circle array, keep current capacity"""
-        self._queue = [None]*self._capacity
+        self._list = [None]*self._capacity
         self._front = 0
         self._rear = self._capacity - 1
         return self
@@ -109,9 +109,9 @@ class Circle:
         """Get value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
-            return self._queue[(self._front + index) % self._capacity]
+            return self._list[(self._front + index) % self._capacity]
         elif -cnt <= index < 0:
-            return self._queue[(self._front + cnt + index) % self._capacity]
+            return self._list[(self._front + cnt + index) % self._capacity]
         else:
             l = -cnt
             h = cnt - 1
@@ -126,9 +126,9 @@ class Circle:
         """Set value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
-            self._queue[(self._front + index) % self._capacity] = value
+            self._list[(self._front + index) % self._capacity] = value
         elif -cnt <= index < 0:
-            self._queue[(self._front + cnt + index) % self._capacity] = value
+            self._list[(self._front + cnt + index) % self._capacity] = value
         else:
             l = -cnt
             h = cnt - 1
@@ -146,9 +146,9 @@ class Circle:
             rear = self._rear
             pos = self._front
             while pos != rear:
-                yield self._queue[pos]
+                yield self._list[pos]
                 pos = (pos + 1) % cap
-            yield self._queue[pos]
+            yield self._list[pos]
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -169,7 +169,7 @@ class Circle:
         capR = other._capacity
         nn = 0
         while nn < cnt:
-            if left._queue[(frontL+nn)%capL] != right._queue[(frontR+nn)%capR]:
+            if left._list[(frontL+nn)%capL] != right._list[(frontR+nn)%capR]:
                 return False
             nn += 1
         return True
@@ -190,7 +190,7 @@ class Circle:
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
-        self._queue[self._rear] = data
+        self._list[self._rear] = data
         self._count += 1
         return self
 
@@ -199,7 +199,7 @@ class Circle:
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
-        self._queue[self._front] = data
+        self._list[self._front] = data
         self._count += 1
         return self
 
@@ -208,8 +208,8 @@ class Circle:
         if self._count == 0:
             return None
         else:
-            data = self._queue[self._rear]
-            self._queue[self._rear] = None
+            data = self._list[self._rear]
+            self._list[self._rear] = None
             self._rear = (self._rear - 1) % self._capacity
             self._count -= 1
             return data
@@ -219,8 +219,8 @@ class Circle:
         if self._count == 0:
             return None
         else:
-            data = self._queue[self._front]
-            self._queue[self._front] = None
+            data = self._list[self._front]
+            self._list[self._front] = None
             self._front = (self._front + 1) % self._capacity
             self._count -= 1
             return data
@@ -237,7 +237,7 @@ class Circle:
         """Compact circle array and add extra capacity"""
         self._compact()
         if addCapacity > 0:
-            self._queue = self._queue + [None]*addCapacity
+            self._list = self._list + [None]*addCapacity
             self._capacity += addCapacity
             if self._count == 0:
                 self._rear = self._capacity - 1
@@ -267,8 +267,7 @@ class Circle:
         self._capacity = copy._capacity
         self._front = copy._front
         self._rear = copy._rear
-        self._queue = copy._queue
-        del copy
+        self._list = copy._list
         return self
 
     def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
@@ -286,8 +285,7 @@ class Circle:
         self._capacity = copy._capacity
         self._front = copy._front
         self._rear = copy._rear
-        self._queue = copy._queue
-        del copy
+        self._list = copy._list
         return self
 
 if __name__ == "__main__":

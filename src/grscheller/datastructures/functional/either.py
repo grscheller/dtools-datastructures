@@ -38,8 +38,17 @@ class Either():
             self._value = left
 
     def __bool__(self) -> bool:
-        """Return true if a Left, false if a Right."""
+        """Return true if a Left, false if a Right"""
         return self._isLeft
+
+    def __len__(self) -> int:
+        """An Either always contains just one thing, even if it is None"""
+        return 1
+
+    def __iter__(self):
+        """Yields its value if a Left"""
+        if self:
+            yield self._value
 
     def __repr__(self) -> str:
         if self:
@@ -48,7 +57,7 @@ class Either():
             return 'Right(' + repr(self._value) + ')'
 
     def __eq__(self, other: Either) -> bool:
-        """True if both sides are same "type" and values compare as equal."""
+        """True if both sides are same "type" and values compare as equal"""
         if not isinstance(other, type(self)):
             return False
 
@@ -76,7 +85,7 @@ class Either():
             return f(self._value)
         return self.copy()
 
-    def get(self):
+    def get(self) -> Any | None:
         if self:
             return self._value
         return None

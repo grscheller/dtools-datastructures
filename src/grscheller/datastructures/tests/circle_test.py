@@ -43,23 +43,35 @@ class TestCircle:
         assert len(c) == 0
 
     def test_iterators(self):
-        data = [1, 2, 3, 4]
+        data = [*range(100)]
+        c = Circle(*data)
+        ii = 0
+        for item in c:
+            assert data[ii] == item
+            ii += 1
+        assert ii == 100
+
+        data.append(100)
         c = Circle(*data)
         data.reverse()
         ii = 0
         for item in reversed(c):
             assert data[ii] == item
             ii += 1
-        assert ii == 4
+        assert ii == 101
 
-        data.reverse()
-        data.append(42)
-        c.pushR(42)
-        ii=0
-        for item in c:
-            assert data[ii] == item
-            ii += 1
-        assert ii == 5
+        c0 = Circle()
+        for _ in c0:
+            assert False
+        for _ in reversed(c0):
+            assert False
+
+        data = ()
+        c0 = Circle(*data)
+        for _ in c0:
+            assert False
+        for _ in reversed(c0):
+            assert False
 
     def test_capacity(self):
         c = Circle()

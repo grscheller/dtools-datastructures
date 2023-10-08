@@ -44,11 +44,15 @@ class Maybe():
         return self._value != None
 
     def __len__(self) -> int:
+        """A Maybe either contains something or not.
+        Return 1 if a Some, 0 if a Nothing.
+        """
         if self:
             return 1
         return 0
 
     def __iter__(self):
+        """Yields its value if not a Nothing"""
         if self:
             yield self._value
 
@@ -79,13 +83,13 @@ class Maybe():
             return Maybe()
 
     def get(self) -> Any | None:
-        """Get constents if they exist, otherwise return None. Caller is
+        """Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
         """
         return self._value
 
     def getOrElse(self, default: Any) -> Any:
-        """Get constents if they exist, otherwise return provided default value,
+        """Get contents if they exist, otherwise return provided default value,
         which is guarnteed never to be None. If the caller sets it to None,
         swap it for the empty tuple (). () was choosen since it is iterable and
         "does the right thing" in an iterable context. If caller really wants

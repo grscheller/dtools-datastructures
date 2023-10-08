@@ -1,6 +1,6 @@
 # Changelog: grscheller.datastrucures
 
-## Overview
+### Overview
 
 * Single maintainer project
   * semantic versioning
@@ -10,33 +10,35 @@
       * API breaking changes (between GitHub commits)
       * API additions (between PyPI releases)
     * fourth digit either means
-      * bugfixes or minor changes (between PyPI releases)
+      * bug fixes or minor changes (between PyPI releases)
       * GitHub only thrashing and experimentation
   * rolling release model
-    * maintainer will not back port bugfixes to previous versions
+    * maintainer will not back port bug fixes to previous versions
     * main branch will be the only tracking branch on GitHub
-      * attempt to keep realatvely stable, but not fully tested
+      * attempt to keep relatively stable, but not fully tested
     * feature branch begin with "feature_" and are places to
       * explore new directions
       * commit potentially very broken code
       * could be deleted from GitHub WITHOUT WARNING
-    * PyPI releases are taged with a leading "v" on GitHub
+    * PyPI releases are tagged with a leading "v" on GitHub
       * semantic versioning more strict between PyPI releases
       * semantic versioning between GitHub commits a bit more subjective
-        * only meaningfull GitHub commits will be listed below
+        * only meaningful GitHub commits will be listed below
         * all non-pulled PyPI releases will be tagged & listed below
 
 ## Versions
 
-### Version 0.6.8.5 - commit date: 2023-10-08
-* 3 new methods for class Circle (formally Carray, formally Cqueue)
+### Version 0.6.8.6 - commit date: 2023-10-08
+* 3 new methods for class Circle and Dqueue
   * mapSelf, flatMapSelf, mergeMapSelf
     * these correspond to map, flatMap, mergeMap
-    * except they act on the Circle object itself, not a new instance
+    * except they act on the class objects themselves, not new instances
 * these new methods will NOT be added to the Stack class
-  * they would distroy node sharing
+  * they would destroy node sharing
+  * did add a map method which returns a new instance (with new nodes)
+  * TODO: add flatMap and mergeMap methods
 * probably will add them to the Dqueue class too
-  * not worth the maintenance effort mainting two version of Dqueue
+  * not worth the maintenance effort maintaining two version of Dqueue
     * one returning new instances
     * the other modifying the object in place
 
@@ -65,13 +67,13 @@
   * used for grscheller.datastructures implementation
   * no particular need to indicate them to be _private
   * exports the following functions so far
-    * concatIters - sequentually concatenate multiple iterators
+    * concatIters - sequentially concatenate multiple iterators
     * mergeIters - merge multiple iterators until one is exhausted
     * mapIter - lazily map a function over an iterator stream
 * Decided to keep Alpha for next PyPI release
 
 ### Version 0.6.3.2 - commit date: 2023-09-30
-* Made funtional module into a sub package of datastructures
+* Made functional module into a sub package of datastructures
 * Improved comments and type annotations
 * Removed isEmpty method from Dqueue class
 * Both Dqueue & Stack objects evaluate true when non-empty
@@ -145,10 +147,10 @@
 
 * first Version uploaded to PyPI
 * https://pypi.org/project/grscheller.datastructures/
-* Installable from PyPI
+* Install from PyPI
   * $ pip install grscheller.datastructures==0.2.1.0
   * $ pip install grscheller.datastructures # for top level version
-* Installable from GitHub
+* Install from GitHub
   * $ pip install git+https://github.com/grscheller/datastructures@v0.2.1.0
 * pytest made a dependency
   * useful & less confusing to developers and endusers
@@ -160,7 +162,7 @@
 
 ### Version 0.2.0.2 - github only release date: 2023-08-29
 
-* First version installable from GitHub with pip
+* First version able to be installed from GitHub with pip
 * $ pip install git+https://github.com/grscheller/datastructures@v0.2.0.2
 
 ### Version 0.2.0.1 - commit date: 2023-08-29
@@ -187,6 +189,6 @@
 
 * Package implementing data structures which do not throw exceptions
 * Did not push to PyPI until version 0.2
-* Initial Python Datastructures for 0.1.0.0:
+* Initial Python grscheller.datastructures for 0.1.0.0:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack

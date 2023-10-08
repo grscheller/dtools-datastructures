@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
@@ -30,6 +30,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .functional.maybe import Maybe, Some, Nothing
+from .core import concatIters, mergeIters, mapIter
 from .circle import Circle
 
 class _Node():
@@ -68,12 +69,12 @@ class Stack():
         cnt = len(ds)
         if r2l:
             start = cnt - 1
-            step = -1
             stop = -1
+            step = -1
         else:
             start = 0
-            step = 1
             stop = cnt
+            step = 1
 
         self._head = None
         self._count = 0
@@ -93,7 +94,7 @@ class Stack():
         return self._count
 
     def __iter__(self):
-        """Iterator yielding data stored in the stack, starting """
+        """Iterator yielding data stored in the stack, starting at head"""
         node = self._head
         while node:
             yield node._data
@@ -132,10 +133,10 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        caData = Circle(*self).map(lambda x: repr(x)) 
-        repStr = '|| ' + caData.popR()
-        while caData:
-            repStr = repStr + ' <- ' + caData.popR()
+        circleData = Circle(*self).mapSelf(lambda x: repr(x)) 
+        repStr = '|| ' + circleData.popR()
+        while circleData:
+            repStr = repStr + ' <- ' + circleData.popR()
         repStr += ' ><'
         return repStr
 
@@ -198,6 +199,9 @@ class Stack():
             return stack
         else:
             return self.copy()
+
+    def map(self, f: Callable[[Any], Stack]) -> Stack:
+        return Stack(*mapIter(iter(self), f))
 
 if __name__ == "__main__":
     pass
