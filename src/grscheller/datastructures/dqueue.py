@@ -30,7 +30,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
-from .core import concatIters, mapIter
+from .iterlib import concatIters, mapIter
 
 class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.

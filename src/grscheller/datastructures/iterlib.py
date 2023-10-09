@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Core functions used to implement the grscheller.datastructures package"""
+"""Iterator related functions used by the grscheller.datastructures package"""
 
 from __future__ import annotations
 from typing import Any, Callable, Iterator
@@ -21,6 +21,10 @@ __all__ = ['concatIters', 'mergeIters', 'mapIter']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
+
+def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
+    """Lazily map a function over an iterator stream"""
+    return (f(x) for x in iterator)
 
 def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one"""
@@ -36,7 +40,6 @@ def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted"""
     iterList = list(iterators)
     numIters = len(iterList)
-    values = []
     while True:
         try:
             values = []
@@ -46,7 +49,3 @@ def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
                 yield value
         except StopIteration:
             break
-
-def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
-    """Lazily map a function over an iterator stream"""
-    return (f(x) for x in iterator)    # TODO: clarify interator vs generator

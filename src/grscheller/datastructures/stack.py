@@ -30,7 +30,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .functional.maybe import Maybe, Some, Nothing
-from .core import concatIters, mergeIters, mapIter
+from .iterlib import concatIters, mergeIters, mapIter
 from .circle import Circle
 
 class _Node():
@@ -58,27 +58,13 @@ class Stack():
     - None represents the absence of a value and are ignored if pushed on the
       stack. Use a grscheller.functional.Maybe to indicate an assent value or
       another sentital value such as the empty tuple ().
-    - No map or flatMap methods defined due to node sharing nature of the class.
     """
-    def __init__(self, *ds, r2l=True):
-        """Construct a LIFO Stack.
-
-        - push parameters right to left if r2l true (default)
-        - push parameters left to right if r2l false
-        """
+    def __init__(self, *ds):
+        """Construct a LIFO Stack"""
         cnt = len(ds)
-        if r2l:
-            start = cnt - 1
-            stop = -1
-            step = -1
-        else:
-            start = 0
-            stop = cnt
-            step = 1
-
         self._head = None
         self._count = 0
-        for ii in range(start, stop, step):
+        for ii in range(cnt):
             d = ds[ii]
             if d != None:
                 node = _Node(d, self._head)
@@ -102,7 +88,11 @@ class Stack():
 
     def __reversed__(self):
         """Reverse iterate over the current state of the stack"""
-        return iter(Stack(*self, r2l=False))
+        return iter(Stack(*self))
+
+    def reverse(self) -> Stack:
+        """Return a new stack in reverse order"""
+        return Stack(*self)
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
@@ -169,6 +159,16 @@ class Stack():
             return Some(data)
 
     def head(self) -> Maybe:
+        """DEPRICATED: Use peak() method instead
+
+        This method was renamed to peak(). The head() name will be will be
+        removed in a future release.
+        """
+        if self._head is None:
+            return Nothing
+        return Some(self._head._data)
+
+    def peak(self) -> Maybe:
         """Returns on option for data at head of stack.
         Does not consume the data if it exists.
         """
@@ -201,7 +201,23 @@ class Stack():
             return self.copy()
 
     def map(self, f: Callable[[Any], Stack]) -> Stack:
-        return Stack(*mapIter(iter(self), f))
+        return Stack(*mapIter(reversed(self), f))
+
+    def flatMap(self, f: Callable[[Any], Stack]) -> Stack:
+        """Apply function and flatten result, returns new instance"""
+        return Stack(
+            *concatIters(
+                *mapIter(mapIter(reversed(self), f), lambda x: reversed(x))
+            )
+        )
+
+    def mergeMap(self, f: Callable[[Any], Stack]) -> Stack:
+        """Apply function and flatten result, returns new instance"""
+        return Stack(
+            *mergeIters(
+                *mapIter(mapIter(reversed(self), f), lambda x: reversed(x))
+            )
+        )
 
 if __name__ == "__main__":
     pass

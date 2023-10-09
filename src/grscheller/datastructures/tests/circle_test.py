@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from grscheller.datastructures.circle import Circle
+from grscheller.datastructures.iterlib import mapIter
 
 class TestCircle:
     def test_push_then_pop(self):
@@ -136,6 +137,10 @@ class TestCircle:
         c2_answers = Circle(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert c2 == c2_answers
         assert len(c2) == 3*len(c1) == 12
+#        c3 = Circle()
+#        c4 = c3.flatMap(lambda x: Circle(1, x, x*x+1))
+#        assert 3 == c4 == Circle()
+#        assert c3 is not c4
 
     def test_flatMapSelf(self):
         c1 = Circle(1,2,3,5,10)
@@ -154,11 +159,13 @@ class TestCircle:
         assert c2[2] == c2[5] == c2[8] == c2[11] == 'GGGGGGG'
         assert c2[-1] == 'GGGGGGG'
         assert len(c2) == len(c1)*min(*c1) == 3*4
+        assert len(c2) == len(c1)*min(*(mapIter(iter(c1), lambda x: int(x)))) == 3*4
 
     def test_mergeMapSelf(self):
         c1 = Circle(5, 4, 7)
         c1_orig_len = len(c1)
-        c1_orig_min = min(*c1)
+        c1_orig_min = min(*c1)   # works but pyright complains
+        c1_orig_min = min(mapIter(iter(c1), lambda x: int(x)))
         assert len(c1) == 3
         c1.mergeMapSelf(lambda x: Circle(*([chr(0o100+x)*x]*x)))
         assert len(c1) == 3*4

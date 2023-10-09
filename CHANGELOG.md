@@ -26,7 +26,24 @@
         * only meaningful GitHub commits will be listed below
         * all non-pulled PyPI releases will be tagged & listed below
 
-## Versions
+# Versions
+
+### Version v0.6.9.0 - PyPI release date: 2023-10-09
+* deprecated Stack head() method
+  * replaced with peak() method
+* renamed core module to iterlib module
+  * library just contained functions for manimulating iterators
+  * TODO: use mergeIters as a guide for an iterator "zip" function
+* class Stack better in alignment with:
+  * Python lists
+    * more natural for Stack to iterate backwards starting from head
+    * removed Stack's __getitem__ method
+    * both pop and push/append from end
+  * Dqueue which wraps a Circle instance
+    * also Dqueue does not have a __getitem__ method
+  * Circle which implements a circular array with a Python List
+  * Stack now implements map, flatMap, mergeMap methods
+    * each returns a new Stack instance, with new nodes
 
 ### Version 0.6.8.6 - commit date: 2023-10-08
 * 3 new methods for class Circle and Dqueue

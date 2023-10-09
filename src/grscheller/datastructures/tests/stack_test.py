@@ -14,6 +14,7 @@
 
 from grscheller.datastructures.stack import Stack
 from grscheller.datastructures.functional import Maybe, Nothing, Some
+from grscheller.datastructures.iterlib import concatIters
 import grscheller.datastructures.stack as stack
 
 class Test_Node:
@@ -55,13 +56,17 @@ class TestStack:
 
         s2 = Stack(1, 2, 3, 42)
         while s2:
-            assert s2.head().get() != Nothing
+            assert s2.peak().get() != Nothing
             s2.pop()
         assert not s2
         ms2 = s2.pop()
         assert ms2 == Nothing
         assert ms2.get() is None
         assert not ms2
+        s2.push(42)
+        assert s2.peak() == Some(40+2)
+        if s2.peak() == Some(42):
+            assert s2.pop().get() == 42
 
     def test_stack_len(self):
         s0 = Stack()
@@ -90,8 +95,8 @@ class TestStack:
         assert s1.tail() == Nothing
 
     def test_stack_iter(self):
-        giantStack = Stack(*["Fe", " Fi", " Fo", " Fum"])
-        giantTalk = giantStack.head().getOrElse("Teeny Tiny")
+        giantStack = Stack(*[" Fum", " Fo", " Fi", "Fe"])
+        giantTalk = giantStack.peak().getOrElse("Teeny Tiny")
         assert giantTalk == "Fe"
         generalThumb = ['I', ' am', ' General', ' Tom', ' Thumb.']
         gs = giantStack.tail().getOrElse(Stack(*reversed(generalThumb)))
@@ -112,7 +117,7 @@ class TestStack:
         assert s1 != s2
         assert s1 == s2.tail().getOrElse(Stack())
 
-        assert s2.head().getOrElse(7) == 42
+        assert s2.peak().getOrElse(7) == 42
         assert s2.pop().getOrElse(0) == 42
 
         s3 = Stack(range(10000))
@@ -141,17 +146,17 @@ class TestStack:
         s9 = Stack(["huey", "dewey", "louie"])
         assert s7 == s8
         assert s7 != s9
-        assert s7.head() == s8.head()
-        assert s7.head() is not s8.head()
-        assert s7.head() != s9.head()
-        assert s7.head() is not s9.head()
+        assert s7.peak() == s8.peak()
+        assert s7.peak() is not s8.peak()
+        assert s7.peak() != s9.peak()
+        assert s7.peak() is not s9.peak()
         ducks.append("louie")
         assert s7 == s8
         assert s7 == s9
         s7.push(['moe', 'larry', 'curlie'])
         s8.push(['moe', 'larry'])
         assert s7 != s8
-        s8.head().getOrElse([]).append("curlie")
+        s8.peak().getOrElse([]).append("curlie")
         assert s7 == s8
 
     def test_doNotStoreNones(self):
@@ -165,12 +170,57 @@ class TestStack:
         s1.pop()
         assert not s1
 
+    def test_reverse(self):
+        s1 = Stack('a', 'b', 'c', 'd')
+        s2 = Stack('d', 'c', 'b', 'a')
+        assert s1 != s2
+        assert s1 == s2.reverse()
+        s0 = Stack()
+        assert s0 == s0
+        assert s0 == s0.reverse()
+        s3 = Stack(concatIters(iter(range(1, 100)), iter(range(98, 0, -1))))
+        assert s3 == s3
+        assert s3 == s3.reverse()
+
+    def test_reversed(self):
+        lf = [1.0, 2.0, 3.0, 4.0]
+        lr = [4.0, 3.0, 2.0, 1.0]
+        s1 = Stack(4.0, 3.0, 2.0, 1.0)
+        l_s1 = list(s1)
+        l_r_s1 = list(reversed(s1))
+        assert lf == l_s1
+        assert lr == l_r_s1
+        s2 = Stack(*lf)
+        while s2:
+            assert s2.pop().get() == lf.pop()
+
     def test_map(self):
-        s1 = Stack(5,4,3,2,1)
+        s1 = Stack(1,2,3,4,5)
         s2 = s1.map(lambda x: 2*x+1)
-        assert s1.head().get() == 5
-        assert s2.head().get() == 11
+        assert s1.peak().get() == 5
+        assert s2.peak().get() == 11
         s3 = s2.map(lambda y: (y-1)//2)
         assert s1 == s3
         assert s1 is not s3
 
+    def test_flatMap(self):
+        c1 = Stack(1, 20, 300)
+        c2 = c1.flatMap(lambda x: Stack(x, x+1))
+        c2_answers = Stack(1, 2, 20, 21, 300, 301)
+        assert c2 == c2_answers
+        assert len(c2) == 2*len(c1) == 6
+        c3 = Stack()
+        c4 = c3.flatMap(lambda x: Stack(x, x+1))
+        assert c3 == c4 == Stack()
+        assert c3 is not c4
+
+    def test_mergeMap(self):
+        c1 = Stack(1, 20, 300)
+        c2 = c1.mergeMap(lambda x: Stack(x, x+1))
+        c2_answers = Stack(1, 20, 300, 2, 21, 301)
+        assert c2 == c2_answers
+        assert len(c2) == 2*len(c1) == 6
+        c3 = Stack()
+        c4 = c3.flatMap(lambda x: Stack(x, x+1))
+        assert c3 == c4 == Stack()
+        assert c3 is not c4

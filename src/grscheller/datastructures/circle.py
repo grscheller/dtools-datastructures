@@ -31,7 +31,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Self, Never, Union
-from .core import concatIters, mergeIters, mapIter
+from .iterlib import concatIters, mergeIters, mapIter
 
 class Circle:
     """Circular array with amortized O(1) indexing, prepending & appending
