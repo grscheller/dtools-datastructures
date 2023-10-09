@@ -12,23 +12,27 @@ structure comes not from what it enables you to do, but from what it
 does not allow you to do.
 
 Unlike many of the data structures in the standard library, these data
-structures avoid throwing uncaught exceptions. Exceptions indicating
-possible coding errors like "SyntaxError", "AttributeError", "TypeError"
-and "IndexError" are permitted. Monadic data structures like Maybe and
-Either are provided to deal with the "unhappy path." Exceptions do have
-their place for "exceptional" events, but not in the basic building
-blocks of a code base.
+structures avoid throwing uncaught exceptions. Uncaught exceptions
+indicating possible coding errors like "SyntaxError", "AttributeError",
+"TypeError" and sometimes "IndexError" are permitted. Also
+"StopIteration" is frequently deferred to client code since it is so
+deeply baked into the Python language. Monadic data structures like
+Maybe and Either are provided to deal with the "unhappy path."
+Exceptions do have their place for "exceptional" events, but not in the
+basic building blocks of a code base.
 
 Mutation is either avoided or pushed to the innermost scopes. Functional
 methods like map and flatMap return copies instead of mutating the
-originals.
+originals. Iterators usually iterate over copies of the iterables that
+producesd them.
 
 As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
-value in a very real datastructure? Implemented in CPython as C language
-data structure, the Python None "singleton" builtin "object" does have
-a sort of real existence to it. Unless specifically documented
-otherwise, None values are not stored in these data structures.
+value in a very real datastructure? Implemented in CPython as
+a C language data structure, the Python None "singleton" builtin
+"object" does have a sort of real existence to it. Unless specifically
+documented otherwise, None values are not stored in these data
+structures.
 
 Type annotations used in this package are extremely useful in helping
 external tooling work well. See PEP-563 & PEP-649. These features are
@@ -132,22 +136,20 @@ FP Datastructures supporting a functional style of programming in Python.
 
 * Function **EitherToMaybe**
 
-## grscheller.datastructes.core module
+## grscheller.datastructes.iterlib module
 
-Module of functions used in the implementation of this package. Below
-are some functions from this module that may be of interest for their
-own sake.
+Module of functions used in the manipulation of Python iterators.
 
 ### Functions for interators
+
+* Function **mapIter**
+  * Lazily map a function over an iterator stream
 
 * Function **concatIters**
   * Sequentually concatenate multiple iterators into one
 
 * Function **mergeIters**
   * Merge multiple iterator streams until one is exhausted
-
-* Function **mapIter**
-  * Lazily map a function over an iterator stream
 
 #### Examples
 
@@ -183,4 +185,40 @@ own sake.
    4
    9
    1764
-```   
+```
+
+#### Why write my own iterator library module
+
+Why not just use the itertools module? When I first created the iterlib
+(formerly called core) module, I did not understand the distinction
+between generators, iterators, and being iterable. They were all
+conflated in my mind. Until I started coding with these concepts, the
+itertools documentation just confused me even more.
+
+#### Iterators vs generators
+
+A generator is a type of iterator implemented via a function where at
+least one return statement is replaced by a yield statement. Python also
+has syntax to produce generators from "generator comprehensions" similar
+to the syntax used to produce lists from "list comprehensions."
+
+Don't confuse an object being iterable with being an iterator.
+
+A Python iterator is a stateful objects with a __next__(self) method
+which either returns the next value or raises the StopIteration exception.
+The Python builtin next() function returns the next value from the
+iterator object.
+
+An object is iterable if it has an __iter__(self) method. This method
+can either return an iterator or be a generator. the Python iter()
+builtin function returns an iterator when called with an iterable
+object. 
+
+* Objects can be iterable without being iterators.
+  * the iter() function produces an iterator for the iterable object
+  * for-loop systax effectively call iter() behind the scenes 
+* Many iterators are themseves iterable
+  * many just return a "self" reference when iterator is requested
+  * an iterator need not be iterable
+  * an iterable can return something other than itself
+    * like a copy of itself so the original can safely mutate
