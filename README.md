@@ -24,7 +24,7 @@ basic building blocks of a code base.
 Mutation is either avoided or pushed to the innermost scopes. Functional
 methods like map and flatMap return copies instead of mutating the
 originals. Iterators usually iterate over copies of the iterables that
-producesd them.
+produced them.
 
 As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
