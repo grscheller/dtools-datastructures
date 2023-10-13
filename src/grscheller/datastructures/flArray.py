@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.dqueue - Double sided queue
+"""Module grscheller.datastructure.flArray - Double sided queue
 
 Fixed length array of size > 0 with O(1) data access. Data structure will
 prevent array from changing length. Will store None values.
@@ -25,9 +25,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
-from .functional.maybe import Maybe, Nothing, Some
-from .iterlib import concatIters, mapIter
+from typing import Any, Callable, Self, Never, Union
+from .functional.maybe import Maybe, Nothing
+from .iterlib import concatIters, mergeIters, mapIter
 
 class FLArray():
     """Class representing a fixed length array data structure of length > 0.
@@ -36,32 +36,47 @@ class FLArray():
         """Construct a fixed length array.
            - guarnteed to be of length |size| for size != 0
            - if size not indicated (or 0), size to data provided
-             - if no data provided, return array of size = 1
+             - if no data provided, return array with default value of size = 1
            - assign missing values the default value
-           - if size < 0, reverse data provided
+           - if size < 0, pad on left or slice on right
         """
-        if size >= 0:
-            self._list = list(ds)
-            initial_size = len(self._list)
-        else:
-            self._list = list(reversed(ds))
-            initial_size = len(self._list)
-            size = -size
-        match (size, size == initial_size, size > initial_size):
+        dlist = list(ds)
+        dsize = len(dlist)
+        match (size, abs(size) == dsize, abs(size) > dsize):
             case (0, _, _):
-                if initial_size > 0:
-                    self._size = initial_size
+                # default to the size of the data given
+                if dsize > 0:
+                    self._size = dsize
+                    self._list = dlist
                 else:
-                    self._list = [default]
+                    # ensure flArray not empty
                     self._size = 1
+                    self._list = [default]
             case (_, True, _):
-                self._size = size
+                # no size inconsistencies
+                self._size = dsize
+                self._list = dlist
             case (_, _, True):
-                self._list = self._list + [default]*(size - initial_size)
-                self._size = size
+                if size > 0:
+                    # pad higher indexes (on "right")
+                    self._size = size
+                    self._list = dlist + [default]*(size - dsize)
+                else:
+                    # pad lower indexes (on "left")
+                    dlist.reverse()
+                    dlist += [default]*(-size - dsize)
+                    dlist.reverse()
+                    self._size = -size
+                    self._list = dlist + [default]*(size - dsize)
             case _:
-                self._list = self._list[0:size]
-                self._size = size
+                if size > 0:
+                    # take left slice, ignore extra data at end
+                    self._size = size
+                    self._list = dlist[0:size]
+                else:
+                    # take right slice, ignore extra data at beginning
+                    self._size = -size
+                    self._list = dlist[dsize+size:]
 
     def __bool__(self):
         """Returns true if not all values evaluate as False"""
@@ -73,6 +88,25 @@ class FLArray():
     def __len__(self) -> int:
         """Returns the size of the flArray"""
         return self._size
+
+    def __getitem__(self, index: int) -> Union[Any, Never]:
+        # TODO: Does not like being given a slice ... research
+        cnt = self._size
+        if not -cnt <= index < cnt:
+            l = -cnt
+            h = cnt - 1
+            msg = f'fdArray index = {index} not between {l} and {h} while getting value'
+            raise IndexError(msg)
+        return self._list[index]
+
+    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
+        cnt = self._size
+        if not -cnt <= index < cnt:
+            l = -cnt
+            h = cnt - 1
+            msg = f'fdArray index = {index} not between {l} and {h} while getting value'
+            raise IndexError(msg)
+        self._list[index] = value
 
     def __iter__(self):
         """Iterator yielding data currently stored in flArray"""
@@ -108,7 +142,7 @@ class FLArray():
         """Apply function over dqueue contents, returns new instance"""
         return FLArray(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> FLArray:
+    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
         """Apply function over dqueue contents"""
         copy = FLArray(*mapIter(iter(self), f))
         self._circle = copy._circle
@@ -118,6 +152,14 @@ class FLArray():
         """Apply function and flatten result, returns new instance"""
         return FLArray(
             *concatIters(
+                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
+            )
+        )
+
+    def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
+        """Apply function and flatten result, returns new instance"""
+        return FLArray(
+            *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )

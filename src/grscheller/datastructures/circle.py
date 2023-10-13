@@ -122,7 +122,7 @@ class Circle:
             else:
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value) -> None | Never:
+    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
         """Set value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
