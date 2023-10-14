@@ -1,7 +1,7 @@
 ## Python grscheller.datastructures package
 
 Data structures supporting a functional style of programming and
-avoiding the throwing of exceptions. 
+avoiding the raising of unnecessary exceptions. 
 
 Why not just use Python builtin data structures like lists and
 dictionaries directly? The data structures in this package internalize
@@ -18,8 +18,8 @@ indicating possible coding errors like "SyntaxError", "AttributeError",
 "StopIteration" is frequently deferred to client code since it is so
 deeply baked into the Python language. Monadic data structures like
 Maybe and Either are provided to deal with the "unhappy path."
-Exceptions do have their place for "exceptional" events, but not in the
-basic building blocks of a code base.
+In Python, exceptions do have their place, but only for iterators and
+"exceptional" events.
 
 Mutation is either avoided or pushed to the innermost scopes. Functional
 methods like map and flatMap return copies instead of mutating the
@@ -45,10 +45,11 @@ to guide the design of this package.
 
 ### grscheller.datastructuses.circle module
 
-Double sided circular array with amortized O(1) pushing/popping to/from
-either end, O(1) length determination, and O(1) indexing for setting and
-getting values. Implemented with a Python List. This datastructure
-automatically resizes itself as needed.
+Implements a double sided circular array with amortized O(1)
+pushing/popping to/from either end, O(1) length determination,
+and O(1) indexing for setting and getting values. Implemented
+with a Python List. This datastructure automatically resizes
+itself as needed.
 
 Mainly used to help implement other data structures in this package,
 this class is not opinionated regarding None as a value. It freely
@@ -67,22 +68,25 @@ a circular array and will resize itself as needed.
   * O(1) length determination
   * O(n) copy
 
-If None values are pushed to this data structure, some care must be
-taken when extracting them. Popping a None from a dqueue is
-indestinguishable from popping from an empty dqueue. Empty Tuples ()
-make for good sentinel values.
+### grscheller.datastructes.flArray module
+
+Implements a fixed length array of element of different types.
+
+* Class **FLArray**
+  * O(1) data access
+* will store None as value
 
 ### grscheller.datastructes.stack module
 
-LIFO stack data structure implemented with singularly linked nodes. The
-Stack objects themselves are light weight and have only two attributes,
-a count containing the number of elements on the stack, and a head
-containing either None, for an empty stack, or the first node of the
-stack. The nodes themselves are an implementation detail and are private
-to the module. The nodes, and the data they contain, are designed to be
-shared between different Stack instances.
+Implements a LIFO stack data structure implemented with singularly
+linked nodes. The Stack objects themselves are light weight and have
+only two attributes, a count containing the number of elements on the
+stack, and a head containing either None, for an empty stack, or the
+first node of the stack. The nodes themselves are an implementation
+detail and are private to the module. The nodes, and the data they
+contain, are designed to be shared between different Stack instances.
           
-* Class Stack
+* Class **Stack**
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy

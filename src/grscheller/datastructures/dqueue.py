@@ -36,8 +36,9 @@ class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
 
     Does not throw exceptions. The Dqueue class consistently uses None to
-    represent the absence of a value. Therefore some care needs to be taken
-    when Python None is pushed onto Dqueue objects.
+    represent the absence of a value. None will not be pushed to this
+    datastructure. As an alternative, use Maybe objects of type Nothing,
+    or the empty tuple () to represent a non-existent value. 
     """
     def __init__(self, *ds):
         """Construct a double sided queue"""

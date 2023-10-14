@@ -14,8 +14,8 @@
 
 """Module grscheller.datastructure.flArray - Double sided queue
 
-Fixed length array of size > 0 with O(1) data access. Data structure will
-prevent array from changing length. Will store None values.
+Implements fixed length arrays of values of arbitrary types. O(1) data access
+which will store None values. The arrays must have length > 0.
 """
 
 from __future__ import annotations
@@ -26,19 +26,20 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Self, Never, Union
-from .functional.maybe import Maybe, Nothing
+from .functional.maybe import Nothing
 from .iterlib import concatIters, mergeIters, mapIter
 
 class FLArray():
     """Class representing a fixed length array data structure of length > 0.
+    Permits storing None as a value.
     """
     def __init__(self, *ds, size: int = 0, default: Any = Nothing):
-        """Construct a fixed length array.
+        """Construct a fixed length array
            - guarnteed to be of length |size| for size != 0
            - if size not indicated (or 0), size to data provided
              - if no data provided, return array with default value of size = 1
            - assign missing values the default value
-           - if size < 0, pad on left or slice on right
+           - if size < 0, pad provided data on left or slice it on the right
         """
         dlist = list(ds)
         dsize = len(dlist)
