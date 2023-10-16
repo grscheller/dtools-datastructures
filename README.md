@@ -36,7 +36,7 @@ value in a very real datastructure? Implemented in CPython as
 a C language data structure, the Python None "singleton" builtin
 "object" does have a sort of real existence to it. Unless specifically
 documented otherwise, None values are not stored in these data
-structures since.
+structures.
 
 Type annotations used in this package are extremely useful in helping
 external tooling work well. See PEP-563 & PEP-649. These features are
@@ -79,7 +79,18 @@ Implements a fixed length array of element of different types.
 
 * Class **FLArray**
   * O(1) data access
-* will store None as value
+* will store None as a value
+
+### grscheller.datastructes.queue module
+
+Implements a FIFO queue data structure. The queue is implemented with
+a circular array and will resize itself as needed. 
+
+* Class **Dqueue**
+  * O(1) push & pop
+  * O(1) peaks for last in or next out
+  * O(1) length determination
+  * O(n) copy
 
 ### grscheller.datastructes.stack module
 
@@ -95,17 +106,6 @@ contain, are designed to be shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
-
-### grscheller.datastructes.queue module
-
-Implements a FIFO queue data structure. The queue is implemented with
-a circular array and will resize itself as needed. 
-
-* Class **Dqueue**
-  * O(1) push & pop
-  * O(1) peaks for last in or next out
-  * O(1) length determination
-  * O(n) copy
 
 ## grscheller.datastructes.functional subpackage
 
