@@ -28,6 +28,20 @@
 
 # Versions
 
+### Version 0.7.0.0 - commit date 2023-10-16
+* added Queue data structure repreenting a FIFO queue
+* renamed two Dqueue methods
+  * headR -> peakLastIn
+  * headL -> peakNextOut
+* went ahead and removed Stack head method
+  * fair since I still labeling releases as alpha releases
+  * the API is still a work in progress
+* updated README.md
+  * foreshadowing making a distinction between
+    * objects "sharing" their data -> FP methods return copies
+    * objects "contain" their data -> FP methods mutate object
+  * added info on class Queue
+
 ### Version v0.6.9.0 - PyPI release date: 2023-10-09
 * deprecated Stack head() method
   * replaced with peak() method
@@ -108,7 +122,7 @@
   * work-in-progress
   * erroneous LSP error messages greatly reduced
 
-### Version 0.5.2.1 - PyPI release date: 2023-09-24
+### Version v0.5.2.1 - PyPI release date: 2023-09-24
 * data structures now support a much more FP style for Python
   * implemented Maybe monad
   * introduces the use of type annotations for this effort
@@ -136,7 +150,7 @@
   * Stack & _StackNONE classes inherit from _StackBase
   * still working out the API
 
-### Version 0.3.0.2 - PyPI release date: 2023-09-09
+### Version v0.3.0.2 - PyPI release date: 2023-09-09
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
@@ -150,7 +164,7 @@
 * worst case O(n)
   * will short circuit fast if possible
 
-### Version 0.2.2.2 - PyPI release date: 2023-09-04
+### Version v0.2.2.2 - PyPI release date: 2023-09-04
 
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
@@ -160,7 +174,7 @@
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
   * could not do the same for tests/ if end users are to have access
 
-### Version 0.2.1.0 - PyPI release date: 2023-09-03
+### Version v0.2.1.0 - PyPI release date: 2023-09-03
 
 * first Version uploaded to PyPI
 * https://pypi.org/project/grscheller.datastructures/
@@ -206,6 +220,6 @@
 
 * Package implementing data structures which do not throw exceptions
 * Did not push to PyPI until version 0.2
-* Initial Python grscheller.datastructures for 0.1.0.0:
+* Initial Python grscheller.datastructures for 0.1.0.0 commit:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack

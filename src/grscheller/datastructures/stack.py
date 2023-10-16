@@ -80,7 +80,7 @@ class Stack():
         return self._count
 
     def __iter__(self):
-        """Iterator yielding data stored in the stack, starting at head"""
+        """Iterator yielding data stored in the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
@@ -114,7 +114,7 @@ class Stack():
                 return True
             if left._head is right._head:
                 return True
-            if left.head() != right.head():
+            if left.peak() != right.peak():
                 return False
             left = left.tail().getOrElse(Stack())
             right = right.tail().getOrElse(Stack())
@@ -157,16 +157,6 @@ class Stack():
             self._head = self._head._next
             self._count -= 1
             return Some(data)
-
-    def head(self) -> Maybe:
-        """DEPRICATED: Use peak() method instead
-
-        This method was renamed to peak(). The head() name will be will be
-        removed in a future release.
-        """
-        if self._head is None:
-            return Nothing
-        return Some(self._head._data)
 
     def peak(self) -> Maybe:
         """Returns on option for data at head of stack.

@@ -21,10 +21,14 @@ Maybe and Either are provided to deal with the "unhappy path."
 In Python, exceptions do have their place, but only for iterators and
 "exceptional" events.
 
-Mutation is either avoided or pushed to the innermost scopes. Functional
-methods like map and flatMap return copies instead of mutating the
-originals. Iterators usually iterate over copies of the iterables that
-produced them.
+Mutation is either avoided or pushed to the innermost scopes. Iterators
+usually iterate over copies of the iterables that produced them allowing
+the original data structures to safely mutate without race conditions.
+
+For data structures which "share" their data with other instances,
+functional methods, like map and flatMap, return copies. For data
+strurctures which "contain" their data, functional methods mutate the
+instances instead.
 
 As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
@@ -32,7 +36,7 @@ value in a very real datastructure? Implemented in CPython as
 a C language data structure, the Python None "singleton" builtin
 "object" does have a sort of real existence to it. Unless specifically
 documented otherwise, None values are not stored in these data
-structures.
+structures since.
 
 Type annotations used in this package are extremely useful in helping
 external tooling work well. See PEP-563 & PEP-649. These features are
@@ -65,6 +69,7 @@ a circular array and will resize itself as needed.
 
 * Class **Dqueue**
   * O(1) pushes & pops either end
+  * O(1) peaks either end
   * O(1) length determination
   * O(n) copy
 
@@ -90,6 +95,17 @@ contain, are designed to be shared between different Stack instances.
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
+
+### grscheller.datastructes.queue module
+
+Implements a FIFO queue data structure. The queue is implemented with
+a circular array and will resize itself as needed. 
+
+* Class **Dqueue**
+  * O(1) push & pop
+  * O(1) peaks for last in or next out
+  * O(1) length determination
+  * O(n) copy
 
 ## grscheller.datastructes.functional subpackage
 

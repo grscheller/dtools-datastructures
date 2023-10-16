@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.dqueue - Double sided queue
+"""Module grscheller.datastructure.queue - LIFO queue
 
-Double sided queue with amortized O(1) insertions & deletions from either end.
-Obtaining length (number of elements) of a Dqueue is also a O(1) operation.
+LIFO queue with amortized O(1) pushing & popping from the queue.
+Obtaining length (number of elements) of a Queue is also a O(1) operation.
 
 Implemented with a Python List based circular array.
 """
 
 from __future__ import annotations
 
-__all__ = ['Dqueue']
+__all__ = ['Queue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -32,36 +32,36 @@ from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
 from .iterlib import concatIters, mapIter
 
-class Dqueue():
-    """Double sided queue datastructure. Will resize itself as needed.
+class Queue():
+    """FIFO queue datastructure. Will resize itself as needed.
 
-    Does not throw exceptions. The Dqueue class consistently uses None to
-    represent the absence of a value. None will not be pushed to this
-    datastructure. As an alternative, use Maybe objects of type Nothing,
-    or the empty tuple () to represent a non-existent value. 
+    The Queue class consistently uses None to represent the absence of a value.
+    None will not be pushed to this datastructure. As an alternative, use Maybe
+    objects of type Nothing, or the empty tuple () to represent a non-existent
+    value. 
     """
     def __init__(self, *ds):
-        """Construct a double sided queue"""
+        """Construct a FIFO queue datastructure"""
         self._circle = Circle()
         for d in ds:
             self._circle.pushR(d)
 
     def __bool__(self) -> bool:
-        """Returns true if dqueue is not empty"""
+        """Returns true if queue is not empty"""
         return len(self._circle) != 0
 
     def __len__(self) -> int:
-        """Returns current number of values in dqueue"""
+        """Returns current number of values in queue"""
         return len(self._circle)
 
     def __iter__(self):
-        """Iterator yielding data currently stored in dqueue"""
+        """Iterator yielding data currently stored in queue"""
         currCircle = self._circle.copy()
         for pos in range(len(currCircle)):
             yield currCircle[pos]
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the dqueue"""
+        """Reverse iterate over the current state of the queue"""
         for data in reversed(self._circle.copy()):
             yield data
 
@@ -74,85 +74,71 @@ class Dqueue():
         return self._circle == other._circle
 
     def __repr__(self):
-        """Display data in dqueue"""
+        """Display data in queue"""
         dataListStrs = []
         for data in self._circle:
             dataListStrs.append(repr(data))
-        return ">< " + " | ".join(dataListStrs) + " ><"
+        return "<< " + " | ".join(dataListStrs) + " <<"
 
-    def copy(self) -> Dqueue:
-        """Return shallow copy of the dqueue in O(n) time & space complexity"""
-        new_dqueue = Dqueue()
-        new_dqueue._circle = self._circle.copy()
-        return new_dqueue
+    def copy(self) -> Queue:
+        """Return shallow copy of the queue in O(n) time & space complexity"""
+        new_queue = Queue()
+        new_queue._circle = self._circle.copy()
+        return new_queue
 
-    def pushR(self, *ds: Any) -> Dqueue:
-        """Push data on rear of dqueue & return reference to self"""
+    def push(self, *ds: Any) -> Queue:
+        """Push data on rear of queue & return reference to self"""
         for d in ds:
             if d != None:
                 self._circle.pushR(d)
         return self
 
-    def pushL(self, *ds: Any) -> Dqueue:
-        """Push data on front of dqueue, return reference to self"""
-        for d in ds:
-            if d != None:
-                self._circle.pushL(d)
-        return self
-
-    def popR(self) -> Maybe:
-        """Pop data off rear of dqueue"""
-        if len(self._circle) > 0:
-            return Some(self._circle.popR())
-        else:
-            return Nothing
-
-    def popL(self) -> Maybe:
-        """Pop data off front of dqueue"""
+    def pop(self) -> Maybe:
+        """Pop data off front of queue"""
         if len(self._circle) > 0:
             return Some(self._circle.popL())
         else:
             return Nothing
 
-    def peakR(self) -> Maybe:
-        """Return rear element of dqueue without consuming it"""
+    def peakLastIn(self) -> Maybe:
+        """Return last element pushed to queue without consuming it"""
         if len(self._circle) > 0:
             return Some(self._circle[-1])
         else:
             return Nothing
 
-    def peakL(self) -> Maybe:
-        """Return front element of dqueue without consuming it"""
+    def peakNextOut(self) -> Maybe:
+        """Return next element ready to pop from queue without consuming it"""
         if len(self._circle) > 0:
             return Some(self._circle[0])
         else:
             return Nothing
 
     def capacity(self) -> int:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of queue"""
         return self._circle.capacity()
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of queue"""
         return self._circle.fractionFilled()
 
     def resize(self, addCapacity = 0):
-        """Compact dqueue and add extra capacity"""
+        """Compact queue and add extra capacity"""
         return self._circle.resize(addCapacity)
 
-    def map(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents, returns new instance"""
-        return Dqueue(*mapIter(iter(self), f))
+    def map(self, f: Callable[[Any], Any]) -> Queue:
+        """Apply function over queue contents, returns new instance"""
+        return Queue(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents"""
-        copy = Dqueue(*mapIter(iter(self), f))
+    def mapSelf(self, f: Callable[[Any], Any]) -> Queue:
+        """Apply function over queue contents"""
+        copy = Queue(*mapIter(iter(self), f))
         self._circle = copy._circle
         return self
 
-    def flatMap(self, f: Callable[[Any], Dqueue]) -> Dqueue:
+    def flatMap(self, f: Callable[[Any], Queue]) -> Queue:
         """Apply function and flatten result, returns new instance"""
-        return Dqueue(
+        return Queue(
             *concatIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )

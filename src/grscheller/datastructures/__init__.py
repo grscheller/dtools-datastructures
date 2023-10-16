@@ -34,7 +34,7 @@
          - GitHub only thrashing and experimentation
 """
 
-__version__ = "0.6.10.0"
+__version__ = "0.7.0.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -42,8 +42,9 @@ __license__ = "Appache License 2.0"
 from .functional.maybe import *
 from .functional.either import *
 from .functional.util import *
+from .iterlib import *
 from .circle import *
 from .dqueue import *
 from .flArray import *
 from .stack import *
-from .iterlib import *
+from .queue import *
