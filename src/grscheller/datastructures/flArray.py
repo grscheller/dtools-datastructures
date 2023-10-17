@@ -116,7 +116,7 @@ class FLArray():
             yield currList[pos]
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the dqueue"""
+        """Reverse iterate over the current state of the flArray"""
         for data in reversed(self._list.copy()):
             yield data
 
@@ -140,13 +140,12 @@ class FLArray():
         return FLArray(self)
 
     def map(self, f: Callable[[Any], Any]) -> FLArray:
-        """Apply function over dqueue contents, returns new instance"""
+        """Apply function over flArray contents, returns new instance"""
         return FLArray(*mapIter(iter(self), f))
 
     def mapSelf(self, f: Callable[[Any], Any]) -> Self:
-        """Apply function over dqueue contents"""
-        copy = FLArray(*mapIter(iter(self), f))
-        self._circle = copy._circle
+        """Apply function over flArray contents"""
+        self._circle.mapSelf(f)
         return self
 
     def flatMap(self, f: Callable[[Any], FLArray]) -> FLArray:
@@ -157,6 +156,13 @@ class FLArray():
             )
         )
 
+    def flatMapSelf(self, f: Callable[[Any], FLArray]) -> Self:
+        """Apply function to contents and flatten result"""
+        donor = self.flatMap(f)
+        self._size = donor._size
+        self._list = donor._list
+        return self
+
     def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
         """Apply function and flatten result, returns new instance"""
         return FLArray(
@@ -165,5 +171,11 @@ class FLArray():
             )
         )
 
+    def mergeMapSelf(self, f: Callable[[Any], FLArray]) -> Self:
+        """Apply function and merge to flatten result, returns new instance"""
+        donor = self.mergeMap(f)
+        self._size = donor._size
+        self._list = donor._list
+        return self
 if __name__ == "__main__":
     pass

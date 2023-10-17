@@ -34,7 +34,7 @@
          - GitHub only thrashing and experimentation
 """
 
-__version__ = "0.7.0.0"
+__version__ = "0.7.1.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

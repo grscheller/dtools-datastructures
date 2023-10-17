@@ -262,12 +262,12 @@ class Circle:
 
     def flatMapSelf(self, f: Callable[[Any], Circle]) -> Self:
         """Apply function to contents and flatten result"""
-        copy = self.flatMap(f)
-        self._count = copy._count
-        self._capacity = copy._capacity
-        self._front = copy._front
-        self._rear = copy._rear
-        self._list = copy._list
+        donor = self.flatMap(f)
+        self._count = donor._count
+        self._capacity = donor._capacity
+        self._front = donor._front
+        self._rear = donor._rear
+        self._list = donor._list
         return self
 
     def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
@@ -279,13 +279,13 @@ class Circle:
         )
 
     def mergeMapSelf(self, f: Callable[[Any], Circle]) -> Self:
-        """Apply function and flatten result, returns new instance"""
-        copy = self.mergeMap(f)
-        self._count = copy._count
-        self._capacity = copy._capacity
-        self._front = copy._front
-        self._rear = copy._rear
-        self._list = copy._list
+        """Apply function and merge to flatten result, returns new instance"""
+        donor = self.mergeMap(f)
+        self._count = donor._count
+        self._capacity = donor._capacity
+        self._front = donor._front
+        self._rear = donor._rear
+        self._list = donor._list
         return self
 
 if __name__ == "__main__":

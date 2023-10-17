@@ -135,3 +135,6 @@ class TestDqueue:
         dq2 = dq1.flatMap(lambda x: Dqueue(1, x, x*x+1))
         dq2_answers = Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert dq2 == dq2_answers
+        assert dq1 == dq2
+        assert dq1 is dq2
+        assert dq1 is not dq2_answers

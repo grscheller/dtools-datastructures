@@ -61,11 +61,9 @@ class Stack():
     """
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
-        cnt = len(ds)
         self._head = None
         self._count = 0
-        for ii in range(cnt):
-            d = ds[ii]
+        for d in ds:
             if d != None:
                 node = _Node(d, self._head)
                 self._head = node

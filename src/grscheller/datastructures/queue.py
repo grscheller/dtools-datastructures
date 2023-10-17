@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Self
 from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
 from .iterlib import concatIters, mapIter
@@ -130,19 +130,16 @@ class Queue():
         """Apply function over queue contents, returns new instance"""
         return Queue(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> Queue:
+    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
         """Apply function over queue contents"""
-        copy = Queue(*mapIter(iter(self), f))
-        self._circle = copy._circle
+        self._circle = Queue(*mapIter(iter(self), f))._circle
         return self
 
-    def flatMap(self, f: Callable[[Any], Queue]) -> Queue:
-        """Apply function and flatten result, returns new instance"""
-        return Queue(
-            *concatIters(
-                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
-            )
-        )
+    def flatMap(self, f: Callable[[Any], Queue]) -> Self:
+        """Apply function and flatten result, surpress any None values"""
+        self._circle = Queue(*concatIters(
+            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
+        return self
 
 if __name__ == "__main__":
     pass

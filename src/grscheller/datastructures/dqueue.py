@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Self
 from .circle import Circle
 from .functional.maybe import Maybe, Nothing, Some
 from .iterlib import concatIters, mapIter
@@ -151,12 +151,10 @@ class Dqueue():
         return self
 
     def flatMap(self, f: Callable[[Any], Dqueue]) -> Dqueue:
-        """Apply function and flatten result, returns new instance"""
-        return Dqueue(
-            *concatIters(
-                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
-            )
-        )
+        """Apply function and flatten result, surpress any None values"""
+        self._circle = Dqueue(*concatIters(
+            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
+        return self
 
 if __name__ == "__main__":
     pass
