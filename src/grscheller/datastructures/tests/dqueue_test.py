@@ -13,32 +13,30 @@
 # limitations under the License.
 
 from grscheller.datastructures.dqueue import Dqueue
-from grscheller.datastructures.functional import Maybe, Nothing
 
 class TestDqueue:
     def test_push_then_pop(self):
         dq = Dqueue()
         pushed = 42; dq.pushL(pushed)
-        popped = dq.popL().get()
+        popped = dq.popL()
         assert pushed == popped
         assert len(dq) == 0
-        assert dq.popL().getOrElse(42) == 42
         pushed = 0; dq.pushL(pushed)
-        popped = dq.popR().getOrElse(42)
+        popped = dq.popR()
         assert pushed == popped == 0
         assert not dq
         pushed = 0; dq.pushR(pushed)
-        popped = dq.popL().get()
+        popped = dq.popL()
         assert popped is not None
         assert pushed == popped
         assert len(dq) == 0
         pushed = ''; dq.pushR(pushed)
-        popped = dq.popR().get()
+        popped = dq.popR()
         assert pushed == popped
         assert len(dq) == 0
         dq.pushR('first').pushR('second').pushR('last')
-        assert dq.popL().get() == 'first'
-        assert dq.popR().get() == 'last'
+        assert dq.popL() == 'first'
+        assert dq.popR() == 'last'
         assert dq
         dq.popL()
         assert len(dq) == 0
@@ -113,46 +111,32 @@ class TestDqueue:
         dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
         assert dq1 == dq2
 
-        tup2 = dq2.popR().getOrElse((42, 'Hitchhiker'))
+        tup2 = dq2.popR()
         assert dq1 != dq2
 
         dq2.pushR((42, 'foofoo'))
         assert dq1 != dq2
 
-        dq1.popR().getOrElse((38, 'Nami'))
+        dq1.popR()
         dq1.pushR((42, 'foofoo')).pushR(tup2)
         dq2.pushR(tup2)
         assert dq1 == dq2
 
-        holdA = dq1.popL().getOrElse(666)
+        holdA = dq1.popL()
         dq1.resize(42)
-        holdB = dq1.popL().getOrElse(777)
-        holdC = dq1.popR().getOrElse(888)
+        holdB = dq1.popL()
+        holdC = dq1.popR()
         dq1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
         dq2.pushL(200)
         assert dq1 == dq2
 
-    def test_maybe(self):
-        dq1 = Dqueue()
-        m42 = dq1.pushL(42).popR()
-        mNot = dq1.popR()
-        assert m42 == Maybe(42)
-        assert m42 != Maybe(21)
-        assert m42.getOrElse(21) == 42
-        assert m42.getOrElse(21) != 21
-        assert m42.get() == 42
-        assert m42.get() != 21
-        assert mNot.getOrElse(21) == 21
-        assert mNot == Nothing
-        assert mNot.get() == None
-
     def test_mapAndFlatMap(self):
         dq1 = Dqueue(1,2,3,10)
+        dq2 = dq1.copy()
         dq1_answers = Dqueue(0,3,8,99)
         assert dq1.map(lambda x: x*x-1) == dq1_answers
-        dq2 = dq1.flatMap(lambda x: Dqueue(1, x, x*x+1))
+        dq2.flatMap(lambda x: Dqueue(1, x, x*x+1))
         dq2_answers = Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert dq2 == dq2_answers
-        assert dq1 == dq2
-        assert dq1 is dq2
-        assert dq1 is not dq2_answers
+        assert dq1 != dq2
+        assert dq1 is not dq2

@@ -13,32 +13,30 @@
 # limitations under the License.
 
 from grscheller.datastructures.queue import Queue
-from grscheller.datastructures.functional import Maybe, Nothing
 
 class TestQueue:
     def test_push_then_pop(self):
         q = Queue()
         pushed = 42; q.push(pushed)
-        popped = q.pop().get()
+        popped = q.pop()
         assert pushed == popped
         assert len(q) == 0
-        assert q.pop().getOrElse(42) == 42
         pushed = 0; q.push(pushed)
-        popped = q.pop().getOrElse(42)
+        popped = q.pop()
         assert pushed == popped == 0
         assert not q
         pushed = 0; q.push(pushed)
-        popped = q.pop().get()
+        popped = q.pop()
         assert popped is not None
         assert pushed == popped
         assert len(q) == 0
         pushed = ''; q.push(pushed)
-        popped = q.pop().get()
+        popped = q.pop()
         assert pushed == popped
         assert len(q) == 0
         q.push('first').push('second').push('last')
-        assert q.pop().get() == 'first'
-        assert q.pop().get() == 'second'
+        assert q.pop()== 'first'
+        assert q.pop()== 'second'
         assert q
         q.pop()
         assert len(q) == 0
@@ -113,7 +111,7 @@ class TestQueue:
         tup2 = 42, 'foofoo'
         q1 = Queue(1, 2, 3, 'Forty-Two', tup1)
         q2 = Queue(2, 3, 'Forty-Two').push((7, 11, 'foobar'))
-        popped = q1.pop().get()
+        popped = q1.pop()
         assert popped == 1
         assert q1 == q2
 
@@ -123,7 +121,7 @@ class TestQueue:
 
         q1.push(q1.pop(), q1.pop(), q1.pop())
         q2.push(q2.pop(), q2.pop(), q2.pop()).pop()
-        assert tup2 == q2.peakNextOut().getOrElse((42, 'Hitchhiker'))
+        assert tup2 == q2.peakNextOut()
         assert q1 != q2
         assert q1.pop() != q2.pop()
         assert q1 == q2
@@ -132,27 +130,13 @@ class TestQueue:
         q2.pop()
         assert q1 == q2
 
-    def test_maybe(self):
-        dq1 = Queue()
-        m42 = dq1.push(42).pop()
-        mNot = dq1.pop()
-        assert m42 == Maybe(42)
-        assert m42 != Maybe(21)
-        assert m42.getOrElse(21) == 42
-        assert m42.getOrElse(21) != 21
-        assert m42.get() == 42
-        assert m42.get() != 21
-        assert mNot.getOrElse(21) == 21
-        assert mNot == Nothing
-        assert mNot.get() == None
-
     def test_mapAndFlatMap(self):
         q1 = Queue(1,2,3,10)
+        q2 = q1.copy()
         q1_answers = Queue(0,3,8,99)
         assert q1.map(lambda x: x*x-1) == q1_answers
-        q2 = q1.flatMap(lambda x: Queue(1, x, x*x+1))
+        q2.flatMap(lambda x: Queue(1, x, x*x+1))
         q2_answers = Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert q2 == q2_answers
-        assert q1 == q2
-        assert q1 is q2
-        assert q1 is not q2_answers
+        assert q1 != q2
+        assert q1 is not q2

@@ -1,4 +1,3 @@
-# Copyright 2023 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,10 +26,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self
+from typing import Any, Callable, Self, Union
 from .circle import Circle
-from .functional.maybe import Maybe, Nothing, Some
-from .iterlib import concatIters, mapIter
+from .iterlib import concatIters, mapIter, mergeIters
 
 class Queue():
     """FIFO queue datastructure. Will resize itself as needed.
@@ -94,26 +92,26 @@ class Queue():
                 self._circle.pushR(d)
         return self
 
-    def pop(self) -> Maybe:
+    def pop(self) -> Union[Any, None]:
         """Pop data off front of queue"""
         if len(self._circle) > 0:
-            return Some(self._circle.popL())
+            return self._circle.popL()
         else:
-            return Nothing
+            return None
 
-    def peakLastIn(self) -> Maybe:
+    def peakLastIn(self) -> Union[Any, None]:
         """Return last element pushed to queue without consuming it"""
         if len(self._circle) > 0:
-            return Some(self._circle[-1])
+            return self._circle[-1]
         else:
-            return Nothing
+            return None
 
-    def peakNextOut(self) -> Maybe:
+    def peakNextOut(self) -> Union[Any, None]:
         """Return next element ready to pop from queue without consuming it"""
         if len(self._circle) > 0:
-            return Some(self._circle[0])
+            return self._circle[0]
         else:
-            return Nothing
+            return None
 
     def capacity(self) -> int:
         """Returns current capacity of queue"""
@@ -123,15 +121,12 @@ class Queue():
         """Returns current capacity of queue"""
         return self._circle.fractionFilled()
 
-    def resize(self, addCapacity = 0):
+    def resize(self, addCapacity = 0) -> Self:
         """Compact queue and add extra capacity"""
-        return self._circle.resize(addCapacity)
+        self._circle.resize(addCapacity)
+        return self
 
-    def map(self, f: Callable[[Any], Any]) -> Queue:
-        """Apply function over queue contents, returns new instance"""
-        return Queue(*mapIter(iter(self), f))
-
-    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
+    def map(self, f: Callable[[Any], Any]) -> Self:
         """Apply function over queue contents"""
         self._circle = Queue(*mapIter(iter(self), f))._circle
         return self
@@ -139,6 +134,12 @@ class Queue():
     def flatMap(self, f: Callable[[Any], Queue]) -> Self:
         """Apply function and flatten result, surpress any None values"""
         self._circle = Queue(*concatIters(
+            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
+        return self
+
+    def mergeMap(self, f: Callable[[Any], Queue]) -> Self:
+        """Apply function and flatten result, surpress any None values"""
+        self._circle = Queue(*mergeIters(
             *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
         return self
 

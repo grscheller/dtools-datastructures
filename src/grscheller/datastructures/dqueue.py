@@ -27,17 +27,16 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self
+from typing import Any, Callable, Self, Union
 from .circle import Circle
-from .functional.maybe import Maybe, Nothing, Some
-from .iterlib import concatIters, mapIter
+from .iterlib import concatIters, mapIter, mergeIters
 
 class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
 
     Does not throw exceptions. The Dqueue class consistently uses None to
     represent the absence of a value. None will not be pushed to this
-    datastructure. As an alternative, use Maybe objects of type Nothing,
+    data structure. As an alternative, use Maybe objects of type Nothing,
     or the empty tuple () to represent a non-existent value. 
     """
     def __init__(self, *ds):
@@ -101,33 +100,33 @@ class Dqueue():
                 self._circle.pushL(d)
         return self
 
-    def popR(self) -> Maybe:
+    def popR(self) -> Union[Any, None]:
         """Pop data off rear of dqueue"""
         if len(self._circle) > 0:
-            return Some(self._circle.popR())
+            return self._circle.popR()
         else:
-            return Nothing
+            return None
 
-    def popL(self) -> Maybe:
+    def popL(self) -> Union[Any, None]:
         """Pop data off front of dqueue"""
         if len(self._circle) > 0:
-            return Some(self._circle.popL())
+            return self._circle.popL()
         else:
-            return Nothing
+            return None
 
-    def peakR(self) -> Maybe:
+    def peakR(self) -> Union[Any, None]:
         """Return rear element of dqueue without consuming it"""
         if len(self._circle) > 0:
-            return Some(self._circle[-1])
+            return self._circle[-1]
         else:
-            return Nothing
+            return None
 
-    def peakL(self) -> Maybe:
+    def peakL(self) -> Union[Any, None]:
         """Return front element of dqueue without consuming it"""
         if len(self._circle) > 0:
-            return Some(self._circle[0])
+            return self._circle[0]
         else:
-            return Nothing
+            return None
 
     def capacity(self) -> int:
         """Returns current capacity of dqueue"""
@@ -137,23 +136,25 @@ class Dqueue():
         """Returns current capacity of dqueue"""
         return self._circle.fractionFilled()
 
-    def resize(self, addCapacity = 0):
+    def resize(self, addCapacity = 0) -> Self:
         """Compact dqueue and add extra capacity"""
-        return self._circle.resize(addCapacity)
-
-    def map(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents, returns new instance"""
-        return Dqueue(*mapIter(iter(self), f))
-
-    def mapSelf(self, f: Callable[[Any], Any]) -> Dqueue:
-        """Apply function over dqueue contents"""
-        copy = Dqueue(*mapIter(iter(self), f))
-        self._circle = copy._circle
+        self._circle.resize(addCapacity)
         return self
 
-    def flatMap(self, f: Callable[[Any], Dqueue]) -> Dqueue:
+    def map(self, f: Callable[[Any], Any]) -> Self:
+        """Apply function over dqueue contents"""
+        self._circle = Dqueue(*mapIter(iter(self), f))._circle
+        return self
+
+    def flatMap(self, f: Callable[[Any], Dqueue]) -> Self:
         """Apply function and flatten result, surpress any None values"""
         self._circle = Dqueue(*concatIters(
+            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
+        return self
+
+    def mergeMap(self, f: Callable[[Any], Dqueue]) -> Self:
+        """Apply function and flatten result, surpress any None values"""
+        self._circle = Dqueue(*mergeIters(
             *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._circle
         return self
 

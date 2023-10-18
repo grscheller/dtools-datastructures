@@ -28,6 +28,12 @@
 
 # Versions
 
+### Version 0.7.2.0 - commit date 2023-10-18
+* Queue & Dqueue no longer return Maybe objects
+  * Neither store None as a value
+  * Now safe to return None for non-existent values
+    * like popping or peaking from an empty queue or dqueue
+
 ### Version 0.7.0.0 - commit date 2023-10-16
 * added Queue data structure repreenting a FIFO queue
 * renamed two Dqueue methods

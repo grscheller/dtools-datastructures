@@ -1,4 +1,4 @@
-## Python grscheller.datastructures package
+# Python grscheller.datastructures package
 
 Data structures supporting a functional style of programming and
 avoiding the raising of unnecessary exceptions. 
@@ -75,7 +75,7 @@ a circular array and will resize itself as needed.
 
 ### grscheller.datastructes.flArray module
 
-Implements a fixed length array of element of different types.
+Implements a fixed length array of elements of different types.
 
 * Class **FLArray**
   * O(1) data access
@@ -86,7 +86,7 @@ Implements a fixed length array of element of different types.
 Implements a FIFO queue data structure. The queue is implemented with
 a circular array and will resize itself as needed. 
 
-* Class **Dqueue**
+* Class **Queue**
   * O(1) push & pop
   * O(1) peaks for last in or next out
   * O(1) length determination
@@ -176,27 +176,23 @@ Module of functions used in the manipulation of Python iterators.
 ```python
    In [1]: from grscheller.datastructures.core import *
    
-   In [2]: for aa in concatIters(iter([1,2,3,4,5]), iter(['a','b','c'])):
+   In [2]: for aa in concatIters(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
    1
    2
    3
    4
-   5
    a
    b
-   c
    
-   In [3]: for aa in mergeIters(iter([1,2,3,4,5]), iter(['a','b','c'])):
+   In [3]: for aa in mergeIters(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
    1
    a
    2
    b
-   3
-   c
 
    In [4]: for aa in mapIter(iter([1,2,3,42]), lambda x: x*x):
       ...:     print(aa)
