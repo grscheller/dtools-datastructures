@@ -43,6 +43,24 @@ class TestDqueue:
         dq.popL()
         assert len(dq) == 0
 
+    def test_pushing_None(self):
+        dq0 = Dqueue()
+        dq1 = Dqueue()
+        dq2 = Dqueue()
+        dq1.pushR(None)
+        dq2.pushL(None)
+        assert dq0 == dq1 == dq2
+
+        barNone = (1, 2, None, 3, None, 4)
+        bar = (1, 2, 3, 4)
+        dq0 = Dqueue(*barNone)
+        dq1 = Dqueue(*bar)
+        assert dq0 == dq1
+        for d in iter(dq0):
+            assert d is not None
+        for d in dq1:
+            assert d is not None
+
     def test_iterators(self):
         data = [1, 2, 3, 4]
         dq = Dqueue(*data)

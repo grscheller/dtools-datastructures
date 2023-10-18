@@ -64,7 +64,7 @@ class Stack():
         self._head = None
         self._count = 0
         for d in ds:
-            if d != None:
+            if d is not None:
                 node = _Node(d, self._head)
                 self._head = node
                 self._count += 1
@@ -108,7 +108,7 @@ class Stack():
         right = other
         nn = self._count
         while nn > 0:
-            if left is None or right is None:
+            if left is None:
                 return True
             if left._head is right._head:
                 return True
@@ -140,7 +140,7 @@ class Stack():
         return the stack being pushed.
         """
         for d in ds:
-            if d != None:
+            if d is not None:
                 node = _Node(d, self._head)
                 self._head = node
                 self._count += 1

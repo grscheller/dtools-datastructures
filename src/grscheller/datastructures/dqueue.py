@@ -44,7 +44,8 @@ class Dqueue():
         """Construct a double sided queue"""
         self._circle = Circle()
         for d in ds:
-            self._circle.pushR(d)
+            if d is not None:
+                self._circle.pushR(d)
 
     def __bool__(self) -> bool:
         """Returns true if dqueue is not empty"""

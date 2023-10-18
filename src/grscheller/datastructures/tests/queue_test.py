@@ -43,6 +43,24 @@ class TestQueue:
         q.pop()
         assert len(q) == 0
 
+    def test_pushing_None(self):
+        q0 = Queue()
+        q1 = Queue()
+        q2 = Queue()
+        q1.push(None)
+        q2.push(None)
+        assert q0 == q1 == q2
+
+        barNone = (1, 2, None, 3, None, 4)
+        bar = (1, 2, 3, 4)
+        q0 = Queue(*barNone)
+        q1 = Queue(*bar)
+        assert q0 == q1
+        for d in q0:
+            assert d is not None
+        for d in q1:
+            assert d is not None
+
     def test_iterators(self):
         data = [1, 2, 3, 4]
         dq = Queue(*data)

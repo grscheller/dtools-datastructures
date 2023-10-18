@@ -44,7 +44,8 @@ class Queue():
         """Construct a FIFO queue datastructure"""
         self._circle = Circle()
         for d in ds:
-            self._circle.pushR(d)
+            if d is not None:
+                self._circle.pushR(d)
 
     def __bool__(self) -> bool:
         """Returns true if queue is not empty"""
