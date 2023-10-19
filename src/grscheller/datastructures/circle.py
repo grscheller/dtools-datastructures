@@ -104,7 +104,6 @@ class Circle:
         """Returns current number of values in the circlular array"""
         return self._count
 
-    # def __getitem__(self, index: int) -> Any | Never: # annotation module or pyright bug?
     def __getitem__(self, index: int) -> Union[Any, Never]:
         """Get value at a valid index, otherwise raise IndexError"""
         cnt = self._count

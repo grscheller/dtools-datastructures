@@ -137,7 +137,7 @@ class FLArray():
 
     def copy(self) -> FLArray:
         """Return shallow copy of the flArray in O(n) time & space complexity"""
-        return FLArray(self)
+        return FLArray(*self)
 
     def map(self, f: Callable[[Any], Any]) -> FLArray:
         """Apply function over flArray contents, returns new instance"""
@@ -145,7 +145,8 @@ class FLArray():
 
     def mapSelf(self, f: Callable[[Any], Any]) -> Self:
         """Apply function over flArray contents"""
-        self._circle.mapSelf(f)
+        for idx in range(self._size):
+            self._list[idx] = f(self._list[idx])
         return self
 
     def flatMap(self, f: Callable[[Any], FLArray]) -> FLArray:

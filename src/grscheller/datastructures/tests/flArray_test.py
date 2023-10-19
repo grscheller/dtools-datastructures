@@ -117,13 +117,48 @@ class TestFPArray:
         else:
             assert False
 
-    def test_mapAndFlatMap(self):
+    def test_mapFlatMap(self):
         fl1 = FLArray(1,2,3,10)
-        fl1_answers = FLArray(0, 3, 8, 99)
-        assert fl1.map(lambda x: x*x-1) == fl1_answers
-        fl2 = fl1.flatMap(lambda x: FLArray(1, x, x*x+1))
-        fl2_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert fl2 == fl2_answers
-        fl3 = fl1.mergeMap(lambda x: FLArray(1, x, x*x+1))
-        fl3_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
-        assert fl3 == fl3_answers
+        fl2 = fl1.copy()
+        fl3 = fl1.copy()
+
+        fl4 = fl1.map(lambda x: x*x-1)
+        fl4_answers = FLArray(0, 3, 8, 99)
+        assert fl1 != fl4_answers
+        assert fl4 == fl4_answers
+        assert fl1 is not fl4
+        
+        fl5 = fl2.flatMap(lambda x: FLArray(1, x, x*x+1))
+        fl5_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
+        assert fl2 != fl5_answers
+        assert fl5 == fl5_answers
+        assert fl5 is not fl2
+        
+        fl6 = fl3.mergeMap(lambda x: FLArray(1, x, x*x+1))
+        fl6_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
+        assert fl3 != fl6_answers
+        assert fl6 == fl6_answers
+        assert fl6 is not fl3
+
+    def test_mapFlatMapSelf(self):
+        fl1 = FLArray(1,2,3,10)
+        fl2 = fl1.copy()
+        fl3 = fl1.copy()
+
+        fl4 = fl1.mapSelf(lambda x: x*x-1)
+        fl4_answers = FLArray(0, 3, 8, 99)
+        assert fl1 == fl4_answers
+        assert fl4 == fl4_answers
+        assert fl1 is fl4
+        
+        fl5 = fl2.flatMapSelf(lambda x: FLArray(1, x, x*x+1))
+        fl5_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
+        assert fl2 == fl5_answers
+        assert fl5 == fl5_answers
+        assert fl5 is fl2
+        
+        fl6 = fl3.mergeMapSelf(lambda x: FLArray(1, x, x*x+1))
+        fl6_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
+        assert fl3 == fl6_answers
+        assert fl6 == fl6_answers
+        assert fl6 is fl3

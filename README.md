@@ -1,22 +1,22 @@
 # Python grscheller.datastructures package
 
-Data structures supporting a functional style of programming, avoiding
-raising unnecessary exceptions, support either the sharing or the safe
-encapsulation of data, yet still try to be Pythonic.
+Data structures supporting a functional style of programming, yet still
+try to be Pythonic.
 
 Why not just use Python builtin data structures like lists and
 dictionaries directly? The data structures in this package allow you to
 
+* internalize the "bit fiddling" needed to implement desired behavior
 * focus on the algorithms these data structures were talored to support
-* internalize the "bit fiddling" needed to implement the data structures
-* code to the "happy path" and deal with errors without exceptions
+* code to the "happy" path and provide FP tools for the "unhappy" ones
+* deal with errors without forcing exceptions upon users of the package
 * safely handling mutation by
   * pushing it to protected innermost scopes
-  * have iterators process non-mutating copies of internal state
-    * allows for "lazy" evaluation without race conditions
 * allow sharing of data by
   * pushing mutation to an outer scope
   * making immutable internal state inaccessible to client code
+* allow for "lazy" evaluation without race conditions by
+  * having iterators process non-mutating copies of internal state
 
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prvents you from doing.
