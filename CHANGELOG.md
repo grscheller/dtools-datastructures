@@ -1,32 +1,28 @@
 # Changelog: grscheller.datastrucures
 
-### Overview
+## Overview
 
 * Single maintainer project
-  * semantic versioning
-    * first digit signifies an event or epoch
-    * second digit means breaking API changes (between PyPI releases)
-    * third digit either means
-      * API breaking changes (between GitHub commits)
-      * API additions (between PyPI releases)
-    * fourth digit either means
-      * bug fixes or minor changes (between PyPI releases)
-      * GitHub only thrashing and experimentation
-  * rolling release model
+  * Semantic Versioning
+   * first digit signifies an event or epoch
+   * second digit means breaking API changes (between PyPI releases)
+   * third digit either means
+     * API breaking changes (between GitHub commits)
+     * API additions (between PyPI releases)
+   * fourth digit either means
+     * bugfixes or minor changes (between PyPI releases)
+     * GitHub only thrashing and experimentation
+  * Rolling Release Model
     * maintainer will not back port bug fixes to previous versions
     * main branch will be the only tracking branch on GitHub
       * attempt to keep relatively stable, but not fully tested
     * feature branch begin with "feature_" and are places to
       * explore new directions
       * commit potentially very broken code
-      * could be deleted from GitHub WITHOUT WARNING
+      * could be deleted from GitHub anytime WITHOUT WARNING
     * PyPI releases are tagged with a leading "v" on GitHub
-      * semantic versioning more strict between PyPI releases
-      * semantic versioning between GitHub commits a bit more subjective
-        * only meaningful GitHub commits will be listed below
-        * all non-pulled PyPI releases will be tagged & listed below
 
-# Versions
+## Versions
 
 ### Version 0.7.2.0 - commit date 2023-10-18
 * Queue & Dqueue no longer return Maybe objects

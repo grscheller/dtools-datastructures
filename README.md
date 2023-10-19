@@ -1,34 +1,24 @@
 # Python grscheller.datastructures package
 
-Data structures supporting a functional style of programming and
-avoiding the raising of unnecessary exceptions. 
+Data structures supporting a functional style of programming, avoiding
+raising unnecessary exceptions, support either the sharing or the safe
+encapsulation of data, yet still try to be Pythonic.
 
 Why not just use Python builtin data structures like lists and
-dictionaries directly? The data structures in this package internalize
-the "bit fiddling" allowing your code to follow the "happy path" and
-letting you concentrate on the algorithms for which these data
-structures were tailored to support. Sometimes the real power of a data
-structure comes not from what it enables you to do, but from what it
-does not allow you to do.
+dictionaries directly? The data structures in this package allow you to
 
-Unlike many of the data structures in the standard library, these data
-structures avoid throwing uncaught exceptions. Uncaught exceptions
-indicating possible coding errors like "SyntaxError", "AttributeError",
-"TypeError" and sometimes "IndexError" are permitted. Also
-"StopIteration" is frequently deferred to client code since it is so
-deeply baked into the Python language. Monadic data structures like
-Maybe and Either are provided to deal with the "unhappy path."
-In Python, exceptions do have their place, but only for iterators and
-"exceptional" events.
+* focus on the algorithms these data structures were talored to support
+* internalize the "bit fiddling" needed to implement the data structures
+* code to the "happy path" and deal with errors without exceptions 
+* safely handling mutation by
+  * pushing it to protected innermost scopes
+  * have iterators process non-mutating copies of internal state
+* allow sharing of data by
+  * pushing mutation to an outer scope
+  * making immutable internal state inaccessible to client code
 
-Mutation is either avoided or pushed to the innermost scopes. Iterators
-usually iterate over copies of the iterables that produced them allowing
-the original data structures to safely mutate without race conditions.
-
-For data structures which "share" their data with other instances,
-functional methods, like map and flatMap, return copies. For data
-strurctures which "contain" their data, functional methods mutate the
-instances instead.
+Sometimes the real power of a data structure comes not from what it
+enables you to do, but from what it prvents you from doing.
 
 As a design choice, None is semantically used by this package to
 indicate the absence of a value. How does one store a "non-existent"
@@ -174,7 +164,15 @@ Module of functions used in the manipulation of Python iterators.
 #### Examples
 
 ```python
-   In [1]: from grscheller.datastructures.core import *
+   In [1]: from grscheller.datastructures.iterlib import *
+
+   In [4]: for aa in mapIter(iter([1,2,3,42]), lambda x: x*x):
+      ...:     print(aa)
+      ...:
+   1
+   4
+   9
+   1764
    
    In [2]: for aa in concatIters(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
@@ -193,14 +191,6 @@ Module of functions used in the manipulation of Python iterators.
    a
    2
    b
-
-   In [4]: for aa in mapIter(iter([1,2,3,42]), lambda x: x*x):
-      ...:     print(aa)
-      ...:
-   1
-   4
-   9
-   1764
 ```
 
 #### Why write my own iterator library module
@@ -220,14 +210,14 @@ to the syntax used to produce lists from "list comprehensions."
 
 Don't confuse an object being iterable with being an iterator.
 
-A Python iterator is a stateful objects with a __next__(self) method
+A Python iterator is a stateful objects with a \_\_next\_\_(self) method
 which either returns the next value or raises the StopIteration exception.
 The Python builtin next() function returns the next value from the
 iterator object.
 
-An object is iterable if it has an __iter__(self) method. This method
-can either return an iterator or be a generator. the Python iter()
-builtin function returns an iterator when called with an iterable
+An object is iterable if it has an \_\_iter\_\_(self) method. This
+method can either return an iterator or be a generator. the Python
+iter() builtin function returns an iterator when called with an iterable
 object. 
 
 * Objects can be iterable without being iterators.
