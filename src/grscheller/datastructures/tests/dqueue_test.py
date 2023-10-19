@@ -59,6 +59,40 @@ class TestDqueue:
         for d in dq1:
             assert d is not None
 
+    def test_bool_len_peak(self):
+        dq = Dqueue()
+        assert not dq
+        dq.pushL(2,1)
+        dq.pushR(3)
+        assert dq
+        assert len(dq) == 3
+        assert dq.popL() == 1
+        assert len(dq) == 2
+        assert dq
+        assert dq.peakL() == 2
+        assert dq.peakR() == 3
+        assert dq.popR() == 3
+        assert len(dq) == 1
+        assert dq
+        assert dq.popL() == 2
+        assert len(dq) == 0
+        assert not dq
+        assert not dq.popL()
+        assert not dq.popR()
+        assert dq.popL() == None
+        assert dq.popR() == None
+        assert len(dq) == 0
+        assert not dq
+        assert dq.pushR(42)
+        assert len(dq) == 1
+        assert dq
+        assert dq.peakL() == 42
+        assert dq.peakR() == 42
+        assert dq.popR() == 42
+        assert not dq
+        assert dq.peakL() == None
+        assert dq.peakR() == None
+
     def test_iterators(self):
         data = [1, 2, 3, 4]
         dq = Dqueue(*data)
@@ -106,6 +140,20 @@ class TestDqueue:
         dq.resize(20)
         assert dq.fractionFilled() == 5/25
 
+    def test_copy_reversed(self):
+        dq1 = Dqueue(*range(20))
+        dq2 = dq1.copy()
+        assert dq1 == dq2
+        assert dq1 is not dq2
+        jj = 19
+        for ii in reversed(dq1):
+            assert jj == ii
+            jj -= 1
+        jj = 0
+        for ii in iter(dq1):
+            assert jj == ii
+            jj += 1
+
     def test_equality(self):
         dq1 = Dqueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
@@ -133,6 +181,7 @@ class TestDqueue:
     def test_mapAndFlatMap(self):
         dq1 = Dqueue(1,2,3,10)
         dq2 = dq1.copy()
+        dq3 = dq2.copy()
         dq1_answers = Dqueue(0,3,8,99)
         assert dq1.map(lambda x: x*x-1) == dq1_answers
         dq2.flatMap(lambda x: Dqueue(1, x, x*x+1))
@@ -140,3 +189,6 @@ class TestDqueue:
         assert dq2 == dq2_answers
         assert dq1 != dq2
         assert dq1 is not dq2
+        dq3.mergeMap(lambda x: Dqueue(*range(2*x, x*x+4)))
+        dq3_answers = Dqueue(2, 4, 6, 20, 3, 5, 7, 21, 4, 6, 8, 22)
+        assert dq3 == dq3_answers

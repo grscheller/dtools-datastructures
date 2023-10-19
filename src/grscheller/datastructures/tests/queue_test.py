@@ -59,6 +59,37 @@ class TestQueue:
         for d in q1:
             assert d is not None
 
+    def test_bool_len_peak(self):
+        q = Queue()
+        assert not q
+        q.push(1,2,3)
+        assert q
+        assert q.peakNextOut() == 1
+        assert q.peakLastIn() == 3
+        assert len(q) == 3
+        assert q.pop() == 1
+        assert len(q) == 2
+        assert q
+        assert q.pop() == 2
+        assert len(q) == 1
+        assert q
+        assert q.pop() == 3
+        assert len(q) == 0
+        assert not q
+        assert not q.pop()
+        assert q.pop() == None
+        assert len(q) == 0
+        assert not q
+        assert q.push(42)
+        assert q.peakNextOut() == 42
+        assert q.peakLastIn() == 42
+        assert len(q) == 1
+        assert q
+        assert q.pop() == 42
+        assert not q
+        assert q.peakNextOut() == None
+        assert q.peakLastIn() == None
+
     def test_iterators(self):
         data = [1, 2, 3, 4]
         dq = Queue(*data)
@@ -106,6 +137,20 @@ class TestQueue:
         q.resize(20)
         assert q.fractionFilled() == 5/25
 
+    def test_copy_reversed(self):
+        q1 = Queue(*range(20))
+        q2 = q1.copy()
+        assert q1 == q2
+        assert q1 is not q2
+        jj = 19
+        for ii in reversed(q1):
+            assert jj == ii
+            jj -= 1
+        jj = 0
+        for ii in iter(q1):
+            assert jj == ii
+            jj += 1
+
     def test_equality_identity(self):
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
@@ -133,6 +178,8 @@ class TestQueue:
     def test_mapAndFlatMap(self):
         q1 = Queue(1,2,3,10)
         q2 = q1.copy()
+        q3 = q2.copy()
+        assert q1 == q2 == q3
         q1_answers = Queue(0,3,8,99)
         assert q1.map(lambda x: x*x-1) == q1_answers
         q2.flatMap(lambda x: Queue(1, x, x*x+1))
@@ -140,3 +187,6 @@ class TestQueue:
         assert q2 == q2_answers
         assert q1 != q2
         assert q1 is not q2
+        q3.mergeMap(lambda x: Queue(*range(2*x, x*x+4)))
+        q3_answers = Queue(2, 4, 6, 20, 3, 5, 7, 21, 4, 6, 8, 22)
+        assert q3 == q3_answers
