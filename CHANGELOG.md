@@ -2,25 +2,25 @@
 
 ## Overview
 
-* Single maintainer project
-  * Semantic Versioning
-   * first digit signifies an event or epoch
-   * second digit means breaking API changes (between PyPI releases)
-   * third digit either means
-     * API breaking changes (between GitHub commits)
-     * API additions (between PyPI releases)
-   * fourth digit either means
-     * bugfixes or minor changes (between PyPI releases)
-     * GitHub only thrashing and experimentation
-  * Rolling Release Model
-    * maintainer will not back port bug fixes to previous versions
-    * main branch will be the only tracking branch on GitHub
-      * attempt to keep relatively stable, but not fully tested
-    * feature branch begin with "feature_" and are places to
-      * explore new directions
-      * commit potentially very broken code
-      * could be deleted from GitHub anytime WITHOUT WARNING
-    * PyPI releases are tagged with a leading "v" on GitHub
+* Single Maintainer Project
+* Semantic Versioning
+  * first digit signifies an event or epoch
+  * second digit means breaking API changes (between PyPI releases)
+  * third digit either means
+    * API breaking changes (between GitHub commits)
+    * API additions (between PyPI releases)
+  * fourth digit either means
+    * bugfixes or minor changes (between PyPI releases)
+    * GitHub only thrashing and experimentation
+* Rolling Release Model
+  * maintainer will not back port bug fixes to previous versions
+  * main branch will be the only tracking branch on GitHub
+    * attempt to keep relatively stable, but not fully tested
+  * feature branch begin with "feature_" and are places to
+    * explore new directions
+    * commit potentially very broken code
+    * could be deleted from GitHub anytime WITHOUT WARNING
+  * PyPI releases are tagged with a leading "v" on GitHub
 
 ## Versions
 

@@ -9,10 +9,11 @@ dictionaries directly? The data structures in this package allow you to
 
 * focus on the algorithms these data structures were talored to support
 * internalize the "bit fiddling" needed to implement the data structures
-* code to the "happy path" and deal with errors without exceptions 
+* code to the "happy path" and deal with errors without exceptions
 * safely handling mutation by
   * pushing it to protected innermost scopes
   * have iterators process non-mutating copies of internal state
+    * allows for "lazy" evaluation without race conditions
 * allow sharing of data by
   * pushing mutation to an outer scope
   * making immutable internal state inaccessible to client code
@@ -55,7 +56,7 @@ empty and true if not empty.
 ### grscheller.datastructes.dqueue module
 
 Implements a double ended queue. The queue is implemented with
-a circular array and will resize itself as needed. 
+a circular array and will resize itself as needed.
 
 * Class **Dqueue**
   * O(1) pushes & pops either end
@@ -74,7 +75,7 @@ Implements a fixed length array of elements of different types.
 ### grscheller.datastructes.queue module
 
 Implements a FIFO queue data structure. The queue is implemented with
-a circular array and will resize itself as needed. 
+a circular array and will resize itself as needed.
 
 * Class **Queue**
   * O(1) push & pop
@@ -91,7 +92,7 @@ stack, and a head containing either None, for an empty stack, or the
 first node of the stack. The nodes themselves are an implementation
 detail and are private to the module. The nodes, and the data they
 contain, are designed to be shared between different Stack instances.
-          
+
 * Class **Stack**
   * O(1) pushes & pops to top of stack
   * O(1) length determination
@@ -173,7 +174,7 @@ Module of functions used in the manipulation of Python iterators.
    4
    9
    1764
-   
+
    In [2]: for aa in concatIters(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
@@ -183,7 +184,7 @@ Module of functions used in the manipulation of Python iterators.
    4
    a
    b
-   
+
    In [3]: for aa in mergeIters(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
@@ -195,11 +196,11 @@ Module of functions used in the manipulation of Python iterators.
 
 #### Why write my own iterator library module
 
-Why not just use the itertools module? When I first created the iterlib
-(formerly called core) module, I did not understand the distinction
-between generators, iterators, and being iterable. They were all
-conflated in my mind. Until I started coding with these concepts, the
-itertools documentation just confused me even more.
+Why not just use the Python itertools module? When I first created the
+iterlib (formerly called core) module, the distinction between
+generators, iterators, and being iterable were all conflated in my
+mind. The itertools documentation didn't make sense to me until
+I started implementing and using these types of tools.
 
 #### Iterators vs generators
 
@@ -216,13 +217,13 @@ The Python builtin next() function returns the next value from the
 iterator object.
 
 An object is iterable if it has an \_\_iter\_\_(self) method. This
-method can either return an iterator or be a generator. the Python
+method can either return an iterator or be a generator. The Python
 iter() builtin function returns an iterator when called with an iterable
-object. 
+object.
 
 * Objects can be iterable without being iterators.
   * the iter() function produces an iterator for the iterable object
-  * for-loop systax effectively call iter() behind the scenes 
+  * for-loop systax effectively call iter() behind the scenes
 * Many iterators are themseves iterable
   * many just return a "self" reference when iterator is requested
   * an iterator need not be iterable
