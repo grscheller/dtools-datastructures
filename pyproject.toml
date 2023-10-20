@@ -25,4 +25,4 @@ test = ["pytest >=7.4"]
 [project.urls]
 Source = "https://github.com/grscheller/datastructures"
 Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
-Documentation = "https://github.com/grscheller/datastructures/doc"
+Documentation = "https://grscheller.github.io/grscheller/datastructures/"
