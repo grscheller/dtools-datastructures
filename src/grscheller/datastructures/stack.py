@@ -15,7 +15,9 @@
 """Module grscheller.datastructure.stack - LIFO stack:
 
    Module implementing a LIFO stack using a singularly linked linear tree of
-   nodes. The nodes can be safely shared between different Stack instances.
+   nodes. The nodes can be safely shared between different Stack instances and
+   are an implementation detail hidden from client code.
+
    Pushing to, popping from, and getting the length of the stack are all O(1)
    operations.
 """

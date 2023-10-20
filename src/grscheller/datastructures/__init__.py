@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""grscheller.datastructures package
+"""Package grscheller.datastructures
 
-   Data structures supporting a functional sytle of programming yet still try
-   to be Pythonic
+   Data structures supporting a functional style of programming, yet still
+   endeavor to be Pythonic.
 """
+
 #
 # Semantic Versioning:
 #  - first digit signifies an event or epoch
@@ -28,7 +29,7 @@
 #    - bugfixes or minor changes (between PyPI releases)
 #    - GitHub only thrashing and experimentation
 #
-__version__ = "0.7.2.2"
+__version__ = "0.7.2.3"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

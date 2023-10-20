@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""grscheller.datastructures.maybe module
+"""Module grscheller.datastructures.functional.either
 
-   Module implementing the Either Monad.
+Implemention of the Either Monad.
 """
+
 from __future__ import annotations
 from typing import Any, Callable
 

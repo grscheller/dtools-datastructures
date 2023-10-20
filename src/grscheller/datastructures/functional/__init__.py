@@ -12,14 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""grscheller.datastructures.functional package
+"""Package grscheller.datastructures.functional
 
-   Data structures supporting a functional style of programming in Python
-   - immutable semantics - map & flatMap return modified copies
-   - None is always treated as a non-existance value
-     - Python None value cannot be stored in any these objects
-     - semantically None does not exist
-     - None only has any real existance as an implementration detail
+Subpackage of grscheller.datastructures
+
+Data structures supporting a functional style of programming in Python
+- immutable semantics - map & flatMap return modified copies
+- None is always treated as a non-existance value
+  - Python None value cannot be stored in any object in this subpackage
+  - semantically None does not exist
+  - None is used as an implementration detail
 """
 
 __author__ = "Geoffrey R. Scheller"

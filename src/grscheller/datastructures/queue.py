@@ -11,12 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.queue - LIFO queue
+"""Module grscheller.datastructure.queue - FIFO queue
 
-LIFO queue with amortized O(1) pushing & popping from the queue.
+FIFO queue with amortized O(1) pushing & popping from the queue.
 Obtaining length (number of elements) of a Queue is also a O(1) operation.
 
-Implemented with a Python List based circular array.
+Implemented with a Python List based circular array. Does not store None as
+a value.
 """
 
 from __future__ import annotations
@@ -31,15 +32,21 @@ from .circle import Circle
 from .iterlib import concatIters, mapIter, mergeIters
 
 class Queue():
-    """FIFO queue datastructure. Will resize itself as needed.
+    """Module grscheller.datastructure.queue - FIFO queue
 
     The Queue class consistently uses None to represent the absence of a value.
-    None will not be pushed to this datastructure. As an alternative, use Maybe
-    objects of type Nothing, or the empty tuple () to represent a non-existent
-    value. 
+    None will not be pushed to this datastructure. Other alternatives, use Maybe
+    objects of type Nothing, or just the empty tuple (), as sentital values. One
+    advantage os () over None is that () is iterable and thus making type
+    checkers more happy.
+
+    A Queue instance will resize itself as needed.
     """
     def __init__(self, *ds):
-        """Construct a FIFO queue datastructure"""
+        """Construct a FIFO queue datastructure
+
+        Null values will be culled from the intial data ds.
+        """
         self._circle = Circle()
         for d in ds:
             if d is not None:

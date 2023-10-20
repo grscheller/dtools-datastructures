@@ -5,12 +5,12 @@ endeavor to be Pythonic.
 
 The data structures in this package:
 
-* Allow developers to focus on the algorithms these data structures
-  were designed to support.
+* Allow developers to focus on the algorithms the data structures were
+  designed to support.
 * Take care of all the "bit fiddling" needed to implement desired
   behaviors.
-* Don't force gratuitous exceptions upon client code leveraging this
-  package.
+* Don't force the raising of gratuitous exceptions upon client code
+  leveraging this package.
 * Safely handle mutating contained data by pushing it to a protected
   inner scope. 
 * Safely share data between data instances by pushing mutation

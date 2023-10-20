@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.flArray - Double sided queue
+"""Module grscheller.datastructure.flArray - Fixed length array
 
 Implements fixed length arrays of values of arbitrary types. O(1) data access
 which will store None values. The arrays must have length > 0.
@@ -30,6 +30,7 @@ from .iterlib import mapIter, concatIters, mergeIters
 
 class FLArray():
     """Class representing a fixed length array data structure of length > 0.
+
     Permits storing None as a value.
     """
     def __init__(self, *ds, size: int = 0, default: Any = None):

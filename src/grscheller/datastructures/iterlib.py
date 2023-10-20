@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Iterator related functions used by the grscheller.datastructures package"""
+"""Module grscheller.datastructures.iterlib
+
+Library of iterator related functions.
+"""
 
 from __future__ import annotations
 from typing import Any, Callable, Iterator

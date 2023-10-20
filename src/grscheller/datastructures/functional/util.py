@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utility functions for use with the data structures defined in the
+"""Module grscheller.datastructures.functional.util
+
+Utility functions for use with the data structures defined in the
 grscheller.datastructures.functional package.
 """
 
@@ -34,3 +36,6 @@ def maybeToEither(m: Maybe, right: Any=None) -> Either:
 def eitherToMaybe(e: Either) -> Maybe:
     """Convert an Either to a Maybe"""
     return Maybe(e.get())
+
+if __name__ == "__main__":
+    pass

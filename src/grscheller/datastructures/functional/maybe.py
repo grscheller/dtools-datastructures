@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""grscheller.datastructures.maybe module
+"""Module grscheller.datastructures.functional.maybe
 
-   Module implementing the Option Monad. Sometimes called Maybe or Optional.
+Implemention of the Maybe Monad, sometimes called the Option ot Optional Monad.
 """
+
 from __future__ import annotations
 from typing import Any, Callable
 
