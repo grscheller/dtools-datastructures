@@ -1,35 +1,37 @@
 # Python grscheller.datastructures package
 
 Data structures supporting a functional style of programming, yet still
-endeavoring to be Pythonic.
+endeavor to be Pythonic.
 
-Why not just use Python like lists and dictionaries directly? The data
-structures in this package:
+The data structures in this package:
 
-* Take care of the "bit fiddling" needed to implement desired behaviors
-  for these data structures.
-* Allow developers to focus on the algorithms the data structures are
-  designed to support.
-* Code to the "happy" path & provide FP tools for the "unhappy" ones.
-* Don't force exceptions upon client code leveraging this package.
-* Safely handle mutation by either pushing it to a protected inner
-  scopes.
-* Safely share data between data structures objects by pushing mutation
+* Allow developers to focus on the algorithms these data structures
+  were designed to support.
+* Take care of all the "bit fiddling" needed to implement desired
+  behaviors.
+* Don't force gratuitous exceptions upon client code leveraging this
+  package.
+* Safely handle mutating contained data by pushing it to a protected
+  inner scope. 
+* Safely share data between data instances by pushing mutation
   to an outer scope and making shared immutable internal state
   inaccessible to client code.
-* Allow for "lazy" evaluation without race conditions by having
-  iterators process non-mutating copies of internal state.
+* Allow for "lazy" evaluation avoiding race conditions by having
+  iterators process non-mutating copies of data structure internal
+  state.
+* Code to the "happy" path & provide FP tools for "exceptional" events.
 
 Sometimes the real power of a data structure comes not from what it
-enables you to do, but from what it prvents you from doing.
+enables you to do, but from what it prevents you from doing.
 
-As a design choice, None is semantically used by this package to
-indicate the absence of a value. How does one store a "non-existent"
-value in a very real datastructure? Implemented in CPython as
-a C language data structure, the Python None "singleton" builtin
+As a design choice, Python `None` is semantically used by this package
+to indicate the absence of a value. How does one store a "non-existent"
+value in a very real data structure? Granted, implemented in CPython as
+a C language data structure, the Python `None` "singleton" builtin
 "object" does have a sort of real existence to it. Unless specifically
-documented otherwise, None values are not stored in these data
-structures.
+documented otherwise, `None` values are not stored to these data
+structures as data. FP `Maybe` & `Either` objects are provided as better
+ways to handle "missing" data.
 
 Type annotations used in this package are extremely useful in helping
 external tooling work well. See PEP-563 & PEP-649. These features are
