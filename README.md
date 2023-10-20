@@ -1,17 +1,16 @@
 # Python grscheller.datastructures package
 
 Data structures supporting a functional style of programming, yet still
-try to be Pythonic.
+endeavoring to be Pythonic.
 
-Why not just use Python builtin data structures like lists and
-dictionaries directly? The data structures in this package allow you to
+Why not just use Python like lists and dictionaries directly? The data
+structures in this package:
 
-* internalize the "bit fiddling" needed to implement desired behavior
-* focus on the algorithms these data structures were talored to support
-* code to the "happy" path and provide FP tools for the "unhappy" ones
-* deal with errors without forcing exceptions upon users of the package
-* safely handling mutation by
-  * pushing it to protected innermost scopes
+* take care of the "bit fiddling" needed to implement desired behaviors
+* allow developers to focus on the algorithms the data structures support
+* code to the "happy" path & provide FP tools for the "unhappy" ones
+* don't force exceptions upon client code leveraging this package
+* safely handling mutation by pushing it to protected inner scopes
 * allow sharing of data by
   * pushing mutation to an outer scope
   * making immutable internal state inaccessible to client code
