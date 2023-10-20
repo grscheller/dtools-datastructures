@@ -39,13 +39,13 @@ def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
 def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted"""
     iterList = list(iterators)
-    numIters = len(iterList)
-    while True:
-        try:
-            values = []
-            for ii in range(numIters):
-                values.append(next(iterList[ii]))
-            for value in values:
-                yield value
-        except StopIteration:
-            break
+    if (numIters := len(iterList)) > 0:
+        while True:
+            try:
+                values = []
+                for ii in range(numIters):
+                    values.append(next(iterList[ii]))
+                for value in values:
+                    yield value
+            except StopIteration:
+                break

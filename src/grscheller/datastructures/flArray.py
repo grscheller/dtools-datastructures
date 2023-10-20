@@ -25,15 +25,14 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self, Never, Union
-from .functional.maybe import Nothing
-from .iterlib import concatIters, mergeIters, mapIter
+from typing import Any, Callable, Never, Self, Union
+from .iterlib import mapIter, concatIters, mergeIters
 
 class FLArray():
     """Class representing a fixed length array data structure of length > 0.
     Permits storing None as a value.
     """
-    def __init__(self, *ds, size: int = 0, default: Any = Nothing):
+    def __init__(self, *ds, size: int = 0, default: Any = None):
         """Construct a fixed length array
            - guarnteed to be of length |size| for size != 0
            - if size not indicated (or 0), size to data provided

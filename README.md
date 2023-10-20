@@ -6,16 +6,19 @@ endeavoring to be Pythonic.
 Why not just use Python like lists and dictionaries directly? The data
 structures in this package:
 
-* take care of the "bit fiddling" needed to implement desired behaviors
-* allow developers to focus on the algorithms the data structures support
-* code to the "happy" path & provide FP tools for the "unhappy" ones
-* don't force exceptions upon client code leveraging this package
-* safely handling mutation by pushing it to protected inner scopes
-* allow sharing of data by
-  * pushing mutation to an outer scope
-  * making immutable internal state inaccessible to client code
-* allow for "lazy" evaluation without race conditions by
-  * having iterators process non-mutating copies of internal state
+* Take care of the "bit fiddling" needed to implement desired behaviors
+  for these data structures.
+* Allow developers to focus on the algorithms the data structures are
+  designed to support.
+* Code to the "happy" path & provide FP tools for the "unhappy" ones.
+* Don't force exceptions upon client code leveraging this package.
+* Safely handle mutation by either pushing it to a protected inner
+  scopes.
+* Safely share data between data structures objects by pushing mutation
+  to an outer scope and making shared immutable internal state
+  inaccessible to client code.
+* Allow for "lazy" evaluation without race conditions by having
+  iterators process non-mutating copies of internal state.
 
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prvents you from doing.

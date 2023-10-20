@@ -178,7 +178,7 @@ class Circle:
         dataListStrs = []
         for data in self:
             dataListStrs.append(repr(data))
-        return "[[ " + " | ".join(dataListStrs) + " ]]"
+        return "(( " + " | ".join(dataListStrs) + " ))"
 
     def copy(self) -> Circle:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
