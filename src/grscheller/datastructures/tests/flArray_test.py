@@ -145,23 +145,17 @@ class TestFPArray:
         fl2 = fl1.copy()
         fl3 = fl1.copy()
 
-        fl4 = fl1.mapSelf(lambda x: x*x-1)
-        fl4_answers = FLArray(0, 3, 8, 99)
-        assert fl1 == fl4_answers
-        assert fl4 == fl4_answers
-        assert fl1 is fl4
+        fl1.mapSelf(lambda x: x*x-1)
+        fl1_answers = FLArray(0, 3, 8, 99)
+        assert fl1 == fl1_answers
         
-        fl5 = fl2.flatMapSelf(lambda x: FLArray(1, x, x*x+1))
-        fl5_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert fl2 == fl5_answers
-        assert fl5 == fl5_answers
-        assert fl5 is fl2
+        fl2.flatMapSelf(lambda x: FLArray(1, x, x*x+1))
+        fl2_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
+        assert fl2 == fl2_answers
         
-        fl6 = fl3.mergeMapSelf(lambda x: FLArray(1, x, x*x+1))
-        fl6_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
-        assert fl3 == fl6_answers
-        assert fl6 == fl6_answers
-        assert fl6 is fl3
+        fl3.mergeMapSelf(lambda x: FLArray(1, x, x*x+1))
+        fl3_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
+        assert fl3 == fl3_answers
 
     def test_bool(self):
         flA_allTrue = FLArray(True, True, True)

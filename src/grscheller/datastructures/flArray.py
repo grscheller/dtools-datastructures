@@ -25,7 +25,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 from .iterlib import mapIter, concatIters, mergeIters
 
 class FLArray():
@@ -143,11 +143,10 @@ class FLArray():
         """Apply function over flArray contents, returns new instance"""
         return FLArray(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
+    def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Apply function over flArray contents"""
         for idx in range(self._size):
             self._list[idx] = f(self._list[idx])
-        return self
 
     def flatMap(self, f: Callable[[Any], FLArray]) -> FLArray:
         """Apply function and flatten result, returns new instance"""
@@ -157,12 +156,11 @@ class FLArray():
             )
         )
 
-    def flatMapSelf(self, f: Callable[[Any], FLArray]) -> Self:
+    def flatMapSelf(self, f: Callable[[Any], FLArray]) -> None:
         """Apply function to contents and flatten result"""
         donor = self.flatMap(f)
         self._size = donor._size
         self._list = donor._list
-        return self
 
     def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
         """Apply function and flatten result, returns new instance"""
@@ -172,11 +170,11 @@ class FLArray():
             )
         )
 
-    def mergeMapSelf(self, f: Callable[[Any], FLArray]) -> Self:
+    def mergeMapSelf(self, f: Callable[[Any], FLArray]) -> None:
         """Apply function and merge to flatten result, returns new instance"""
         donor = self.mergeMap(f)
         self._size = donor._size
         self._list = donor._list
-        return self
+
 if __name__ == "__main__":
     pass
