@@ -82,7 +82,10 @@ class TestStack:
 
     def test_tail(self):
         s1 = Stack()
-        s1.push("fum").push("fo").push("fi").push("fe")
+        s1.push("fum")
+        s1.push("fo")
+        s1.push("fi")
+        s1.push("fe")
         ms2 = s1.tail()
         assert ms2 != Nothing
         ms4 = ms2.map(lambda x: x.copy())
@@ -170,17 +173,16 @@ class TestStack:
         s1.pop()
         assert not s1
 
-    def test_reverse(self):
+    def test_reversing(self):
         s1 = Stack('a', 'b', 'c', 'd')
         s2 = Stack('d', 'c', 'b', 'a')
         assert s1 != s2
-        assert s1 == s2.reverse()
+        assert s2 == Stack(*iter(s1))
         s0 = Stack()
-        assert s0 == s0
-        assert s0 == s0.reverse()
-        s3 = Stack(concatIters(iter(range(1, 100)), iter(range(98, 0, -1))))
-        assert s3 == s3
-        assert s3 == s3.reverse()
+        assert s0 == Stack(*iter(s0))
+        s2 = Stack(concatIters(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s3 = Stack(*iter(s2))
+        assert s3 == s2
 
     def test_reversed(self):
         lf = [1.0, 2.0, 3.0, 4.0]

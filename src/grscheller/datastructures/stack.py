@@ -90,10 +90,6 @@ class Stack():
         """Reverse iterate over the current state of the stack"""
         return iter(Stack(*self))
 
-    def reverse(self) -> Stack:
-        """Return a new stack in reverse order"""
-        return Stack(*self)
-
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
         Worst case is O(n) behavior which happens when all the corresponding
@@ -137,7 +133,7 @@ class Stack():
         stack._count = self._count
         return stack
 
-    def push(self, *ds: Any) -> Stack:
+    def push(self, *ds: Any) -> None:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
@@ -146,7 +142,6 @@ class Stack():
                 node = _Node(d, self._head)
                 self._head = node
                 self._count += 1
-        return self
 
     def pop(self) -> Maybe:
         """Pop data off of top of stack"""
