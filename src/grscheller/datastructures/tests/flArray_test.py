@@ -162,3 +162,61 @@ class TestFPArray:
         assert fl3 == fl6_answers
         assert fl6 == fl6_answers
         assert fl6 is fl3
+
+    def test_bool(self):
+        flA_allTrue = FLArray(True, True, True)
+        flA_allFalse = FLArray(False, False, False)
+        flA_firstTrue = FLArray(True, False, False)
+        flA_lastTrue = FLArray(False, False, False, True)
+        flA_someTrue = FLArray(False, True, False, True, False)
+        flA_defaultTrue = FLArray(default = True)
+        flA_defaultFalse = FLArray(default = False)
+        assert flA_allTrue
+        assert not flA_allFalse
+        assert flA_firstTrue
+        assert flA_lastTrue
+        assert flA_someTrue
+        assert flA_defaultTrue
+        assert not flA_defaultFalse
+
+        flA_None = FLArray(None)
+        flA_0 = FLArray(0, 0, 0)
+        flA_42 = FLArray(*([42]*42))
+        flA_emptyStr = FLArray('')
+        flA_hw = FLArray('hello world')
+        assert not flA_None
+        assert not flA_0
+        assert flA_42
+        assert not flA_emptyStr
+        assert flA_hw
+
+    def test_copy(self):
+        flA4 = FLArray(*range(43), size = 5)
+        flA42 = FLArray(*range(43), size = -5)
+        flA4_copy = flA4.copy()
+        flA42_copy = flA42.copy()
+        assert flA4 == flA4_copy
+        assert flA4 is not flA4_copy
+        assert flA42 == flA42_copy
+        assert flA42 is not flA42_copy
+        assert flA4[0] == 0
+        assert flA4[4] == flA4[-1] == 4
+        assert flA42[0] == 38
+        assert flA42[4] == flA42[-1] == 42
+
+    def test_reversed_iter(self):
+        """Tests that prior state of flA is used, not current one"""
+        flA = FLArray(1,2,3,4,5)
+        flArevIter = reversed(flA)
+        aa = next(flArevIter)
+        assert flA[4] == aa == 5
+        flA[2] = 42
+        aa = next(flArevIter)
+        assert flA[3] == aa == 4
+        aa = next(flArevIter)
+        assert flA[2] != aa == 3
+        aa = next(flArevIter)
+        assert flA[1] == aa == 2
+        aa = next(flArevIter)
+        assert flA[0] == aa == 1
+
