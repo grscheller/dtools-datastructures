@@ -143,7 +143,7 @@ class FLArray():
         """Apply function over flArray contents, returns new instance"""
         return FLArray(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+    def map_update(self, f: Callable[[Any], Any]) -> None:
         """Apply function over flArray contents"""
         for idx in range(self._size):
             self._list[idx] = f(self._list[idx])
@@ -156,7 +156,7 @@ class FLArray():
             )
         )
 
-    def flatMapSelf(self, f: Callable[[Any], FLArray]) -> None:
+    def flatMap_update(self, f: Callable[[Any], FLArray]) -> None:
         """Apply function to contents and flatten result"""
         donor = self.flatMap(f)
         self._size = donor._size
@@ -170,7 +170,7 @@ class FLArray():
             )
         )
 
-    def mergeMapSelf(self, f: Callable[[Any], FLArray]) -> None:
+    def mergeMap_update(self, f: Callable[[Any], FLArray]) -> None:
         """Apply function and merge to flatten result, returns new instance"""
         donor = self.mergeMap(f)
         self._size = donor._size
