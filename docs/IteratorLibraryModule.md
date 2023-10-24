@@ -1,16 +1,16 @@
 # grscheller.datastructures.iterlib module
 
-Module of functions used in the manipulation of Python iterators.
+Module of functions used to manipulate Python iterators.
 
 ### Functions for interators
 
-* Function **mapIter**
+* Function **mapIter**(iter: iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]
   * Lazily map a function over an iterator stream
 
-* Function **concatIters**
+* Function **concatIters**(*iter: iterator[Any]) -> Iterator[Any]
   * Sequentually concatenate multiple iterators into one
 
-* Function **mergeIters**
+* Function **mergeIters**(*iter: iterator[Any]) -> Iterator[Any]
   * Merge multiple iterator streams until one is exhausted
 
 #### Examples

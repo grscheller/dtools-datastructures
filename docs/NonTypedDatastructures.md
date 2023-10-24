@@ -1,7 +1,7 @@
 # grscheller.datastructures package level modules (non-typed)
 
-Non-typed means that the datastructure can hold data of any type except
-for perhaps `None`.
+Non-typed means that the data structure can hold data of any type
+except for perhaps `None`.
 
 ## Non-typed data structures
 
@@ -57,13 +57,13 @@ Provides a FIFO queue data structure.
   * O(1) length determination
   * O(n) copy
 
-The queue is implemented with a circular array and will resize itself as
-needed.
+The queue is implemented with a circular array and will resize itself
+as needed.
 
 ### stack module
 
-Provides a LIFO singlelarly linked datastructure designed to share data
-between different Stack objects.
+Provides a LIFO singlelarly linked data structure designed to share
+data between different Stack objects.
 
 * Class **Stack**
   * O(1) pushes & pops to top of stack
@@ -71,7 +71,7 @@ between different Stack objects.
   * O(1) copy
 
 Implemented as a singularly linked list of nodes. The nodes themselves
-are private to the module and are designed to be shared amoung different
+are private to the module and are designed to be shared among different
 Stack instances.
 
 Stack objects themselves are light weight and have only two attributes,
