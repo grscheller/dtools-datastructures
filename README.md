@@ -28,7 +28,7 @@ enables you to do, but from what it prevents you from doing.
 
 ## Data structure summary
 
-* [Untyped Datastructures](docs/UntypedDatastructures.md)
+* [Non-typed Datastructures](docs/NonTypedDatastructures.md)
 * [Functional Subpackage](docs/FunctionalSubpackage.md)
 * [Iterator Library](docs/IteratorLibraryModule.md)
 

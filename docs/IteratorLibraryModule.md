@@ -1,4 +1,4 @@
-# grscheller.datastructes.iterlib module
+# grscheller.datastructures.iterlib module
 
 Module of functions used in the manipulation of Python iterators.
 
@@ -75,7 +75,7 @@ object.
 * Objects can be iterable without being iterators.
   * the iter() function produces an iterator for the iterable object
   * for-loop systax effectively call iter() behind the scenes
-* Many iterators are themseves iterable
+* Many iterators are themselves iterable
   * many just return a "self" reference when iterator is requested
   * an iterator need not be iterable
   * an iterable can return something other than itself

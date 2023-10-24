@@ -1,4 +1,4 @@
-# grscheller.datastructes package level modules (untyped)
+# grscheller.datastructures package level modules (untyped)
 
 ### grscheller.datastructuses.carray module
 
@@ -16,7 +16,7 @@ Provides a double sided circular array.
 Mainly used as data storage for other data structures in this package.
 Implemented with a Python List.
 
-### grscheller.datastructes.dqueue module
+### grscheller.datastructures.dqueue module
 
 Provides a double ended queue. The queue is implemented with
 a circular array and will resize itself as needed.
@@ -27,7 +27,7 @@ a circular array and will resize itself as needed.
   * O(1) length determination
   * O(n) copy
 
-### grscheller.datastructes.flArray module
+### grscheller.datastructures.flArray module
 
 Provides a fixed length array of elements of different types.
 
@@ -36,7 +36,7 @@ Provides a fixed length array of elements of different types.
   * once created, guaranteed not to change size
   * will store None as a value due to fix length guarentees
 
-### grscheller.datastructes.queue module
+### grscheller.datastructures.queue module
 
 Provides a FIFO queue data structure.
 
@@ -49,7 +49,7 @@ Provides a FIFO queue data structure.
 The queue is implemented with a circular array and will resize itself as
 needed.
 
-### grscheller.datastructes.stack module
+### grscheller.datastructures.stack module
 
 Provides a LIFO singlelarly linked datastructure designed to share data
 between different Stack objects.

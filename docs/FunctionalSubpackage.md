@@ -1,8 +1,8 @@
-# grscheller.datastructes.functional subpackage
+# grscheller.datastructures.functional subpackage
 
 FP Datastructures supporting a functional style of programming in Python.
 
-### grscheller.datastructes.functional.maybe module
+### grscheller.datastructures.functional.maybe module
 
 * Class **Maybe**
   * Represents a possible non-existent value
@@ -23,7 +23,7 @@ FP Datastructures supporting a functional style of programming in Python.
       * use equality semantics
       * not identity semantics
 
-### grscheller.datastructes.functional.either module
+### grscheller.datastructures.functional.either module
 
 * Class **Either**
   * Represents a single value in one of two mutually exclusive contexts
@@ -41,7 +41,7 @@ FP Datastructures supporting a functional style of programming in Python.
   * Creates a right type of Either
   * Typically containing a str type for an error message
 
-### grscheller.datastructes.functional.util module
+### grscheller.datastructures.functional.util module
 
 * Function **maybeToEither**(m: Maybe, right: Any=None) -> Either
   * Convert a Maybe to a left biased Either
