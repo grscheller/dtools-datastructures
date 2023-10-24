@@ -1,4 +1,4 @@
-## grscheller.datastructes.iterlib module
+# grscheller.datastructes.iterlib module
 
 Module of functions used in the manipulation of Python iterators.
 
