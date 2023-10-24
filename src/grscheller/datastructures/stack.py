@@ -122,7 +122,7 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        circleData = Circle(*self).mapSelf(lambda x: repr(x)) 
+        circleData = Circle(*self).map_update(lambda x: repr(x)) 
         repStr = '|| ' + circleData.popR()
         while circleData:
             repStr = repStr + ' <- ' + circleData.popR()

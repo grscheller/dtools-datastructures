@@ -184,23 +184,21 @@ class Circle:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
         return Circle(*self)
 
-    def pushR(self, data: Any) -> Self:
+    def pushR(self, data: Any) -> None:
         """Push data on rear of circle"""
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
         self._list[self._rear] = data
         self._count += 1
-        return self
 
-    def pushL(self, data: Any) -> Self:
+    def pushL(self, data: Any) -> None:
         """Push data on front of circle"""
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
         self._list[self._front] = data
         self._count += 1
-        return self
 
     def popR(self) -> Any:
         """Pop data off rear of circle array, returns None if empty"""
@@ -245,11 +243,10 @@ class Circle:
         """Apply function over circle array contents, returns new instance"""
         return Circle(*mapIter(iter(self), f))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> Self:
+    def map_update(self, f: Callable[[Any], Any]) -> None:
         """Apply function over circle array contents"""
         for idx in range(self._count):
             self[idx] = f(self[idx])
-        return self
 
     def flatMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
@@ -259,7 +256,7 @@ class Circle:
             )
         )
 
-    def flatMapSelf(self, f: Callable[[Any], Circle]) -> Self:
+    def flatMap_update(self, f: Callable[[Any], Circle]) -> None:
         """Apply function to contents and flatten result"""
         donor = self.flatMap(f)
         self._count = donor._count
@@ -267,7 +264,6 @@ class Circle:
         self._front = donor._front
         self._rear = donor._rear
         self._list = donor._list
-        return self
 
     def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
         """Apply function and flatten result, returns new instance"""
@@ -277,7 +273,7 @@ class Circle:
             )
         )
 
-    def mergeMapSelf(self, f: Callable[[Any], Circle]) -> Self:
+    def mergeMap_update(self, f: Callable[[Any], Circle]) -> None:
         """Apply function and merge to flatten result, returns new instance"""
         donor = self.mergeMap(f)
         self._count = donor._count
@@ -285,7 +281,6 @@ class Circle:
         self._front = donor._front
         self._rear = donor._rear
         self._list = donor._list
-        return self
 
 if __name__ == "__main__":
     pass

@@ -35,7 +35,9 @@ class TestCircle:
         popped = c.popR()
         assert pushed == popped
         assert len(c) == 0
-        c.pushR('first').pushR('second').pushR('last')
+        c.pushR('first')
+        c.pushR('second')
+        c.pushR('last')
         assert c.popL() == 'first'
         assert c.popR() == 'last'
         assert c
@@ -82,7 +84,8 @@ class TestCircle:
         assert c.fractionFilled() == 3/4
         c.pushR(3)
         assert c.fractionFilled() == 4/4
-        c.pushR(4).pushL(5)
+        c.pushR(4)
+        c.pushL(5)
         assert c.fractionFilled() == 6/8
         assert len(c) == 6
         assert c.capacity() == 8
@@ -93,7 +96,9 @@ class TestCircle:
 
     def test_equality(self):
         c1 = Circle(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        c2 = Circle(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
+        c2 = Circle(2, 3, 'Forty-Two')
+        c2.pushL(1)
+        c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
 
         tup2 = c2.popR()
@@ -103,7 +108,8 @@ class TestCircle:
         assert c1 != c2
 
         c1.popR()
-        c1.pushR((42, 'foofoo')).pushR(tup2)
+        c1.pushR((42, 'foofoo'))
+        c1.pushR(tup2)
         c2.pushR(tup2)
         assert c1 == c2
 
@@ -111,7 +117,10 @@ class TestCircle:
         c1.resize(42)
         holdB = c1.popL()
         holdC = c1.popR()
-        c1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
+        c1.pushL(holdB)
+        c1.pushR(holdC)
+        c1.pushL(holdA)
+        c1.pushL(200)
         c2.pushL(200)
         assert c1 == c2
 
@@ -126,7 +135,7 @@ class TestCircle:
 
     def test_mapSelf(self):
         c1 = Circle(1,2,3,10)
-        c1.mapSelf(lambda x: x*x-1)
+        c1.map_update(lambda x: x*x-1)
         c1_answers = Circle(0,3,8,99)
         assert c1 == c1_answers
         assert len(c1) == 4
@@ -144,7 +153,7 @@ class TestCircle:
 
     def test_flatMapSelf(self):
         c1 = Circle(1,2,3,5,10)
-        c1.flatMapSelf(lambda x: Circle(1, x, x*x+1))
+        c1.flatMap_update(lambda x: Circle(1, x, x*x+1))
         c1_answers = Circle(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
         assert c1 == c1_answers
         assert len(c1) == 5*3
@@ -180,7 +189,7 @@ class TestCircle:
         c1 = Circle(5, 4, 7)
         min1 = min(iter(c1))
         len1 = len(c1)
-        c1.mergeMapSelf(lambda x: Circle(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap_update(lambda x: Circle(*([chr(0o100+x)*x]*x)))
         assert c1[0] == c1[3] == c1[6] == c1[9] == 'EEEEE'
         assert c1[1] == c1[4] == c1[7] == c1[10] == 'DDDD'
         assert c1[2] == c1[5] == c1[8] == c1[11] == 'GGGGGGG'
@@ -190,14 +199,14 @@ class TestCircle:
         c1 = Circle(2)
         min1 = min(iter(c1))
         len1 = len(c1)
-        c1.mergeMapSelf(lambda x: Circle(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap_update(lambda x: Circle(*([chr(0o100+x)*x]*x)))
         assert c1[0] == c1[1] == 'BB'
         assert c1[-1] == 'BB'
         assert len(c1) == len1*min1 == 1*2
 
         c1 = Circle()
         len1 = len(c1)
-        c1.mergeMapSelf(lambda x: Circle(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap_update(lambda x: Circle(*([chr(0o100+x)*x]*x)))
         assert len(c1) == len1 == 0
 
     def test_get_set_items(self):
