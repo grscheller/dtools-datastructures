@@ -32,7 +32,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .iterlib import concatIters, mergeIters, mapIter
-from .circle import Circle
+from .carray import CArray
 
 class _Node():
     """Class implementing nodes that can be linked together to form a singularly
@@ -122,10 +122,11 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        circleData = Circle(*self).map_update(lambda x: repr(x)) 
-        repStr = '|| ' + circleData.popR()
-        while circleData:
-            repStr = repStr + ' <- ' + circleData.popR()
+        carrayData = CArray(*self)
+        carrayData.map_update(lambda x: repr(x)) 
+        repStr = '|| ' + carrayData.popR()
+        while carrayData:
+            repStr = repStr + ' <- ' + carrayData.popR()
         repStr += ' ><'
         return repStr
 

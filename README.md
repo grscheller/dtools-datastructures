@@ -40,6 +40,20 @@ slated for Python 3.13 but work now in Python 3.11 by including
 Pyright to provide LSP information to Neovim. This allowed the types
 to guide the design of this package.
 
+Generally data structures which:
+
+* "contain" their data & don't allow None values have mutable semantics
+  * Queue
+  * Dqueue
+* "share" their data with other instance have immutable semantics
+  * Stack
+* are in the functional subpackage have immutable semantics
+  * Maybe
+  * Either
+* have additional guarantees or need efficiency, the semantics can vary
+  * Carray
+  * FLarray
+
 ## grscheller.datastructes package level modules
 
 ### grscheller.datastructuses.circle module
@@ -72,7 +86,7 @@ a circular array and will resize itself as needed.
 
 Implements a fixed length array of elements of different types.
 
-* Class **FLArray**
+* Class **FLarray**
   * O(1) data access
 * will store None as a value
 
@@ -149,7 +163,7 @@ FP Datastructures supporting a functional style of programming in Python.
 
 * Function **maybeToEither**
 
-* Function **EitherToMaybe**
+* Function **eitherToMaybe**
 
 ## grscheller.datastructes.iterlib module
 

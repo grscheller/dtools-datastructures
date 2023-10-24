@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.flArray - Fixed length array
+"""Module grscheller.datastructure.flarray - Fixed length array
 
 Implements fixed length arrays of values of arbitrary types. O(1) data access
-which will store None values. The arrays must have length > 0.
+which will store None values. The arrays must have length > 0 and are
+guarnteed not to change size.
 """
 
 from __future__ import annotations
 
-__all__ = ['FLArray']
+__all__ = ['FLarray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -28,7 +29,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable, Never, Union
 from .iterlib import mapIter, concatIters, mergeIters
 
-class FLArray():
+class FLarray():
     """Class representing a fixed length array data structure of length > 0.
 
     Permits storing None as a value.
@@ -50,7 +51,7 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure flArray not empty
+                    # ensure flarray not empty
                     self._size = 1
                     self._list = [default]
             case (_, True, _):
@@ -87,7 +88,7 @@ class FLArray():
         return False
 
     def __len__(self) -> int:
-        """Returns the size of the flArray"""
+        """Returns the size of the flarray"""
         return self._size
 
     def __getitem__(self, index: int) -> Union[Any, Never]:
@@ -110,13 +111,13 @@ class FLArray():
         self._list[index] = value
 
     def __iter__(self):
-        """Iterator yielding data currently stored in flArray"""
+        """Iterator yielding data currently stored in flarray"""
         currList = self._list.copy()
         for pos in range(self._size):
             yield currList[pos]
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the flArray"""
+        """Reverse iterate over the current state of the flarray"""
         for data in reversed(self._list.copy()):
             yield data
 
@@ -129,52 +130,40 @@ class FLArray():
         return self._list == other._list
 
     def __repr__(self):
-        """Display data in flArray"""
+        """Display data in flarray"""
         listStrs = []
         for data in self:
             listStrs.append(repr(data))
         return "[| " + ", ".join(listStrs) + " |]"
 
-    def copy(self) -> FLArray:
-        """Return shallow copy of the flArray in O(n) time & space complexity"""
-        return FLArray(*self)
+    def copy(self) -> FLarray:
+        """Return shallow copy of the flarray in O(n) time & space complexity"""
+        return FLarray(*self)
 
-    def map(self, f: Callable[[Any], Any]) -> FLArray:
-        """Apply function over flArray contents, returns new instance"""
-        return FLArray(*mapIter(iter(self), f))
+    def map(self, f: Callable[[Any], Any]) -> FLarray:
+        """Apply function over flarray contents, returns new instance"""
+        return FLarray(*mapIter(iter(self), f))
 
     def map_update(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over flArray contents"""
+        """Apply function over flarray contents"""
         for idx in range(self._size):
             self._list[idx] = f(self._list[idx])
 
-    def flatMap(self, f: Callable[[Any], FLArray]) -> FLArray:
+    def flatMap(self, f: Callable[[Any], FLarray]) -> FLarray:
         """Apply function and flatten result, returns new instance"""
-        return FLArray(
+        return FLarray(
             *concatIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
 
-    def flatMap_update(self, f: Callable[[Any], FLArray]) -> None:
-        """Apply function to contents and flatten result"""
-        donor = self.flatMap(f)
-        self._size = donor._size
-        self._list = donor._list
-
-    def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
+    def mergeMap(self, f: Callable[[Any], FLarray]) -> FLarray:
         """Apply function and flatten result, returns new instance"""
-        return FLArray(
+        return FLarray(
             *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
-
-    def mergeMap_update(self, f: Callable[[Any], FLArray]) -> None:
-        """Apply function and merge to flatten result, returns new instance"""
-        donor = self.mergeMap(f)
-        self._size = donor._size
-        self._list = donor._list
 
 if __name__ == "__main__":
     pass

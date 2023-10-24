@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.circle - Double sided queue
+"""Module grscheller.datastructure.carray - Double sided queue
 
 Circular array with amortized O(1) indexing, prepending & appending values, and
 length determination. Implemented with a Python List.
@@ -25,7 +25,7 @@ values. Use in a boolean context to determine if empty.
 
 from __future__ import annotations
 
-__all__ = ['Circle']
+__all__ = ['CArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -33,7 +33,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable, Self, Never, Union
 from .iterlib import concatIters, mergeIters, mapIter
 
-class Circle:
+class CArray:
     """Circular array with amortized O(1) indexing, prepending & appending
     values, and length determination.
 
@@ -180,9 +180,9 @@ class Circle:
             dataListStrs.append(repr(data))
         return "(( " + " | ".join(dataListStrs) + " ))"
 
-    def copy(self) -> Circle:
+    def copy(self) -> CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
-        return Circle(*self)
+        return CArray(*self)
 
     def pushR(self, data: Any) -> None:
         """Push data on rear of circle"""
@@ -239,24 +239,24 @@ class Circle:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> Circle:
+    def map(self, f: Callable[[Any], Any]) -> CArray:
         """Apply function over circle array contents, returns new instance"""
-        return Circle(*mapIter(iter(self), f))
+        return CArray(*mapIter(iter(self), f))
 
     def map_update(self, f: Callable[[Any], Any]) -> None:
         """Apply function over circle array contents"""
         for idx in range(self._count):
             self[idx] = f(self[idx])
 
-    def flatMap(self, f: Callable[[Any], Circle]) -> Circle:
+    def flatMap(self, f: Callable[[Any], CArray]) -> CArray:
         """Apply function and flatten result, returns new instance"""
-        return Circle(
+        return CArray(
             *concatIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
 
-    def flatMap_update(self, f: Callable[[Any], Circle]) -> None:
+    def flatMap_update(self, f: Callable[[Any], CArray]) -> None:
         """Apply function to contents and flatten result"""
         donor = self.flatMap(f)
         self._count = donor._count
@@ -265,15 +265,15 @@ class Circle:
         self._rear = donor._rear
         self._list = donor._list
 
-    def mergeMap(self, f: Callable[[Any], Circle]) -> Circle:
+    def mergeMap(self, f: Callable[[Any], CArray]) -> CArray:
         """Apply function and flatten result, returns new instance"""
-        return Circle(
+        return CArray(
             *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))
             )
         )
 
-    def mergeMap_update(self, f: Callable[[Any], Circle]) -> None:
+    def mergeMap_update(self, f: Callable[[Any], CArray]) -> None:
         """Apply function and merge to flatten result, returns new instance"""
         donor = self.mergeMap(f)
         self._count = donor._count
