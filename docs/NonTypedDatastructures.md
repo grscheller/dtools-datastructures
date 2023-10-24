@@ -5,13 +5,13 @@ for perhaps `None`.
 
 ## Non-typed data structures
 
-* Circular Array: [Carray](#grschellerdatastructuresqueue-module)
-* Double Ended Queue: [Dqueue](#grschellerdatastructuresdqueue-module)
-* Fixed Length Array: [FLarray](#grschellerdatastructuresflarray-module)
-* FIFO Queue: [Queue](#grschellerdatastructuresqueue-module)
-* LIFO Stack: [Stack](#grschellerdatastructuresstack-module)
+* Circular Array: [Carray](#carray-module)
+* Double Ended Queue: [Dqueue](#dqueue-module)
+* Fixed Length Array: [FLarray](#flarray-module)
+* FIFO Queue: [Queue](#queue-module)
+* LIFO Stack: [Stack](#stack-module)
 
-### grscheller.datastructuses.carray module
+### carray module
 
 Provides a double sided circular array.
 
@@ -27,7 +27,7 @@ Provides a double sided circular array.
 Mainly used as data storage for other data structures in this package.
 Implemented with a Python List.
 
-### grscheller.datastructures.dqueue module
+### dqueue module
 
 Provides a double ended queue. The queue is implemented with
 a circular array and will resize itself as needed.
@@ -38,7 +38,7 @@ a circular array and will resize itself as needed.
   * O(1) length determination
   * O(n) copy
 
-### grscheller.datastructures.flArray module
+### flArray module
 
 Provides a fixed length array of elements of different types.
 
@@ -47,7 +47,7 @@ Provides a fixed length array of elements of different types.
   * once created, guaranteed not to change size
   * will store None as a value due to fix length guarentees
 
-### grscheller.datastructures.queue module
+### queue module
 
 Provides a FIFO queue data structure.
 
@@ -60,7 +60,7 @@ Provides a FIFO queue data structure.
 The queue is implemented with a circular array and will resize itself as
 needed.
 
-### grscheller.datastructures.stack module
+### stack module
 
 Provides a LIFO singlelarly linked datastructure designed to share data
 between different Stack objects.

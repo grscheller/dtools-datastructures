@@ -51,12 +51,12 @@ value in a very real data structure? Granted, implemented in CPython as
 a C language data structure, the Python `None` "singleton" builtin
 "object" does have a sort of real existence to it. Unless specifically
 documented otherwise, `None` values are not stored to these data
-structures as data. FP `Maybe` & `Either` objects are provided as better
+structures as data. `Maybe` & `Either` objects are provided as better
 ways to handle "missing" data.
 
 #### Methods which mutate objects don't return anything.
 
 For methods which mutate their data structures, I try to follow the
 Python convention of not returning anything, like the append method of
-a Python List. Most functional programming languages will return
-a reference to the data structure.
+the Python List builtin object. Most functional programming languages
+will return a reference to the data structure.
