@@ -1,4 +1,15 @@
-# grscheller.datastructures package level modules (untyped)
+# grscheller.datastructures package level modules (non-typed)
+
+Non-typed means that the datastructure can hold data of any type except
+for perhaps `None`.
+
+## Non-typed data structures
+
+* Circular Array: [Carray](#grschellerdatastructuresqueue-module)
+* Double Ended Queue: [Dqueue](#grschellerdatastructuresdqueue-module)
+* Fixed Length Array: [FLarray](#grschellerdatastructuresflarray-module)
+* FIFO Queue: [Queue](#grschellerdatastructuresqueue-module)
+* LIFO Stack: [Stack](#grschellerdatastructuresstack-module)
 
 ### grscheller.datastructuses.carray module
 

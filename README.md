@@ -26,15 +26,15 @@ The data structures in this package:
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prevents you from doing.
 
-## Data structure summary
+### Data structure summary
 
-* [Non-typed Datastructures](docs/NonTypedDatastructures.md)
+* [Non-Typed Datastructures](docs/NonTypedDatastructures.md)
 * [Functional Subpackage](docs/FunctionalSubpackage.md)
 * [Iterator Library](docs/IteratorLibraryModule.md)
 
-## Design choices
+### Design choices
 
-### Type annotations
+#### Type annotations
 
 Type annotations used in this package are extremely useful in helping
 external tooling work well. See PEP-563 & PEP-649. These features are
@@ -43,7 +43,7 @@ slated for Python 3.13 but work now in Python 3.11 by including
 Pyright to provide LSP information to Neovim. This allowed the types
 to guide the design of this package.
 
-### None as "non-existence"
+#### None as "non-existence"
 
 As a design choice, Python `None` is semantically used by this package
 to indicate the absence of a value. How does one store a "non-existent"
@@ -54,18 +54,9 @@ documented otherwise, `None` values are not stored to these data
 structures as data. FP `Maybe` & `Either` objects are provided as better
 ways to handle "missing" data.
 
-### Mutability vs Immutablility
+#### Methods which mutate objects don't return anything.
 
-Generally data structures which:
-
-* Contain their data & don't allow None values have mutable semantics
-  * Queue
-  * Dqueue
-* Share their data with other instances have immutable semantics
-  * Stack
-* Functional subpackage data structures have immutable semantics
-  * Maybe
-  * Either
-* Have efficiency needs or additional guarantees, the semantics vary
-  * Carray
-  * FLarray
+For methods which mutate their data structures, I try to follow the
+Python convention of not returning anything, like the append method of
+a Python List. Most functional programming languages will return
+a reference to the data structure.
