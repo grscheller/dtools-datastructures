@@ -24,14 +24,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any, Callable, Union
 
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .functional.maybe import Maybe, Some, Nothing
 from .iterlib import concatIters, mergeIters, mapIter
 from .circle import Circle
 
@@ -41,7 +40,11 @@ class _Node():
     next _Node object or None to indicate the bottom of the linked list.
     """
     def __init__(self, data, nodeNext: _Node | None):
-        """Construct an element of a linked list, semantically immutable"""
+        """Construct an element of a linked list, semantically immutable.
+
+        Note: It is the Stack class's responsibility that the _data property is
+        never set to None.
+        """
         self._data = data
         self._next = nodeNext
 
@@ -106,14 +109,14 @@ class Stack():
         right = other
         nn = self._count
         while nn > 0:
-            if left is None:
+            if left is None or right is None:
                 return True
             if left._head is right._head:
                 return True
             if left.peak() != right.peak():
                 return False
-            left = left.tail().getOrElse(Stack())
-            right = right.tail().getOrElse(Stack())
+            left = left.tail()
+            right = right.tail()
             nn -= 1
         return True
 
@@ -143,39 +146,67 @@ class Stack():
                 self._head = node
                 self._count += 1
 
-    def pop(self) -> Maybe:
+    def pop(self) -> Union[Any, None]:
         """Pop data off of top of stack"""
         if self._head is None:
-            return Nothing
+            return None
         else:
             data = self._head._data
             self._head = self._head._next
             self._count -= 1
-            return Some(data)
+            return data
 
-    def peak(self) -> Maybe:
-        """Returns on option for data at head of stack.
-        Does not consume the data if it exists.
+    def peak(self) -> Union[Any, None]:
+        """Returns the data at the head of stack. Does not consume the data.
+
+        Note: If stack is empty, return None.
         """
         if self._head is None:
-            return Nothing
-        return Some(self._head._data)
+            return None
+        return self._head._data
 
-    def tail(self) -> Maybe:
-        """Return Some(tail) of the stack. In the case of an empty stack,
-        return a Nothing.
+    def peakOrElse(self, default: Any) -> Any:
+        """Returns the data at the head of stack. Does not consume the data.
+
+        Note: If stack is empty, return default value.
+        """
+        value = self.peak()
+        if value is None:
+            value = default
+        return value
+
+    def tail(self) -> Union[Stack, None]:
+        """Return tail of the stack.
+
+        Note: The tail of an empty stack does not exist,
+              hence return None.
         """
         if self._head:
             stack = Stack()
             stack._head = self._head._next
             stack._count = self._count - 1
-            return Some(stack)
-        return Nothing
+            return stack
+        return None
+
+    def tailOrElse(self, default: Union[Stack, None] = None) -> Stack:
+        """Return tail of the stack.
+
+        Note: If stack is empty, return default value of type Stack.
+              If default value not give, return a new empty stack.
+        """
+        stack = self.tail()
+        if stack is None:
+            if default is None:
+                stack = Stack()
+            else:
+                stack = default
+        return stack
 
     def cons(self, data: Any) -> Stack:
         """Return a new stack with data as head and self as tail.
-        Note that trying to push None on the stack results in a shallow
-        copy of the original stack.
+
+        Note: Trying to push None on the stack results in a shallow
+              copy of the original stack.
         """
         if data is not None:
             stack = Stack()
@@ -186,6 +217,11 @@ class Stack():
             return self.copy()
 
     def map(self, f: Callable[[Any], Stack]) -> Stack:
+        """Maps a function (or callable object) over the values of the stack.
+
+        Returns a new stack with new nodes so not to affect nodes shared
+        by other Stack objects.
+        """
         return Stack(*mapIter(reversed(self), f))
 
     def flatMap(self, f: Callable[[Any], Stack]) -> Stack:

@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from grscheller.datastructures.stack import Stack
-from grscheller.datastructures.functional import Maybe, Nothing, Some
 from grscheller.datastructures.iterlib import concatIters
 import grscheller.datastructures.stack as stack
 
@@ -43,30 +42,24 @@ class TestStack:
     def test_push_then_pop(self):
         s1 = Stack()
         pushed = 42; s1.push(pushed)
-        popped = s1.pop().getOrElse(())
+        popped = s1.pop()
         assert pushed == popped == 42
 
     def test_pop_from_empty_stack(self):
         s1 = Stack()
-        popped = s1.pop().getOrElse(())
-        assert popped is ()
-        assert popped is not None
-        popped = s1.pop().getOrElse('Forty-Two')
-        assert popped == 'Forty-Two'
+        popped = s1.pop()
+        assert popped is None
 
         s2 = Stack(1, 2, 3, 42)
         while s2:
-            assert s2.peak().get() != Nothing
+            assert s2.peak() is not None
             s2.pop()
         assert not s2
-        ms2 = s2.pop()
-        assert ms2 == Nothing
-        assert ms2.get() is None
-        assert not ms2
+        assert s2.peak() is None
         s2.push(42)
-        assert s2.peak() == Some(40+2)
-        if s2.peak() == Some(42):
-            assert s2.pop().get() == 42
+        assert s2.peak() == 40+2
+        assert s2.pop() == 42
+        assert s2.peak() is None
 
     def test_stack_len(self):
         s0 = Stack()
@@ -80,32 +73,29 @@ class TestStack:
         assert len(s0) == 1
         assert len(s1) == 1998
 
-    def test_tail(self):
+    def test_tail_cons(self):
         s1 = Stack()
         s1.push("fum")
         s1.push("fo")
         s1.push("fi")
         s1.push("fe")
-        ms2 = s1.tail()
-        assert ms2 != Nothing
-        ms4 = ms2.map(lambda x: x.copy())
-        assert ms4 == ms2
-        assert ms4.flatMap(lambda x: Maybe(x.tail())) == ms2.map(lambda x: x.tail())
-        assert ms4.getOrElse(Stack(*[1, 2, 3])) == ms2.getOrElse(Stack(*[3, 2, 1])) 
+        s2 = s1.tail()
+        if s2 is None:
+            assert False
+        s3 = s2.cons("fe")
+        assert s3 == s1
         while s1:
             s1.pop()
-        assert s1.pop() == Nothing
-        assert s1.tail() == Nothing
+        assert s1.pop() == None
+        assert s1.tail() == None
 
     def test_stack_iter(self):
         giantStack = Stack(*[" Fum", " Fo", " Fi", "Fe"])
-        giantTalk = giantStack.peak().getOrElse("Teeny Tiny")
+        giantTalk = giantStack.pop()
         assert giantTalk == "Fe"
-        generalThumb = ['I', ' am', ' General', ' Tom', ' Thumb.']
-        gs = giantStack.tail().getOrElse(Stack(*reversed(generalThumb)))
-        for giantWord in gs:
+        for giantWord in giantStack:
             giantTalk += giantWord
-        assert len(giantStack) == 4
+        assert len(giantStack) == 3
         assert giantTalk == "Fe Fi Fo Fum"
 
         es = Stack()
@@ -116,19 +106,19 @@ class TestStack:
         s1 = Stack(*range(3))
         s2 = s1.cons(42)
         assert s1 is not s2
-        assert s1 is not s2.tail().getOrElse(Stack())
+        assert s1 is not s2.tailOrElse()
         assert s1 != s2
-        assert s1 == s2.tail().getOrElse(Stack())
+        assert s1 == s2.tail()
 
-        assert s2.peak().getOrElse(7) == 42
-        assert s2.pop().getOrElse(0) == 42
+        assert s2.peak() == 42
+        assert s2.pop() == 42
 
         s3 = Stack(range(10000))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
         
-        s3.push(s4.pop().getOrElse(-1))
+        s3.push(s4.pop())
         assert s3 is not s4
         assert s3 != s4
         s3.pop()
@@ -150,7 +140,7 @@ class TestStack:
         assert s7 == s8
         assert s7 != s9
         assert s7.peak() == s8.peak()
-        assert s7.peak() is not s8.peak()
+        assert s7.peak() is s8.peak()
         assert s7.peak() != s9.peak()
         assert s7.peak() is not s9.peak()
         ducks.append("louie")
@@ -159,7 +149,7 @@ class TestStack:
         s7.push(['moe', 'larry', 'curlie'])
         s8.push(['moe', 'larry'])
         assert s7 != s8
-        s8.peak().getOrElse([]).append("curlie")
+        s8.peakOrElse([]).append("curlie")
         assert s7 == s8
 
     def test_doNotStoreNones(self):
@@ -194,13 +184,13 @@ class TestStack:
         assert lr == l_r_s1
         s2 = Stack(*lf)
         while s2:
-            assert s2.pop().get() == lf.pop()
+            assert s2.pop() == lf.pop()
 
     def test_map(self):
         s1 = Stack(1,2,3,4,5)
         s2 = s1.map(lambda x: 2*x+1)
-        assert s1.peak().get() == 5
-        assert s2.peak().get() == 11
+        assert s1.peak() == 5
+        assert s2.peak() == 11
         s3 = s2.map(lambda y: (y-1)//2)
         assert s1 == s3
         assert s1 is not s3
