@@ -29,7 +29,7 @@
 #    - bugfixes or minor changes (between PyPI releases)
 #    - GitHub only thrashing and experimentation
 #
-__version__ = "0.7.3.4"
+__version__ = "0.7.4.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
