@@ -1,4 +1,4 @@
-# Python grscheller.datastructures package
+# Python grscheller.datastructures PyPI Package
 
 Data structures supporting a functional style of programming, yet still
 endeavor to be Pythonic.
@@ -26,11 +26,15 @@ The data structures in this package:
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prevents you from doing.
 
-### Data structure summary
+### Overview grscheller.datastructures PyPI package
 
-* [Non-Typed Datastructures](docs/NonTypedDatastructures.md)
+* [Non-Typed Data structures](docs/NonTypedDatastructures.md)
 * [Functional Subpackage](docs/FunctionalSubpackage.md)
 * [Iterator Library](docs/IteratorLibraryModule.md)
+
+### Detailed API for grscheller.datastructures package
+
+* [Data Structure API's](https://grscheller.github.io/datastructures/documentation.html)
 
 ### Design choices
 

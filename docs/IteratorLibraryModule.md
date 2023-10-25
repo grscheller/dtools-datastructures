@@ -4,13 +4,13 @@ Module of functions used to manipulate Python iterators.
 
 ### Functions for interators
 
-* Function **mapIter**(iter: iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]
+* Function **mapIter**(iter: iterator, f: Callable[[Any], Any]) -> Iterator
   * Lazily map a function over an iterator stream
 
-* Function **concatIters**(*iter: iterator[Any]) -> Iterator[Any]
+* Function **concatIters**(*iter: iterator) -> Iterator
   * Sequentually concatenate multiple iterators into one
 
-* Function **mergeIters**(*iter: iterator[Any]) -> Iterator[Any]
+* Function **mergeIters**(*iter: iterator) -> Iterator
   * Merge multiple iterator streams until one is exhausted
 
 #### Examples
