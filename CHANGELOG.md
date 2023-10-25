@@ -24,13 +24,21 @@
 
 ## Versions
 
+### Version v0.7.4.0 - PyPI release date: 2023-10-25
+    
+* More mature & more Pythonic
+* Major API changes
+* Still tagging it an alpha release
+
 ### Version 0.7.2.0 - commit date 2023-10-18
+
 * Queue & Dqueue no longer return Maybe objects
   * Neither store None as a value
   * Now safe to return None for non-existent values
     * like popping or peaking from an empty queue or dqueue
 
 ### Version 0.7.0.0 - commit date 2023-10-16
+
 * added Queue data structure repreenting a FIFO queue
 * renamed two Dqueue methods
   * headR -> peakLastIn
@@ -45,6 +53,7 @@
   * added info on class Queue
 
 ### Version v0.6.9.0 - PyPI release date: 2023-10-09
+
 * deprecated Stack head() method
   * replaced with peak() method
 * renamed core module to iterlib module
@@ -62,6 +71,7 @@
     * each returns a new Stack instance, with new nodes
 
 ### Version 0.6.8.6 - commit date: 2023-10-08
+
 * 3 new methods for class Circle and Dqueue
   * mapSelf, flatMapSelf, mergeMapSelf
     * these correspond to map, flatMap, mergeMap
@@ -76,6 +86,7 @@
     * the other modifying the object in place
 
 ### Version 0.6.8.3 - commit date: 2023-10-06
+
 * Stack now works with Python Reversed builtin function
   * using a __reversed__ method which is O(n)
   * never figured out why reversed() failed with __getitems__ & __len__
@@ -95,6 +106,7 @@
 
 
 ### Version 0.6.4.1 - commit date: 2023-10-01
+
 * Initial prototypes for map and flatMap for Dqueue class
 * Started grscheller.datastructures.core module
   * used for grscheller.datastructures implementation
@@ -106,6 +118,7 @@
 * Decided to keep Alpha for next PyPI release
 
 ### Version 0.6.3.2 - commit date: 2023-09-30
+
 * Made functional module into a sub package of datastructures
 * Improved comments and type annotations
 * Removed isEmpty method from Dqueue class
@@ -115,22 +128,26 @@
   * Need to improve test suite first
 
 ### Version 0.6.2.0 - commit date: 2023-09-25
+
 * Started work on a Left biased Either Monad
 * removed isEmpty method from Stack class
 
 ### Version 0.6.1.0 - commit date: 2023-09-25
+
 * Maybe get() and getOrElse() API changes
 * getting a better handle on type annotation
   * work-in-progress
   * erroneous LSP error messages greatly reduced
 
 ### Version v0.5.2.1 - PyPI release date: 2023-09-24
+
 * data structures now support a much more FP style for Python
   * implemented Maybe monad
   * introduces the use of type annotations for this effort
   * much better test coverage
 
 ### Version 0.5.0.0 - commit date: 2023-09-20
+
 * begin work on a more functional approach
   * create a monadic Option class
   * drop the subclassing of NONE
@@ -145,6 +162,7 @@
       * then being dissatified with someone else's design
 
 ### Version 0.4.0.0 - commit date: 2023-09-11
+
 * subtle paradigm shift for Stack class
   * empty Stacks no longer returned for nonexistent stacks
     * like the tail of an empty stack
@@ -153,6 +171,7 @@
   * still working out the API
 
 ### Version v0.3.0.2 - PyPI release date: 2023-09-09
+
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
