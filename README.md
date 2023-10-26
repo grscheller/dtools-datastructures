@@ -11,22 +11,22 @@ The data structures in this package:
   designed to support.
 * Take care of all the "bit fiddling" needed to implement desired
   behaviors.
-* Don't force the raising of gratuitous exceptions upon client code
-  leveraging this package.
-* Safely handle mutating contained data by pushing it to a protected
-  inner scope. 
-* Safely share data between data structure instances by pushing mutation
+* Mutate data structure instance safely by pushing contained data to a
+  protected inner scope. 
+* Share data between data structure instances safely by pushing mutation
   to an outer scope and making shared immutable internal state
   inaccessible to client code.
 * Allow for "lazy" evaluation avoiding race conditions by having
   iterators process non-mutating copies of data structure internal
   state.
+* Don't force the raising of gratuitous exceptions upon client code
+  leveraging this package.
 * Code to the "happy" path & provide FP tools for "exceptional" events.
 
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prevents you from doing.
 
-### Overview grscheller.datastructures PyPI package
+### Package [overview grscheller.datastructures][1]
 
 * [Non-Typed Data structures](README.d/NonTypedDatastructures.md)
 * [Functional Subpackage](README.d/FunctionalSubpackage.md)
@@ -34,7 +34,7 @@ enables you to do, but from what it prevents you from doing.
 
 ### Detailed API for grscheller.datastructures package
 
-* [Data Structure API's](https://grscheller.github.io/datastructures/documentation.html)
+* [Data Structure API's][2]
 
 ### Design choices
 
@@ -64,3 +64,8 @@ For methods which mutate their data structures, I try to follow the
 Python convention of not returning anything, like the append method of
 the Python List builtin. Most functional programming languages will
 return a reference to the data structure.
+
+---
+
+[1]: https://github.com/grscheller/datastructures/blob/main/README.md#overview-grschellerdatastructures-pypi-package
+[2]: https://grscheller.github.io/datastructures/documentation.html
