@@ -7,8 +7,8 @@
   * first digit signifies an event or epoch
   * second digit means breaking API changes (between PyPI releases)
   * third digit either means
-    * API breaking changes (between GitHub commits)
     * API additions (between PyPI releases)
+    * first "new" API breaking changes (between GitHub commits)
   * fourth digit either means
     * bugfixes or minor changes (between PyPI releases)
     * GitHub only thrashing and experimentation
@@ -23,6 +23,12 @@
   * PyPI releases are tagged with a leading "v" on GitHub
 
 ## Versions
+
+### Version 0.7.5.0 - commit date 2023-20-26
+* moved pytest testsuite to root of the repo
+  * src/grscheller/datastrucures/tests -> tests/
+  * seems to be the canonical location of a testsuite
+* instructions to run testsuite in tests/__init__.py
 
 ### Version v0.7.4.0 - PyPI release date: 2023-10-25
     

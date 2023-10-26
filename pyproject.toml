@@ -19,9 +19,6 @@ classifiers = [
 dependencies = []
 dynamic = ["version", "description"]
 
-[project.optional-dependencies]
-test = ["pytest >=7.4"]
-
 [project.urls]
 Source = "https://github.com/grscheller/datastructures"
 Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
