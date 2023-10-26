@@ -26,7 +26,8 @@
 
 ### Version v0.7.4.0 - PyPI release date: 2023-10-25
     
-* More mature & more Pythonic
+* More mature
+* More Pythonic
 * Major API changes
 * Still tagging it an alpha release
 
