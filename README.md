@@ -28,9 +28,9 @@ enables you to do, but from what it prevents you from doing.
 
 ### Overview grscheller.datastructures PyPI package
 
-* [Non-Typed Data structures](docs/NonTypedDatastructures.md)
-* [Functional Subpackage](docs/FunctionalSubpackage.md)
-* [Iterator Library](docs/IteratorLibraryModule.md)
+* [Non-Typed Data structures](README.d/NonTypedDatastructures.md)
+* [Functional Subpackage](README.d/FunctionalSubpackage.md)
+* [Iterator Library](README.d/IteratorLibraryModule.md)
 
 ### Detailed API for grscheller.datastructures package
 
