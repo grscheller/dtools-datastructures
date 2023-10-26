@@ -26,15 +26,15 @@ The data structures in this package:
 Sometimes the real power of a data structure comes not from what it
 enables you to do, but from what it prevents you from doing.
 
-### Package [overview grscheller.datastructures][1]
+### Package overview grscheller.datastructures
 
-* [Non-Typed Data structures](README.d/NonTypedDatastructures.md)
-* [Functional Subpackage](README.d/FunctionalSubpackage.md)
-* [Iterator Library](README.d/IteratorLibraryModule.md)
+* [Non-Typed Data structures][1]
+* [Functional Subpackage][2]
+* [Iterator Library][3]
 
 ### Detailed API for grscheller.datastructures package
 
-* [Data Structure API's][2]
+* [Data Structure API's][4]
 
 ### Design choices
 
@@ -67,5 +67,7 @@ return a reference to the data structure.
 
 ---
 
-[1]: https://github.com/grscheller/datastructures/blob/main/README.md#overview-grschellerdatastructures-pypi-package
-[2]: https://grscheller.github.io/datastructures/documentation.html
+[1]: https://github.com/grscheller/datastructures/blob/main/README.d/NonTypedDatastructures.md
+[2]: https://github.com/grscheller/datastructures/blob/main/README.d/FunctionalSubpackage.md
+[3]: https://github.com/grscheller/datastructures/blob/main/README.d/IteratorLibraryModule.md
+[4]: https://grscheller.github.io/datastructures/documentation.html
