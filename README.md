@@ -62,5 +62,5 @@ ways to handle "missing" data.
 
 For methods which mutate their data structures, I try to follow the
 Python convention of not returning anything, like the append method of
-the Python List builtin object. Most functional programming languages
-will return a reference to the data structure.
+the Python List builtin. Most functional programming languages will
+return a reference to the data structure.
