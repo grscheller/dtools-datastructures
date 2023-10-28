@@ -27,7 +27,8 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union
-from .iterlib import mapIter, concatIters, mergeIters
+from itertools import chain
+from .iterlib import mapIter, mergeIters
 
 class FLarray():
     """Class representing a fixed length array data structure of length > 0.
@@ -142,7 +143,7 @@ class FLarray():
 
     def map(self, f: Callable[[Any], Any]) -> FLarray:
         """Apply function over flarray contents, returns new instance"""
-        return FLarray(*mapIter(iter(self), f))
+        return FLarray(*(f(x) for x in iter(self)))
 
     def map_update(self, f: Callable[[Any], Any]) -> None:
         """Apply function over flarray contents"""
@@ -150,15 +151,17 @@ class FLarray():
             self._list[idx] = f(self._list[idx])
 
     def flatMap(self, f: Callable[[Any], FLarray]) -> FLarray:
-        """Apply function and flatten result, returns new instance"""
-        return FLarray(
-            *concatIters(
-                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
-            )
-        )
+        """Apply function and flatten result, returns new instance
+        since size may change
+        """
+        return FLarray(*chain(
+            *(iter(y) for y in (f(x) for x in iter(self)))
+        ))
 
     def mergeMap(self, f: Callable[[Any], FLarray]) -> FLarray:
-        """Apply function and flatten result, returns new instance"""
+        """Apply function and flatten result, returns new instance
+        since size may change
+        """
         return FLarray(
             *mergeIters(
                 *mapIter(mapIter(iter(self), f), lambda x: iter(x))

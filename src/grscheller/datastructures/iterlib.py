@@ -20,7 +20,7 @@ Library of iterator related functions.
 from __future__ import annotations
 from typing import Any, Callable, Iterator
 
-__all__ = ['concatIters', 'mergeIters', 'mapIter']
+__all__ = ['concatIters', 'exhaustIters', 'mergeIters', 'mapIter']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -52,3 +52,26 @@ def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
                     yield value
             except StopIteration:
                 break
+
+def exhaustIters(*iterators: Iterator[Any]) -> Iterator[Any]:
+    """Merge multiple iterator streams until all are exhausted"""
+    iterList = list(iterators)
+    if (numIters := len(iterList)) > 0:
+        ii = 0
+        values = []
+        while True:
+            try:
+                while ii < numIters:
+                    values.append(next(iterList[ii]))
+                    ii += 1
+                for value in values:
+                    yield value
+                values.clear()
+                ii = 0
+            except StopIteration:
+                numIters -= 1
+                if numIters < 1:
+                    break
+                del iterList[ii]
+        for value in values:
+            yield value

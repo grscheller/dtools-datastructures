@@ -17,7 +17,7 @@
 Subpackage of grscheller.datastructures
 
 Data structures supporting a functional style of programming in Python
-- immutable semantics - map & flatMap return modified copies
+- immutable semantics - map & flatMap always return modified copies
 - None is always treated as a non-existance value
   - Python None value cannot be stored in any object in this subpackage
   - semantically None does not exist

@@ -2,7 +2,18 @@
 
 ## Overview
 
-* Single Maintainer Project
+* Single Maintainer PyPI Package
+* Rolling Release Model
+  * maintainer will not back port bug fixes to previous versions
+  * while an Alpha release
+    * main branch will be the only tracking branch
+    * will attempt to keep main relatively stable, but not fully tested
+    * overall structure of package a work in progress
+  * feature branches begin with "feature_" and are places to
+    * explore new directions
+    * commit potentially very broken code
+    * could be deleted from GitHub anytime WITHOUT WARNING
+  * PyPI releases are tagged with a leading "v" on GitHub
 * Semantic Versioning
   * first digit signifies an event or epoch
   * second digit means breaking API changes (between PyPI releases)
@@ -12,19 +23,19 @@
   * fourth digit either means
     * bugfixes or minor changes (between PyPI releases)
     * GitHub only thrashing and experimentation
-* Rolling Release Model
-  * maintainer will not back port bug fixes to previous versions
-  * main branch will be the only tracking branch on GitHub
-    * attempt to keep relatively stable, but not fully tested
-  * feature branch begin with "feature_" and are places to
-    * explore new directions
-    * commit potentially very broken code
-    * could be deleted from GitHub anytime WITHOUT WARNING
-  * PyPI releases are tagged with a leading "v" on GitHub
 
 ## Versions
 
-### Version 0.7.5.0 - commit date 2023-20-26
+### Version 0.8.0.0 - commit date 2023-10-28
+
+* API breaking changes
+  * did not find everything returning self upon mutation
+* Efforts for future directions
+  * decided to use pdoc3 over sphinx to generate API documentation
+  * need to resolve tension of package being Pythonic and Functional
+
+### Version 0.7.5.0 - commit date 2023-10-26
+
 * moved pytest testsuite to root of the repo
   * src/grscheller/datastrucures/tests -> tests/
   * seems to be the canonical location of a testsuite

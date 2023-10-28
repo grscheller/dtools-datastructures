@@ -27,9 +27,10 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self, Union
+from typing import Any, Callable, Union
+from itertools import chain
 from .carray import CArray
-from .iterlib import concatIters, mapIter, mergeIters
+from .iterlib import mapIter, mergeIters
 
 class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
@@ -136,27 +137,24 @@ class Dqueue():
         """Returns current capacity of dqueue"""
         return self._carray.fractionFilled()
 
-    def resize(self, addCapacity = 0) -> Self:
+    def resize(self, addCapacity = 0) -> None:
         """Compact dqueue and add extra capacity"""
         self._carray.resize(addCapacity)
-        return self
 
-    def map(self, f: Callable[[Any], Any]) -> Self:
+    def map(self, f: Callable[[Any], Any]) -> None:
         """Apply function over dqueue contents"""
-        self._carray = Dqueue(*mapIter(iter(self), f))._carray
-        return self
+        self._carray = Dqueue(*(f(x) for x in iter(self)))._carray
 
-    def flatMap(self, f: Callable[[Any], Dqueue]) -> Self:
+    def flatMap(self, f: Callable[[Any], Dqueue]) -> None:
         """Apply function and flatten result, surpress any None values"""
-        self._carray = Dqueue(*concatIters(
-            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._carray
-        return self
+        self._carray = Dqueue(*chain(
+            *(iter(y) for y in (f(x) for x in iter(self)))
+        ))._carray
 
-    def mergeMap(self, f: Callable[[Any], Dqueue]) -> Self:
+    def mergeMap(self, f: Callable[[Any], Dqueue]) -> None:
         """Apply function and flatten result, surpress any None values"""
         self._carray = Dqueue(*mergeIters(
             *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._carray
-        return self
 
 if __name__ == "__main__":
     pass

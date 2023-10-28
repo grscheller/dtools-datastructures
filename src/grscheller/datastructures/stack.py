@@ -31,7 +31,8 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .iterlib import concatIters, mergeIters, mapIter
+from .iterlib import mergeIters, mapIter
+from itertools import chain
 from .carray import CArray
 
 class _Node():
@@ -223,15 +224,13 @@ class Stack():
         Returns a new stack with new nodes so not to affect nodes shared
         by other Stack objects.
         """
-        return Stack(*mapIter(reversed(self), f))
+        return Stack(*(f(x) for x in reversed(self)))
 
     def flatMap(self, f: Callable[[Any], Stack]) -> Stack:
         """Apply function and flatten result, returns new instance"""
-        return Stack(
-            *concatIters(
-                *mapIter(mapIter(reversed(self), f), lambda x: reversed(x))
-            )
-        )
+        return Stack(*chain(
+            *(reversed(y) for y in (f(x) for x in reversed(self)))
+        ))
 
     def mergeMap(self, f: Callable[[Any], Stack]) -> Stack:
         """Apply function and flatten result, returns new instance"""

@@ -27,9 +27,10 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self, Union
+from typing import Any, Callable, Union
+from itertools import chain
 from .carray import CArray
-from .iterlib import concatIters, mapIter, mergeIters
+from .iterlib import mergeIters, exhaustIters
 
 class Queue():
     """Module grscheller.datastructure.queue - FIFO queue
@@ -128,27 +129,31 @@ class Queue():
         """Returns current capacity of queue"""
         return self._carray.fractionFilled()
 
-    def resize(self, addCapacity = 0) -> Self:
+    def resize(self, addCapacity = 0) -> None:
         """Compact queue and add extra capacity"""
         self._carray.resize(addCapacity)
-        return self
 
-    def map(self, f: Callable[[Any], Any]) -> Self:
+    def map(self, f: Callable[[Any], Any]) -> None:
         """Apply function over queue contents"""
-        self._carray = Queue(*mapIter(iter(self), f))._carray
-        return self
+        self._carray = Queue(*map(f, iter(self)))._carray
 
-    def flatMap(self, f: Callable[[Any], Queue]) -> Self:
+    def flatMap(self, f: Callable[[Any], Queue]) -> None:
         """Apply function and flatten result, surpress any None values"""
-        self._carray = Queue(*concatIters(
-            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._carray
-        return self
+        self._carray = Queue(*chain(
+            *(iter(x) for x in map(f, iter(self)))
+        ))._carray
 
-    def mergeMap(self, f: Callable[[Any], Queue]) -> Self:
+    def mergeMap(self, f: Callable[[Any], Queue]) -> None:
         """Apply function and flatten result, surpress any None values"""
         self._carray = Queue(*mergeIters(
-            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._carray
-        return self
+            *(iter(x) for x in map(f, iter(self)))
+        ))._carray
+
+    def exhaustMap(self, f: Callable[[Any], Queue]) -> None:
+        """Apply function and flatten result, surpress any None values"""
+        self._carray = Queue(*exhaustIters(
+            *(iter(x) for x in map(f, iter(self)))
+        ))._carray
 
 if __name__ == "__main__":
     pass

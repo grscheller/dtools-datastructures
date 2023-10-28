@@ -178,17 +178,14 @@ class TestDqueue:
         dq2.pushL(200)
         assert dq1 == dq2
 
-    def test_mapAndFlatMap(self):
+    def test_maps(self):
         dq1 = Dqueue(1,2,3,10)
         dq2 = dq1.copy()
         dq3 = dq2.copy()
-        dq1_answers = Dqueue(0,3,8,99)
-        assert dq1.map(lambda x: x*x-1) == dq1_answers
+        dq1.map(lambda x: x*x-1)
+        assert dq1 == Dqueue(0,3,8,99)
         dq2.flatMap(lambda x: Dqueue(1, x, x*x+1))
-        dq2_answers = Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert dq2 == dq2_answers
-        assert dq1 != dq2
-        assert dq1 is not dq2
+        assert dq2 == Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         dq3.mergeMap(lambda x: Dqueue(*range(2*x, x*x+4)))
         dq3_answers = Dqueue(2, 4, 6, 20, 3, 5, 7, 21, 4, 6, 8, 22)
         assert dq3 == dq3_answers

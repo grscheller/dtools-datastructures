@@ -175,18 +175,20 @@ class TestQueue:
         q2.pop()
         assert q1 == q2
 
-    def test_mapAndFlatMap(self):
-        q1 = Queue(1,2,3,10)
+    def test_maps(self):
+        q1 = Queue(1,2,3,5)
         q2 = q1.copy()
         q3 = q2.copy()
-        assert q1 == q2 == q3
-        q1_answers = Queue(0,3,8,99)
-        assert q1.map(lambda x: x*x-1) == q1_answers
+        q4 = q3.copy()
+        assert q1 == q2 == q3 == q4
+        q1.map(lambda x: x*x-1)
+        assert q1 == Queue(0,3,8,24)
         q2.flatMap(lambda x: Queue(1, x, x*x+1))
-        q2_answers = Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
+        q2_answers = Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
         assert q2 == q2_answers
         assert q1 != q2
         assert q1 is not q2
-        q3.mergeMap(lambda x: Queue(*range(2*x, x*x+4)))
-        q3_answers = Queue(2, 4, 6, 20, 3, 5, 7, 21, 4, 6, 8, 22)
-        assert q3 == q3_answers
+        q3.mergeMap(lambda x: Queue(*range(2*x, 4*x)))
+        assert q3 == Queue(2, 4, 6, 10, 3, 5, 7, 11)
+        q4.exhaustMap(lambda x: Queue(*range(2*x, 3*x)))
+        assert q4 == Queue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)

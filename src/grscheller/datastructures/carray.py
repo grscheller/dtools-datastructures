@@ -30,8 +30,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self, Never, Union
-from .iterlib import concatIters, mergeIters, mapIter
+from typing import Any, Callable, Never, Union
+from itertools import chain
+from .iterlib import mergeIters, mapIter
 
 class CArray:
     """Circular array with amortized O(1) indexing, prepending & appending
@@ -89,12 +90,11 @@ class CArray:
                 self._front = 0
                 self._rear = self._capacity - 1
 
-    def _empty(self) -> Self:
+    def _empty(self) -> None:
         """Empty circle array, keep current capacity"""
         self._list = [None]*self._capacity
         self._front = 0
         self._rear = self._capacity - 1
-        return self
 
     def __bool__(self):
         """Returns true if circle array is not empty"""
@@ -241,7 +241,7 @@ class CArray:
 
     def map(self, f: Callable[[Any], Any]) -> CArray:
         """Apply function over circle array contents, returns new instance"""
-        return CArray(*mapIter(iter(self), f))
+        return CArray(*(f(x) for x in iter(self)))
 
     def map_update(self, f: Callable[[Any], Any]) -> None:
         """Apply function over circle array contents"""
@@ -250,11 +250,9 @@ class CArray:
 
     def flatMap(self, f: Callable[[Any], CArray]) -> CArray:
         """Apply function and flatten result, returns new instance"""
-        return CArray(
-            *concatIters(
-                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
-            )
-        )
+        return CArray(*chain(
+            *(iter(y) for y in (f(x) for x in iter(self)))
+        ))
 
     def flatMap_update(self, f: Callable[[Any], CArray]) -> None:
         """Apply function to contents and flatten result"""
