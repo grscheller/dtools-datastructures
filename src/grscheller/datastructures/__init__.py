@@ -29,7 +29,7 @@
 #    - bugfixes or minor changes (between PyPI releases)
 #    - GitHub only thrashing and experimentation
 #
-__version__ = "0.8.0.0"
+__version__ = "0.8.1.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -37,8 +37,8 @@ __license__ = "Appache License 2.0"
 from .functional.maybe import *
 from .functional.either import *
 from .functional.util import *
-from .iterlib import *
-from .carray import *
+from .core.iterlib import *
+from .core.carray import *
 from .dqueue import *
 from .flarray import *
 from .stack import *

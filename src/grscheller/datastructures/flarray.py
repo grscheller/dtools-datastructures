@@ -28,7 +28,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union
 from itertools import chain
-from .iterlib import mapIter, mergeIters
+from .core.iterlib import mapIter, mergeIters
 
 class FLarray():
     """Class representing a fixed length array data structure of length > 0.

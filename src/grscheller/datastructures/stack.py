@@ -31,9 +31,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .iterlib import mergeIters, mapIter
+from .core.iterlib import mergeIters, mapIter
 from itertools import chain
-from .carray import CArray
+from .core.carray import Carray
 
 class _Node():
     """Class implementing nodes that can be linked together to form a singularly
@@ -123,7 +123,7 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        carrayData = CArray(*self)
+        carrayData = Carray(*self)
         carrayData.map_update(lambda x: repr(x)) 
         repStr = '|| ' + carrayData.popR()
         while carrayData:

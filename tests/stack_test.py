@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from grscheller.datastructures.stack import Stack
-from grscheller.datastructures.iterlib import concatIters
+from grscheller.datastructures.core.iterlib import concatIters
 import grscheller.datastructures.stack as stack
 
 class Test_Node:

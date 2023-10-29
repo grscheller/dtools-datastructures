@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.iterlib
+"""Module grscheller.datastructures.core.iterlib
 
 Library of iterator related functions.
 """
@@ -20,17 +20,23 @@ Library of iterator related functions.
 from __future__ import annotations
 from typing import Any, Callable, Iterator
 
-__all__ = ['concatIters', 'exhaustIters', 'mergeIters', 'mapIter']
+__all__ = ['mapIter', 'concatIters', 'exhaustIters', 'mergeIters']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
-    """Lazily map a function over an iterator stream"""
+    """Lazily map a function over an iterator stream.
+
+    See also the map Python builtin function.
+    """
     return (f(x) for x in iterator)
 
 def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
-    """Sequentually concatenate multiple iterators into one"""
+    """Sequentually concatenate multiple iterators into one.
+
+    See also the chain function from the itertools module.
+    """
     for iterator in iterators:
         while True:
             try:
@@ -39,26 +45,33 @@ def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
             except StopIteration:
                 break
 
-def mergeIters(*iterators: Iterator[Any]) -> Iterator[Any]:
-    """Merge multiple iterator streams until one is exhausted"""
+def mergeIters(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]:
+    """Merge multiple iterator streams until one is exhausted."""
     iterList = list(iterators)
     if (numIters := len(iterList)) > 0:
+        values = []
+        # Break when first iterator is exhausted
         while True:
             try:
-                values = []
                 for ii in range(numIters):
                     values.append(next(iterList[ii]))
                 for value in values:
                     yield value
+                values.clear()
             except StopIteration:
                 break
+        # Yield any remaining values
+        if yieldPartial:
+            for value in values:
+                yield value
 
-def exhaustIters(*iterators: Iterator[Any]) -> Iterator[Any]:
-    """Merge multiple iterator streams until all are exhausted"""
+def exhaustIters(*iterators: Iterator[Any], yieldPartial = True) -> Iterator[Any]:
+    """Merge multiple iterator streams until all are exhausted."""
     iterList = list(iterators)
     if (numIters := len(iterList)) > 0:
         ii = 0
         values = []
+        # Break when last iterator is exhausted
         while True:
             try:
                 while ii < numIters:
@@ -66,12 +79,14 @@ def exhaustIters(*iterators: Iterator[Any]) -> Iterator[Any]:
                     ii += 1
                 for value in values:
                     yield value
-                values.clear()
                 ii = 0
+                values.clear()
             except StopIteration:
                 numIters -= 1
                 if numIters < 1:
                     break
                 del iterList[ii]
-        for value in values:
-            yield value
+        # Yield any remaining values
+        if yieldPartial:
+            for value in values:
+                yield value

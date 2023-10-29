@@ -29,8 +29,8 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Union
 from itertools import chain
-from .carray import CArray
-from .iterlib import mapIter, mergeIters
+from .core.carray import Carray
+from .core.iterlib import mapIter, mergeIters
 
 class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
@@ -42,7 +42,7 @@ class Dqueue():
     """
     def __init__(self, *ds):
         """Construct a double sided queue"""
-        self._carray = CArray()
+        self._carray = Carray()
         for d in ds:
             if d is not None:
                 self._carray.pushR(d)

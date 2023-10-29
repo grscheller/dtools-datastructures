@@ -29,8 +29,8 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Union
 from itertools import chain
-from .carray import CArray
-from .iterlib import mergeIters, exhaustIters
+from .core.carray import Carray
+from .core.iterlib import mergeIters, exhaustIters
 
 class Queue():
     """Module grscheller.datastructure.queue - FIFO queue
@@ -48,7 +48,7 @@ class Queue():
 
         Null values will be culled from the intial data ds.
         """
-        self._carray = CArray()
+        self._carray = Carray()
         for d in ds:
             if d is not None:
                 self._carray.pushR(d)
