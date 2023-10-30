@@ -176,6 +176,7 @@ class TestQueue:
         assert q1 == q2
 
     def test_maps(self):
+        # TODO: more edge cases
         q0 = Queue(1,2,3,5)
         f1 = lambda x: x*x - 1
         f2 = lambda x: Queue(1, x, x*x+1)

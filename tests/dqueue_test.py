@@ -179,13 +179,38 @@ class TestDqueue:
         assert dq1 == dq2
 
     def test_maps(self):
-        dq1 = Dqueue(1,2,3,10)
-        dq2 = dq1.copy()
-        dq3 = dq2.copy()
-        dq1.map(lambda x: x*x-1)
-        assert dq1 == Dqueue(0,3,8,99)
-        dq2.flatMap(lambda x: Dqueue(1, x, x*x+1))
-        assert dq2 == Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        dq3.mergeMap(lambda x: Dqueue(*range(2*x, x*x+4)))
-        dq3_answers = Dqueue(2, 4, 6, 20, 3, 5, 7, 21, 4, 6, 8, 22)
-        assert dq3 == dq3_answers
+        # TODO: more edge cases
+        # TODO: change up from queue_twst.py version
+        q0 = Dqueue(1,2,3,5)
+        f1 = lambda x: x*x - 1
+        f2 = lambda x: Dqueue(1, x, x*x+1)
+        f3 = lambda x: Dqueue(*range(2*x, 4*x))
+        f4 = lambda x: Dqueue(*range(2*x, 3*x))
+
+        q1 = q0.copy()
+        q2 = q1.map(f1)
+        assert q1 == q0
+        q1.map(f1, mut=True)
+        assert q1 == q2 == Dqueue(0,3,8,24)
+        assert q1 != q0
+
+        q3 = q0.copy()
+        q4 = q3.flatMap(f2)
+        assert q3 == q0
+        q3.flatMap(f2, mut=True)
+        assert q3 == q4 == Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
+        assert q3 != q0
+
+        q3 = q0.copy()
+        q4 = q3.mergeMap(f3)
+        assert q3 == q0
+        q3.mergeMap(f3, mut=True)
+        assert q3 == q4 == Dqueue(2, 4, 6, 10, 3, 5, 7, 11)
+        assert q3 != q0
+
+        q5 = q0.copy()
+        q6 = q5.exhaustMap(f4)
+        assert q5 == q0
+        q5.exhaustMap(f4, mut=True)
+        assert q5 == q6 == Dqueue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
+        assert q5 != q0

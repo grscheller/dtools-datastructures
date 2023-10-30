@@ -27,42 +27,51 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Union
+from typing import Any, Callable, Self
 from itertools import chain
+from .core.iterlib import mergeIters, exhaustIters
 from .core.carray import Carray
-from .core.iterlib import mapIter, mergeIters
 
 class Dqueue():
     """Double sided queue datastructure. Will resize itself as needed.
 
-    Does not throw exceptions. The Dqueue class consistently uses None to
-    represent the absence of a value. None will not be pushed to this
-    data structure. As an alternative, use Maybe objects of type Nothing,
-    or the empty tuple () to represent a non-existent value. 
+    The Dqueue class consistently uses None to represent the absence of a value.
+    None will not be pushed to this data structure. As an alternative, use Maybe
+    objects of type Nothing, or the empty tuple () to represent a non-existent
+    value. 
     """
     def __init__(self, *ds):
-        """Construct a double sided queue"""
+        """Construct a double sided queue data structure.
+
+        Null values will be culled from the intial data from ds.
+        """
         self._carray = Carray()
         for d in ds:
             if d is not None:
                 self._carray.pushR(d)
 
     def __bool__(self) -> bool:
-        """Returns true if dqueue is not empty"""
+        """Returns true if dqueue is not empty."""
         return len(self._carray) != 0
 
     def __len__(self) -> int:
-        """Returns current number of values in dqueue"""
+        """Returns current number of values in dqueue."""
         return len(self._carray)
 
     def __iter__(self):
-        """Iterator yielding data currently stored in dqueue"""
+        """Iterator yielding data currently stored in dqueue.
+
+        Data yielded in left-to-right order.
+        """
         currCarray = self._carray.copy()
         for pos in range(len(currCarray)):
             yield currCarray[pos]
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the dqueue"""
+        """Reverse iterate over the current state of the dqueue.
+        
+        Data yielded in right-to-left order.
+        """
         for data in reversed(self._carray.copy()):
             yield data
 
@@ -75,86 +84,127 @@ class Dqueue():
         return self._carray == other._carray
 
     def __repr__(self):
-        """Display data in dqueue"""
+        """Display data in dqueue."""
         dataListStrs = []
         for data in self._carray:
             dataListStrs.append(repr(data))
         return ">< " + " | ".join(dataListStrs) + " ><"
 
     def copy(self) -> Dqueue:
-        """Return shallow copy of the dqueue in O(n) time & space complexity"""
+        """Return shallow copy of the dqueue in O(n) time & space complexity."""
         new_dqueue = Dqueue()
         new_dqueue._carray = self._carray.copy()
         return new_dqueue
 
     def pushR(self, *ds: Any) -> Dqueue:
-        """Push data on rear of dqueue & return reference to self"""
+        """Push data on rear of dqueue & return reference to self."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
         return self
 
     def pushL(self, *ds: Any) -> Dqueue:
-        """Push data on front of dqueue, return reference to self"""
+        """Push data on front of dqueue, return reference to self."""
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
         return self
 
-    def popR(self) -> Union[Any, None]:
+    def popR(self) -> Any|None:
         """Pop data off rear of dqueue"""
         if len(self._carray) > 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -> Union[Any, None]:
+    def popL(self) -> Any|None:
         """Pop data off front of dqueue"""
         if len(self._carray) > 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -> Union[Any, None]:
-        """Return rear element of dqueue without consuming it"""
+    def peakR(self) -> Any|None:
+        """Return righ-mostt element of dqueue without consuming it."""
         if len(self._carray) > 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -> Union[Any, None]:
-        """Return front element of dqueue without consuming it"""
+    def peakL(self) -> Any|None:
+        """Return left-most element of dqueue without consuming it."""
         if len(self._carray) > 0:
             return self._carray[0]
         else:
             return None
 
     def capacity(self) -> int:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of dqueue."""
         return self._carray.capacity()
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of dqueue"""
+        """Returns current capacity of dqueue."""
         return self._carray.fractionFilled()
 
-    def resize(self, addCapacity = 0) -> None:
-        """Compact dqueue and add extra capacity"""
+    def resize(self, addCapacity = 0) -> Self:
+        """Compact dqueue and add extra capacity."""
         self._carray.resize(addCapacity)
+        return self
 
-    def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over dqueue contents"""
-        self._carray = Dqueue(*(f(x) for x in iter(self)))._carray
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|Dqueue:
+        """Apply function over dqueue contents.
 
-    def flatMap(self, f: Callable[[Any], Dqueue]) -> None:
-        """Apply function and flatten result, surpress any None values"""
-        self._carray = Dqueue(*chain(
-            *(iter(y) for y in (f(x) for x in iter(self)))
-        ))._carray
+        Return new Dqueue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newDqueue  = Dqueue(*map(f, iter(self)))
+        if mut:
+            self._carray = newDqueue._carray
+            return self
+        return newDqueue
 
-    def mergeMap(self, f: Callable[[Any], Dqueue]) -> None:
-        """Apply function and flatten result, surpress any None values"""
-        self._carray = Dqueue(*mergeIters(
-            *mapIter(mapIter(iter(self), f), lambda x: iter(x))))._carray
+    def flatMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+        """Apply function and flatten result, surpress any None values.
+
+        Merge the dqueues produced sequentially left-to-right.
+
+        Return new Dqueue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newDqueue = Dqueue(*chain(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newDqueue._carray
+            return self
+        return newDqueue
+
+    def mergeMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+        """Apply function and flatten result, surpress any None values.
+
+        Round Robin Merge the dqueues produced until first cached dqueue is
+        exhausted.
+
+        Return new Dqueue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newDqueue = Dqueue(*mergeIters(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newDqueue._carray
+            return self
+        return newDqueue
+
+    def exhaustMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+        """Apply function and flatten result, surpress any None values.
+
+        Round Robin Merge the dqueues produced until all cached dqueues are exhausted.
+
+        Return new Dqueue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newDqueue = Dqueue(*exhaustIters(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newDqueue._carray
+            return self
+        return newDqueue
 
 if __name__ == "__main__":
     pass

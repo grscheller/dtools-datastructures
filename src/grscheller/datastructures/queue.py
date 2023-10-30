@@ -29,8 +29,8 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Self
 from itertools import chain
-from .core.carray import Carray
 from .core.iterlib import mergeIters, exhaustIters
+from .core.carray import Carray
 
 class Queue():
     """Module grscheller.datastructure.queue - FIFO queue
@@ -44,7 +44,7 @@ class Queue():
     A Queue instance will resize itself as needed.
     """
     def __init__(self, *ds):
-        """Construct a FIFO queue datastructure.
+        """Construct a FIFO queue data structure.
 
         Null values will be culled from the intial data from ds.
         """
@@ -62,7 +62,10 @@ class Queue():
         return len(self._carray)
 
     def __iter__(self):
-        """Iterator yielding data currently stored in queue."""
+        """Iterator yielding data currently stored in queue.
+
+        Data yielded in natural FIFO order.
+        """
         currCarray = self._carray.copy()
         for pos in range(len(currCarray)):
             yield currCarray[pos]
@@ -88,7 +91,7 @@ class Queue():
         return "<< " + " | ".join(dataListStrs) + " <<"
 
     def copy(self) -> Queue:
-        """Return shallow copy of the queue in O(n) time & space complexity"""
+        """Return shallow copy of the queue in O(n) time & space complexity."""
         new_queue = Queue()
         new_queue._carray = self._carray.copy()
         return new_queue
@@ -149,6 +152,8 @@ class Queue():
     def flatMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
         """Apply function and flatten result, surpress any None values.
 
+        Merge the queues produced sequentially front-to-back.
+
         Return new Queue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
@@ -160,6 +165,9 @@ class Queue():
 
     def mergeMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
         """Apply function and flatten result, surpress any None values.
+
+        Round Robin Merge the queues produced until first cached queue is
+        exhausted.
 
         Return new Queue if mut=False (the default)
         otherwise mutate the data structure and return self.
