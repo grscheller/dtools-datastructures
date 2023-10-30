@@ -88,7 +88,7 @@ class Queue():
         dataListStrs = []
         for data in self._carray:
             dataListStrs.append(repr(data))
-        return "<< " + " | ".join(dataListStrs) + " <<"
+        return "<<" + " | ".join(dataListStrs) + "<<"
 
     def copy(self) -> Queue:
         """Return shallow copy of the queue in O(n) time & space complexity."""

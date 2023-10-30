@@ -88,7 +88,7 @@ class Dqueue():
         dataListStrs = []
         for data in self._carray:
             dataListStrs.append(repr(data))
-        return ">< " + " | ".join(dataListStrs) + " ><"
+        return "><" + " | ".join(dataListStrs) + "><"
 
     def copy(self) -> Dqueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity."""

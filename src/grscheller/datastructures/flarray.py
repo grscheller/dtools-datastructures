@@ -135,7 +135,7 @@ class FLarray():
         listStrs = []
         for data in self:
             listStrs.append(repr(data))
-        return "[| " + ", ".join(listStrs) + " |]"
+        return "[|" + ", ".join(listStrs) + "|]"
 
     def copy(self) -> FLarray:
         """Return shallow copy of the flarray in O(n) time & space complexity"""

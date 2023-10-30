@@ -123,13 +123,7 @@ class Stack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        carrayData = Carray(*self)
-        carrayData.map_update(lambda x: repr(x)) 
-        repStr = '|| ' + carrayData.popR()
-        while carrayData:
-            repStr = repStr + ' <- ' + carrayData.popR()
-        repStr += ' ><'
-        return repStr
+        return '|| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
 
     def copy(self) -> Stack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
