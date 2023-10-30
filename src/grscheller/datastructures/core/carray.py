@@ -249,10 +249,11 @@ class Carray:
         """Apply function over circle array contents, returns new instance"""
         return Carray(*(f(x) for x in iter(self)))
 
-    def map_update(self, f: Callable[[Any], Any]) -> None:
+    def map_update(self, f: Callable[[Any], Any]) -> Self:
         """Apply function over circle array contents"""
         for idx in range(self._count):
             self[idx] = f(self[idx])
+        return self
 
     def flatMap(self, f: Callable[[Any], Carray]) -> Carray:
         """Apply function and flatten result, returns new instance"""
@@ -260,7 +261,7 @@ class Carray:
             *(iter(y) for y in (f(x) for x in iter(self)))
         ))
 
-    def flatMap_update(self, f: Callable[[Any], Carray]) -> None:
+    def flatMap_update(self, f: Callable[[Any], Carray]) -> Self:
         """Apply function to contents and flatten result"""
         donor = self.flatMap(f)
         self._count = donor._count
@@ -268,6 +269,7 @@ class Carray:
         self._front = donor._front
         self._rear = donor._rear
         self._list = donor._list
+        return self
 
     def mergeMap(self, f: Callable[[Any], Carray]) -> Carray:
         """Apply function and flatten result, returns new instance"""
@@ -277,7 +279,7 @@ class Carray:
             )
         )
 
-    def mergeMap_update(self, f: Callable[[Any], Carray]) -> None:
+    def mergeMap_update(self, f: Callable[[Any], Carray]) -> Self:
         """Apply function and merge to flatten result, returns new instance"""
         donor = self.mergeMap(f)
         self._count = donor._count
@@ -285,6 +287,7 @@ class Carray:
         self._front = donor._front
         self._rear = donor._rear
         self._list = donor._list
+        return self
 
 if __name__ == "__main__":
     pass

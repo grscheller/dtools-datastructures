@@ -19,7 +19,7 @@
   * second digit means breaking API changes (between PyPI releases)
   * third digit either means
     * API additions (between PyPI releases)
-    * first "new" API breaking changes (between GitHub commits)
+    * start of "new" API breaking changes (between GitHub commits)
   * fourth digit either means
     * bugfixes or minor changes (between PyPI releases)
     * GitHub only thrashing and experimentation

@@ -24,12 +24,12 @@
 #  - second digit means breaking API changes (between PyPI releases)
 #  - third digit either means
 #    - API additions (between PyPI releases)
-#    - first "new" API breaking changes (between GitHub commits)
+#    - start of "new" API breaking changes (between GitHub commits)
 #  - fourth digit either means
 #    - bugfixes or minor changes (between PyPI releases)
 #    - GitHub only thrashing and experimentation
 #
-__version__ = "0.8.1.0"
+__version__ = "0.8.1.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

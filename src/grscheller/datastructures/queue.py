@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Union
+from typing import Any, Callable, Self
 from itertools import chain
 from .core.carray import Carray
 from .core.iterlib import mergeIters, exhaustIters
@@ -44,9 +44,9 @@ class Queue():
     A Queue instance will resize itself as needed.
     """
     def __init__(self, *ds):
-        """Construct a FIFO queue datastructure
+        """Construct a FIFO queue datastructure.
 
-        Null values will be culled from the intial data ds.
+        Null values will be culled from the intial data from ds.
         """
         self._carray = Carray()
         for d in ds:
@@ -54,21 +54,21 @@ class Queue():
                 self._carray.pushR(d)
 
     def __bool__(self) -> bool:
-        """Returns true if queue is not empty"""
+        """Returns true if queue is not empty."""
         return len(self._carray) != 0
 
     def __len__(self) -> int:
-        """Returns current number of values in queue"""
+        """Returns current number of values in queue."""
         return len(self._carray)
 
     def __iter__(self):
-        """Iterator yielding data currently stored in queue"""
+        """Iterator yielding data currently stored in queue."""
         currCarray = self._carray.copy()
         for pos in range(len(currCarray)):
             yield currCarray[pos]
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the queue"""
+        """Reverse iterate over the current state of the queue."""
         for data in reversed(self._carray.copy()):
             yield data
 
@@ -81,7 +81,7 @@ class Queue():
         return self._carray == other._carray
 
     def __repr__(self):
-        """Display data in queue"""
+        """Display data in queue."""
         dataListStrs = []
         for data in self._carray:
             dataListStrs.append(repr(data))
@@ -94,66 +94,93 @@ class Queue():
         return new_queue
 
     def push(self, *ds: Any) -> Queue:
-        """Push data on rear of queue & return reference to self"""
+        """Push data on rear of queue & return reference to self."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
         return self
 
-    def pop(self) -> Union[Any, None]:
-        """Pop data off front of queue"""
+    def pop(self) -> Any|None:
+        """Pop data off front of queue."""
         if len(self._carray) > 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -> Union[Any, None]:
-        """Return last element pushed to queue without consuming it"""
+    def peakLastIn(self) -> Any|None:
+        """Return last element pushed to queue without consuming it."""
         if len(self._carray) > 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -> Union[Any, None]:
-        """Return next element ready to pop from queue without consuming it"""
+    def peakNextOut(self) -> Any|None:
+        """Return next element ready to pop from queue without consuming it."""
         if len(self._carray) > 0:
             return self._carray[0]
         else:
             return None
 
     def capacity(self) -> int:
-        """Returns current capacity of queue"""
+        """Returns current capacity of queue."""
         return self._carray.capacity()
 
     def fractionFilled(self) -> float:
-        """Returns current capacity of queue"""
+        """Returns current capacity of queue."""
         return self._carray.fractionFilled()
 
-    def resize(self, addCapacity = 0) -> None:
-        """Compact queue and add extra capacity"""
+    def resize(self, addCapacity = 0) -> Self:
+        """Compact queue and add extra capacity."""
         self._carray.resize(addCapacity)
+        return self
 
-    def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over queue contents"""
-        self._carray = Queue(*map(f, iter(self)))._carray
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|Queue:
+        """Apply function over queue contents.
 
-    def flatMap(self, f: Callable[[Any], Queue]) -> None:
-        """Apply function and flatten result, surpress any None values"""
-        self._carray = Queue(*chain(
-            *(iter(x) for x in map(f, iter(self)))
-        ))._carray
+        Return new Queue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newQueue  = Queue(*map(f, iter(self)))
+        if mut:
+            self._carray = newQueue._carray
+            return self
+        return newQueue
 
-    def mergeMap(self, f: Callable[[Any], Queue]) -> None:
-        """Apply function and flatten result, surpress any None values"""
-        self._carray = Queue(*mergeIters(
-            *(iter(x) for x in map(f, iter(self)))
-        ))._carray
+    def flatMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
+        """Apply function and flatten result, surpress any None values.
 
-    def exhaustMap(self, f: Callable[[Any], Queue]) -> None:
-        """Apply function and flatten result, surpress any None values"""
-        self._carray = Queue(*exhaustIters(
-            *(iter(x) for x in map(f, iter(self)))
-        ))._carray
+        Return new Queue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newQueue = Queue(*chain(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newQueue._carray
+            return self
+        return newQueue
+
+    def mergeMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
+        """Apply function and flatten result, surpress any None values.
+
+        Return new Queue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newQueue = Queue(*mergeIters(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newQueue._carray
+            return self
+        return newQueue
+
+    def exhaustMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
+        """Apply function and flatten result, surpress any None values.
+
+        Return new Queue if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newQueue = Queue(*exhaustIters(*(iter(x) for x in map(f, iter(self)))))
+        if mut:
+            self._carray = newQueue._carray
+            return self
+        return newQueue
 
 if __name__ == "__main__":
     pass

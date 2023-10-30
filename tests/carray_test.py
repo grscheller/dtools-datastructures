@@ -142,7 +142,7 @@ class TestCarray:
         assert c3 == c4 == Carray()
         assert c3 is not c4
 
-    def test_flatMapSelf(self):
+    def test_flatMapUpdate(self):
         c1 = Carray(1,2,3,5,10)
         c1.flatMap_update(lambda x: Carray(1, x, x*x+1))
         c1_answers = Carray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
@@ -151,7 +151,7 @@ class TestCarray:
 
     def test_mergeMap(self):
         c1 = Carray(5, 4, 7)
-        # need to figure out why pyright does not like the below line
+        # need to figure out why pyright does not like the line below
         min1 = min(iter(c1))
         len1 = len(c1)
         c2 = c1.mergeMap(lambda x: Carray(*([chr(0o100+x)*x]*x)))
@@ -177,7 +177,7 @@ class TestCarray:
         assert len(c2) == len1 == 0
         assert len(c1) == len1 == 0
 
-    def test_mergeMapSelf(self):
+    def test_mergeMapUpdate(self):
         c1 = Carray(5, 4, 7)
         min1 = min(iter(c1))
         len1 = len(c1)

@@ -176,19 +176,36 @@ class TestQueue:
         assert q1 == q2
 
     def test_maps(self):
-        q1 = Queue(1,2,3,5)
-        q2 = q1.copy()
-        q3 = q2.copy()
-        q4 = q3.copy()
-        assert q1 == q2 == q3 == q4
-        q1.map(lambda x: x*x-1)
-        assert q1 == Queue(0,3,8,24)
-        q2.flatMap(lambda x: Queue(1, x, x*x+1))
-        q2_answers = Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
-        assert q2 == q2_answers
-        assert q1 != q2
-        assert q1 is not q2
-        q3.mergeMap(lambda x: Queue(*range(2*x, 4*x)))
-        assert q3 == Queue(2, 4, 6, 10, 3, 5, 7, 11)
-        q4.exhaustMap(lambda x: Queue(*range(2*x, 3*x)))
-        assert q4 == Queue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
+        q0 = Queue(1,2,3,5)
+        f1 = lambda x: x*x - 1
+        f2 = lambda x: Queue(1, x, x*x+1)
+        f3 = lambda x: Queue(*range(2*x, 4*x))
+        f4 = lambda x: Queue(*range(2*x, 3*x))
+
+        q1 = q0.copy()
+        q2 = q1.map(f1)
+        assert q1 == q0
+        q1.map(f1, mut=True)
+        assert q1 == q2 == Queue(0,3,8,24)
+        assert q1 != q0
+
+        q3 = q0.copy()
+        q4 = q3.flatMap(f2)
+        assert q3 == q0
+        q3.flatMap(f2, mut=True)
+        assert q3 == q4 == Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
+        assert q3 != q0
+
+        q3 = q0.copy()
+        q4 = q3.mergeMap(f3)
+        assert q3 == q0
+        q3.mergeMap(f3, mut=True)
+        assert q3 == q4 == Queue(2, 4, 6, 10, 3, 5, 7, 11)
+        assert q3 != q0
+
+        q5 = q0.copy()
+        q6 = q5.exhaustMap(f4)
+        assert q5 == q0
+        q5.exhaustMap(f4, mut=True)
+        assert q5 == q6 == Queue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
+        assert q5 != q0
