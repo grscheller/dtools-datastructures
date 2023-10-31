@@ -142,15 +142,16 @@ class Carray:
                 raise IndexError(msg0)
 
     def __iter__(self):
-        """Iterator yielding contents of circle array, does not consume data"""
+        """Iterator yielding current contents of carray, does not consume data"""
         if self._count > 0:
             cap = self._capacity
             rear = self._rear
             pos = self._front
+            currList = self._list.copy()
             while pos != rear:
-                yield self._list[pos]
+                yield currList[pos]
                 pos = (pos + 1) % cap
-            yield self._list[pos]
+            yield currList[pos]
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -178,10 +179,7 @@ class Carray:
 
     def __repr__(self):
         """Display data in the circle array"""
-        dataListStrs = []
-        for data in self:
-            dataListStrs.append(repr(data))
-        return "((" + " | ".join(dataListStrs) + "))"
+        return "((" + " | ".join(map(lambda x: repr(x), iter(self))) + "))"
 
     def copy(self) -> Carray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""

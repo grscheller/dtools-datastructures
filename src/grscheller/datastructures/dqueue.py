@@ -85,10 +85,7 @@ class Dqueue():
 
     def __repr__(self):
         """Display data in dqueue."""
-        dataListStrs = []
-        for data in self._carray:
-            dataListStrs.append(repr(data))
-        return "><" + " | ".join(dataListStrs) + "><"
+        return "><" + " | ".join(self.map(lambda x: repr(x))) + "><"
 
     def copy(self) -> Dqueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity."""

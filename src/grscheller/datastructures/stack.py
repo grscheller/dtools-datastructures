@@ -92,7 +92,7 @@ class Stack():
 
     def __reversed__(self):
         """Reverse iterate over the current state of the stack"""
-        return iter(Stack(*self))
+        return reversed(Carray(*self))
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.

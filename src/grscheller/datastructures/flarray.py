@@ -36,7 +36,7 @@ class FLarray():
     Permits storing None as a value.
     """
     def __init__(self, *ds, size: int = 0, default: Any = None):
-        """Construct a fixed length array
+        """Construct a fixed length array, do not "swallow" None values.
            - guarnteed to be of length |size| for size != 0
            - if size not indicated (or 0), size to data provided
              - if no data provided, return array with default value of size = 1
@@ -94,6 +94,7 @@ class FLarray():
 
     def __getitem__(self, index: int) -> Union[Any, Never]:
         # TODO: Does not like being given a slice ... research
+        # TODO: Pyright LSP does not like Any|Never as return type
         cnt = self._size
         if not -cnt <= index < cnt:
             l = -cnt
@@ -132,10 +133,8 @@ class FLarray():
 
     def __repr__(self):
         """Display data in flarray"""
-        listStrs = []
-        for data in self:
-            listStrs.append(repr(data))
-        return "[|" + ", ".join(listStrs) + "|]"
+        # __iter__ already makes a defensive copy
+        return "[|" + ", ".join(map(lambda x: repr(x), iter(self))) + "|]"
 
     def copy(self) -> FLarray:
         """Return shallow copy of the flarray in O(n) time & space complexity"""
