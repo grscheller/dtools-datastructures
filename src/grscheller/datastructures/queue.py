@@ -29,7 +29,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Self
 from itertools import chain
-from .core.iterlib import mergeIters, exhaustIters
+from .core.iterlib import merge, exhaust
 from .core.carray import Carray
 
 class Queue():
@@ -154,7 +154,9 @@ class Queue():
         Return new Queue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newQueue = Queue(*chain(*(iter(x) for x in map(f, iter(self)))))
+        newQueue = Queue(*chain(
+            *(iter(x) for x in map(f, iter(self)))
+        ))
         if mut:
             self._carray = newQueue._carray
             return self
@@ -169,7 +171,9 @@ class Queue():
         Return new Queue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newQueue = Queue(*mergeIters(*(iter(x) for x in map(f, iter(self)))))
+        newQueue = Queue(*merge(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
         if mut:
             self._carray = newQueue._carray
             return self
@@ -178,10 +182,15 @@ class Queue():
     def exhaustMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
         """Apply function and flatten result, surpress any None values.
 
+        Round Robin Merge the queues produced until all cached queues are
+        exhausted.
+
         Return new Queue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newQueue = Queue(*exhaustIters(*(iter(x) for x in map(f, iter(self)))))
+        newQueue = Queue(*exhaust(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
         if mut:
             self._carray = newQueue._carray
             return self

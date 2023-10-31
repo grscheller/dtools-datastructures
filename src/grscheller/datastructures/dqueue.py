@@ -27,9 +27,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self
+from typing import Any, Callable, Self, Union
 from itertools import chain
-from .core.iterlib import mergeIters, exhaustIters
+from .core.iterlib import merge, exhaust
 from .core.carray import Carray
 
 class Dqueue():
@@ -168,7 +168,9 @@ class Dqueue():
         Return new Dqueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*chain(*(iter(x) for x in map(f, iter(self)))))
+        newDqueue = Dqueue(*chain(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
         if mut:
             self._carray = newDqueue._carray
             return self
@@ -183,7 +185,9 @@ class Dqueue():
         Return new Dqueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*mergeIters(*(iter(x) for x in map(f, iter(self)))))
+        newDqueue = Dqueue(*merge(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
         if mut:
             self._carray = newDqueue._carray
             return self
@@ -192,12 +196,16 @@ class Dqueue():
     def exhaustMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
         """Apply function and flatten result, surpress any None values.
 
-        Round Robin Merge the dqueues produced until all cached dqueues are exhausted.
+        Round Robin Merge the dqueues produced until all cached dqueues are
+        exhausted.
 
         Return new Dqueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*exhaustIters(*(iter(x) for x in map(f, iter(self)))))
+        newDqueue = Dqueue(*exhaust(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
+        newDqueue = Dqueue(*exhaust(*(iter(x) for x in map(f, iter(self)))))
         if mut:
             self._carray = newDqueue._carray
             return self

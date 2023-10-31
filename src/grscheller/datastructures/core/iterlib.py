@@ -20,7 +20,7 @@ Library of iterator related functions.
 from __future__ import annotations
 from typing import Any, Callable, Iterator
 
-__all__ = ['mapIter', 'concatIters', 'exhaustIters', 'mergeIters']
+__all__ = ['mapIter', 'concat', 'exhaust', 'merge']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -32,7 +32,7 @@ def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
     """
     return (f(x) for x in iterator)
 
-def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
+def concat(*iterators: Iterator[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one.
 
     See also the chain function from the itertools module.
@@ -45,7 +45,7 @@ def concatIters(*iterators: Iterator[Any]) -> Iterator[Any]:
             except StopIteration:
                 break
 
-def mergeIters(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]:
+def merge(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted."""
     iterList = list(iterators)
     if (numIters := len(iterList)) > 0:
@@ -65,7 +65,7 @@ def mergeIters(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]
             for value in values:
                 yield value
 
-def exhaustIters(*iterators: Iterator[Any], yieldPartial = True) -> Iterator[Any]:
+def exhaust(*iterators: Iterator[Any], yieldPartial = True) -> Iterator[Any]:
     """Merge multiple iterator streams until all are exhausted."""
     iterList = list(iterators)
     if (numIters := len(iterList)) > 0:

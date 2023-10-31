@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from grscheller.datastructures.stack import Stack
-from grscheller.datastructures.core.iterlib import concatIters
+from grscheller.datastructures.core.iterlib import concat
 import grscheller.datastructures.stack as stack
 
 class Test_Node:
@@ -170,7 +170,7 @@ class TestStack:
         assert s2 == Stack(*iter(s1))
         s0 = Stack()
         assert s0 == Stack(*iter(s0))
-        s2 = Stack(concatIters(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s2 = Stack(concat(iter(range(1, 100)), iter(range(98, 0, -1))))
         s3 = Stack(*iter(s2))
         assert s3 == s2
 
@@ -196,23 +196,31 @@ class TestStack:
         assert s1 is not s3
 
     def test_flatMap(self):
-        c1 = Stack(1, 20, 300)
-        c2 = c1.flatMap(lambda x: Stack(x, x+1))
-        c2_answers = Stack(1, 2, 20, 21, 300, 301)
+        c1 = Stack(2, 1, 3)
+        c2 = c1.flatMap(lambda x: Stack(*range(x, 3*x)))
+        c2_answers = Stack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
         assert c2 == c2_answers
-        assert len(c2) == 2*len(c1) == 6
         c3 = Stack()
         c4 = c3.flatMap(lambda x: Stack(x, x+1))
         assert c3 == c4 == Stack()
         assert c3 is not c4
 
     def test_mergeMap(self):
-        c1 = Stack(1, 20, 300)
-        c2 = c1.mergeMap(lambda x: Stack(x, x+1))
-        c2_answers = Stack(1, 20, 300, 2, 21, 301)
+        c1 = Stack(2, 1, 3)
+        c2 = c1.mergeMap(lambda x: Stack(*range(x, 3*x)))
+        c2_answers = Stack(2, 1, 3, 3, 2, 4)
         assert c2 == c2_answers
-        assert len(c2) == 2*len(c1) == 6
         c3 = Stack()
-        c4 = c3.flatMap(lambda x: Stack(x, x+1))
+        c4 = c3.mergeMap(lambda x: Stack(x, x+1))
+        assert c3 == c4 == Stack()
+        assert c3 is not c4
+
+    def test_exhaustMap(self):
+        c1 = Stack(2, 1, 3)
+        c2 = c1.exhaustMap(lambda x: Stack(*range(x, 3*x)))
+        c2_answers = Stack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
+        assert c2 == c2_answers
+        c3 = Stack()
+        c4 = c3.exhaustMap(lambda x: Stack(x, x+1))
         assert c3 == c4 == Stack()
         assert c3 is not c4

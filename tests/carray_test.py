@@ -126,7 +126,7 @@ class TestCarray:
 
     def test_mapSelf(self):
         c1 = Carray(1,2,3,10)
-        c1.map_update(lambda x: x*x-1)
+        c1.map(lambda x: x*x-1, mut=True)
         c1_answers = Carray(0,3,8,99)
         assert c1 == c1_answers
         assert len(c1) == 4
@@ -144,7 +144,7 @@ class TestCarray:
 
     def test_flatMapUpdate(self):
         c1 = Carray(1,2,3,5,10)
-        c1.flatMap_update(lambda x: Carray(1, x, x*x+1))
+        c1.flatMap(lambda x: Carray(1, x, x*x+1), mut=True)
         c1_answers = Carray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
         assert c1 == c1_answers
         assert len(c1) == 5*3
@@ -181,7 +181,7 @@ class TestCarray:
         c1 = Carray(5, 4, 7)
         min1 = min(iter(c1))
         len1 = len(c1)
-        c1.mergeMap_update(lambda x: Carray(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap(lambda x: Carray(*([chr(0o100+x)*x]*x)), mut=True)
         assert c1[0] == c1[3] == c1[6] == c1[9] == 'EEEEE'
         assert c1[1] == c1[4] == c1[7] == c1[10] == 'DDDD'
         assert c1[2] == c1[5] == c1[8] == c1[11] == 'GGGGGGG'
@@ -191,14 +191,14 @@ class TestCarray:
         c1 = Carray(2)
         min1 = min(iter(c1))
         len1 = len(c1)
-        c1.mergeMap_update(lambda x: Carray(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap(lambda x: Carray(*([chr(0o100+x)*x]*x)), mut=True)
         assert c1[0] == c1[1] == 'BB'
         assert c1[-1] == 'BB'
         assert len(c1) == len1*min1 == 1*2
 
         c1 = Carray()
         len1 = len(c1)
-        c1.mergeMap_update(lambda x: Carray(*([chr(0o100+x)*x]*x)))
+        c1.mergeMap(lambda x: Carray(*([chr(0o100+x)*x]*x), mut=True))
         assert len(c1) == len1 == 0
 
     def test_get_set_items(self):

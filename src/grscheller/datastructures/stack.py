@@ -24,15 +24,14 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Union
-
 __all__ = ['Stack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .core.iterlib import mergeIters, mapIter
+from typing import Any, Callable
 from itertools import chain
+from .core.iterlib import merge, exhaust
 from .core.carray import Carray
 
 class _Node():
@@ -142,7 +141,7 @@ class Stack():
                 self._head = node
                 self._count += 1
 
-    def pop(self) -> Union[Any, None]:
+    def pop(self) -> Any|None:
         """Pop data off of top of stack"""
         if self._head is None:
             return None
@@ -152,7 +151,7 @@ class Stack():
             self._count -= 1
             return data
 
-    def peak(self) -> Union[Any, None]:
+    def peak(self) -> Any|None:
         """Returns the data at the head of stack. Does not consume the data.
 
         Note: If stack is empty, return None.
@@ -171,7 +170,7 @@ class Stack():
             value = default
         return value
 
-    def tail(self) -> Union[Stack, None]:
+    def tail(self) -> Stack|None:
         """Return tail of the stack.
 
         Note: The tail of an empty stack does not exist,
@@ -184,7 +183,7 @@ class Stack():
             return stack
         return None
 
-    def tailOrElse(self, default: Union[Stack, None] = None) -> Stack:
+    def tailOrElse(self, default: Stack|None = None) -> Stack:
         """Return tail of the stack.
 
         Note: If stack is empty, return default value of type Stack.
@@ -213,26 +212,41 @@ class Stack():
             return self.copy()
 
     def map(self, f: Callable[[Any], Stack]) -> Stack:
-        """Maps a function (or callable object) over the values of the stack.
+        """Maps a function (or callable object) over the values on the stack.
 
         Returns a new stack with new nodes so not to affect nodes shared
-        by other Stack objects.
+        by other Stack objects. None values surpressed.
         """
-        return Stack(*(f(x) for x in reversed(self)))
+        return Stack(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], Stack]) -> Stack:
-        """Apply function and flatten result, returns new instance"""
+        """Apply function and flatten result, returns new instance
+
+        Merge the stacks produced sequentially front-to-back.
+        """
         return Stack(*chain(
-            *(reversed(y) for y in (f(x) for x in reversed(self)))
+            *map(reversed, map(f, reversed(self)))
         ))
 
     def mergeMap(self, f: Callable[[Any], Stack]) -> Stack:
-        """Apply function and flatten result, returns new instance"""
-        return Stack(
-            *mergeIters(
-                *mapIter(mapIter(reversed(self), f), lambda x: reversed(x))
-            )
-        )
+        """Apply function and flatten result, returns new instance
+
+        Round Robin Merge the stacks produced until first cached stack is
+        exhausted.
+        """
+        return Stack(*merge(
+            *map(reversed, map(f, reversed(self)))
+        ))
+
+    def exhaustMap(self, f: Callable[[Any], Stack]) -> Stack:
+        """Apply function and flatten result, returns new instance
+
+        Round Robin Merge the stacks produced until all the cached stacks are
+        exhausted.
+        """
+        return Stack(*exhaust(
+            *map(reversed, map(f, reversed(self)))
+        ))
 
 if __name__ == "__main__":
     pass

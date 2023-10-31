@@ -145,7 +145,7 @@ class TestFPArray:
         fl2 = fl1.copy()
         fl3 = fl1.copy()
 
-        fl1.map_update(lambda x: x*x-1)
+        fl1.map(lambda x: x*x-1, mut=True)
         fl1_answers = FLarray(0, 3, 8, 99)
         assert fl1 == fl1_answers
         

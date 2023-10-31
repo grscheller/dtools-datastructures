@@ -26,9 +26,9 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Union
+from typing import Any, Callable, Never, Self, Union
 from itertools import chain
-from .core.iterlib import mapIter, mergeIters
+from .core.iterlib import exhaust, merge
 
 class FLarray():
     """Class representing a fixed length array data structure of length > 0.
@@ -140,32 +140,49 @@ class FLarray():
         """Return shallow copy of the flarray in O(n) time & space complexity"""
         return FLarray(*self)
 
-    def map(self, f: Callable[[Any], Any]) -> FLarray:
-        """Apply function over flarray contents, returns new instance"""
-        return FLarray(*(f(x) for x in iter(self)))
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|FLarray:
+        """Apply function over flarray contents.
 
-    def map_update(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over flarray contents"""
-        for idx in range(self._size):
-            self._list[idx] = f(self._list[idx])
+        Return new FLarray if mut=False (the default)
+        otherwise mutate the data structure and return self.
+        """
+        newFLarray  = FLarray(*map(f, iter(self)))
+        if mut:
+            self._list = newFLarray._list
+            return self
+        return newFLarray
 
     def flatMap(self, f: Callable[[Any], FLarray]) -> FLarray:
-        """Apply function and flatten result, returns new instance
-        since size may change
+        """Apply function and flatten result, returns only a
+        new instance since size may change.
+
+        Merge the flarrays produced sequentially left-to-right.
         """
         return FLarray(*chain(
-            *(iter(y) for y in (f(x) for x in iter(self)))
+            *map(lambda x: iter(x), map(f, iter(self)))
         ))
 
     def mergeMap(self, f: Callable[[Any], FLarray]) -> FLarray:
         """Apply function and flatten result, returns new instance
-        since size may change
+        only since size may change.
+
+        Round Robin Merge the flarrays produced until first cached
+        flarray is exhausted.
         """
-        return FLarray(
-            *mergeIters(
-                *mapIter(mapIter(iter(self), f), lambda x: iter(x))
-            )
-        )
+        return FLarray(*merge(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
+
+    def exhaustMap(self, f: Callable[[Any], FLarray]) -> FLarray:
+        """Apply function and flatten result, returns new instance
+        only since size may change.
+
+        Round Robin Merge the flarrays produced until all cached
+        flarrays are exhausted.
+        """
+        return FLarray(*exhaust(
+            *map(lambda x: iter(x), map(f, iter(self)))
+        ))
 
 if __name__ == "__main__":
     pass
