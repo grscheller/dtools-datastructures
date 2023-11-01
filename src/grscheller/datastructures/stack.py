@@ -24,7 +24,7 @@
 
 from __future__ import annotations
 
-__all__ = ['Stack', 'FPstack']
+__all__ = ['FStack', 'PStack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -55,7 +55,7 @@ class _Node():
         return True
 
 class _StacK():
-    """Future base class for Pstack & Fstack classes"""
+    """Future base class for PStack & FStack classes"""
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
         self._head = None
@@ -66,8 +66,7 @@ class _StacK():
                 self._head = node
                 self._count += 1
 
-# class Pstack():
-class Stack():
+class PStack():
     """Class implementing a Last In, First Out (LIFO) stack data structure. The
     stack contains a singularly linked list of nodes. Class designed to share
     nodes with other Stack instances.
@@ -140,14 +139,14 @@ class Stack():
         """Display the data in the stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
 
-    def copy(self) -> Stack:
+    def copy(self) -> PStack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
-        stack = Stack()
+        stack = PStack()
         stack._head = self._head
         stack._count = self._count
         return stack
 
-    def push(self, *ds: Any) -> None:
+    def push(self, *ds: Any) -> Self:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
@@ -156,6 +155,7 @@ class Stack():
                 node = _Node(d, self._head)
                 self._head = node
                 self._count += 1
+        return self
 
     def pop(self) -> Any|None:
         """Pop data off of top of stack"""
@@ -186,85 +186,44 @@ class Stack():
             value = default
         return value
 
-    def tail(self) -> Stack|None:
-        """Return tail of the stack.
-
-        Note: The tail of an empty stack does not exist,
-              hence return None.
-        """
-        if self._head:
-            stack = Stack()
-            stack._head = self._head._next
-            stack._count = self._count - 1
-            return stack
-        return None
-
-    def tailOrElse(self, default: Stack|None = None) -> Stack:
-        """Return tail of the stack.
-
-        Note: If stack is empty, return default value of type Stack.
-              If default value not give, return a new empty stack.
-        """
-        stack = self.tail()
-        if stack is None:
-            if default is None:
-                stack = Stack()
-            else:
-                stack = default
-        return stack
-
-    def cons(self, data: Any) -> Stack:
-        """Return a new stack with data as head and self as tail.
-
-        Note: Trying to push None on the stack results in a shallow
-              copy of the original stack.
-        """
-        if data is not None:
-            stack = Stack()
-            stack._head = _Node(data, self._head)
-            stack._count = self._count + 1
-            return stack
-        else:
-            return self.copy()
-
-    def map(self, f: Callable[[Any], Stack]) -> Stack:
+    def map(self, f: Callable[[Any], PStack]) -> PStack:
         """Maps a function (or callable object) over the values on the stack.
 
         Returns a new stack with new nodes so not to affect nodes shared
         by other Stack objects. None values surpressed.
         """
-        return Stack(*map(f, reversed(self)))
+        return PStack(*map(f, reversed(self)))
 
-    def flatMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def flatMap(self, f: Callable[[Any], PStack]) -> PStack:
         """Apply function and flatten result, returns new instance
 
         Merge the stacks produced sequentially front-to-back.
         """
-        return Stack(*chain(
+        return PStack(*chain(
             *map(reversed, map(f, reversed(self)))
         ))
 
-    def mergeMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def mergeMap(self, f: Callable[[Any], PStack]) -> PStack:
         """Apply function and flatten result, returns new instance
 
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         """
-        return Stack(*merge(
+        return PStack(*merge(
             *map(reversed, map(f, reversed(self)))
         ))
 
-    def exhaustMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def exhaustMap(self, f: Callable[[Any], PStack]) -> PStack:
         """Apply function and flatten result, returns new instance
 
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         """
-        return Stack(*exhaust(
+        return PStack(*exhaust(
             *map(reversed, map(f, reversed(self)))
         ))
 
-class FPstack():
+class FStack():
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This class
     designed to share nodes with other Stack instances.
@@ -335,35 +294,14 @@ class FPstack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '|| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
+        return '| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
 
-    def copy(self) -> Stack:
+    def copy(self) -> FStack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
-        stack = Stack()
+        stack = FStack()
         stack._head = self._head
         stack._count = self._count
         return stack
-
-    def push(self, *ds: Any) -> Self:
-        """Push data that is not NONE onto top of stack,
-        return the stack being pushed.
-        """
-        for d in ds:
-            if d is not None:
-                node = _Node(d, self._head)
-                self._head = node
-                self._count += 1
-        return self
-
-    def pop(self) -> Any|None:
-        """Pop data off of top of stack"""
-        if self._head is None:
-            return None
-        else:
-            data = self._head._data
-            self._head = self._head._next
-            self._count -= 1
-            return data
 
     def peak(self) -> Any|None:
         """Returns the data at the head of stack. Does not consume the data.
@@ -384,20 +322,20 @@ class FPstack():
             value = default
         return value
 
-    def tail(self) -> Stack|None:
+    def tail(self) -> FStack|None:
         """Return tail of the stack.
 
         Note: The tail of an empty stack does not exist,
               hence return None.
         """
         if self._head:
-            stack = Stack()
+            stack = FStack()
             stack._head = self._head._next
             stack._count = self._count - 1
             return stack
         return None
 
-    def tailOrElse(self, default: Stack|None = None) -> Stack:
+    def tailOrElse(self, default: FStack|None = None) -> FStack:
         """Return tail of the stack.
 
         Note: If stack is empty, return default value of type Stack.
@@ -406,59 +344,59 @@ class FPstack():
         stack = self.tail()
         if stack is None:
             if default is None:
-                stack = Stack()
+                stack = FStack()
             else:
                 stack = default
         return stack
 
-    def cons(self, data: Any) -> Stack:
+    def cons(self, data: Any) -> FStack:
         """Return a new stack with data as head and self as tail.
 
         Note: Trying to push None on the stack results in a shallow
               copy of the original stack.
         """
         if data is not None:
-            stack = Stack()
+            stack = FStack()
             stack._head = _Node(data, self._head)
             stack._count = self._count + 1
             return stack
         else:
             return self.copy()
 
-    def map(self, f: Callable[[Any], Stack]) -> Stack:
+    def map(self, f: Callable[[Any], FStack]) -> FStack:
         """Maps a function (or callable object) over the values on the stack.
 
         Returns a new stack with new nodes so not to affect nodes shared
         by other Stack objects. None values surpressed.
         """
-        return Stack(*map(f, reversed(self)))
+        return FStack(*map(f, reversed(self)))
 
-    def flatMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def flatMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Apply function and flatten result, returns new instance
 
         Merge the stacks produced sequentially front-to-back.
         """
-        return Stack(*chain(
+        return FStack(*chain(
             *map(reversed, map(f, reversed(self)))
         ))
 
-    def mergeMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Apply function and flatten result, returns new instance
 
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         """
-        return Stack(*merge(
+        return FStack(*merge(
             *map(reversed, map(f, reversed(self)))
         ))
 
-    def exhaustMap(self, f: Callable[[Any], Stack]) -> Stack:
+    def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Apply function and flatten result, returns new instance
 
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         """
-        return Stack(*exhaust(
+        return FStack(*exhaust(
             *map(reversed, map(f, reversed(self)))
         ))
 

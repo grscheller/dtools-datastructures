@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.stack import Stack
+from grscheller.datastructures.stack import PStack
 from grscheller.datastructures.core.iterlib import concat
 import grscheller.datastructures.stack as stack
 
@@ -40,17 +40,17 @@ class Test_Node:
 
 class TestStack:
     def test_push_then_pop(self):
-        s1 = Stack()
+        s1 = PStack()
         pushed = 42; s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
     def test_pop_from_empty_stack(self):
-        s1 = Stack()
+        s1 = PStack()
         popped = s1.pop()
         assert popped is None
 
-        s2 = Stack(1, 2, 3, 42)
+        s2 = PStack(1, 2, 3, 42)
         while s2:
             assert s2.peak() is not None
             s2.pop()
@@ -62,8 +62,8 @@ class TestStack:
         assert s2.peak() is None
 
     def test_stack_len(self):
-        s0 = Stack()
-        s1 = Stack(*range(0,2000))
+        s0 = PStack()
+        s1 = PStack(*range(0,2000))
 
         assert len(s0) == 0
         assert len(s1) == 2000
@@ -74,7 +74,7 @@ class TestStack:
         assert len(s1) == 1998
 
     def test_tail_cons(self):
-        s1 = Stack()
+        s1 = PStack()
         s1.push("fum")
         s1.push("fo")
         s1.push("fi")
@@ -90,7 +90,7 @@ class TestStack:
         assert s1.tail() == None
 
     def test_stack_iter(self):
-        giantStack = Stack(*[" Fum", " Fo", " Fi", "Fe"])
+        giantStack = PStack(*[" Fum", " Fo", " Fi", "Fe"])
         giantTalk = giantStack.pop()
         assert giantTalk == "Fe"
         for giantWord in giantStack:
@@ -98,12 +98,12 @@ class TestStack:
         assert len(giantStack) == 3
         assert giantTalk == "Fe Fi Fo Fum"
 
-        es = Stack()
+        es = PStack()
         for _ in es:
             assert False
 
     def test_equality(self):
-        s1 = Stack(*range(3))
+        s1 = PStack(*range(3))
         s2 = s1.cons(42)
         assert s1 is not s2
         assert s1 is not s2.tailOrElse()
@@ -113,7 +113,7 @@ class TestStack:
         assert s2.peak() == 42
         assert s2.pop() == 42
 
-        s3 = Stack(range(10000))
+        s3 = PStack(range(10000))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
@@ -125,8 +125,8 @@ class TestStack:
         s3.pop()
         assert s3 == s4
 
-        s5 = Stack(*[1,2,3,4])
-        s6 = Stack(*[1,2,3,42])
+        s5 = PStack(*[1,2,3,4])
+        s6 = PStack(*[1,2,3,42])
         assert s5 != s6
         for aa in range(10):
             s5.push(aa)
@@ -134,9 +134,9 @@ class TestStack:
         assert s5 != s6
 
         ducks = ["huey", "dewey"]
-        s7 = Stack(ducks)
-        s8 = Stack(ducks)
-        s9 = Stack(["huey", "dewey", "louie"])
+        s7 = PStack(ducks)
+        s8 = PStack(ducks)
+        s9 = PStack(["huey", "dewey", "louie"])
         assert s7 == s8
         assert s7 != s9
         assert s7.peak() == s8.peak()
@@ -153,7 +153,7 @@ class TestStack:
         assert s7 == s8
 
     def test_doNotStoreNones(self):
-        s1 = Stack()
+        s1 = PStack()
         s1.push(None)
         s1.push(None)
         s1.push(None)
@@ -164,30 +164,30 @@ class TestStack:
         assert not s1
 
     def test_reversing(self):
-        s1 = Stack('a', 'b', 'c', 'd')
-        s2 = Stack('d', 'c', 'b', 'a')
+        s1 = PStack('a', 'b', 'c', 'd')
+        s2 = PStack('d', 'c', 'b', 'a')
         assert s1 != s2
-        assert s2 == Stack(*iter(s1))
-        s0 = Stack()
-        assert s0 == Stack(*iter(s0))
-        s2 = Stack(concat(iter(range(1, 100)), iter(range(98, 0, -1))))
-        s3 = Stack(*iter(s2))
+        assert s2 == PStack(*iter(s1))
+        s0 = PStack()
+        assert s0 == PStack(*iter(s0))
+        s2 = PStack(concat(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s3 = PStack(*iter(s2))
         assert s3 == s2
 
     def test_reversed(self):
         lf = [1.0, 2.0, 3.0, 4.0]
         lr = [4.0, 3.0, 2.0, 1.0]
-        s1 = Stack(4.0, 3.0, 2.0, 1.0)
+        s1 = PStack(4.0, 3.0, 2.0, 1.0)
         l_s1 = list(s1)
         l_r_s1 = list(reversed(s1))
         assert lf == l_s1
         assert lr == l_r_s1
-        s2 = Stack(*lf)
+        s2 = PStack(*lf)
         while s2:
             assert s2.pop() == lf.pop()
 
     def test_map(self):
-        s1 = Stack(1,2,3,4,5)
+        s1 = PStack(1,2,3,4,5)
         s2 = s1.map(lambda x: 2*x+1)
         assert s1.peak() == 5
         assert s2.peak() == 11
@@ -196,31 +196,31 @@ class TestStack:
         assert s1 is not s3
 
     def test_flatMap(self):
-        c1 = Stack(2, 1, 3)
-        c2 = c1.flatMap(lambda x: Stack(*range(x, 3*x)))
-        c2_answers = Stack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
+        c1 = PStack(2, 1, 3)
+        c2 = c1.flatMap(lambda x: PStack(*range(x, 3*x)))
+        c2_answers = PStack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
         assert c2 == c2_answers
-        c3 = Stack()
-        c4 = c3.flatMap(lambda x: Stack(x, x+1))
-        assert c3 == c4 == Stack()
+        c3 = PStack()
+        c4 = c3.flatMap(lambda x: PStack(x, x+1))
+        assert c3 == c4 == PStack()
         assert c3 is not c4
 
     def test_mergeMap(self):
-        c1 = Stack(2, 1, 3)
-        c2 = c1.mergeMap(lambda x: Stack(*range(x, 3*x)))
-        c2_answers = Stack(2, 1, 3, 3, 2, 4)
+        c1 = PStack(2, 1, 3)
+        c2 = c1.mergeMap(lambda x: PStack(*range(x, 3*x)))
+        c2_answers = PStack(2, 1, 3, 3, 2, 4)
         assert c2 == c2_answers
-        c3 = Stack()
-        c4 = c3.mergeMap(lambda x: Stack(x, x+1))
-        assert c3 == c4 == Stack()
+        c3 = PStack()
+        c4 = c3.mergeMap(lambda x: PStack(x, x+1))
+        assert c3 == c4 == PStack()
         assert c3 is not c4
 
     def test_exhaustMap(self):
-        c1 = Stack(2, 1, 3)
-        c2 = c1.exhaustMap(lambda x: Stack(*range(x, 3*x)))
-        c2_answers = Stack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
+        c1 = PStack(2, 1, 3)
+        c2 = c1.exhaustMap(lambda x: PStack(*range(x, 3*x)))
+        c2_answers = PStack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
         assert c2 == c2_answers
-        c3 = Stack()
-        c4 = c3.exhaustMap(lambda x: Stack(x, x+1))
-        assert c3 == c4 == Stack()
+        c3 = PStack()
+        c4 = c3.exhaustMap(lambda x: PStack(x, x+1))
+        assert c3 == c4 == PStack()
         assert c3 is not c4

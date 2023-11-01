@@ -15,7 +15,7 @@
 from grscheller.datastructures.functional import Maybe, Nothing, Some
 from grscheller.datastructures.functional import Either, Left, Right
 # from grscheller.datastructures.core.carray import Carray
-from grscheller.datastructures import Stack, FPstack
+from grscheller.datastructures import FStack, PStack
 # from grscheller.datastructures import Queue, Dqueue, FLarray
 
 
@@ -50,43 +50,44 @@ class TestMaybe:
         assert repr(Left(42)) == 'Left(42)'
         assert repr(Right(13)) == 'Right(13)'
 
-# class TestPStack:
-#     s1 = Pstack()
-#     assert repr(s1) == '||  ><'
-#     assert repr(s1.push(42)) == '|| 42 ><'
-#     assert repr(s1.push()) == '|| 42 ><'
-#     assert repr(s1.push('Buggy the clown')) == "|| 42 <- 'Buggy the clown' ><"
-#     assert repr(s1.pop()) == 'Buggy the clown'
-#     foo = Pstack(1)
-#     bar = foo.copy()
-#     bar.pop()
-#     foo.push(2,3,4)
-#     baz = bar.push(2).push(3).push(4)
-#     assert repr(foo) == '|| 1 <- 2 <- 3 <-4 ><'
-#     assert repr(baz) == '|| 2 <- 3 <-4 ><'
-#     assert repr(bar) == '||  ><'
-# 
-# class TestFPstack:
-#     s1 = FPstack()
+class TestPStack:
+    s1 = PStack()
+    assert repr(s1) == '||  ><'
+    assert repr(s1.push(42)) == '|| 42 ><'
+    assert repr(s1.push()) == '|| 42 ><'
+    assert repr(s1.push('Buggy the clown')) == "|| 42 <- 'Buggy the clown' ><"
+    assert repr(s1.pop()) == "'Buggy the clown'"
+    foo = PStack(1)
+    bar = foo.copy()
+    bar.pop()
+    foo.push(2,3,4)
+    baz = bar.push(2).push(3).push(4)
+    assert repr(foo) == '|| 1 <- 2 <- 3 <- 4 ><'
+    assert repr(baz) == '|| 2 <- 3 <- 4 ><'
+    assert repr(bar) == '|| 2 <- 3 <- 4 ><'
+    assert bar == baz
+    assert bar is baz
+
+# class TestFStack:
+#     s1 = FStack()
 #     assert repr(s1) == '|  ><'
-#     assert repr(s2 := s1.push(42)) == '| 42 ><'
-#     assert repr(s1) == '|  ><'
+#     s2 = s1.push(42)
+#     assert repr(s1) == '| 42 ><'
+#     assert repr(s2) == '| 42 ><'
 #     del s1
-#     assert repr(s2) == '| 42 ><'
 #     assert repr(s2.push()) == '| 42 ><'
-#     s4 = (s3 := s2.push('Buggy the clown')).push('wins!')
-#     assert repr(s2) == '| 42 ><'
-#     assert repr(s3) == "| 42 <- 'Buggy the clown' ><"
-#     assert repr(s4) == "| 42 <- 'Buggy the clown' <- 'wins!' ><"
+#     s2.push('Buggy the clown').push('wins!')
+#     assert repr(s2) == "| 42 <- 'Buggy the clown' <- 'wins!' ><"
 # 
-#     assert repr(s2.push('Buggy the clown')) == "| 42 <- 'Buggy the clown' ><"
-#     assert repr(s4.pop()) == 'Buggy the clown'
-#     foo = FPstack(1)
+#     foo = FStack(1, 2)
 #     bar = foo.copy()
-#     bar.pop()
-#     foo.push(2,3,4)
-#     baz = bar.push(2).push(3).push(4)
-#     assert repr(foo) == '| 1 <- 2 <- 3 <-4 ><'
-#     assert repr(baz) == '| 2 <- 3 <-4 ><'
-#     assert repr(bar) == '|  ><'
+#     assert bar.pop() == 2
+#     foo.push(3, 4, 5)
+#     baz = bar.push(2).push(3).push(4).push(5)
+#     assert repr(foo) == '| 1 <- 2 <- 3 <- 4 <- 5 ><'
+#     assert repr(baz) == '| 1 <- 2 <- 3 <- 4 <- 5 ><'
+#     assert repr(bar) == '| 1 <- 2 <- 3 <- 4 <- 5 ><'
+#     assert foo == bar ==baz
+#     assert foo is not bar
+#     assert baz is bar
 # 
