@@ -333,12 +333,14 @@ class TestFStack:
         s7 = s7.cons(['moe', 'larry', 'curlie'])
         s8 = s8.cons(['moe', 'larry'])
         assert s7 != s8
+        assert s8 is not None
         s8.headOr([]).append("curlie")
         assert s7 == s8
 
     def test_doNotStoreNones(self):
         s1 = FStack()
-        s2 = s1 .cons(None).cons(None).cons(None).cons(42).cons(None)
+        assert s1.cons(None) == None
+        s2 = s1.cons(42)
         assert len(s2) == 1
         assert s2
         s2 = s2.tail()

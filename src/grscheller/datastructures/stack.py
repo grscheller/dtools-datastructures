@@ -54,31 +54,8 @@ class _Node():
         """Always return true, None will return as false"""
         return True
 
-class _StacK():
-    """Future base class for PStack & FStack classes"""
-    def __init__(self, *ds):
-        """Construct a LIFO Stack"""
-        self._head = None
-        self._count = 0
-        for d in ds:
-            if d is not None:
-                node = _Node(d, self._head)
-                self._head = node
-                self._count += 1
-
-class PStack():
-    """Class implementing a Last In, First Out (LIFO) stack data structure. The
-    stack contains a singularly linked list of nodes. Class designed to share
-    nodes with other Stack instances.
-
-    - Stacks are stateful objects where values can be pushed on & popped off.
-    - A stack points to either the top node of a singlely linked list, or to
-      None which indicates an empty stack.
-    - A stack keeps a count of the number of objects currently on it.
-    - None represents the absence of a value and are ignored if pushed on the
-      stack. Use a grscheller.functional.Maybe to indicate an assent value or
-      another sentital value such as the empty tuple ().
-    """
+class _Stack():
+    """Base class for the PStack & FStack classes"""
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
         self._head = None
@@ -108,11 +85,20 @@ class PStack():
         """Reverse iterate over the current state of the stack"""
         return reversed(CArray(*self))
 
+    def _tail(self, stack):
+        """Return tail of the stack."""
+        if self._head:
+            stack._head = self._head._next
+            stack._count = self._count - 1
+            return stack
+        return None
+
     def __eq__(self, other: Any):
-        """Returns True if all the data stored on the two stacks are the same.
-        Worst case is O(n) behavior which happens when all the corresponding
-        data elements on the two stacks are equal, in whatever sense they
-        define equality, and none of the nodes are shared.
+        """Returns True if all the data stored on the two stacks are the same
+        and the two stacks are of the same subclass. Worst case is O(n) behavior
+        which happens when all the corresponding data elements on the two stacks
+        are equal, in whatever sense they define equality, and none of the nodes
+        are shared.
         """
         if not isinstance(other, type(self)):
             return False
@@ -120,31 +106,54 @@ class PStack():
         if self._count != other._count:
             return False
 
-        left = self.copy()
-        right = other.copy()
+        left = self
+        right = other
         nn = self._count
         while nn > 0:
             if left is None or right is None:
                 return True
             if left._head is right._head:
                 return True
-            if left.peak() != right.peak():
+            if left._getHead() != right._getHead():
                 return False
-            left.pop()
-            right.pop()
+            left = left._tail(self._getStack())
+            right = right._tail(self._getStack())
             nn -= 1
         return True
+
+    def copy(self) -> _Stack:
+        """Return shallow copy of the stack in O(1) time & space complexity"""
+        stack = self._getStack()
+        stack._head = self._head
+        stack._count = self._count
+        return stack
+
+    def _getHead(self) -> Any|None:
+        raise NotImplemented
+
+    def _getStack(self) -> _Stack:
+        raise NotImplemented
+
+class PStack(_Stack):
+    """Class implementing a Last In, First Out (LIFO) stack data structure. The
+    stack contains a singularly linked list of nodes. Class designed to share
+    nodes with other Stack instances.
+
+    - Stacks are stateful objects where values can be pushed on & popped off.
+    - A stack points to either the top node of a singlely linked list, or to
+      None which indicates an empty stack.
+    - A stack keeps a count of the number of objects currently on it.
+    - None represents the absence of a value and are ignored if pushed on the
+      stack. Use a grscheller.functional.Maybe to indicate an assent value or
+      another sentital value such as the empty tuple ().
+    """
+    def __init__(self, *ds):
+        """Construct a stateful LIFO Stack"""
+        _Stack.__init__(self, *ds)
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
-
-    def copy(self) -> PStack:
-        """Return shallow copy of the stack in O(1) time & space complexity"""
-        stack = PStack()
-        stack._head = self._head
-        stack._count = self._count
-        return stack
 
     def push(self, *ds: Any) -> Self:
         """Push data that is not NONE onto top of stack,
@@ -223,7 +232,13 @@ class PStack():
             *map(reversed, map(f, reversed(self)))
         ))
 
-class FStack():
+    def _getHead(self) -> Any|None:
+        return self.peak()
+
+    def _getStack(self) -> PStack:
+        return PStack()
+
+class FStack(_Stack):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This class
     designed to share nodes with other Stack instances.
@@ -237,71 +252,12 @@ class FStack():
       another sentital value such as the empty tuple ().
     """
     def __init__(self, *ds):
-        """Construct a LIFO Stack"""
-        self._head = None
-        self._count = 0
-        for d in ds:
-            if d is not None:
-                node = _Node(d, self._head)
-                self._head = node
-                self._count += 1
-
-    def __bool__(self) -> bool:
-        """Returns true if stack is not empty"""
-        return self._count > 0
-
-    def __len__(self) -> int:
-        """Returns current number of values on the stack"""
-        return self._count
-
-    def __iter__(self):
-        """Iterator yielding data stored in the stack, starting at the head"""
-        node = self._head
-        while node:
-            yield node._data
-            node = node._next
-
-    def __reversed__(self):
-        """Reverse iterate over the current state of the stack"""
-        return reversed(CArray(*self))
-
-    def __eq__(self, other: Any):
-        """Returns True if all the data stored on the two stacks are the same.
-        Worst case is O(n) behavior which happens when all the corresponding
-        data elements on the two stacks are equal, in whatever sense they
-        define equality, and none of the nodes are shared.
-        """
-        if not isinstance(other, type(self)):
-            return False
-
-        if self._count != other._count:
-            return False
-
-        left = self
-        right = other
-        nn = self._count
-        while nn > 0:
-            if left is None or right is None:
-                return True
-            if left._head is right._head:
-                return True
-            if left.head() != right.head():
-                return False
-            left = left.tail()
-            right = right.tail()
-            nn -= 1
-        return True
+        """Construct an immutable LIFO Stack"""
+        _Stack.__init__(self, *ds)
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
-
-    def copy(self) -> FStack:
-        """Return shallow copy of the stack in O(1) time & space complexity"""
-        stack = FStack()
-        stack._head = self._head
-        stack._count = self._count
-        return stack
 
     def head(self) -> Any|None:
         """Returns the data at the head of stack. Does not consume the data.
@@ -328,12 +284,7 @@ class FStack():
         Note: The tail of an empty stack does not exist,
               hence return None.
         """
-        if self._head:
-            stack = FStack()
-            stack._head = self._head._next
-            stack._count = self._count - 1
-            return stack
-        return None
+        return self._tail(FStack())
 
     def tailOr(self, default: FStack|None = None) -> FStack:
         """Return tail of the stack.
@@ -341,7 +292,7 @@ class FStack():
         Note: If stack is empty, return default value of type Stack.
               If default value not give, return a new empty stack.
         """
-        stack = self.tail()
+        stack = self._tail(FStack())
         if stack is None:
             if default is None:
                 stack = FStack()
@@ -349,11 +300,11 @@ class FStack():
                 stack = default
         return stack
 
-    def cons(self, data: Any) -> FStack:
+    def cons(self, data: Any) -> FStack|None:
         """Return a new stack with data as head and self as tail.
 
-        Note: Trying to push None on the stack results in a shallow
-              copy of the original stack.
+        Note: Constructing an stack using a non-existent value as head results
+        in a non-existent stack.
         """
         if data is not None:
             stack = FStack()
@@ -361,7 +312,7 @@ class FStack():
             stack._count = self._count + 1
             return stack
         else:
-            return self.copy()
+            return None
 
     def map(self, f: Callable[[Any], FStack]) -> FStack:
         """Maps a function (or callable object) over the values on the stack.
@@ -399,6 +350,12 @@ class FStack():
         return FStack(*exhaust(
             *map(reversed, map(f, reversed(self)))
         ))
+
+    def _getHead(self) -> Any|None:
+        return self.head()
+
+    def _getStack(self) -> FStack:
+        return FStack()
 
 if __name__ == "__main__":
     pass
