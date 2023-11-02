@@ -85,7 +85,7 @@ class DQueue():
 
     def __repr__(self):
         """Display data in dqueue."""
-        return "><" + " | ".join(self.map(lambda x: repr(x))) + "><"
+        return ">< " + " | ".join(self.map(lambda x: repr(x))) + " ><"
 
     def copy(self) -> DQueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity."""

@@ -85,7 +85,7 @@ class Queue():
 
     def __repr__(self):
         """Display data in queue."""
-        return "<<" + " | ".join(map(lambda x: repr(x), iter(self))) + "<<"
+        return "<< " + " | ".join(map(lambda x: repr(x), iter(self))) + " <<"
 
     def copy(self) -> Queue:
         """Return shallow copy of the queue in O(n) time & space complexity."""

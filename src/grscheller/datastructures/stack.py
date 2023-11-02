@@ -198,8 +198,7 @@ class PStack(_Stack):
     def map(self, f: Callable[[Any], PStack]) -> PStack:
         """Maps a function (or callable object) over the values on the stack.
 
-        Returns a new stack with new nodes so not to affect nodes shared
-        by other Stack objects. None values surpressed.
+        Returns a new stack with new nodes.  None values surpressed.
         """
         return PStack(*map(f, reversed(self)))
 
@@ -303,7 +302,7 @@ class FStack(_Stack):
     def cons(self, data: Any) -> FStack|None:
         """Return a new stack with data as head and self as tail.
 
-        Note: Constructing an stack using a non-existent value as head results
+        Note: Constructing a stack using a non-existent value as head results
         in a non-existent stack.
         """
         if data is not None:
@@ -317,8 +316,7 @@ class FStack(_Stack):
     def map(self, f: Callable[[Any], FStack]) -> FStack:
         """Maps a function (or callable object) over the values on the stack.
 
-        Returns a new stack with new nodes so not to affect nodes shared
-        by other Stack objects. None values surpressed.
+        Returns a new stack with new nodes. None values surpressed.
         """
         return FStack(*map(f, reversed(self)))
 
