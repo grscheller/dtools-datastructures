@@ -121,7 +121,7 @@ class _Stack():
             nn -= 1
         return True
 
-    def copy(self) -> _Stack:
+    def copy(self) -> PStack|FStack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
         stack = self._getStack()
         stack._head = self._head
@@ -131,7 +131,22 @@ class _Stack():
     def _getHead(self) -> Any|None:
         raise NotImplemented
 
-    def _getStack(self) -> _Stack:
+    def _getStack(self) -> PStack|FStack:
+        raise NotImplemented
+
+    def pop(self) -> PStack:
+        raise NotImplemented
+
+    def push(self, _) -> PStack:
+        raise NotImplemented
+
+    def head(self) -> FStack:
+        raise NotImplemented
+
+    def tail(self) -> FStack:
+        raise NotImplemented
+
+    def cons(self, _) -> FStack:
         raise NotImplemented
 
 class PStack(_Stack):
