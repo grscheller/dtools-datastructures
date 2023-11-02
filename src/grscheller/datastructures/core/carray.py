@@ -25,7 +25,7 @@ values. Use in a boolean context to determine if empty.
 
 from __future__ import annotations
 
-__all__ = ['Carray']
+__all__ = ['CArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -34,7 +34,7 @@ from typing import Any, Callable, Never, Self, Union
 from itertools import chain
 from .iterlib import exhaust, merge
 
-class Carray:
+class CArray:
     """Circular array with amortized O(1) indexing, prepending & appending
     values, and length determination.
 
@@ -181,9 +181,9 @@ class Carray:
         """Display data in the circle array"""
         return "((" + " | ".join(map(lambda x: repr(x), iter(self))) + "))"
 
-    def copy(self) -> Carray:
+    def copy(self) -> CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
-        return Carray(*self)
+        return CArray(*self)
 
     def pushR(self, data: Any) -> Self:
         """Push data on rear of circle"""
@@ -243,23 +243,23 @@ class Carray:
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|Carray:
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|CArray:
         """Apply function over the circular array's contents.
 
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newCarray  = Carray(*map(f, iter(self)))
+        newCArray  = CArray(*map(f, iter(self)))
         if mut:
-            self._count = newCarray._count
-            self._capacity = newCarray._capacity
-            self._front = newCarray._front
-            self._rear = newCarray._rear
-            self._list = newCarray._list
+            self._count = newCArray._count
+            self._capacity = newCArray._capacity
+            self._front = newCArray._front
+            self._rear = newCArray._rear
+            self._list = newCArray._list
             return self
-        return newCarray
+        return newCArray
 
-    def flatMap(self, f: Callable[[Any], Carray], mut: bool=False) -> Self|Carray:
+    def flatMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
         """Apply function and flatten result, don't surpress None values.
 
         Merge the circular array produced sequentially left-to-right.
@@ -267,19 +267,19 @@ class Carray:
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newCarray = Carray(*chain(
+        newCArray = CArray(*chain(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._count = newCarray._count
-            self._capacity = newCarray._capacity
-            self._front = newCarray._front
-            self._rear = newCarray._rear
-            self._list = newCarray._list
+            self._count = newCArray._count
+            self._capacity = newCArray._capacity
+            self._front = newCArray._front
+            self._rear = newCArray._rear
+            self._list = newCArray._list
             return self
-        return newCarray
+        return newCArray
 
-    def mergeMap(self, f: Callable[[Any], Carray], mut: bool=False) -> Self|Carray:
+    def mergeMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
         """Apply function and flatten result, don't surpress None values.
 
         Round Robin Merge the circular array produced until first cached
@@ -288,19 +288,19 @@ class Carray:
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newCarray = Carray(*merge(
+        newCArray = CArray(*merge(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._count = newCarray._count
-            self._capacity = newCarray._capacity
-            self._front = newCarray._front
-            self._rear = newCarray._rear
-            self._list = newCarray._list
+            self._count = newCArray._count
+            self._capacity = newCArray._capacity
+            self._front = newCArray._front
+            self._rear = newCArray._rear
+            self._list = newCArray._list
             return self
-        return newCarray
+        return newCArray
 
-    def exhaustMap(self, f: Callable[[Any], Carray], mut: bool=False) -> Self|Carray:
+    def exhaustMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
         """Apply function and flatten result, don't surpress None values.
 
         Round Robin Merge the circular array produced until all cached
@@ -309,17 +309,17 @@ class Carray:
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newCarray = Carray(*exhaust(
+        newCArray = CArray(*exhaust(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._count = newCarray._count
-            self._capacity = newCarray._capacity
-            self._front = newCarray._front
-            self._rear = newCarray._rear
-            self._list = newCarray._list
+            self._count = newCArray._count
+            self._capacity = newCArray._capacity
+            self._front = newCArray._front
+            self._rear = newCArray._rear
+            self._list = newCArray._list
             return self
-        return newCarray
+        return newCArray
 
 if __name__ == "__main__":
     pass

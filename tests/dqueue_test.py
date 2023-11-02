@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.dqueue import Dqueue
+from grscheller.datastructures.dqueue import DQueue
 
 class TestDqueue:
     def test_push_then_pop(self):
-        dq = Dqueue()
+        dq = DQueue()
         pushed = 42; dq.pushL(pushed)
         popped = dq.popL()
         assert pushed == popped
@@ -42,17 +42,17 @@ class TestDqueue:
         assert len(dq) == 0
 
     def test_pushing_None(self):
-        dq0 = Dqueue()
-        dq1 = Dqueue()
-        dq2 = Dqueue()
+        dq0 = DQueue()
+        dq1 = DQueue()
+        dq2 = DQueue()
         dq1.pushR(None)
         dq2.pushL(None)
         assert dq0 == dq1 == dq2
 
         barNone = (1, 2, None, 3, None, 4)
         bar = (1, 2, 3, 4)
-        dq0 = Dqueue(*barNone)
-        dq1 = Dqueue(*bar)
+        dq0 = DQueue(*barNone)
+        dq1 = DQueue(*bar)
         assert dq0 == dq1
         for d in iter(dq0):
             assert d is not None
@@ -60,7 +60,7 @@ class TestDqueue:
             assert d is not None
 
     def test_bool_len_peak(self):
-        dq = Dqueue()
+        dq = DQueue()
         assert not dq
         dq.pushL(2,1)
         dq.pushR(3)
@@ -95,7 +95,7 @@ class TestDqueue:
 
     def test_iterators(self):
         data = [1, 2, 3, 4]
-        dq = Dqueue(*data)
+        dq = DQueue(*data)
         ii = 0
         for item in dq:
             assert data[ii] == item
@@ -103,7 +103,7 @@ class TestDqueue:
         assert ii == 4
 
         data.append(5)
-        dq = Dqueue(*data)
+        dq = DQueue(*data)
         data.reverse()
         ii = 0
         for item in reversed(dq):
@@ -111,21 +111,21 @@ class TestDqueue:
             ii += 1
         assert ii == 5
 
-        dq0 = Dqueue()
+        dq0 = DQueue()
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
         data = ()
-        dq0 = Dqueue(*data)
+        dq0 = DQueue(*data)
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
     def test_capacity(self):
-        dq = Dqueue(1, 2)
+        dq = DQueue(1, 2)
         assert dq.fractionFilled() == 2/2
         dq.pushL(0)
         assert dq.fractionFilled() == 3/4
@@ -141,7 +141,7 @@ class TestDqueue:
         assert dq.fractionFilled() == 5/25
 
     def test_copy_reversed(self):
-        dq1 = Dqueue(*range(20))
+        dq1 = DQueue(*range(20))
         dq2 = dq1.copy()
         assert dq1 == dq2
         assert dq1 is not dq2
@@ -155,8 +155,8 @@ class TestDqueue:
             jj += 1
 
     def test_equality(self):
-        dq1 = Dqueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        dq2 = Dqueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
+        dq1 = DQueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        dq2 = DQueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
         assert dq1 == dq2
 
         tup2 = dq2.popR()
@@ -181,36 +181,36 @@ class TestDqueue:
     def test_maps(self):
         # TODO: more edge cases
         # TODO: change up from queue_twst.py version
-        q0 = Dqueue(1,2,3,5)
+        q0 = DQueue(1,2,3,5)
         f1 = lambda x: x*x - 1
-        f2 = lambda x: Dqueue(1, x, x*x+1)
-        f3 = lambda x: Dqueue(*range(2*x, 4*x))
-        f4 = lambda x: Dqueue(*range(2*x, 3*x))
+        f2 = lambda x: DQueue(1, x, x*x+1)
+        f3 = lambda x: DQueue(*range(2*x, 4*x))
+        f4 = lambda x: DQueue(*range(2*x, 3*x))
 
         q1 = q0.copy()
         q2 = q1.map(f1)
         assert q1 == q0
         q1.map(f1, mut=True)
-        assert q1 == q2 == Dqueue(0,3,8,24)
+        assert q1 == q2 == DQueue(0,3,8,24)
         assert q1 != q0
 
         q3 = q0.copy()
         q4 = q3.flatMap(f2)
         assert q3 == q0
         q3.flatMap(f2, mut=True)
-        assert q3 == q4 == Dqueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
+        assert q3 == q4 == DQueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
         assert q3 != q0
 
         q3 = q0.copy()
         q4 = q3.mergeMap(f3)
         assert q3 == q0
         q3.mergeMap(f3, mut=True)
-        assert q3 == q4 == Dqueue(2, 4, 6, 10, 3, 5, 7, 11)
+        assert q3 == q4 == DQueue(2, 4, 6, 10, 3, 5, 7, 11)
         assert q3 != q0
 
         q5 = q0.copy()
         q6 = q5.exhaustMap(f4)
         assert q5 == q0
         q5.exhaustMap(f4, mut=True)
-        assert q5 == q6 == Dqueue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
+        assert q5 == q6 == DQueue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
         assert q5 != q0

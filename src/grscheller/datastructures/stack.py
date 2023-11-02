@@ -32,7 +32,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable, Self
 from itertools import chain
 from .core.iterlib import merge, exhaust
-from .core.carray import Carray
+from .core.carray import CArray
 
 class _Node():
     """Class implementing nodes that can be linked together to form a singularly
@@ -106,7 +106,7 @@ class PStack():
 
     def __reversed__(self):
         """Reverse iterate over the current state of the stack"""
-        return reversed(Carray(*self))
+        return reversed(CArray(*self))
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
@@ -120,8 +120,8 @@ class PStack():
         if self._count != other._count:
             return False
 
-        left = self
-        right = other
+        left = self.copy()
+        right = other.copy()
         nn = self._count
         while nn > 0:
             if left is None or right is None:
@@ -130,14 +130,14 @@ class PStack():
                 return True
             if left.peak() != right.peak():
                 return False
-            left = left.tail()
-            right = right.tail()
+            left.pop()
+            right.pop()
             nn -= 1
         return True
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '|| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
+        return '|| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
 
     def copy(self) -> PStack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
@@ -168,7 +168,7 @@ class PStack():
             return data
 
     def peak(self) -> Any|None:
-        """Returns the data at the head of stack. Does not consume the data.
+        """Returns the data at the top of stack. Does not consume the data.
 
         Note: If stack is empty, return None.
         """
@@ -176,7 +176,7 @@ class PStack():
             return None
         return self._head._data
 
-    def peakOrElse(self, default: Any) -> Any:
+    def peakOr(self, default: Any) -> Any:
         """Returns the data at the head of stack. Does not consume the data.
 
         Note: If stack is empty, return default value.
@@ -263,7 +263,7 @@ class FStack():
 
     def __reversed__(self):
         """Reverse iterate over the current state of the stack"""
-        return reversed(Carray(*self))
+        return reversed(CArray(*self))
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same.
@@ -285,7 +285,7 @@ class FStack():
                 return True
             if left._head is right._head:
                 return True
-            if left.peak() != right.peak():
+            if left.head() != right.head():
                 return False
             left = left.tail()
             right = right.tail()
@@ -294,7 +294,7 @@ class FStack():
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '| ' + ' <- '.join(reversed(Carray(*self).map(lambda x: repr(x)))) + ' ><'
+        return '| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
 
     def copy(self) -> FStack:
         """Return shallow copy of the stack in O(1) time & space complexity"""
@@ -303,7 +303,7 @@ class FStack():
         stack._count = self._count
         return stack
 
-    def peak(self) -> Any|None:
+    def head(self) -> Any|None:
         """Returns the data at the head of stack. Does not consume the data.
 
         Note: If stack is empty, return None.
@@ -312,12 +312,12 @@ class FStack():
             return None
         return self._head._data
 
-    def peakOrElse(self, default: Any) -> Any:
+    def headOr(self, default: Any) -> Any:
         """Returns the data at the head of stack. Does not consume the data.
 
         Note: If stack is empty, return default value.
         """
-        value = self.peak()
+        value = self.head()
         if value is None:
             value = default
         return value
@@ -335,7 +335,7 @@ class FStack():
             return stack
         return None
 
-    def tailOrElse(self, default: FStack|None = None) -> FStack:
+    def tailOr(self, default: FStack|None = None) -> FStack:
         """Return tail of the stack.
 
         Note: If stack is empty, return default value of type Stack.

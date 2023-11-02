@@ -26,6 +26,16 @@
 
 ## Versions
 
+### Version 0.8.3.0 - commit date 2023-11-02
+
+* major API breaking change
+  * now two versions of Stack class
+    * PStack (stateful) with push, pop, peak methods
+    * FStack (immutable) with cons, tail, head methods
+  * Dqueue renamed DQueue
+  * FLarray renamed FLArray
+* tests now work
+
 ### Version 0.8.0.0 - commit date 2023-10-28
 
 * API breaking changes

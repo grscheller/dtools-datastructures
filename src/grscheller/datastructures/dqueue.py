@@ -15,14 +15,14 @@
 """Module grscheller.datastructure.dqueue - Double sided queue
 
 Double sided queue with amortized O(1) insertions & deletions from either end.
-Obtaining length (number of elements) of a Dqueue is also a O(1) operation.
+Obtaining length (number of elements) of a DQueue is also a O(1) operation.
 
 Implemented with a Python List based circular array.
 """
 
 from __future__ import annotations
 
-__all__ = ['Dqueue']
+__all__ = ['DQueue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -30,12 +30,12 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable, Self, Union
 from itertools import chain
 from .core.iterlib import merge, exhaust
-from .core.carray import Carray
+from .core.carray import CArray
 
-class Dqueue():
+class DQueue():
     """Double sided queue datastructure. Will resize itself as needed.
 
-    The Dqueue class consistently uses None to represent the absence of a value.
+    The DQueue class consistently uses None to represent the absence of a value.
     None will not be pushed to this data structure. As an alternative, use Maybe
     objects of type Nothing, or the empty tuple () to represent a non-existent
     value. 
@@ -45,7 +45,7 @@ class Dqueue():
 
         Null values will be culled from the intial data from ds.
         """
-        self._carray = Carray()
+        self._carray = CArray()
         for d in ds:
             if d is not None:
                 self._carray.pushR(d)
@@ -87,20 +87,20 @@ class Dqueue():
         """Display data in dqueue."""
         return "><" + " | ".join(self.map(lambda x: repr(x))) + "><"
 
-    def copy(self) -> Dqueue:
+    def copy(self) -> DQueue:
         """Return shallow copy of the dqueue in O(n) time & space complexity."""
-        new_dqueue = Dqueue()
+        new_dqueue = DQueue()
         new_dqueue._carray = self._carray.copy()
         return new_dqueue
 
-    def pushR(self, *ds: Any) -> Dqueue:
+    def pushR(self, *ds: Any) -> DQueue:
         """Push data on rear of dqueue & return reference to self."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
         return self
 
-    def pushL(self, *ds: Any) -> Dqueue:
+    def pushL(self, *ds: Any) -> DQueue:
         """Push data on front of dqueue, return reference to self."""
         for d in ds:
             if d != None:
@@ -148,68 +148,68 @@ class Dqueue():
         self._carray.resize(addCapacity)
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|Dqueue:
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|DQueue:
         """Apply function over dqueue contents.
 
-        Return new Dqueue if mut=False (the default)
+        Return new DQueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue  = Dqueue(*map(f, iter(self)))
+        newDQueue  = DQueue(*map(f, iter(self)))
         if mut:
-            self._carray = newDqueue._carray
+            self._carray = newDQueue._carray
             return self
-        return newDqueue
+        return newDQueue
 
-    def flatMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+    def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> Self|DQueue:
         """Apply function and flatten result, surpress any None values.
 
         Merge the dqueues produced sequentially left-to-right.
 
-        Return new Dqueue if mut=False (the default)
+        Return new DQueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*chain(
+        newDQueue = DQueue(*chain(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._carray = newDqueue._carray
+            self._carray = newDQueue._carray
             return self
-        return newDqueue
+        return newDQueue
 
-    def mergeMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+    def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> Self|DQueue:
         """Apply function and flatten result, surpress any None values.
 
         Round Robin Merge the dqueues produced until first cached dqueue is
         exhausted.
 
-        Return new Dqueue if mut=False (the default)
+        Return new DQueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*merge(
+        newDQueue = DQueue(*merge(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._carray = newDqueue._carray
+            self._carray = newDQueue._carray
             return self
-        return newDqueue
+        return newDQueue
 
-    def exhaustMap(self, f: Callable[[Any], Dqueue], mut: bool=False) -> Self|Dqueue:
+    def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> Self|DQueue:
         """Apply function and flatten result, surpress any None values.
 
         Round Robin Merge the dqueues produced until all cached dqueues are
         exhausted.
 
-        Return new Dqueue if mut=False (the default)
+        Return new DQueue if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newDqueue = Dqueue(*exhaust(
+        newDQueue = DQueue(*exhaust(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
-        newDqueue = Dqueue(*exhaust(*(iter(x) for x in map(f, iter(self)))))
+        newDQueue = DQueue(*exhaust(*(iter(x) for x in map(f, iter(self)))))
         if mut:
-            self._carray = newDqueue._carray
+            self._carray = newDQueue._carray
             return self
-        return newDqueue
+        return newDQueue
 
 if __name__ == "__main__":
     pass
