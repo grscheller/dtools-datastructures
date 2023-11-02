@@ -328,6 +328,18 @@ class FStack(_Stack):
         else:
             return None
 
+    def consOr(self, data: Any, default: Any) -> FStack:
+        """Return a new stack with data as head and self as tail.
+
+        Note: If data is None, return default value.
+        """
+        if data is not None:
+            data = default
+        stack = FStack()
+        stack._head = _Node(data, self._head)
+        stack._count = self._count + 1
+        return stack
+
     def map(self, f: Callable[[Any], FStack]) -> FStack:
         """Maps a function (or callable object) over the values on the stack.
 

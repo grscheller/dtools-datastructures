@@ -227,8 +227,8 @@ class TestPStack:
 class TestFStack:
     def test_cons_and_tail(self):
         s1 = FStack()
-        s2 = s1.cons(42)
-        head = s2.head()
+        s2 = s1.consOr(42, ())
+        head = s2.headOr(())
         assert head == 42
 
     def test_head_of_empty_stack(self):
@@ -244,7 +244,7 @@ class TestFStack:
         assert not s2
         assert len(s2) == 0
         assert s2.head() is None
-        s2 = s2.cons(42)
+        s2 = s2.consOr(42, 0)      # Do I want this???
         assert s2.head() == 40+2
 
     def test_stack_len(self):
@@ -253,7 +253,7 @@ class TestFStack:
 
         assert len(s0) == 0
         assert len(s1) == 2000
-        s0 = s0.cons(42)
+        s0 = s0.consOr(42, -1)
         s1 = s1.tailOr().tailOr()
         assert len(s0) == 1
         assert len(s1) == 1998
@@ -261,13 +261,14 @@ class TestFStack:
     def test_tail_cons(self):
         s1 = FStack()
         s1 = s1.cons("fum").cons("fo").cons("fi").cons("fe")
-        s2 = s1.tail()
-        if s2 is None:
-            assert False
-        s3 = s2.cons("fe")
-        assert s3 == s1
-        while s1:
-            s1 = s1.tailOr()
+        assert type(s1) == FStack    # another way to gag warnings
+        s2 = s1.tail()            # a better way to do this is to
+        if s2 is None:            # is to use entire verions of tail,
+            assert False          # cons, and head???
+        s3 = s2.cons("fe")     # don't want enduser to have to
+        assert s3 == s1        # resort to monadic error handling
+        while s1:                 # or cook monadic types into this data
+            s1 = s1.tailOr()      # structure (of anther version of???
         assert s1.head() == None
         assert s1.tail() == None
 
@@ -288,6 +289,10 @@ class TestFStack:
     def test_equality(self):
         s1 = FStack(*range(3))
         s2 = s1.cons(42)
+        assert s2 is not None        # how do I let the typechecker know
+                                     # that this is not None???
+                                       # maybe just give up and throw
+                                       # exceptions???
         assert s1 is not s2
         assert s1 is not s2.tailOr()
         assert s1 != s2
