@@ -26,6 +26,12 @@
 
 ## Versions
 
+### Version 0.8.4.0 - commit date 2023-11-03
+
+* new data structure FTuple added
+  * wrapped tuple with a FP interface
+  * initial minimal viable product
+
 ### Version 0.8.3.0 - commit date 2023-11-02
 
 * major API breaking change
