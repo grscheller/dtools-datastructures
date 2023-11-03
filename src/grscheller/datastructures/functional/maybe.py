@@ -83,7 +83,7 @@ class Maybe():
         else:
             return Maybe()
 
-    def get(self) -> Any | None:
+    def get(self) -> Any|None:
         """Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
         """

@@ -86,7 +86,7 @@ class Either():
             return f(self._value)
         return self.copy()
 
-    def get(self) -> Any | None:
+    def get(self) -> Any|None:
         if self:
             return self._value
         return None

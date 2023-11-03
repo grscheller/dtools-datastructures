@@ -41,7 +41,7 @@ class _Node():
 
     Nodes can safely be shared between different Stack instances.
     """
-    def __init__(self, data, nodeNext: _Node | None):
+    def __init__(self, data, nodeNext: _Node|None):
         """Construct an element of a linked list, semantically immutable.
 
         Note: It is the Stack class's responsibility that the _data property is
@@ -333,7 +333,7 @@ class FStack(_Stack):
 
         Note: If data is None, return default value.
         """
-        if data is not None:
+        if data is None:
             data = default
         stack = FStack()
         stack._head = _Node(data, self._head)
