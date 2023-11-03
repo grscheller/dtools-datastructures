@@ -35,7 +35,7 @@ class FTuple():
     """
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""
-        self._ds = tuple(filter(None.__ne__, ds))
+        self._ds = tuple(filter(lambda x: x != None, ds))
 
     def __bool__(self):
         """Returns true if not empty"""
@@ -46,13 +46,15 @@ class FTuple():
         return len(self._ds)
 
     def __getitem__(self, index: int) -> Any:
+        # TODO: Does not like being given a slice ... research
         msg = ''
         if (cnt := len(self)) == 0:
-            msg = 'Indexing an empty ftuple'
+            msg = 'Indexing an empty FTuple'
         elif not -cnt <= index < cnt:
             l = -cnt
             h = cnt - 1
-            msg = f'ftuple index = {index} not between {l} and {h} while getting value'
+            msg = f'FTuple index = {index} not between {l} and {h}'
+            msg += ' while getting value'
         
         if msg:
             raise IndexError(msg)
@@ -60,10 +62,12 @@ class FTuple():
         return self._ds[index]
 
     def __iter__(self):
+        """Iterate over the immutable state of the FTuple"""
         for d in self._ds:
             yield d
 
     def __reversed__(self):
+        """Reverse iterate over the immutable state of the FTuple"""
         for d in reversed(self._ds):
             yield d
 
@@ -76,17 +80,21 @@ class FTuple():
         """Display data in the FTuple"""
         return "((" + ", ".join(map(lambda x: repr(x), iter(self))) + "))"
 
+    def __add__(self, other: FTuple) -> FTuple:
+        """Concatenate two FTuples"""
+        ftuple = FTuple()
+        ftuple._ds = self._ds + other._ds
+        return ftuple
+
     def copy(self) -> FTuple:
         """Return shallow copy of the FTuple in O(n) time & space complexity"""
         ftuple = FTuple()
         ftuple._ds = self._ds
         return ftuple
 
-    def __add__(self, other: FTuple) -> FTuple:
-        """Concatenate two FTuples"""
-        ftuple = FTuple()
-        ftuple._ds = self._ds + other._ds
-        return ftuple
+    def reverse(self) -> FTuple:
+        """Return a reversed FTuple"""
+        return(FTuple(*reversed(self)))
 
     def map(self, f: Callable[[Any], Any]) -> FTuple:
         """Apply function over the FTuple's contents. Filter out None values."""

@@ -52,13 +52,18 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure flarray not empty
+                    # ensure FLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, True, _):
                 # no size inconsistencies
-                self._size = dsize
-                self._list = dlist
+                if dsize > 0:
+                    self._size = dsize
+                    self._list = dlist
+                else:
+                    # ensure FLArray not empty
+                    self._size = 1
+                    self._list = [default]
             case (_, _, True):
                 if size > 0:
                     # pad higher indexes (on "right")
@@ -94,32 +99,36 @@ class FLArray():
 
     def __getitem__(self, index: int) -> Union[Any, Never]:
         # TODO: Does not like being given a slice ... research
-        # TODO: Pyright LSP does not like Any|Never as return type
-        cnt = self._size
-        if not -cnt <= index < cnt:
-            l = -cnt
-            h = cnt - 1
-            msg = f'fdArray index = {index} not between {l} and {h} while getting value'
+        size = self._size
+        if not -size <= index < size:
+            l = -size
+            h = size - 1
+            msg = f'FLArray index = {index} not between {l} and {h}'
+            msg += ' while getting value'
             raise IndexError(msg)
         return self._list[index]
 
     def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
-        cnt = self._size
-        if not -cnt <= index < cnt:
-            l = -cnt
-            h = cnt - 1
-            msg = f'fdArray index = {index} not between {l} and {h} while getting value'
+        size = self._size
+        if not -size <= index < size:
+            l = -size
+            h = size - 1
+            msg = f'FLArray index = {index} not between {l} and {h}'
+            msg += ' while setting value'
             raise IndexError(msg)
         self._list[index] = value
 
     def __iter__(self):
-        """Iterator yielding data currently stored in flarray"""
-        currList = self._list.copy()
-        for pos in range(self._size):
-            yield currList[pos]
+        """Iterate over the current dtate of the flarray. Copy is made so
+        original source can safely mutate.
+        """
+        for data in iter(self._list.copy()):
+            yield data
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the flarray"""
+        """Reverse iterate over the current state of the flarray. Copy is
+        made so original source can safely mutate.
+        """
         for data in reversed(self._list.copy()):
             yield data
 
@@ -136,9 +145,24 @@ class FLArray():
         # __iter__ already makes a defensive copy
         return "[|" + ", ".join(map(lambda x: repr(x), iter(self))) + "|]"
 
+    def __add__(self, other: FLArray) -> FLArray:
+        """Add FLArrays component-wise left to right."""
+        if (lhs := self._size) != (rhs := other._size):
+            msg = 'FLArray size mismatch: '
+            msg += f'LHS size={lhs} but RHS size={rhs}'
+            raise ValueError(msg)
+        flarray = FLArray(size=lhs)
+        for ii in range(lhs):
+            flarray[ii] = self[ii] + other[ii]
+        return flarray
+
     def copy(self) -> FLArray:
         """Return shallow copy of the flarray in O(n) time & space complexity"""
         return FLArray(*self)
+
+    def reverse(self) -> None:
+        """Reversed the FLArray"""
+        self._list.reverse()
 
     def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|FLArray:
         """Apply function over flarray contents.

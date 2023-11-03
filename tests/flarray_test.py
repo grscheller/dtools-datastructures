@@ -14,7 +14,58 @@
 
 from grscheller.datastructures.flarray import FLArray
 
-class TestFPArray:
+class TestFLArray:
+    def test_default(self):
+        fl1 = FLArray(default=0)
+        fl2 = FLArray(default=0)
+        assert fl1 == fl2
+        assert fl1 is not fl2
+        assert not fl1
+        assert not fl2
+        assert len(fl1) == 1
+        assert len(fl2) == 1
+        fl3 = fl1 + fl2
+        assert fl3 == fl2 == fl3
+        assert fl3 is not fl1
+        assert fl3 is not fl2
+        assert not fl3
+        assert len(fl3) == 1
+        assert type(fl3) == FLArray
+        fl4 = fl3.copy()
+        assert fl4 == fl3
+        assert fl4 is not fl3
+        fl1_copy = fl1.copy()
+        fl1.reverse()
+        assert fl1 == fl1_copy   # only one element
+
+        foo = 42
+        baz = 'hello world'
+
+        try:
+            foo = fl1[0]
+        except IndexError as err:
+            print(err)
+            assert False
+        else:
+            assert True
+        finally:
+            assert True
+            assert foo == 0
+
+        try:
+            baz = fl2[42]
+        except IndexError as err:
+            print(err)
+            assert True
+        else:
+            assert False
+        finally:
+            assert True
+            assert baz == 'hello world'
+
+        fl5 = FLArray(*range(1,4), size=-5, default=42)
+        assert fl5 == FLArray(42, 42, 1, 2, 3)
+
     def test_set_then_get(self):
         fl = FLArray(size=5, default=0)
         got = fl[1]
@@ -74,7 +125,7 @@ class TestFPArray:
             assert False
         try:
             bar = fl[-6] 
-            print(f'should never print: {bar}')
+            assert False
         except IndexError:
             assert True
         except Exception as error:
@@ -140,14 +191,10 @@ class TestFPArray:
         assert fl6 == fl6_answers
         assert fl6 is not fl3
 
-    def test_mapFlatMap_update(self):
+    def test_mapFlatMap_mutate(self):
         fl1 = FLArray(1,2,3,10)
-        fl2 = fl1.copy()
-        fl3 = fl1.copy()
-
         fl1.map(lambda x: x*x-1, mut=True)
-        fl1_answers = FLArray(0, 3, 8, 99)
-        assert fl1 == fl1_answers
+        assert fl1 == FLArray(0, 3, 8, 99)
         
     def test_bool(self):
         fl_allTrue = FLArray(True, True, True)
@@ -206,3 +253,39 @@ class TestFPArray:
         aa = next(flrevIter)
         assert fl[0] == aa == 1
 
+    def test_add(self):
+        fl1 = FLArray(1,2,3)
+        fl2 = FLArray(4,5,6)
+        assert fl1 + fl2 == FLArray(5,7,9)
+        assert fl2 + fl1 == FLArray(5,7,9)
+
+        try:
+            fl1 = FLArray(1,2,3)
+            fl2 = FLArray(4,5,6,7,8,9)
+            fl12 = fl1 + fl2
+            fl21 = fl2 + fl1
+            assert fl12 == fl21 == FLArray(5,7,9)
+        except ValueError:
+            assert True
+        else:
+            assert False
+
+    def test_reverse(self):
+        fl1 = FLArray(1, 2, 3, 'foo', 'bar')
+        fl2 = FLArray('bar', 'foo', 3, 2, 1)
+        assert fl1 != fl2
+        fl2.reverse()
+        assert fl1 == fl2
+        fl1.reverse()
+        assert fl1 != fl2
+        assert fl1[1] == fl2[-2]
+
+        fl4 = fl2.copy()
+        fl5 = fl2.copy()
+        assert fl4 == fl5
+        fl4.reverse()
+        fl5.reverse()
+        assert fl4 != fl2
+        assert fl5 != fl2
+        fl2.reverse()
+        assert fl4 == fl2
