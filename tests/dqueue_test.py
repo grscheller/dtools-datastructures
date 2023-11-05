@@ -34,7 +34,7 @@ class TestDqueue:
         popped = dq.popR()
         assert pushed == popped
         assert len(dq) == 0
-        dq.pushR('first').pushR('second').pushR('last')
+        dq.pushR('first'); dq.pushR('second'); dq.pushR('last')
         assert dq.popL() == 'first'
         assert dq.popR() == 'last'
         assert dq
@@ -83,7 +83,7 @@ class TestDqueue:
         assert dq.popR() == None
         assert len(dq) == 0
         assert not dq
-        assert dq.pushR(42)
+        dq.pushR(42)
         assert len(dq) == 1
         assert dq
         assert dq.peakL() == 42
@@ -124,22 +124,6 @@ class TestDqueue:
         for _ in reversed(dq0):
             assert False
 
-    def test_capacity(self):
-        dq = DQueue(1, 2)
-        assert dq.fractionFilled() == 2/2
-        dq.pushL(0)
-        assert dq.fractionFilled() == 3/4
-        dq.pushR(3)
-        assert dq.fractionFilled() == 4/4
-        dq.pushR(4)
-        assert dq.fractionFilled() == 5/8
-        assert len(dq) == 5
-        assert dq.capacity() == 8
-        dq.resize()
-        assert dq.fractionFilled() == 5/5
-        dq.resize(20)
-        assert dq.fractionFilled() == 5/25
-
     def test_copy_reversed(self):
         dq1 = DQueue(*range(20))
         dq2 = dq1.copy()
@@ -156,7 +140,9 @@ class TestDqueue:
 
     def test_equality(self):
         dq1 = DQueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        dq2 = DQueue(2, 3, 'Forty-Two').pushL(1).pushR((7, 11, 'foobar'))
+        dq2 = DQueue(2, 3, 'Forty-Two')
+        dq2.pushL(1)
+        dq2.pushR((7, 11, 'foobar'))
         assert dq1 == dq2
 
         tup2 = dq2.popR()
@@ -166,15 +152,18 @@ class TestDqueue:
         assert dq1 != dq2
 
         dq1.popR()
-        dq1.pushR((42, 'foofoo')).pushR(tup2)
+        dq1.pushR((42, 'foofoo'))
+        dq1.pushR(tup2)
         dq2.pushR(tup2)
         assert dq1 == dq2
 
         holdA = dq1.popL()
-        dq1.resize(42)
         holdB = dq1.popL()
         holdC = dq1.popR()
-        dq1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
+        dq1.pushL(holdB)
+        dq1.pushR(holdC)
+        dq1.pushL(holdA)
+        dq1.pushL(200)
         dq2.pushL(200)
         assert dq1 == dq2
 

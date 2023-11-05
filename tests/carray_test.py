@@ -35,7 +35,7 @@ class TestCarray:
         popped = c.popR()
         assert pushed == popped
         assert len(c) == 0
-        c.pushR('first').pushR('second').pushR('last')
+        c.pushR('first'); c.pushR('second'); c.pushR('last')
         assert c.popL() == 'first'
         assert c.popR() == 'last'
         assert c
@@ -76,16 +76,26 @@ class TestCarray:
     def test_capacity(self):
         c = CArray()
         assert c.capacity() == 2
+
         c = CArray(1, 2)
         assert c.fractionFilled() == 2/4
-        assert c.pushL(0).fractionFilled() == 3/4
-        assert c.pushR(3).fractionFilled() == 4/4
-        c.pushR(4).pushL(5)
+
+        c.pushL(0)
+        assert c.fractionFilled() == 3/4
+
+        c.pushR(3)
+        assert c.fractionFilled() == 4/4
+
+        c.pushR(4)
+        c.pushL(5)
         assert c.fractionFilled() == 6/8
+
         assert len(c) == 6
         assert c.capacity() == 8
+
         c.resize()
         assert c.fractionFilled() == 6/6
+
         c.resize(30)
         assert c.fractionFilled() == 6/36
 
@@ -103,73 +113,89 @@ class TestCarray:
         assert c1 != c2
 
         c1.popR()
-        c1.pushR((42, 'foofoo')).pushR(tup2)
+        c1.pushR((42, 'foofoo'))
+        c1.pushR(tup2)
         c2.pushR(tup2)
         assert c1 == c2
 
-        holdA = c1.popL()
-        c1.resize(42)
+        holdA = c1.popL(); c1.resize(42)
         holdB = c1.popL()
         holdC = c1.popR()
-        c1.pushL(holdB).pushR(holdC).pushL(holdA).pushL(200)
+        c1.pushL(holdB)
+        c1.pushR(holdC)
+        c1.pushL(holdA)
+        c1.pushL(200)
         c2.pushL(200)
         assert c1 == c2
 
     def test_map(self):
-        c1 = CArray(1,2,3,10)
+        c0 = CArray(1,2,3,10)
+        c1 = c0.copy()
         c2 = c1.map(lambda x: x*x-1)
-        c2_answers = CArray(0,3,8,99)
-        assert c2 == c2_answers
+        assert c2 == CArray(0,3,8,99)
         assert c1 != c2
-        assert c1 is not c2
+        assert c1 == c0
+        assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
-    def test_mapSelf(self):
+    def test_mapMutate(self):
         c1 = CArray(1,2,3,10)
         c1.map(lambda x: x*x-1, mut=True)
-        c1_answers = CArray(0,3,8,99)
-        assert c1 == c1_answers
+        assert c1 == CArray(0,3,8,99)
         assert len(c1) == 4
 
     def test_flatMap(self):
         c1 = CArray(1,2,3,10)
         c2 = c1.flatMap(lambda x: CArray(1, x, x*x+1))
-        c2_answers = CArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert c2 == c2_answers
+        assert c2 == CArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert len(c2) == 3*len(c1) == 12
-        c3 = CArray()
-        c4 = c3.flatMap(lambda x: CArray(1, x, x*x+1))
-        assert c3 == c4 == CArray()
-        assert c3 is not c4
 
-    def test_flatMapUpdate(self):
+        c1 = CArray()
+        c2 = c1.flatMap(lambda x: CArray(1, x, x*x+1))
+        assert c1 == c2 == CArray()
+        assert c1 is not c2
+
+    def test_flatMapMutate(self):
         c1 = CArray(1,2,3,5,10)
         c1.flatMap(lambda x: CArray(1, x, x*x+1), mut=True)
-        c1_answers = CArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
-        assert c1 == c1_answers
+        assert c1 == CArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26, 1, 10, 101)
         assert len(c1) == 5*3
 
     def test_mergeMap(self):
         c1 = CArray(5, 4, 7)
         # need to figure out why pyright does not like the line below
-        min1 = min(iter(c1))
-        len1 = len(c1)
         c2 = c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x)))
         assert c2[0] == c2[3] == c2[6] == c2[9] == 'EEEEE'
         assert c2[1] == c2[4] == c2[7] == c2[10] == 'DDDD'
         assert c2[2] == c2[5] == c2[8] == c2[11] == 'GGGGGGG'
         assert c2[-1] == 'GGGGGGG'
-        assert len(c2) == len1*min1 == 3*4
-        assert len(c1) == len1 == 3
+
+        try:
+            bogus = c2[12]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c2) == 3*4
+        assert len(c1) == 3
 
         c1 = CArray(3)
-        min1 = min(iter(c1))
-        len1 = len(c1)
         c2 = c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x)))
         assert c2[0] == c2[1] == c2[2] == 'CCC'
         assert c2[-1] == 'CCC'
-        assert len(c2) == len1*min1 == 1*3
-        assert len(c1) == len1
+
+        try:
+            bogus = c2[3]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c1) == 1
+        assert len(c2) == 3
 
         c1 = CArray()
         len1 = len(c1)
@@ -177,29 +203,144 @@ class TestCarray:
         assert len(c2) == len1 == 0
         assert len(c1) == len1 == 0
 
-    def test_mergeMapUpdate(self):
+    def test_mergeMapMutate(self):
         c1 = CArray(5, 4, 7)
-        min1 = min(iter(c1))
-        len1 = len(c1)
         c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
         assert c1[0] == c1[3] == c1[6] == c1[9] == 'EEEEE'
         assert c1[1] == c1[4] == c1[7] == c1[10] == 'DDDD'
         assert c1[2] == c1[5] == c1[8] == c1[11] == 'GGGGGGG'
         assert c1[-1] == 'GGGGGGG'
-        assert len(c1) == len1*min1 == 3*4
+
+        try:
+            bogus = c1[12]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c1) == 3*4
 
         c1 = CArray(2)
-        min1 = min(iter(c1))
-        len1 = len(c1)
         c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
         assert c1[0] == c1[1] == 'BB'
         assert c1[-1] == 'BB'
-        assert len(c1) == len1*min1 == 1*2
+
+        try:
+            bogus = c1[2]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+        
+        assert len(c1) == 1*2
 
         c1 = CArray()
-        len1 = len(c1)
-        c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x), mut=True))
-        assert len(c1) == len1 == 0
+        c1.mergeMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
+
+        try:
+            bogus = c1[0]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        try:
+            bogus = c1[-1]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c1) == 0
+
+    def test_exhaustMap(self):
+        c1 = CArray(5, 4, 7)
+        c2 = c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)))
+        assert c2[0] == c2[3] == c2[6] ==  c2[9] == c2[12] == 'EEEEE'
+        assert c2[1] == c2[4] == c2[7] == c2[10] == 'DDDD'
+        assert c2[2] == c2[5] == c2[8] == c2[11] == c2[13] == c2[14] == c2[15] == 'GGGGGGG'
+        assert c2[-1] == 'GGGGGGG'
+        
+        try:
+            bogus = c2[16]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c2) == 5 + 4 + 7
+        assert len(c1) == 3
+
+        c1 = CArray(3)
+        c2 = c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)))
+        assert c2[0] == c2[1] == c2[2] == 'CCC'
+        assert c2[-1] == 'CCC'
+
+        try:
+            bogus = c1[12]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+        
+        assert len(c1) == 1
+        assert len(c2) == 1*3
+
+        c1 = CArray()
+        c2 = c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)))
+
+        try:
+            bogus = c1[0]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        try:
+            bogus = c1[-1]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c2) == 0
+        assert len(c1) == 0
+
+    def test_exhaustMapMutate(self):
+        c1 = CArray(5, 4, 7)
+        c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
+        assert c1[0] == c1[3] == c1[6] ==  c1[9] == c1[12] == 'EEEEE'
+        assert c1[1] == c1[4] == c1[7] == c1[10] == 'DDDD'
+        assert c1[2] == c1[5] == c1[8] == c1[11] == c1[13] == c1[14] == c1[15] == 'GGGGGGG'
+        assert c1[-1] == 'GGGGGGG'
+
+        try:
+            bogus = c1[16]
+        except IndexError:
+            assert True
+        else:
+            print(f'I am {bogus}!')
+            assert False
+
+        assert len(c1) == 5 + 4 + 7
+
+        c1 = CArray(2)
+        c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
+        assert c1[0] == c1[1] == 'BB'
+        assert c1[-1] == 'BB'
+        assert len(c1) == 1*2
+
+        c1 = CArray()
+        c1.exhaustMap(lambda x: CArray(*([chr(0o100+x)*x]*x)), mut=True)
+        assert len(c1) == 0
 
     def test_get_set_items(self):
         c1 = CArray('a', 'b', 'c', 'd')

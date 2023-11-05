@@ -20,15 +20,15 @@ class TestFLArray:
         fl2 = FLArray(default=0)
         assert fl1 == fl2
         assert fl1 is not fl2
-        assert not fl1
-        assert not fl2
+        assert fl1
+        assert fl2
         assert len(fl1) == 1
         assert len(fl2) == 1
         fl3 = fl1 + fl2
         assert fl3 == fl2 == fl3
         assert fl3 is not fl1
         assert fl3 is not fl2
-        assert not fl3
+        assert fl3
         assert len(fl3) == 1
         assert type(fl3) == FLArray
         fl4 = fl3.copy()
@@ -62,6 +62,43 @@ class TestFLArray:
         finally:
             assert True
             assert baz == 'hello world'
+
+        fl1 = FLArray(default=12)
+        fl2 = FLArray(default=30)
+        assert fl1 != fl2
+        assert fl1
+        assert fl2
+        assert len(fl1) == 1
+        assert len(fl2) == 1
+        fl3 = fl1 + fl2
+        assert fl3[0] == 42
+
+        fl1 = FLArray()
+        fl2 = FLArray(None, None, None)
+        assert fl1 != fl2
+        assert fl1 is not fl2
+        assert not fl1
+        assert not fl2
+        assert len(fl1) == 1
+        assert len(fl2) == 3
+
+        fl1 = FLArray(1, 2, size=3)
+        fl2 = FLArray(1, 2, None)
+        assert fl1 == fl2
+        assert fl1 is not fl2
+        assert fl1
+        assert fl2
+        assert len(fl1) == 3
+        assert len(fl2) == 3
+
+        fl1 = FLArray(1, 2, size=-3)
+        fl2 = FLArray(None, 1, 2)
+        assert fl1 == fl2
+        assert fl1 is not fl2
+        assert fl1
+        assert fl2
+        assert len(fl1) == 3
+        assert len(fl2) == 3
 
         fl5 = FLArray(*range(1,4), size=-5, default=42)
         assert fl5 == FLArray(42, 42, 1, 2, 3)
@@ -125,7 +162,6 @@ class TestFLArray:
             assert False
         try:
             bar = fl[-6] 
-            assert False
         except IndexError:
             assert True
         except Exception as error:
@@ -173,22 +209,19 @@ class TestFLArray:
         fl2 = fl1.copy()
         fl3 = fl1.copy()
 
-        fl4 = fl1.map(lambda x: x*x-1)
-        fl4_answers = FLArray(0, 3, 8, 99)
-        assert fl1 != fl4_answers
-        assert fl4 == fl4_answers
+        fl4 = fl1.map(lambda x: x*x-1, mut=False)
+        assert fl1 == FLArray(1,2,3,10)
+        assert fl4 == FLArray(0, 3, 8, 99)
         assert fl1 is not fl4
         
         fl5 = fl2.flatMap(lambda x: FLArray(1, x, x*x+1))
-        fl5_answers = FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert fl2 != fl5_answers
-        assert fl5 == fl5_answers
+        assert fl2 == FLArray(1,2,3,10)
+        assert fl5 == FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
         assert fl5 is not fl2
         
         fl6 = fl3.mergeMap(lambda x: FLArray(1, x, x*x+1))
-        fl6_answers = FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
-        assert fl3 != fl6_answers
-        assert fl6 == fl6_answers
+        assert fl3 == FLArray(1,2,3,10)
+        assert fl6 == FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
         assert fl6 is not fl3
 
     def test_mapFlatMap_mutate(self):
@@ -197,30 +230,30 @@ class TestFLArray:
         assert fl1 == FLArray(0, 3, 8, 99)
         
     def test_bool(self):
-        fl_allTrue = FLArray(True, True, True)
-        fl_allFalse = FLArray(False, False, False)
-        fl_firstTrue = FLArray(True, False, False)
-        fl_lastTrue = FLArray(False, False, False, True)
-        fl_someTrue = FLArray(False, True, False, True, False)
-        fl_defaultTrue = FLArray(default = True)
-        fl_defaultFalse = FLArray(default = False)
-        assert fl_allTrue
-        assert not fl_allFalse
-        assert fl_firstTrue
-        assert fl_lastTrue
-        assert fl_someTrue
-        assert fl_defaultTrue
-        assert not fl_defaultFalse
+        fl_allNotNone = FLArray(True, 0, '')
+        fl_allNone = FLArray(None, None, None)
+        fl_firstNone = FLArray(None, False, [])
+        fl_lastNone = FLArray(0.0, True, False, None)
+        fl_someNone = FLArray(0, None, 42, None, False)
+        fl_defaultNone = FLArray(default = None)
+        fl_defaultNotNone = FLArray(default = False)
+        assert fl_allNotNone
+        assert not fl_allNone
+        assert fl_firstNone
+        assert fl_lastNone
+        assert fl_someNone
+        assert not fl_defaultNone
+        assert fl_defaultNotNone
 
-        fl_None = FLArray(None)
+        fl_Nones = FLArray(None, size=4321)
         fl_0 = FLArray(0, 0, 0)
-        fl_42 = FLArray(*([42]*42))
+        fl_42s = FLArray(*([42]*42))
         fl_emptyStr = FLArray('')
-        fl_hw = FLArray('hello world')
-        assert not fl_None
-        assert not fl_0
-        assert fl_42
-        assert not fl_emptyStr
+        fl_hw = FLArray('hello', 'world')
+        assert not fl_Nones
+        assert fl_0
+        assert fl_42s
+        assert fl_emptyStr
         assert fl_hw
 
     def test_copy(self):

@@ -31,9 +31,8 @@ from itertools import chain
 from .core.iterlib import exhaust, merge
 
 class FLArray():
-    """Class representing a fixed length array data structure of length > 0.
-
-    Permits storing None as a value.
+    """Class implementing a stateful fixed length array data structure of
+    length > 0. Permits storing None as a value.
     """
     def __init__(self, *ds, size: int = 0, default: Any = None):
         """Construct a fixed length array, do not "swallow" None values.
@@ -87,9 +86,9 @@ class FLArray():
                     self._list = dlist[dsize+size:]
 
     def __bool__(self):
-        """Returns true if not all values evaluate as False"""
-        for ii in range(self._size):
-            if self._list[ii]:
+        """Return true if all stored values are not None."""
+        for value in self:
+            if value is not None:
                 return True
         return False
 
@@ -98,7 +97,6 @@ class FLArray():
         return self._size
 
     def __getitem__(self, index: int) -> Union[Any, Never]:
-        # TODO: Does not like being given a slice ... research
         size = self._size
         if not -size <= index < size:
             l = -size
@@ -164,7 +162,7 @@ class FLArray():
         """Reversed the FLArray"""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|FLArray:
+    def map(self, f: Callable[[Any], Any], mut: bool=True) -> Self|FLArray:
         """Apply function over flarray contents.
 
         Return new FLArray if mut=False (the default)
@@ -187,8 +185,8 @@ class FLArray():
         ))
 
     def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
-        """Apply function and flatten result, returns new instance
-        only since size may change.
+        """Apply function and flatten result, returns only a instance
+        since size may change.
 
         Round Robin Merge the flarrays produced until first cached
         flarray is exhausted.

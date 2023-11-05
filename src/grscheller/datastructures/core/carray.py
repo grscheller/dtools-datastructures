@@ -35,8 +35,8 @@ from itertools import chain
 from .iterlib import exhaust, merge
 
 class CArray:
-    """Circular array with amortized O(1) indexing, prepending & appending
-    values, and length determination.
+    """Class implementing a stateful circular array with amortized O(1)
+    indexing, prepending & appending values, and length determination.
 
     Raises IndexError exceptions.
     """
@@ -185,25 +185,23 @@ class CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
         return CArray(*self)
 
-    def pushR(self, data: Any) -> Self:
+    def pushR(self, data: Any) -> None:
         """Push data on rear of circle"""
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
         self._list[self._rear] = data
         self._count += 1
-        return self
 
-    def pushL(self, data: Any) -> Self:
+    def pushL(self, data: Any) -> None:
         """Push data on front of circle"""
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
         self._list[self._front] = data
         self._count += 1
-        return self
 
-    def popR(self) -> Any:
+    def popR(self) -> Any|None:
         """Pop data off rear of circle array, returns None if empty"""
         if self._count == 0:
             return None
@@ -214,7 +212,7 @@ class CArray:
             self._count -= 1
             return data
 
-    def popL(self) -> Any:
+    def popL(self) -> Any|None:
         """Pop data off front of circle array, returns None if empty"""
         if self._count == 0:
             return None

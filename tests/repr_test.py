@@ -17,6 +17,7 @@ from grscheller.datastructures.functional import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import Queue, DQueue, FLArray
+from grscheller.datastructures import FLArray, FTuple
 
 
 def addLt42(x: int, y: int) -> int|None:
@@ -25,8 +26,8 @@ def addLt42(x: int, y: int) -> int|None:
         return sum
     return None
 
-class TestMaybeEither:
-    def testMaybe(self):
+class Test_repr:
+    def test_Maybe(self):
         n1 = Maybe()
         o1 = Maybe(42)
         assert repr(n1) == 'Nothing'
@@ -42,7 +43,7 @@ class TestMaybeEither:
         assert repr(nt1) == repr(nt2) == repr(nt3) == repr(mb2) =='Nothing'
         assert repr(s1) == 'Some(1)'
 
-    def testEither(self):
+    def test_Either(self):
         assert repr(Either(10)) == 'Left(10)'
         assert repr(Either(addLt42(10, -4))) == 'Left(6)'
         assert repr(Either(addLt42(10, 40))) == 'Right(None)'
@@ -50,8 +51,7 @@ class TestMaybeEither:
         assert repr(Left(42)) == 'Left(42)'
         assert repr(Right(13)) == 'Right(13)'
 
-class TestStack:
-    def testPStack(self):
+    def test_PStack(self):
         s1 = PStack()
         assert repr(s1) == '||  ><'
         assert repr(s1.push(42)) == '|| 42 ><'
@@ -69,7 +69,7 @@ class TestStack:
         assert bar == baz
         assert bar is baz
 
-    def testFStack(self):
+    def test_FStack(self):
         s1 = FStack()
         assert repr(s1) == '|  ><'
         s2 = s1.cons(42)
@@ -93,15 +93,14 @@ class TestStack:
         assert foo ==baz
         assert foo is not baz
 
-class Test_Queue:
-    def testQueue(self):
+    def test_Queue(self):
         q1 = Queue()
         assert repr(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
-        assert repr(q1) == '<< 2 | 3 | 42 <<'
+        assert repr(q1) == '<< 2 < 3 < 42 <<'
 
-    def testDqueue(self):
+    def test_Dqueue(self):
         dq1 = DQueue()
         dq2 = DQueue()
         assert repr(dq1) == '><  ><'
@@ -114,17 +113,24 @@ class Test_Queue:
         assert repr(dq1) == '>< 5 | 4 | 3 | 2 ><'
         assert repr(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
-
-class Test_FLArray:
-    def testFlarry(self):
+    def test_flarray(self):
         fl = FLArray(1,2,3,4,5)
         fl[2] = 42
         assert repr(fl) == '[|1, 2, 42, 4, 5|]'
 
-class Test_Circle:
+    def test_ftuple(self):
+        ft1 = FTuple(1,2,3,4,5)
+        ft2 = ft1.flatMap(lambda x: FTuple(*range(1, x)))
+        assert repr(ft1) == '((1, 2, 3, 4, 5))'
+        assert repr(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'
+
     def testCArray(self):
         ca = CArray()
-        ca.pushR(1).pushR(2).pushR(3).pushR(4).pushR(5)
+        ca.pushR(1)
+        ca.pushR(2)
+        ca.pushR(3)
+        ca.pushR(4)
+        ca.pushR(5)
         assert ca.popL() == 1
         ca.pushL(42)
         ca.popR()

@@ -85,7 +85,7 @@ class Queue():
 
     def __repr__(self):
         """Display data in queue."""
-        return "<< " + " | ".join(map(lambda x: repr(x), iter(self))) + " <<"
+        return "<< " + " < ".join(map(lambda x: repr(x), iter(self))) + " <<"
 
     def copy(self) -> Queue:
         """Return shallow copy of the queue in O(n) time & space complexity."""
@@ -93,12 +93,11 @@ class Queue():
         new_queue._carray = self._carray.copy()
         return new_queue
 
-    def push(self, *ds: Any) -> Queue:
-        """Push data on rear of queue & return reference to self."""
+    def push(self, *ds: Any) -> None:
+        """Push data on rear of queue & no return value."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
-        return self
 
     def pop(self) -> Any|None:
         """Pop data off front of queue."""
@@ -121,80 +120,61 @@ class Queue():
         else:
             return None
 
-    def capacity(self) -> int:
-        """Returns current capacity of queue."""
-        return self._carray.capacity()
-
-    def fractionFilled(self) -> float:
-        """Returns current capacity of queue."""
-        return self._carray.fractionFilled()
-
-    def resize(self, addCapacity = 0) -> Self:
-        """Compact queue and add extra capacity."""
-        self._carray.resize(addCapacity)
-        return self
-
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|Queue:
-        """Apply function over queue contents.
-
-        Return new Queue if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def map(self, f: Callable[[Any], Any], mut: bool=True) -> Queue|None:
+        """Apply function over Queue contents. If mut=True (the default) mutate
+        the Queue & don't return anything. Othersise, return a new Queue leaving
+        the original unchanged. Suppress any None Values returned by f.
         """
-        newQueue  = Queue(*map(f, iter(self)))
+        queue  = Queue(*map(f, iter(self)))
         if mut:
-            self._carray = newQueue._carray
-            return self
-        return newQueue
+            self._carray = queue._carray
+            return None
+        return queue
 
-    def flatMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
-        """Apply function and flatten result, surpress any None values.
-
-        Merge the queues produced sequentially front-to-back.
-
-        Return new Queue if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def flatMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+        """Apply function over the queue's contents and flatten result merging
+        the queues produced sequentially front-to-back. If mut=True (default)
+        mutate the Queue & don't return anything. Othersise, return a new Queue
+        leaving the original unchanged. Suppress any None Values contained in
+        any of the Queues returned by f.
         """
-        newQueue = Queue(*chain(
+        queue = Queue(*chain(
             *(iter(x) for x in map(f, iter(self)))
         ))
         if mut:
-            self._carray = newQueue._carray
-            return self
-        return newQueue
+            self._carray = queue._carray
+            return None
+        return queue
 
-    def mergeMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
-        """Apply function and flatten result, surpress any None values.
-
-        Round Robin Merge the queues produced until first cached queue is
-        exhausted.
-
-        Return new Queue if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def mergeMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+        """Apply function over the Queue's contents and flatten result by round
+        robin merging until one of the first Queues produced by f is exhausted.
+        If mut=True (default) mutate the Queue & don't return anything.
+        Othersise, return a new Queue leaving the original unchanged. Suppress
+        any None Values contained in any of the Queues returned by f.
         """
-        newQueue = Queue(*merge(
+        queue = Queue(*merge(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._carray = newQueue._carray
-            return self
-        return newQueue
+            self._carray = queue._carray
+            return None
+        return queue
 
-    def exhaustMap(self, f: Callable[[Any], Queue], mut: bool=False) -> Self|Queue:
-        """Apply function and flatten result, surpress any None values.
-
-        Round Robin Merge the queues produced until all cached queues are
-        exhausted.
-
-        Return new Queue if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def exhaustMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+        """Apply function over the Queue's contents and flatten result by round
+        robin merging until all the Queues produced by f are exhausted. If
+        mut=True (default) mutate the Queue & don't return anything. Othersise,
+        return a new Queue leaving the original unchanged. Suppress any None
+        Values contained in any of the Queues returned by f.
         """
-        newQueue = Queue(*exhaust(
+        queue = Queue(*exhaust(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
-            self._carray = newQueue._carray
-            return self
-        return newQueue
+            self._carray = queue._carray
+            return None
+        return queue
 
 if __name__ == "__main__":
     pass

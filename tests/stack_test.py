@@ -39,13 +39,13 @@ class Test_Node:
         assert n3._next._next == n2._next
 
 class TestPStack:
-    def test_push_then_pop(self):
+    def test_pushThenPop(self):
         s1 = PStack()
         pushed = 42; s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
-    def test_pop_from_empty_stack(self):
+    def test_popFromEmptyStack(self):
         s1 = PStack()
         popped = s1.pop()
         assert popped is None
@@ -61,7 +61,7 @@ class TestPStack:
         assert s2.pop() == 42
         assert s2.peak() is None
 
-    def test_stack_len(self):
+    def test_StackLen(self):
         s0 = PStack()
         s1 = PStack(*range(0,2000))
 
@@ -73,7 +73,7 @@ class TestPStack:
         assert len(s0) == 1
         assert len(s1) == 1998
 
-    def test_nolonger_tail_cons(self):
+    def test_nolongerTailCons(self):
         s1 = PStack()
         s1.push("fum")
         s1.push("fo")
@@ -116,7 +116,6 @@ class TestPStack:
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
-        
         s3.push(s4.pop())
         assert s3 is not s4
         assert s3 != s4
@@ -187,51 +186,58 @@ class TestPStack:
 
     def test_map(self):
         s1 = PStack(1,2,3,4,5)
-        s2 = s1.map(lambda x: 2*x+1)
+        s1.map(lambda x: 2*x+1)
+        assert s1.peak() == 11
+        s1.map(lambda y: (y-1)//2)
         assert s1.peak() == 5
-        assert s2.peak() == 11
-        s3 = s2.map(lambda y: (y-1)//2)
-        assert s1 == s3
-        assert s1 is not s3
+        assert len(s1) == 5
 
     def test_flatMap(self):
+        c0 = PStack()
         c1 = PStack(2, 1, 3)
-        c2 = c1.flatMap(lambda x: PStack(*range(x, 3*x)))
-        c2_answers = PStack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
-        assert c2 == c2_answers
-        c3 = PStack()
-        c4 = c3.flatMap(lambda x: PStack(x, x+1))
-        assert c3 == c4 == PStack()
-        assert c3 is not c4
+        c2 = PStack(2, 1, 3)
+     #  c2 = c1.copy()
+        c1.flatMap(lambda x: PStack(*range(x, 3*x)))
+        assert c1 == PStack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
+        c2.flatMap(lambda x: PStack(x, x+1))
+        assert c2 == PStack(2, 3, 1, 2, 3, 4)
+        c0.flatMap(lambda x: PStack(x, x+1))
+        assert c0 == PStack()
 
     def test_mergeMap(self):
+        c0 = PStack()
         c1 = PStack(2, 1, 3)
-        c2 = c1.mergeMap(lambda x: PStack(*range(x, 3*x)))
-        c2_answers = PStack(2, 1, 3, 3, 2, 4)
-        assert c2 == c2_answers
-        c3 = PStack()
-        c4 = c3.mergeMap(lambda x: PStack(x, x+1))
-        assert c3 == c4 == PStack()
-        assert c3 is not c4
+        c2 = PStack(2, 1, 3)
+     #  c2 = c1.copy()
+        c1.mergeMap(lambda x: PStack(*range(x, 2*x+1)))
+        assert c1 == PStack(2, 1, 3, 3, 2, 4)
+        c2.mergeMap(lambda x: PStack(x, x+1))
+        assert c2 == PStack(2, 1, 3, 3, 2, 4)
+        c0.mergeMap(lambda x: PStack(x, x+1))
+        assert c0 == PStack()
 
     def test_exhaustMap(self):
+        c0 = PStack()
         c1 = PStack(2, 1, 3)
-        c2 = c1.exhaustMap(lambda x: PStack(*range(x, 3*x)))
-        c2_answers = PStack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
-        assert c2 == c2_answers
-        c3 = PStack()
-        c4 = c3.exhaustMap(lambda x: PStack(x, x+1))
-        assert c3 == c4 == PStack()
-        assert c3 is not c4
+        c2 = PStack(2, 1, 3)
+     #  c2 = c1.copy()
+        c0.exhaustMap(lambda x: PStack(x, x+1))
+        assert c0 == PStack()
+        c1.exhaustMap(lambda x: PStack(x, x+1))
+        assert c1 == PStack(2, 1, 3, 3, 2, 4)
+        c2.exhaustMap(lambda x: PStack(*range(x, 2*x+1)))
+        assert c2 == PStack(2, 1, 3, 3, 2, 4, 4, 5, 6)
+        c2.exhaustMap(lambda _: PStack())
+        assert c2 == PStack()
 
-class TestFStack:
-    def test_cons_and_tail(self):
+class Test_FStack:
+    def test_consTail(self):
         s1 = FStack()
         s2 = s1.consOr(42, ())
         head = s2.headOr(())
         assert head == 42
 
-    def test_head_of_empty_stack(self):
+    def test_headOfEmptyStack(self):
         s1 = FStack()
         assert s1.head() is None
 
@@ -247,7 +253,7 @@ class TestFStack:
         s2 = s2.consOr(42, 0)      # Do I want this???
         assert s2.head() == 40+2
 
-    def test_stack_len(self):
+    def test_Stacklen(self):
         s0 = FStack()
         s1 = FStack(*range(0,2000))
 
@@ -258,21 +264,21 @@ class TestFStack:
         assert len(s0) == 1
         assert len(s1) == 1998
 
-    def test_tail_cons(self):
+    def test_tailcons(self):
         s1 = FStack()
-        s1 = s1.cons("fum").cons("fo").cons("fi").cons("fe")
+        s1 = s1.consOr("fum").consOr("fo").consOr("fi").consOr("fe")
         assert type(s1) == FStack    # another way to gag warnings
         s2 = s1.tail()            # a better way to do this is to
-        if s2 is None:            # is to use entire verions of tail,
+        if s2 is None:            # use entire verions of tail,
             assert False          # cons, and head???
         s3 = s2.cons("fe")     # don't want enduser to have to
         assert s3 == s1        # resort to monadic error handling
         while s1:                 # or cook monadic types into this data
-            s1 = s1.tailOr()      # structure (of anther version of???
+            s1 = s1.tailOr()      # structureaa.
         assert s1.head() == None
         assert s1.tail() == None
 
-    def test_stack_iter(self):
+    def test_stackIter(self):
         giantStack = FStack(*[" Fum", " Fo", " Fi", "Fe"])
         giantTalk = giantStack.head()
         giantStack = giantStack.tailOr()
@@ -309,6 +315,7 @@ class TestFStack:
         s4 = s4.tail()
         assert s3 is not s4
         assert s3 != s4
+        assert s3 is not None  # not part of the tests, code idiot checking
         s3 = s3.tailOr().tail()
         assert s3 == s4
         assert s3 is not None

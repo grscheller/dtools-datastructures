@@ -34,7 +34,7 @@ class TestQueue:
         popped = q.pop()
         assert pushed == popped
         assert len(q) == 0
-        q.push('first').push('second').push('last')
+        q.push('first'); q.push('second'); q.push('last')
         assert q.pop()== 'first'
         assert q.pop()== 'second'
         assert q
@@ -76,11 +76,11 @@ class TestQueue:
         assert q.pop() == 3
         assert len(q) == 0
         assert not q
-        assert not q.pop()
         assert q.pop() == None
         assert len(q) == 0
         assert not q
-        assert q.push(42)
+        q.push(42)
+        assert q
         assert q.peakNextOut() == 42
         assert q.peakLastIn() == 42
         assert len(q) == 1
@@ -121,22 +121,6 @@ class TestQueue:
         for _ in reversed(dq0):
             assert False
 
-    def test_capacity(self):
-        q = Queue(1, 2)
-        assert q.fractionFilled() == 2/2
-        q.push(0)
-        assert q.fractionFilled() == 3/4
-        q.push(3)
-        assert q.fractionFilled() == 4/4
-        q.push(4)
-        assert q.fractionFilled() == 5/8
-        assert len(q) == 5
-        assert q.capacity() == 8
-        q.resize()
-        assert q.fractionFilled() == 5/5
-        q.resize(20)
-        assert q.fractionFilled() == 5/25
-
     def test_copy_reversed(self):
         q1 = Queue(*range(20))
         q2 = q1.copy()
@@ -155,17 +139,17 @@ class TestQueue:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
         q1 = Queue(1, 2, 3, 'Forty-Two', tup1)
-        q2 = Queue(2, 3, 'Forty-Two').push((7, 11, 'foobar'))
+        q2 = Queue(2, 3, 'Forty-Two'); q2.push((7, 11, 'foobar'))
         popped = q1.pop()
         assert popped == 1
         assert q1 == q2
 
         q2.push(tup2)
         assert q1 != q2
-        assert q1 is not q2
 
         q1.push(q1.pop(), q1.pop(), q1.pop())
-        q2.push(q2.pop(), q2.pop(), q2.pop()).pop()
+        q2.push(q2.pop(), q2.pop(), q2.pop())
+        q2.pop()
         assert tup2 == q2.peakNextOut()
         assert q1 != q2
         assert q1.pop() != q2.pop()
@@ -183,29 +167,27 @@ class TestQueue:
         f3 = lambda x: Queue(*range(2*x, 4*x))
         f4 = lambda x: Queue(*range(2*x, 3*x))
 
-        q1 = q0.copy()
-        q2 = q1.map(f1)
-        assert q1 == q0
-        q1.map(f1, mut=True)
-        assert q1 == q2 == Queue(0,3,8,24)
+        q1 = q0.map(f1, mut=False)
         assert q1 != q0
+        assert q1 == Queue(0,3,8,24)
+        assert q0 == Queue(1,2,3,5)
 
         q3 = q0.copy()
-        q4 = q3.flatMap(f2)
+        q4 = q3.flatMap(f2, mut=False)
         assert q3 == q0
         q3.flatMap(f2, mut=True)
         assert q3 == q4 == Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
-        assert q3 != q0
+        assert q3 != q0 == Queue(1,2,3,5)
 
         q3 = q0.copy()
-        q4 = q3.mergeMap(f3)
+        q4 = q3.mergeMap(f3, mut=False)
         assert q3 == q0
         q3.mergeMap(f3, mut=True)
         assert q3 == q4 == Queue(2, 4, 6, 10, 3, 5, 7, 11)
         assert q3 != q0
 
         q5 = q0.copy()
-        q6 = q5.exhaustMap(f4)
+        q6 = q5.exhaustMap(f4, mut=False)
         assert q5 == q0
         q5.exhaustMap(f4, mut=True)
         assert q5 == q6 == Queue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)

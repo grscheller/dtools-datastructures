@@ -54,8 +54,13 @@ class _Node():
         """Always return true, None will return as false"""
         return True
 
-class _Stack():
-    """Base class for the PStack & FStack classes"""
+class Stack():
+    """Abstract base class for the purposes of DRY inheritance
+    of the PStack & FStack classes. Both implement FIFO stack
+    datastructures. PStack has a procedural interface implementing
+    stateful semantics. FStack has a functional interface implementing
+    immutable semantics.
+    """
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
         self._head = None
@@ -82,10 +87,10 @@ class _Stack():
             node = node._next
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the stack"""
+        """Reverse iterate over the contents of the stack"""
         return reversed(CArray(*self))
 
-    def _tail(self, stack):
+    def _tail(self, stack) -> PStack|FStack|None:
         """Return tail of the stack."""
         if self._head:
             stack._head = self._head._next
@@ -97,10 +102,32 @@ class _Stack():
         """Returns True if all the data stored on the two stacks are the same
         and the two stacks are of the same subclass. Worst case is O(n) behavior
         which happens when all the corresponding data elements on the two stacks
-        are equal, in whatever sense they define equality, and none of the nodes
-        are shared.
+        are equal, in whatever sense they equality is defined, and none of the
+        nodes are shared.
         """
-        if not isinstance(other, type(self)):
+        def getHead(stack: Stack|PStack|FStack) -> Any|None:
+            typeStack = type(stack)
+            if typeStack == PStack:
+                return stack.peak()
+            elif typeStack == FStack:
+                return stack.head()
+            else:
+                raise NotImplementedError
+
+        def getEmptyStack(stack: Stack|PStack|FStack) -> PStack|FStack:
+            typeStack = type(stack)
+            if typeStack == PStack:
+                return PStack()
+            elif typeStack == FStack:
+                return FStack()
+            else:
+                msg = f'{typeStack} is not a supported class '
+                msg += 'derived from the Stack abstract baseclass.'
+                raise NotImplementedError(msg)
+
+        typeSelf = type(self)
+
+        if not isinstance(other, typeSelf):
             return False
 
         if self._count != other._count:
@@ -114,42 +141,32 @@ class _Stack():
                 return True
             if left._head is right._head:
                 return True
-            if left._getHead() != right._getHead():
+            if getHead(left) != getHead(right):
                 return False
-            left = left._tail(self._getStack())
-            right = right._tail(self._getStack())
+            left = left._tail(getEmptyStack(self))
+            right = right._tail(getEmptyStack(self))
             nn -= 1
         return True
 
-    def copy(self) -> PStack|FStack:
-        """Return shallow copy of the stack in O(1) time & space complexity"""
-        stack = self._getStack()
-        stack._head = self._head
-        stack._count = self._count
-        return stack
-
-    def _getHead(self) -> Any|None:
-        raise NotImplemented
-
-    def _getStack(self) -> PStack|FStack:
-        raise NotImplemented
-
     def pop(self) -> PStack:
-        raise NotImplemented
+        raise NotImplementedError
 
     def push(self, _) -> PStack:
-        raise NotImplemented
+        raise NotImplementedError
 
-    def head(self) -> FStack:
-        raise NotImplemented
+    def peak(self) -> Any|None:
+        raise NotImplementedError
+
+    def head(self) -> Any|None:
+        raise NotImplementedError
 
     def tail(self) -> FStack:
-        raise NotImplemented
+        raise NotImplementedError
 
     def cons(self, _) -> FStack:
-        raise NotImplemented
+        raise NotImplementedError
 
-class PStack(_Stack):
+class PStack(Stack):
     """Class implementing a Last In, First Out (LIFO) stack data structure. The
     stack contains a singularly linked list of nodes. Class designed to share
     nodes with other Stack instances.
@@ -164,11 +181,18 @@ class PStack(_Stack):
     """
     def __init__(self, *ds):
         """Construct a stateful LIFO Stack"""
-        _Stack.__init__(self, *ds)
+        super().__init__(*ds)
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
+
+    def copy(self) -> PStack:
+        """Return shallow copy of a PStack in O(1) time & space complexity"""
+        pstack = PStack()
+        pstack._head = self._head
+        pstack._count = self._count
+        return pstack
 
     def push(self, *ds: Any) -> Self:
         """Push data that is not NONE onto top of stack,
@@ -210,49 +234,55 @@ class PStack(_Stack):
             value = default
         return value
 
-    def map(self, f: Callable[[Any], PStack]) -> PStack:
+    def map(self, f: Callable[[Any], PStack]) -> Self:
         """Maps a function (or callable object) over the values on the stack.
 
         Returns a new stack with new nodes.  None values surpressed.
         """
-        return PStack(*map(f, reversed(self)))
+        newPStack = PStack(*map(f, reversed(self)))
+        self._head = newPStack._head
+        self._count = newPStack._count
+        return self
 
-    def flatMap(self, f: Callable[[Any], PStack]) -> PStack:
-        """Apply function and flatten result, returns new instance
+    def flatMap(self, f: Callable[[Any], PStack]) -> Self:
+        """Apply function and flatten result, returns new instance.
 
         Merge the stacks produced sequentially front-to-back.
         """
-        return PStack(*chain(
+        newPStack = PStack(*chain(
             *map(reversed, map(f, reversed(self)))
         ))
+        self._head = newPStack._head
+        self._count = newPStack._count
+        return self
 
-    def mergeMap(self, f: Callable[[Any], PStack]) -> PStack:
-        """Apply function and flatten result, returns new instance
+    def mergeMap(self, f: Callable[[Any], PStack]) -> Self:
+        """Apply function and flatten result, returns new instance.
 
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         """
-        return PStack(*merge(
+        newPStack = PStack(*merge(
             *map(reversed, map(f, reversed(self)))
         ))
+        self._head = newPStack._head
+        self._count = newPStack._count
+        return self
 
-    def exhaustMap(self, f: Callable[[Any], PStack]) -> PStack:
+    def exhaustMap(self, f: Callable[[Any], PStack]) -> Self:
         """Apply function and flatten result, returns new instance
 
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         """
-        return PStack(*exhaust(
+        newPStack = PStack(*exhaust(
             *map(reversed, map(f, reversed(self)))
         ))
+        self._head = newPStack._head
+        self._count = newPStack._count
+        return self
 
-    def _getHead(self) -> Any|None:
-        return self.peak()
-
-    def _getStack(self) -> PStack:
-        return PStack()
-
-class FStack(_Stack):
+class FStack(Stack):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This class
     designed to share nodes with other Stack instances.
@@ -267,11 +297,18 @@ class FStack(_Stack):
     """
     def __init__(self, *ds):
         """Construct an immutable LIFO Stack"""
-        _Stack.__init__(self, *ds)
+        super().__init__(*ds)
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
+
+    def copy(self) -> FStack:
+        """Return shallow copy of a FStack in O(1) time & space complexity"""
+        fstack = FStack()
+        fstack._head = self._head
+        fstack._count = self._count
+        return fstack
 
     def head(self) -> Any|None:
         """Returns the data at the head of stack. Does not consume the data.
@@ -292,7 +329,7 @@ class FStack(_Stack):
             value = default
         return value
 
-    def tail(self) -> FStack|None:
+    def tail(self) -> Stack|None:
         """Return tail of the stack.
 
         Note: The tail of an empty stack does not exist,
@@ -300,7 +337,7 @@ class FStack(_Stack):
         """
         return self._tail(FStack())
 
-    def tailOr(self, default: FStack|None = None) -> FStack:
+    def tailOr(self, default: FStack|None=None) -> Stack:
         """Return tail of the stack.
 
         Note: If stack is empty, return default value of type Stack.
@@ -317,8 +354,8 @@ class FStack(_Stack):
     def cons(self, data: Any) -> FStack|None:
         """Return a new stack with data as head and self as tail.
 
-        Note: Constructing a stack using a non-existent value as head results
-        in a non-existent stack.
+        Constructing a stack using a non-existent value as
+        head results in a non-existent stack.
         """
         if data is not None:
             stack = FStack()
@@ -328,16 +365,22 @@ class FStack(_Stack):
         else:
             return None
 
-    def consOr(self, data: Any, default: Any) -> FStack:
+    def consOr(self, data: Any, default: Any=None) -> FStack:
         """Return a new stack with data as head and self as tail.
 
-        Note: If data is None, return default value.
+        If data is None, use default value to construct the new FStack, unless
+        the default value is also None. In that case, just return the original
+        FStack.  
         """
         if data is None:
             data = default
         stack = FStack()
-        stack._head = _Node(data, self._head)
-        stack._count = self._count + 1
+        if data is not None:
+            stack._head = _Node(data, self._head)
+            stack._count = self._count + 1
+        else:
+            stack._head = self._head
+            stack._count = self._count
         return stack
 
     def map(self, f: Callable[[Any], FStack]) -> FStack:
@@ -375,12 +418,6 @@ class FStack(_Stack):
         return FStack(*exhaust(
             *map(reversed, map(f, reversed(self)))
         ))
-
-    def _getHead(self) -> Any|None:
-        return self.head()
-
-    def _getStack(self) -> FStack:
-        return FStack()
 
 if __name__ == "__main__":
     pass
