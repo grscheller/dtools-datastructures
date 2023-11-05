@@ -35,6 +35,7 @@ from .core.iterlib import merge, exhaust
 from .core.carray import CArray
 
 class _Node():
+    
     """Class implementing nodes that can be linked together to form a singularly
     linked list. A node always contain data. It either has a reference to the
     next _Node object or None to indicate the bottom of the linked list.
@@ -54,12 +55,14 @@ class _Node():
         """Always return true, None will return as false"""
         return True
 
-class Stack():
-    """Abstract base class for the purposes of DRY inheritance
-    of the PStack & FStack classes. Both implement FIFO stack
-    datastructures. PStack has a procedural interface implementing
-    stateful semantics. FStack has a functional interface implementing
-    immutable semantics.
+class StackBase():
+    """Abstract base class for the purposes of DRY inheritance of classes
+    implementing stack type data structures. Each stack is a very simple
+    stateful object containing a count of the number of elements on it and
+    a reference to an immutable node of a linear tree of singularly linked
+    nodes. Different stack objects can safely share the same data by each
+    pointing to the same node. Each stack class ensures None values do not
+    get pushed onto the the stack.
     """
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
@@ -105,7 +108,7 @@ class Stack():
         are equal, in whatever sense they equality is defined, and none of the
         nodes are shared.
         """
-        def getHead(stack: Stack|PStack|FStack) -> Any|None:
+        def getHead(stack: StackBase|PStack|FStack) -> Any|None:
             typeStack = type(stack)
             if typeStack == PStack:
                 return stack.peak()
@@ -114,7 +117,7 @@ class Stack():
             else:
                 raise NotImplementedError
 
-        def getEmptyStack(stack: Stack|PStack|FStack) -> PStack|FStack:
+        def getEmptyStack(stack: StackBase|PStack|FStack) -> PStack|FStack:
             typeStack = type(stack)
             if typeStack == PStack:
                 return PStack()
@@ -166,18 +169,21 @@ class Stack():
     def cons(self, _) -> FStack:
         raise NotImplementedError
 
-class PStack(Stack):
+
+class PStack(StackBase):
     """Class implementing a Last In, First Out (LIFO) stack data structure. The
     stack contains a singularly linked list of nodes. Class designed to share
-    nodes with other Stack instances.
+    nodes with other PStack instances.
 
-    - Stacks are stateful objects where values can be pushed on & popped off.
-    - A stack points to either the top node of a singlely linked list, or to
-      None which indicates an empty stack.
-    - A stack keeps a count of the number of objects currently on it.
-    - None represents the absence of a value and are ignored if pushed on the
-      stack. Use a grscheller.functional.Maybe to indicate an assent value or
-      another sentital value such as the empty tuple ().
+    PStacks are stateful objects where values can be pushed on & popped off.
+
+    A stack points to either the top node of a singlely linked list, or to
+    None which indicates an empty stack.
+    
+    A stack keeps a count of the number of objects currently on it.
+    
+    None represents the absence of a value and are ignored if pushed on the
+    stack. Use another object, like an empty tuple (), as a sentinal value.
     """
     def __init__(self, *ds):
         """Construct a stateful LIFO Stack"""
@@ -282,18 +288,21 @@ class PStack(Stack):
         self._count = newPStack._count
         return self
 
-class FStack(Stack):
+
+class FStack(StackBase):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This class
-    designed to share nodes with other Stack instances.
+    designed to share nodes with other FStack instances.
 
-    - Functional stacks are immutable objects.
-    - A functional stack points to either the top node in the list, or to None
-      which indicates an empty stack.
-    - A functional stack has the count of the number of objects on it.
-    - None represents the absence of a value and are ignored if pushed on the
-      stack. Use a grscheller.functional.Maybe to indicate an assent value or
-      another sentital value such as the empty tuple ().
+    Functional stacks are also immutable objects.
+
+    A functional stack points to either the top node in the list, or to None
+    which indicates an empty stack.
+
+    A functional stack has the count of the number of objects on it.
+
+    None represents the absence of a value and are ignored if pushed on the
+    stack. Use another object, like an empty tuple (), as a sentinal values.
     """
     def __init__(self, *ds):
         """Construct an immutable LIFO Stack"""
@@ -329,7 +338,7 @@ class FStack(Stack):
             value = default
         return value
 
-    def tail(self) -> Stack|None:
+    def tail(self) -> StackBase|None:
         """Return tail of the stack.
 
         Note: The tail of an empty stack does not exist,
@@ -337,7 +346,7 @@ class FStack(Stack):
         """
         return self._tail(FStack())
 
-    def tailOr(self, default: FStack|None=None) -> Stack:
+    def tailOr(self, default: FStack|None=None) -> StackBase:
         """Return tail of the stack.
 
         Note: If stack is empty, return default value of type Stack.
