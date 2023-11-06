@@ -126,7 +126,11 @@ class Test_repr:
 
     def testCArray(self):
         ca = CArray()
+        assert repr(ca) == '(||)'
         ca.pushR(1)
+        ca.pushL('foo')
+        assert repr(ca) == "(|'foo', 1|)"
+        assert ca.popL() == 'foo'
         ca.pushR(2)
         ca.pushR(3)
         ca.pushR(4)
@@ -134,5 +138,5 @@ class Test_repr:
         assert ca.popL() == 1
         ca.pushL(42)
         ca.popR()
-        assert repr(ca) == '((42, 2, 3, 4))'
+        assert repr(ca) == '(|42, 2, 3, 4|)'
 

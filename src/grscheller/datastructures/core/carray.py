@@ -179,7 +179,7 @@ class CArray:
 
     def __repr__(self):
         """Display data in the circle array"""
-        return "((" + ", ".join(map(lambda x: repr(x), iter(self))) + "))"
+        return "(|" + ", ".join(map(lambda x: repr(x), iter(self))) + "|)"
 
     def copy(self) -> CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
