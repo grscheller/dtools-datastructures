@@ -25,7 +25,7 @@ Classes:
 
 from __future__ import annotations
 
-__all__ = ['Queue', 'DQueue']
+__all__ = ['SQueue', 'DQueue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -35,12 +35,12 @@ from itertools import chain
 from .core.iterlib import merge, exhaust
 from .core.carray import CArray
 
-class QueueBase():
+class Queue():
     """Abstract base class for the purposes of DRY inheritance of classes
     implementing queue type data structures with a list based circular array.
     Each queue object "has-a" (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each queue class ensures
-    None values do not get pushed onto the circular array.
+    circular array used will resize itself as needed. Each Queue subclass most
+    ensure that None values do not get pushed onto the circular array.
     """
     def __init__(self, *ds):
         """Construct a queue data structure.
@@ -54,16 +54,15 @@ class QueueBase():
 
     def __bool__(self) -> bool:
         """Returns true if queue is not empty."""
-        return len(self._carray) != 0
+        return len(self._carray) > 0
 
     def __len__(self) -> int:
         """Returns current number of values in queue."""
         return len(self._carray)
-    
-    def __iter__(self):
-        """Iterator yielding data currently stored in queue.
 
-        Data yielded in natural FIFO order.
+    def __iter__(self):
+        """Iterator yielding data currently stored in queue. Data yielded in
+        natural FIFO order.
         """
         currCarray = self._carray.copy()
         for pos in range(len(currCarray)):
@@ -82,13 +81,23 @@ class QueueBase():
             return False
         return self._carray == other._carray
 
-    def _copy(self, queue: Any) -> QueueBase|Queue|DQueue:
-        """Return shallow copy of the dqueue in O(n) time & space complexity."""
+    def copy(self) -> Any:
+        """Return shallow copy of the queue in O(n) time & space complexity."""
+        # Since types are objects, why can't Python match on Types???
+        match repr(type(self)):
+            case "<class 'grscheller.datastructures.queue.SQueue'>":
+                queue = SQueue()
+            case "<class 'grscheller.datastructures.queue.DQueue'>":
+                queue = DQueue()
+            case _:
+                msg = f'{repr(type(self))} is not a supported class '
+                msg += 'derived from the Stack base class.'
+                raise NotImplementedError(msg)
         queue._carray = self._carray.copy()
         return queue
 
 
-class Queue(QueueBase):
+class SQueue(Queue):
     """Single sided queue datastructure.
 
     Will resize itself as needed.
@@ -104,9 +113,10 @@ class Queue(QueueBase):
         """Display data in queue."""
         return "<< " + " < ".join(map(lambda x: repr(x), iter(self))) + " <<"
 
-    def copy(self) -> QueueBase:
-        """Return shallow copy of the queue in O(n) time & space complexity."""
-        return self._copy(Queue())
+    def copy(self):
+        squeue = SQueue()
+        squeue._carray = self._carray.copy()
+        return squeue
 
     def push(self, *ds: Any) -> None:
         """Push data on rear of queue & no return value."""
@@ -135,40 +145,40 @@ class Queue(QueueBase):
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -> Queue|None:
+    def map(self, f: Callable[[Any], Any], mut: bool=True) -> SQueue|None:
         """Apply function over Queue contents. If mut=True (the default) mutate
         the Queue & don't return anything. Othersise, return a new Queue leaving
         the original unchanged. Suppress any None Values returned by f.
         """
-        queue  = Queue(*map(f, iter(self)))
+        queue  = SQueue(*map(f, iter(self)))
         if mut:
             self._carray = queue._carray
             return None
         return queue
 
-    def flatMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+    def flatMap(self, f: Callable[[Any], SQueue], mut: bool=True) -> SQueue|None:
         """Apply function over the queue's contents and flatten result merging
         the queues produced sequentially front-to-back. If mut=True (default)
         mutate the Queue & don't return anything. Othersise, return a new Queue
         leaving the original unchanged. Suppress any None Values contained in
         any of the Queues returned by f.
         """
-        queue = Queue(*chain(
-            *(iter(x) for x in map(f, iter(self)))
+        queue = SQueue(*chain(
+            *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
             self._carray = queue._carray
             return None
         return queue
 
-    def mergeMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+    def mergeMap(self, f: Callable[[Any], SQueue], mut: bool=True) -> SQueue|None:
         """Apply function over the Queue's contents and flatten result by round
         robin merging until one of the first Queues produced by f is exhausted.
         If mut=True (default) mutate the Queue & don't return anything.
         Othersise, return a new Queue leaving the original unchanged. Suppress
         any None Values contained in any of the Queues returned by f.
         """
-        queue = Queue(*merge(
+        queue = SQueue(*merge(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
@@ -176,14 +186,14 @@ class Queue(QueueBase):
             return None
         return queue
 
-    def exhaustMap(self, f: Callable[[Any], Queue], mut: bool=True) -> None|Queue:
+    def exhaustMap(self, f: Callable[[Any], SQueue], mut: bool=True) -> SQueue|None:
         """Apply function over the Queue's contents and flatten result by round
         robin merging until all the Queues produced by f are exhausted. If
         mut=True (default) mutate the Queue & don't return anything. Othersise,
         return a new Queue leaving the original unchanged. Suppress any None
         Values contained in any of the Queues returned by f.
         """
-        queue = Queue(*exhaust(
+        queue = SQueue(*exhaust(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
         if mut:
@@ -192,7 +202,7 @@ class Queue(QueueBase):
         return queue
 
 
-class DQueue(QueueBase):
+class DQueue(Queue):
     """Double sided queue datastructure.
 
     Will resize itself as needed.
@@ -208,9 +218,10 @@ class DQueue(QueueBase):
         """Display data in dqueue."""
         return ">< " + " | ".join(map(lambda x: repr(x), iter(self))) + " ><"
 
-    def copy(self) -> QueueBase:
-        """Return shallow copy of the dqueue in O(n) time & space complexity."""
-        return self._copy(DQueue())
+    def copy(self):
+        dqueue = DQueue()
+        dqueue._carray = self._carray.copy()
+        return dqueue
 
     def pushR(self, *ds: Any) -> None:
         """Push data left to right onto rear of dqueue."""
@@ -252,7 +263,7 @@ class DQueue(QueueBase):
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> None|DQueue:
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> DQueue|None:
         """Apply function over DQueue contents. If mut=True (the default) mutate
         the DQueue & don't return anything. Othersise, return a new DQueue
         leaving the original unchanged. Suppress any None Values returned by f.
@@ -263,7 +274,7 @@ class DQueue(QueueBase):
             return None
         return dqueue
 
-    def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> None|DQueue:
+    def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> DQueue|None:
         """Apply function over the DQueue's contents and flatten result merging
         the DQueues produced sequentially front-to-back. If mut=True (default)
         mutate the DQueue & don't return anything. Othersise, return a new
@@ -278,7 +289,7 @@ class DQueue(QueueBase):
             return None
         return dqueue
 
-    def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> None|DQueue:
+    def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> DQueue|None:
         """Apply function over the DQueue's contents and flatten result by round
         robin merging until one of the first DQueues produced by f is exhausted.
         If mut=True (default) mutate the DQueue & don't return anything.
@@ -293,7 +304,7 @@ class DQueue(QueueBase):
             return None
         return dqueue
 
-    def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> None|DQueue:
+    def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -> DQueue|None:
         """Apply function over the DQueue's contents and flatten result by round
         robin merging until all the DQueues produced by f are exhausted. If
         mut=True (default) mutate the DQueue & don't return anything. Othersise,
@@ -303,7 +314,6 @@ class DQueue(QueueBase):
         dqueue = DQueue(*exhaust(
             *map(lambda x: iter(x), map(f, iter(self)))
         ))
-        dqueue = DQueue(*exhaust(*(iter(x) for x in map(f, iter(self)))))
         if mut:
             self._carray = dqueue._carray
             return None

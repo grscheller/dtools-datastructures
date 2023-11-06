@@ -397,8 +397,7 @@ class Test_FStack:
     def test_flatMap(self):
         c1 = FStack(2, 1, 3)
         c2 = c1.flatMap(lambda x: FStack(*range(x, 3*x)))
-        c2_answers = FStack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
-        assert c2 == c2_answers
+        assert c2 == FStack(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
         c3 = FStack()
         c4 = c3.flatMap(lambda x: FStack(x, x+1))
         assert c3 == c4 == FStack()
@@ -407,8 +406,7 @@ class Test_FStack:
     def test_mergeMap(self):
         c1 = FStack(2, 1, 3)
         c2 = c1.mergeMap(lambda x: FStack(*range(x, 3*x)))
-        c2_answers = FStack(2, 1, 3, 3, 2, 4)
-        assert c2 == c2_answers
+        assert c2 == FStack(2, 1, 3, 3, 2, 4)
         c3 = FStack()
         c4 = c3.mergeMap(lambda x: FStack(x, x+1))
         assert c3 == c4 == FStack()
@@ -417,8 +415,7 @@ class Test_FStack:
     def test_exhaustMap(self):
         c1 = FStack(2, 1, 3)
         c2 = c1.exhaustMap(lambda x: FStack(*range(x, 3*x)))
-        c2_answers = FStack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
-        assert c2 == c2_answers
+        assert c2 == FStack(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
         c3 = FStack()
         c4 = c3.exhaustMap(lambda x: FStack(x, x+1))
         assert c3 == c4 == FStack()

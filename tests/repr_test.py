@@ -16,7 +16,7 @@ from grscheller.datastructures.functional import Maybe, Nothing, Some
 from grscheller.datastructures.functional import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
-from grscheller.datastructures import Queue, DQueue, FLArray
+from grscheller.datastructures import SQueue, DQueue, FLArray
 from grscheller.datastructures import FLArray, FTuple
 
 
@@ -94,7 +94,7 @@ class Test_repr:
         assert foo is not baz
 
     def test_Queue(self):
-        q1 = Queue()
+        q1 = SQueue()
         assert repr(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()

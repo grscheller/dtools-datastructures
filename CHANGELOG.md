@@ -26,6 +26,16 @@
 
 ## Versions
 
+### Version v0.8.6.0 - PyPI release date: 2023-11-05
+    
+* Finally got queue.py & stack.py inheritance sorted out
+* LSP with Pyright working quite well
+* Goals for next PyPI release:
+  * combine methods
+    * tail and tailOr
+    * cons and consOr
+    * head and headOr
+
 ### Version 0.8.4.0 - commit date 2023-11-03
 
 * new data structure FTuple added

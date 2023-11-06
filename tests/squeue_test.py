@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.queue import Queue
+from grscheller.datastructures.queue import SQueue
 
 class TestQueue:
     def test_push_then_pop(self):
-        q = Queue()
+        q = SQueue()
         pushed = 42; q.push(pushed)
         popped = q.pop()
         assert pushed == popped
@@ -42,17 +42,17 @@ class TestQueue:
         assert len(q) == 0
 
     def test_pushing_None(self):
-        q0 = Queue()
-        q1 = Queue()
-        q2 = Queue()
+        q0 = SQueue()
+        q1 = SQueue()
+        q2 = SQueue()
         q1.push(None)
         q2.push(None)
         assert q0 == q1 == q2
 
         barNone = (1, 2, None, 3, None, 4)
         bar = (1, 2, 3, 4)
-        q0 = Queue(*barNone)
-        q1 = Queue(*bar)
+        q0 = SQueue(*barNone)
+        q1 = SQueue(*bar)
         assert q0 == q1
         for d in q0:
             assert d is not None
@@ -60,7 +60,7 @@ class TestQueue:
             assert d is not None
 
     def test_bool_len_peak(self):
-        q = Queue()
+        q = SQueue()
         assert not q
         q.push(1,2,3)
         assert q
@@ -92,7 +92,7 @@ class TestQueue:
 
     def test_iterators(self):
         data = [1, 2, 3, 4]
-        dq = Queue(*data)
+        dq = SQueue(*data)
         ii = 0
         for item in dq:
             assert data[ii] == item
@@ -100,7 +100,7 @@ class TestQueue:
         assert ii == 4
 
         data.append(5)
-        dq = Queue(*data)
+        dq = SQueue(*data)
         data.reverse()
         ii = 0
         for item in reversed(dq):
@@ -108,21 +108,21 @@ class TestQueue:
             ii += 1
         assert ii == 5
 
-        dq0 = Queue()
+        dq0 = SQueue()
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
         data = ()
-        dq0 = Queue(*data)
+        dq0 = SQueue(*data)
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
     def test_copy_reversed(self):
-        q1 = Queue(*range(20))
+        q1 = SQueue(*range(20))
         q2 = q1.copy()
         assert q1 == q2
         assert q1 is not q2
@@ -138,8 +138,8 @@ class TestQueue:
     def test_equality_identity(self):
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
-        q1 = Queue(1, 2, 3, 'Forty-Two', tup1)
-        q2 = Queue(2, 3, 'Forty-Two'); q2.push((7, 11, 'foobar'))
+        q1 = SQueue(1, 2, 3, 'Forty-Two', tup1)
+        q2 = SQueue(2, 3, 'Forty-Two'); q2.push((7, 11, 'foobar'))
         popped = q1.pop()
         assert popped == 1
         assert q1 == q2
@@ -161,34 +161,34 @@ class TestQueue:
 
     def test_maps(self):
         # TODO: more edge cases
-        q0 = Queue(1,2,3,5)
+        q0 = SQueue(1,2,3,5)
         f1 = lambda x: x*x - 1
-        f2 = lambda x: Queue(1, x, x*x+1)
-        f3 = lambda x: Queue(*range(2*x, 4*x))
-        f4 = lambda x: Queue(*range(2*x, 3*x))
+        f2 = lambda x: SQueue(1, x, x*x+1)
+        f3 = lambda x: SQueue(*range(2*x, 4*x))
+        f4 = lambda x: SQueue(*range(2*x, 3*x))
 
         q1 = q0.map(f1, mut=False)
         assert q1 != q0
-        assert q1 == Queue(0,3,8,24)
-        assert q0 == Queue(1,2,3,5)
+        assert q1 == SQueue(0,3,8,24)
+        assert q0 == SQueue(1,2,3,5)
 
         q3 = q0.copy()
         q4 = q3.flatMap(f2, mut=False)
         assert q3 == q0
         q3.flatMap(f2, mut=True)
-        assert q3 == q4 == Queue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
-        assert q3 != q0 == Queue(1,2,3,5)
+        assert q3 == q4 == SQueue(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 5, 26)
+        assert q3 != q0 == SQueue(1,2,3,5)
 
         q3 = q0.copy()
         q4 = q3.mergeMap(f3, mut=False)
         assert q3 == q0
         q3.mergeMap(f3, mut=True)
-        assert q3 == q4 == Queue(2, 4, 6, 10, 3, 5, 7, 11)
+        assert q3 == q4 == SQueue(2, 4, 6, 10, 3, 5, 7, 11)
         assert q3 != q0
 
         q5 = q0.copy()
         q6 = q5.exhaustMap(f4, mut=False)
         assert q5 == q0
         q5.exhaustMap(f4, mut=True)
-        assert q5 == q6 == Queue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
+        assert q5 == q6 == SQueue(2, 4, 6, 10, 5, 7, 11, 8, 12, 13, 14)
         assert q5 != q0
