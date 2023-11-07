@@ -14,7 +14,7 @@ The data structures in this package:
 * Mutate data structure instances safely by manipulating encapsulated
   data in protected inner scopes.
 * Iterate over inaccessible copies of internal state allowing the data
-  structures to safely mutate. 
+  structures to safely mutate while iterators leisurely iterate. 
 * Safely share data between multiple data structure instances by making
   shared data immutable and inaccessible to client code.
 * Don't force exception driven code paths upon client code.

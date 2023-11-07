@@ -86,10 +86,10 @@ class Either():
             return f(self._value)
         return self.copy()
 
-    def get(self) -> Any|None:
+    def get(self, default: Any=None) -> Any:
         if self:
             return self._value
-        return None
+        return default
 
 # Either convenience functions. First two act like subtype constructors.
 

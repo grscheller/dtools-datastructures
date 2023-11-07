@@ -83,21 +83,10 @@ class Maybe():
         else:
             return Maybe()
 
-    def get(self) -> Any|None:
+    def get(self, default: Any=None) -> Any:
         """Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
         """
-        return self._value
-
-    def getOrElse(self, default: Any) -> Any:
-        """Get contents if they exist, otherwise return provided default value,
-        which is guarnteed never to be None. If the caller sets it to None,
-        swap it for the empty tuple (). () was choosen since it is iterable and
-        "does the right thing" in an iterable context. If caller really wants
-        None returned, they can use the get() method instead.
-        """
-        if default is None:
-            default = ()
         if self:
             return self._value
         else:
@@ -113,7 +102,9 @@ def Some(value=None):
     """
     return Maybe(value)
 
-Nothing = Some()  # Nothing is not a singleton, test via equality not identity.
+#: Maybe object representing a missing value,
+#: Nothing is not a singleton. Test via equality not identity.
+Nothing = Some()
 
 if __name__ == "__main__":
     pass
