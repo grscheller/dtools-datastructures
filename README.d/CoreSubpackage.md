@@ -1,17 +1,39 @@
-# grscheller.datastructures.iterlib module
+# grscheller.datastructures.core package
+
+### carray module
+
+Provides a double sided circular array.
+
+* Class **Carray**
+  * double sides circular array
+  * amortized O(1) pushing/popping either end
+  * O(1) length determination
+  * automatically resizes itself as needed
+  * will freely store `None` as a value
+  * O(1) indexing for getting & setting array values
+    * Raises `IndexError` exceptions
+  * implemented with a Python List.
+
+Mainly used as data storage for other data structures in the
+grscheller.datastructures package. Freely stores None as a value.
+
+### core.iterlib library
 
 Module of functions used to manipulate Python iterators.
-
-### Functions for interators
 
 * Function **mapIter**(iter: iterator, f: Callable[[Any], Any]) -> Iterator
   * Lazily map a function over an iterator stream
 
-* Function **concatIters**(*iter: iterator) -> Iterator
+* Function **concat**(*iter: iterator) -> Iterator
   * Sequentually concatenate multiple iterators into one
+  * pure Python version of itertools.chain
+    * use the itertools version instead
 
-* Function **mergeIters**(*iter: iterator) -> Iterator
+* Function **merge**(*iter: iterator) -> Iterator
   * Merge multiple iterator streams until one is exhausted
+
+* Function **exhaust**(*iter: iterator) -> Iterator
+  * Merge multiple iterator streams until all are exhausted
 
 #### Examples
 
@@ -26,7 +48,7 @@ Module of functions used to manipulate Python iterators.
    9
    1764
 
-   In [2]: for aa in concatIters(iter([1,2,3,4]), iter(['a','b'])):
+   In [2]: for aa in concat(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
    1
@@ -36,7 +58,7 @@ Module of functions used to manipulate Python iterators.
    a
    b
 
-   In [3]: for aa in mergeIters(iter([1,2,3,4]), iter(['a','b'])):
+   In [3]: for aa in merge(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
    1

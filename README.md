@@ -9,29 +9,26 @@ The data structures in this package:
 
 * Allow developers to focus on the algorithms the data structures were
   designed to support.
-* Take care of all the "bit fiddling" needed to implement desired
-  behaviors.
-* Mutate data structure instance safely by pushing contained data to a
-  protected inner scope. 
-* Share data between data structure instances safely by pushing mutation
-  to an outer scope and making shared immutable internal state
-  inaccessible to client code.
-* Allow for "lazy" evaluation avoiding race conditions by having
-  iterators process non-mutating copies of data structure internal
-  state.
-* Don't force the raising of gratuitous exceptions upon client code
-  leveraging this package.
+* Take care of all the "bit fiddling" needed to implement data structure
+  behaviors, perform memory management, and deal with edge cases.
+* Mutate data structure instances safely by manipulating encapsulated
+  data in protected inner scopes.
+* Iterate over inaccessible copies of internal state allowing the data
+  structures to safely mutate. 
+* Safely share data between multiple data structure instances by making
+  shared data immutable and inaccessible to client code.
+* Don't force exception driven code paths upon client code.
 * Code to the "happy" path & provide simple FP tools for "exceptional"
   events.
 
 Sometimes the real power of a data structure comes not from what it
-enables you to do, but from what it prevents you from doing.
+empowers you to do, but from what it prevents you from doing.
 
 ### Package overview grscheller.datastructures
 
-* [Non-Typed Data structures][1]
+* [Data structures][1]
 * [Functional Subpackage][2]
-* [Iterator Library][3]
+* [Core Subpackage][3]
 
 ### Detailed API for grscheller.datastructures package
 
@@ -59,14 +56,7 @@ For the main data structures at the top level of this package, methods
 which mutate the data structures do not return any values. I try to
 follow the Python convention followed by the builtin types of not
 returning anything when mutated. Like the append method of the Python
-List builtin.
-
-The practice in most Functional Programming (FP) languages is to return
-a reference to the mutated data structure. This allows the chaining of
-mutating methods, which I find convenient.
-
-I need to decide on which convention to adopt before this package
-becomes a Beta release.
+list builtin.
 
 #### Type annotations
 
@@ -87,9 +77,9 @@ tree, and other special comment strings. See pdoc3 documentation
 
 ---
 
-[1]: https://github.com/grscheller/datastructures/blob/main/README.d/NonTypedDatastructures.md
+[1]: https://github.com/grscheller/datastructures/blob/main/README.d/Datastructures.md
 [2]: https://github.com/grscheller/datastructures/blob/main/README.d/FunctionalSubpackage.md
-[3]: https://github.com/grscheller/datastructures/blob/main/README.d/IteratorLibraryModule.md
+[3]: https://github.com/grscheller/datastructures/blob/main/README.d/CoreSubpackage.md
 [4]: https://grscheller.github.io/datastructures/documentation.html
 [5]: https://docs.python.org/3.13/library/typing.html
 [6]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
