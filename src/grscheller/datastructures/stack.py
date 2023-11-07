@@ -173,24 +173,13 @@ class PStack(Stack):
             self._count -= 1
             return data
 
-    def peak(self) -> Any|None:
-        """Returns the data at the top of stack. Does not consume the data.
-
-        Note: If stack is empty, return None.
+    def peak(self, default: Any=None) -> Any:
+        """Returns the data at the top of the stack. Does not consume the data.
+        If stack is empty, data does not exist so in that case return default.
         """
         if self._head is None:
-            return None
+            return default
         return self._head._data
-
-    def peakOr(self, default: Any) -> Any:
-        """Returns the data at the head of stack. Does not consume the data.
-
-        Note: If stack is empty, return default value.
-        """
-        value = self.peak()
-        if value is None:
-            value = default
-        return value
 
     def map(self, f: Callable[[Any], PStack]) -> None:
         """Maps a function (or callable object) over the values on the stack.
@@ -267,55 +256,33 @@ class FStack(Stack):
         fstack._count = self._count
         return fstack
 
-    def head(self) -> Any|None:
-        """Returns the data at the head of stack. Does not consume the data.
-
-        Note: If stack is empty, return None.
+    def head(self, default: Any=None) -> Any:
+        """Returns the data at the top of the stack. Does not consume the data.
+        If stack is empty, head does not exist so in that case return default.
         """
         if self._head is None:
-            return None
+            return default
         return self._head._data
 
-    def headOr(self, default: Any) -> Any:
-        """Returns the data at the head of stack. Does not consume the data.
-
-        Note: If stack is empty, return default value.
+    def tail(self, default=None) -> FStack:
+        """Return tail of the stack. If Stack is empty, tail does not exist, so
+        return a default of type FStack instead. If default is not given, return
+        an empty FStack.
         """
-        value = self.head()
-        if value is None:
-            value = default
-        return value
-
-    def tail(self) -> Stack|None:
-        """Return tail of the stack. Note, the tail of an empty stack does
-        not exist, hence return None.
-        """
-        stack = FStack()
         if self._head:
+            stack = FStack()
             stack._head = self._head._next
             stack._count = self._count - 1
             return stack
-        return None
+        elif default is None:
+            return FStack()
+        else:
+            return default
 
-    def tailOr(self, default: FStack|None=None) -> Stack:
-        """Return tail of the stack.
-
-        Note: If stack is empty, return default value of type Stack.
-              If default value not give, return a new empty stack.
-        """
-        stack = self.tail()
-        if stack is None:
-            if default is None:
-                stack = FStack()
-            else:
-                stack = default
-        return stack
-
-    def cons(self, data: Any) -> FStack|None:
-        """Return a new stack with data as head and self as tail.
-
-        Constructing a stack using a non-existent value as
-        head results in a non-existent stack.
+    def cons(self, data: Any) -> FStack:
+        """Return a new stack with data as head and self as tail. Constructing
+        a stack using a non-existent value as head results in a non-existent
+        stack. In that case, just return a copy of the stack.
         """
         if data is not None:
             stack = FStack()
@@ -323,25 +290,7 @@ class FStack(Stack):
             stack._count = self._count + 1
             return stack
         else:
-            return None
-
-    def consOr(self, data: Any, default: Any=None) -> FStack:
-        """Return a new stack with data as head and self as tail.
-
-        If data is None, use default value to construct the new FStack, unless
-        the default value is also None. In that case, just return the original
-        FStack.
-        """
-        if data is None:
-            data = default
-        stack = FStack()
-        if data is not None:
-            stack._head = _Node(data, self._head)
-            stack._count = self._count + 1
-        else:
-            stack._head = self._head
-            stack._count = self._count
-        return stack
+            return self.copy()
 
     def map(self, f: Callable[[Any], FStack]) -> FStack:
         """Maps a function (or callable object) over the values on the stack.
