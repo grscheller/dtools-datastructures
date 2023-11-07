@@ -147,7 +147,7 @@ class TestPStack:
         s7.push(['moe', 'larry', 'curlie'])
         s8.push(['moe', 'larry'])
         assert s7 != s8
-        s8.peakOr([]).append("curlie")
+        s8.peak([]).append("curlie")
         assert s7 == s8
 
     def test_doNotStoreNones(self):
@@ -233,8 +233,8 @@ class TestPStack:
 class Test_FStack:
     def test_consTail(self):
         s1 = FStack()
-        s2 = s1.consOr(42, ())
-        head = s2.headOr(())
+        s2 = s1.cons(42)
+        head = s2.head(())
         assert head == 42
 
     def test_headOfEmptyStack(self):
@@ -244,13 +244,13 @@ class Test_FStack:
         s2 = FStack(1, 2, 3, 42)
         while s2:
             assert s2.head() is not None
-            s2 = s2.tailOr()
+            s2 = s2.tail()
             if not s2:
                 break
         assert not s2
         assert len(s2) == 0
         assert s2.head() is None
-        s2 = s2.consOr(42, 0)      # Do I want this???
+        s2 = s2.cons(42)
         assert s2.head() == 40+2
 
     def test_Stacklen(self):
@@ -259,29 +259,29 @@ class Test_FStack:
 
         assert len(s0) == 0
         assert len(s1) == 2000
-        s0 = s0.consOr(42, -1)
-        s1 = s1.tailOr().tailOr()
+        s0 = s0.cons(42)
+        s1 = s1.tail().tail()
         assert len(s0) == 1
         assert len(s1) == 1998
 
     def test_tailcons(self):
         s1 = FStack()
-        s1 = s1.consOr("fum").consOr("fo").consOr("fi").consOr("fe")
-        assert type(s1) == FStack    # another way to gag warnings
-        s2 = s1.tail()            # a better way to do this is to
-        if s2 is None:            # use entire verions of tail,
-            assert False          # cons, and head???
-        s3 = s2.cons("fe")     # don't want enduser to have to
-        assert s3 == s1        # resort to monadic error handling
-        while s1:                 # or cook monadic types into this data
-            s1 = s1.tailOr()      # structureaa.
+        s1 = s1.cons("fum").cons("fo").cons("fi").cons("fe")
+        assert type(s1) == FStack
+        s2 = s1.tail()
+        if s2 is None:
+            assert False
+        s3 = s2.cons("fe")
+        assert s3 == s1
+        while s1:
+            s1 = s1.tail()
         assert s1.head() == None
-        assert s1.tail() == None
+        assert s1.tail() == FStack()
 
     def test_stackIter(self):
         giantStack = FStack(*[" Fum", " Fo", " Fi", "Fe"])
         giantTalk = giantStack.head()
-        giantStack = giantStack.tailOr()
+        giantStack = giantStack.tail()
         assert giantTalk == "Fe"
         for giantWord in giantStack:
             giantTalk += giantWord
@@ -295,12 +295,10 @@ class Test_FStack:
     def test_equality(self):
         s1 = FStack(*range(3))
         s2 = s1.cons(42)
-        assert s2 is not None        # how do I let the typechecker know
-                                     # that this is not None???
-                                       # maybe just give up and throw
-                                       # exceptions???
+        assert s2 is not None  # How do I let the typechecker
+                               # know this can't be None?
         assert s1 is not s2
-        assert s1 is not s2.tailOr()
+        assert s1 is not s2.tail()
         assert s1 != s2
         assert s1 == s2.tail()
 
@@ -315,8 +313,9 @@ class Test_FStack:
         s4 = s4.tail()
         assert s3 is not s4
         assert s3 != s4
-        assert s3 is not None  # not part of the tests, code idiot checking
-        s3 = s3.tailOr().tail()
+        assert s3 is not None  # Not part of the tests,
+                               # code idiot checking.
+        s3 = s3.tail().tail()
         assert s3 == s4
         assert s3 is not None
         assert s4 != None
@@ -346,19 +345,19 @@ class Test_FStack:
         s8 = s8.cons(['moe', 'larry'])
         assert s7 != s8
         assert s8 is not None
-        s8.headOr([]).append("curlie")
+        s8.head(default = []).append("curlie")
         assert s7 == s8
 
     def test_doNotStoreNones(self):
         s1 = FStack()
-        assert s1.cons(None) == None
+        assert s1.cons(None) == s1
         s2 = s1.cons(42)
         assert len(s2) == 1
         assert s2
         s2 = s2.tail()
         assert not s1
         assert not s2
-        assert s2 is not None
+        assert len(s2) == 0
 
     def test_reversing(self):
         s1 = FStack('a', 'b', 'c', 'd')
@@ -382,7 +381,7 @@ class Test_FStack:
         s2 = FStack(*lf)
         while s2:
             assert s2.head() == lf.pop()
-            s2 = s2.tailOr()
+            s2 = s2.tail()
         assert len(s2) == 0
 
     def test_map(self):

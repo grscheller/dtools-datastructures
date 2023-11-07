@@ -77,7 +77,7 @@ class Test_repr:
         assert repr(s2) == '| 42 ><'
         del s1
         s1 = s2.cons(None)
-        assert s1 == None
+        assert s1 == s2
         s1 = s2.cons(())
         assert repr(s1) == '| 42 <- () ><'
         s3 = s1.cons('Buggy the clown').cons('wins!')
