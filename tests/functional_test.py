@@ -66,13 +66,13 @@ class TestMaybe:
     def test_get(self):
         o1 = Maybe(1)
         n1 = Maybe()
-        assert o1.getOrElse(42) == 1
-        assert n1.getOrElse(42) == 42
+        assert o1.get(42) == 1
+        assert n1.get(42) == 42
         assert o1.get() == 1
         assert n1.get() is None
         assert n1.get() == None
-        assert n1.getOrElse(13) == (10 + 3)
-        assert n1.getOrElse(10/7) == (10/7)
+        assert n1.get(13) == (10 + 3)
+        assert n1.get(10/7) == (10/7)
 
     def test_nothing(self):
         o1 = Maybe(42)
