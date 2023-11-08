@@ -39,7 +39,7 @@ class Queue():
     """Abstract base class for the purposes of DRY inheritance of classes
     implementing queue type data structures with a list based circular array.
     Each queue object "has-a" (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each Queue subclass most
+    circular array used will resize itself as needed. Each Queue subclass must
     ensure that None values do not get pushed onto the circular array.
     """
     def __init__(self, *ds):
@@ -64,9 +64,9 @@ class Queue():
         """Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
         """
-        currCarray = self._carray.copy()
-        for pos in range(len(currCarray)):
-            yield currCarray[pos]
+        cached = self._carray.copy()
+        for pos in range(len(cached)):
+            yield cached[pos]
 
     def __reversed__(self):
         """Reverse iterate over the current state of the queue."""
@@ -98,12 +98,8 @@ class Queue():
 
 
 class SQueue(Queue):
-    """Single sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    """Single sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on an squeue.
     """
     def __init__(self, *ds):
         """Construct a FIFO queue data structure."""
@@ -203,12 +199,8 @@ class SQueue(Queue):
 
 
 class DQueue(Queue):
-    """Double sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    """Double sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on a dqueue.
     """
     def __init__(self, *ds):
         """Construct a FIFO queue data structure."""

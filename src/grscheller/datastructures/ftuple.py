@@ -29,10 +29,7 @@ from itertools import chain
 from .core.iterlib import exhaust, merge
 
 class FTuple():
-    """Class wrappng a tuple providing FP behaviors.
-
-    Filter out None values.
-    """
+    """Class implementing tuple-like data structure with FP behaviors."""
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""
         self._ds = tuple(filter(lambda x: x != None, ds))

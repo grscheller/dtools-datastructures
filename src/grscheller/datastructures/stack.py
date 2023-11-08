@@ -74,6 +74,9 @@ class Stack():
                 self._head = node
                 self._count += 1
 
+    def copy(self) -> Stack:
+        raise NotImplementedError
+
     def __bool__(self) -> bool:
         """Returns true if stack is not empty"""
         return self._count > 0
@@ -127,15 +130,14 @@ class PStack(Stack):
     stack contains a singularly linked list of nodes. Class designed to share
     nodes with other PStack instances.
 
-    PStacks are stateful objects where values can be pushed on & popped off.
+    PStacks stacks are stateful objects, values can be pushed on & popped off.
 
     A stack points to either the top node of a singlely linked list, or to
     None which indicates an empty stack.
 
     A stack keeps a count of the number of objects currently on it.
 
-    None represents the absence of a value and are ignored if pushed on the
-    stack. Use another object, like an empty tuple (), as a sentinal value.
+    None represents the absence of a value and ignored if pushed on a stack.
     """
     def __init__(self, *ds):
         """Construct a stateful LIFO Stack"""
@@ -228,18 +230,17 @@ class PStack(Stack):
 
 class FStack(Stack):
     """Class implementing an immutable singularly linked stack data
-    structure consisting of a singularly linked list of nodes. This class
-    designed to share nodes with other FStack instances.
+    structure consisting of a singularly linked list of nodes. This
+    is class designed to share nodes with other FStack instances.
 
-    Functional stacks are also immutable objects.
+    FStack stacks are immutable objects.
 
     A functional stack points to either the top node in the list, or to None
     which indicates an empty stack.
 
     A functional stack has the count of the number of objects on it.
 
-    None represents the absence of a value and are ignored if pushed on the
-    stack. Use another object, like an empty tuple (), as a sentinal values.
+    None represents the absence of a value and ignored if pushed on an FStack.
     """
     def __init__(self, *ds):
         """Construct an immutable LIFO Stack"""

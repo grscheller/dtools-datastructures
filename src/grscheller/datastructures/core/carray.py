@@ -117,8 +117,9 @@ class CArray:
         else:
             l = -cnt
             h = cnt - 1
-            msg = f'Data structure index = {index} not between {l} and {h} while getting value'
-            msg0 = 'Circle array trying to index an empty circle array while getting value'
+            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            msg += 'while getting value.'
+            msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
                 raise IndexError(msg)
             else:
@@ -134,8 +135,9 @@ class CArray:
         else:
             l = -cnt
             h = cnt - 1
-            msg = f'Circle array index = {index} not between {l} and {h} while setting value'
-            msg0 = 'Circle array trying to index an empty circle array while setting value'
+            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            msg += 'while setting value.'
+            msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
                 raise IndexError(msg)
             else:
@@ -248,68 +250,6 @@ class CArray:
         otherwise mutate the data structure and return self.
         """
         newCArray  = CArray(*map(f, iter(self)))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return self
-        return newCArray
-
-    def flatMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
-        """Apply function and flatten result, don't surpress None values.
-
-        Merge the circular array produced sequentially left-to-right.
-
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
-        """
-        newCArray = CArray(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return self
-        return newCArray
-
-    def mergeMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
-        """Apply function and flatten result, don't surpress None values.
-
-        Round Robin Merge the circular array produced until first cached
-        carray is exhausted.
-
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
-        """
-        newCArray = CArray(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return self
-        return newCArray
-
-    def exhaustMap(self, f: Callable[[Any], CArray], mut: bool=False) -> Self|CArray:
-        """Apply function and flatten result, don't surpress None values.
-
-        Round Robin Merge the circular array produced until all cached
-        dqueue is exhausted.
-
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
-        """
-        newCArray = CArray(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
         if mut:
             self._count = newCArray._count
             self._capacity = newCArray._capacity

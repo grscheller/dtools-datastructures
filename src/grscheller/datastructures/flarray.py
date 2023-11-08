@@ -32,16 +32,21 @@ from .core.iterlib import exhaust, merge
 
 class FLArray():
     """Class implementing a stateful fixed length array data structure of
-    length > 0. Permits storing None as a value.
+    length > 0.
+
+    Guarnteed to be of length |size| for size != 0
+
+    If size not indicated (or 0), size to data provided. Also when no data
+    is provided, return array with a default value and a size = 1.
+
+    If size > 0, pad data on right with a default or slice off trailing data.
+
+    If size < 0, pad data on left with a default or slice off initial data.
+
+    Permits storing None as a value.
     """
     def __init__(self, *ds, size: int = 0, default: Any = None):
-        """Construct a fixed length array, do not "swallow" None values.
-           - guarnteed to be of length |size| for size != 0
-           - if size not indicated (or 0), size to data provided
-             - if no data provided, return array with default value of size = 1
-           - assign missing values the default value
-           - if size < 0, pad provided data on left or slice it on the right
-        """
+        """Construct a fixed length array, None values allowed."""
         dlist = list(ds)
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) > dsize):
