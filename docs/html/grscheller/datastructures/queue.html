@@ -76,7 +76,7 @@ class Queue():
     &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
     implementing queue type data structures with a list based circular array.
     Each queue object &#34;has-a&#34; (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each Queue subclass most
+    circular array used will resize itself as needed. Each Queue subclass must
     ensure that None values do not get pushed onto the circular array.
     &#34;&#34;&#34;
     def __init__(self, *ds):
@@ -101,9 +101,9 @@ class Queue():
         &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
         &#34;&#34;&#34;
-        currCarray = self._carray.copy()
-        for pos in range(len(currCarray)):
-            yield currCarray[pos]
+        cached = self._carray.copy()
+        for pos in range(len(cached)):
+            yield cached[pos]
 
     def __reversed__(self):
         &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
@@ -135,12 +135,8 @@ class Queue():
 
 
 class SQueue(Queue):
-    &#34;&#34;&#34;Single sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on an squeue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
@@ -240,12 +236,8 @@ class SQueue(Queue):
 
 
 class DQueue(Queue):
-    &#34;&#34;&#34;Double sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on a dqueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
@@ -374,22 +366,16 @@ if __name__ == &#34;__main__&#34;:
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Double sided queue datastructure.</p>
-<p>Will resize itself as needed.</p>
-<p>None represents the absence of a value and are ignored if pushed on the
-queue. Use another object, like an empty tuple (), as a sentinal values.</p>
+<div class="desc"><p>Double sided queue datastructure. Will resize itself as needed.
+None represents the absence of a value and ignored if pushed on a dqueue.</p>
 <p>Construct a FIFO queue data structure.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DQueue(Queue):
-    &#34;&#34;&#34;Double sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on a dqueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
@@ -738,22 +724,16 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Single sided queue datastructure.</p>
-<p>Will resize itself as needed.</p>
-<p>None represents the absence of a value and are ignored if pushed on the
-queue. Use another object, like an empty tuple (), as a sentinal values.</p>
+<div class="desc"><p>Single sided queue datastructure. Will resize itself as needed.
+None represents the absence of a value and ignored if pushed on an squeue.</p>
 <p>Construct a FIFO queue data structure.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SQueue(Queue):
-    &#34;&#34;&#34;Single sided queue datastructure.
-
-    Will resize itself as needed.
-
-    None represents the absence of a value and are ignored if pushed on the
-    queue. Use another object, like an empty tuple (), as a sentinal values.
+    &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
+    None represents the absence of a value and ignored if pushed on an squeue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;

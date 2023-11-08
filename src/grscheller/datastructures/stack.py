@@ -231,7 +231,7 @@ class PStack(Stack):
 class FStack(Stack):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
-    is class designed to share nodes with other FStack instances.
+    class is designed to share nodes with other FStack instances.
 
     FStack stacks are immutable objects.
 

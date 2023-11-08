@@ -14,15 +14,15 @@
     * commit potentially very broken code
     * could be deleted from GitHub anytime WITHOUT WARNING
   * PyPI releases are tagged with a leading "v" on GitHub
-* Semantic Versioning
-  * first digit signifies an event or epoch
-  * second digit means breaking API changes (between PyPI releases)
-  * third digit either means
-    * API additions (between PyPI releases)
-    * start of "new" API breaking changes (between GitHub commits)
-  * fourth digit either means
-    * bugfixes or minor changes (between PyPI releases)
-    * GitHub only thrashing and experimentation
+  * semantic versioning for PyPI releases:
+   - first digit signifies an event or epoch
+   - second digit means
+     - breaking API changes
+     - major changes
+   - third digit either means
+     - API additions
+     - bugfixes or minor changes
+     - documentation updates
 
 ## Versions
 

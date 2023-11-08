@@ -18,18 +18,15 @@
    endeavor to be Pythonic.
 """
 
-#
-# Semantic Versioning:
+# Semantic Versioning for PyPI releases:
 #  - first digit signifies an event or epoch
 #  - second digit means breaking API changes (between PyPI releases)
 #  - third digit either means
-#    - API additions (between PyPI releases)
-#    - start of "new" API breaking changes (between GitHub commits)
-#  - fourth digit either means
-#    - bugfixes or minor changes (between PyPI releases)
-#    - GitHub only thrashing and experimentation
+#    - API additions
+#    - bugfixes or minor changes
+#    - documentation updates
 #
-__version__ = "0.8.8.0"
+__version__ = "0.8.7"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

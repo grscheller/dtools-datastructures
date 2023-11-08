@@ -64,16 +64,21 @@ from .core.iterlib import exhaust, merge
 
 class FLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
-    length &gt; 0. Permits storing None as a value.
+    length &gt; 0.
+
+    Guarnteed to be of length |size| for size != 0
+
+    If size not indicated (or 0), size to data provided. Also when no data
+    is provided, return array with a default value and a size = 1.
+
+    If size &gt; 0, pad data on right with a default or slice off trailing data.
+
+    If size &lt; 0, pad data on left with a default or slice off initial data.
+
+    Permits storing None as a value.
     &#34;&#34;&#34;
     def __init__(self, *ds, size: int = 0, default: Any = None):
-        &#34;&#34;&#34;Construct a fixed length array, do not &#34;swallow&#34; None values.
-           - guarnteed to be of length |size| for size != 0
-           - if size not indicated (or 0), size to data provided
-             - if no data provided, return array with default value of size = 1
-           - assign missing values the default value
-           - if size &lt; 0, pad provided data on left or slice it on the right
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
         dlist = list(ds)
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
@@ -257,29 +262,35 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a stateful fixed length array data structure of
-length &gt; 0. Permits storing None as a value.</p>
-<p>Construct a fixed length array, do not "swallow" None values.
-- guarnteed to be of length |size| for size != 0
-- if size not indicated (or 0), size to data provided
-- if no data provided, return array with default value of size = 1
-- assign missing values the default value
-- if size &lt; 0, pad provided data on left or slice it on the right</p></div>
+length &gt; 0.</p>
+<p>Guarnteed to be of length |size| for size != 0</p>
+<p>If size not indicated (or 0), size to data provided. Also when no data
+is provided, return array with a default value and a size = 1.</p>
+<p>If size &gt; 0, pad data on right with a default or slice off trailing data.</p>
+<p>If size &lt; 0, pad data on left with a default or slice off initial data.</p>
+<p>Permits storing None as a value.</p>
+<p>Construct a fixed length array, None values allowed.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
-    length &gt; 0. Permits storing None as a value.
+    length &gt; 0.
+
+    Guarnteed to be of length |size| for size != 0
+
+    If size not indicated (or 0), size to data provided. Also when no data
+    is provided, return array with a default value and a size = 1.
+
+    If size &gt; 0, pad data on right with a default or slice off trailing data.
+
+    If size &lt; 0, pad data on left with a default or slice off initial data.
+
+    Permits storing None as a value.
     &#34;&#34;&#34;
     def __init__(self, *ds, size: int = 0, default: Any = None):
-        &#34;&#34;&#34;Construct a fixed length array, do not &#34;swallow&#34; None values.
-           - guarnteed to be of length |size| for size != 0
-           - if size not indicated (or 0), size to data provided
-             - if no data provided, return array with default value of size = 1
-           - assign missing values the default value
-           - if size &lt; 0, pad provided data on left or slice it on the right
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
         dlist = list(ds)
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):

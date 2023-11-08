@@ -59,10 +59,7 @@ from itertools import chain
 from .core.iterlib import exhaust, merge
 
 class FTuple():
-    &#34;&#34;&#34;Class wrappng a tuple providing FP behaviors.
-
-    Filter out None values.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
         self._ds = tuple(filter(lambda x: x != None, ds))
@@ -170,18 +167,14 @@ if __name__ == &#34;__main__&#34;:
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class wrappng a tuple providing FP behaviors.</p>
-<p>Filter out None values.</p>
+<div class="desc"><p>Class implementing tuple-like data structure with FP behaviors.</p>
 <p>Wrap a tuple and filter out None values</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FTuple():
-    &#34;&#34;&#34;Class wrappng a tuple providing FP behaviors.
-
-    Filter out None values.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
         self._ds = tuple(filter(lambda x: x != None, ds))
