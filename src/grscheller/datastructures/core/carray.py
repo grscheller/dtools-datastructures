@@ -19,8 +19,8 @@ length determination. Implemented with a Python List.
 
 Mainly used to implement other grscheller.datastructure classes where
 functionality is more likely restricted than augmented. This class is
-not opinionated regarding None as a value. It freely stores and returns None
-values. Use in a boolean context to determine if empty.
+not opinionated regarding None as a value. It freely stores and returns
+None values. Use in a boolean context to determine if empty.
 """
 
 from __future__ import annotations
@@ -93,14 +93,14 @@ class CArray:
         return self
 
     def _empty(self) -> Self:
-        """Empty circle array, keep current capacity"""
+        """Empty circular array, keep current capacity"""
         self._list = [None]*self._capacity
         self._front = 0
         self._rear = self._capacity - 1
         return self
 
     def __bool__(self):
-        """Returns true if circle array is not empty"""
+        """Returns true if circular array is not empty"""
         return self._count > 0
 
     def __len__(self):
@@ -117,7 +117,7 @@ class CArray:
         else:
             l = -cnt
             h = cnt - 1
-            msg = f'Circle array index = {index} not between {l} and {h} while getting value'
+            msg = f'Data structure index = {index} not between {l} and {h} while getting value'
             msg0 = 'Circle array trying to index an empty circle array while getting value'
             if cnt > 0:
                 raise IndexError(msg)

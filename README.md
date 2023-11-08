@@ -32,7 +32,7 @@ empowers you to do, but from what it prevents you from doing.
 
 ### Detailed API for grscheller.datastructures package
 
-* [Data Structure API's][4]
+* [Detailed grscheller.datastructures API's][4]
 
 ### Design choices
 
@@ -80,6 +80,6 @@ tree, and other special comment strings. See pdoc3 documentation
 [1]: https://github.com/grscheller/datastructures/blob/main/README.d/Datastructures.md
 [2]: https://github.com/grscheller/datastructures/blob/main/README.d/FunctionalSubpackage.md
 [3]: https://github.com/grscheller/datastructures/blob/main/README.d/CoreSubpackage.md
-[4]: https://grscheller.github.io/datastructures/documentation.html
+[4]: https://grscheller.github.io/datastructures/
 [5]: https://docs.python.org/3.13/library/typing.html
 [6]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
