@@ -19,14 +19,18 @@
 """
 
 # Semantic Versioning for PyPI releases:
-#  - first digit signifies an event or epoch
-#  - second digit means breaking API changes (between PyPI releases)
-#  - third digit either means
+#  - first digit signifies a major event, epoch, or paradigm shift
+#  - second digit means
+#    - breaking API changes
+#    - major changes
+#  - third digit means
 #    - API additions
 #    - bugfixes or minor changes
 #    - documentation updates
+#  - forth digit (development only)
+#    - commit count
 #
-__version__ = "0.8.7"
+__version__ = "0.8.7.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

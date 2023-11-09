@@ -4,27 +4,34 @@
 
 * Single Maintainer PyPI Package
 * Rolling Release Model
+  * maintained on GitHub, software is a Beta release 
   * maintainer will not back port bug fixes to previous versions
-  * while an Alpha release
-    * main branch will be the only tracking branch
-    * will attempt to keep main relatively stable, but not fully tested
-    * overall structure of package a work in progress
+  * main branch will be the release branch
+    * will either be the current PyPI release, or
+    * will be the release canidate for the next PyPI release
+    * PyPI releases are tagged with a leading "v" on GitHub
+  * devel branch will be the only software development tracking branch
+    * will attempt to keep relatively stable, but
+    * may not be fully tested
   * feature branches begin with "feature_" and are places to
     * explore new directions
     * commit potentially very broken code
     * could be deleted from GitHub anytime WITHOUT WARNING
-  * PyPI releases are tagged with a leading "v" on GitHub
-  * semantic versioning for PyPI releases:
-   - first digit signifies an event or epoch
-   - second digit means
-     - breaking API changes
-     - major changes
-   - third digit either means
-     - API additions
-     - bugfixes or minor changes
-     - documentation updates
+* Semantic versioning for PyPI releases:
+  * first digit signifies a major event, epoch, or paradigm shift
+  * second digit means
+    * breaking API changes
+    * major changes
+  * third digit either means
+    * API additions
+    * bugfixes or minor changes
+    * documentation updates
+  * forth digit (develoment branches & early PyPI releases only)
+    * commit count
+    * development environment thrashing
+    * not to be taken too seriously
 
-## Versions
+## Version - PyPI releases begin with "v"
 
 ### Version v0.8.6.0 - PyPI release date: 2023-11-05
     
@@ -72,7 +79,7 @@
 * More mature
 * More Pythonic
 * Major API changes
-* Still tagging it an alpha release
+* Still tagging it an Alpha release
 
 ### Version 0.7.2.0 - commit date 2023-10-18
 
@@ -284,7 +291,7 @@
 ### Version 0.1.0.0 - initial version: 2023-08-27
 
 * Package implementing data structures which do not throw exceptions
-* Did not push to PyPI until version 0.2
+* Did not push to PyPI until version 0.2.1.0
 * Initial Python grscheller.datastructures for 0.1.0.0 commit:
   * dqueue - implements a double sided queue class Dqueue
   * stack - implements a LIFO stack class Stack
