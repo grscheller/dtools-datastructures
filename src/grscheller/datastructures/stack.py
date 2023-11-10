@@ -20,6 +20,10 @@
 
    Pushing to, popping from, and getting the length of the stack are all O(1)
    operations.
+
+Classes:
+  grscheller.datastructure.PStack - LIFO stack, mutable, procedural interface
+  grscheller.datastructure.FStack - LIFO stack, immutable, functional interface
 """
 
 from __future__ import annotations
@@ -86,7 +90,7 @@ class Stack():
         return self._count
 
     def __iter__(self):
-        """Iterator yielding data stored in the stack, starting at the head"""
+        """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
@@ -145,7 +149,7 @@ class PStack(Stack):
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '|| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
+        return '|| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> PStack:
         """Return shallow copy of a PStack in O(1) time & space complexity"""
@@ -165,7 +169,7 @@ class PStack(Stack):
                 self._count += 1
         return self
 
-    def pop(self) -> Any|None:
+    def pop(self) -> Any:
         """Pop data off of top of stack"""
         if self._head is None:
             return None
@@ -248,7 +252,7 @@ class FStack(Stack):
 
     def __repr__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '| ' + ' <- '.join(reversed(CArray(*self).map(lambda x: repr(x)))) + ' ><'
+        return '| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> FStack:
         """Return shallow copy of a FStack in O(1) time & space complexity"""

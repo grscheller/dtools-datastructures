@@ -22,12 +22,13 @@ grscheller.datastructures package. Freely stores None as a value.
 Module of functions used to manipulate Python iterators.
 
 * Function **mapIter**(iter: iterator, f: Callable[[Any], Any]) -> Iterator
-  * Lazily map a function over an iterator stream
+  * DEPRECATED - written before I knew Python map builtin
+  * lazily map a function over an iterator stream
 
 * Function **concat**(*iter: iterator) -> Iterator
+  * DEPRECATED - use itertools.chain instead
   * Sequentually concatenate multiple iterators into one
   * pure Python version of itertools.chain
-    * use the itertools version instead
 
 * Function **merge**(*iter: iterator) -> Iterator
   * Merge multiple iterator streams until one is exhausted
@@ -84,15 +85,15 @@ to the syntax used to produce lists from "list comprehensions."
 
 Don't confuse an object being iterable with being an iterator.
 
-A Python iterator is a stateful objects with a \_\_next\_\_(self) method
-which either returns the next value or raises the StopIteration exception.
-The Python builtin next() function returns the next value from the
-iterator object.
+Python iterators are implemented, at least by CPython, as stateful
+objects with a \_\_next\_\_(self) method which either returns the next
+value or raises the StopIteration exception. The Python builtin next()
+builtin function returns the next value from the iterator object.
 
 An object is iterable if it has an \_\_iter\_\_(self) method. This
 method can either return an iterator or be a generator. The Python
 iter() builtin function returns an iterator when called with an iterable
-object.
+object
 
 * Objects can be iterable without being iterators.
   * the iter() function produces an iterator for the iterable object
@@ -101,4 +102,27 @@ object.
   * many just return a "self" reference when iterator is requested
   * an iterator need not be iterable
   * an iterable can return something other than itself
-    * like a copy of itself so the original can safely mutate
+    * like a copy of itself so the original is not depleted by the copy
+
+But...
+
+Officially, according to the [Python documentation][1], an iterator
+object is required to support "iterator protocol" and must provide
+the following two methods:
+
+* iterator.__iter__()
+  * Required to return the iterator object itself. This is required to
+    allow both containers and iterators to be used with `for ... in`
+    statements and with the map() built in function.
+* iterator.__next__()
+  * Return the next item from the iterator. If there are no further
+    items, raise the StopIteration exception.
+
+Note that by using a generator for a class's __iter__ method will not
+only provide both of the the above methods, but the iteterators created
+by `for ... in` syntax and the `map` builtin are inaccessible to the
+rest of the code. This package defensively uses cache copies of data in
+such generators so that the original objects can safely mutate while the
+iterators created can leisurely yield the container's past state.
+
+[1]: https://docs.python.org/3/library/stdtypes.html#iterator-types

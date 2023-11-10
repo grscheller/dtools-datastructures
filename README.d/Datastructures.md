@@ -55,14 +55,17 @@ Provides a LIFO singlelarly linked data structure designed to share
 data between different Stack objects.
 
 * Class **PStack**
+  * PStack objects are stateful with a procudural interface
+  * safely shares data with other PStack objects
   * O(1) pushes & pops to top of stack
   * O(1) length determination
   * O(1) copy
   * does not store None values
 
 * Class **FStack**
-  * Stacks themseves are immutable
-  * Functional interface
+  * FStack objects are immutable with a functional interface
+  * safely shares data with other FStack objects
+  * O(1) head, tail, and cons methods
   * O(1) length determination
   * O(1) copy
   * does not store None values

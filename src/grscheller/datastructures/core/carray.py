@@ -144,7 +144,9 @@ class CArray:
                 raise IndexError(msg0)
 
     def __iter__(self):
-        """Iterator yielding current contents of carray, does not consume data"""
+        """Generator yielding the cached contents of the current state of
+        the CArray.
+        """
         if self._count > 0:
             cap = self._capacity
             rear = self._rear
@@ -181,7 +183,7 @@ class CArray:
 
     def __repr__(self):
         """Display data in the circle array"""
-        return "(|" + ", ".join(map(lambda x: repr(x), iter(self))) + "|)"
+        return "(|" + ", ".join(map(repr, self)) + "|)"
 
     def copy(self) -> CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
@@ -249,7 +251,7 @@ class CArray:
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         """
-        newCArray  = CArray(*map(f, iter(self)))
+        newCArray  = CArray(*map(f, self))
         if mut:
             self._count = newCArray._count
             self._capacity = newCArray._capacity

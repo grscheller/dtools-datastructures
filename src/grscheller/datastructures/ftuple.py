@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.ftuple - Functional tuples
+"""Module grscheller.datastructure.ftuple - functional tuples
 
-Implements a tuple like object with funtional behaviors.
+Module implementing an immutable tuple like object with
+a funtional interface. Right now just a minimally viable product.
 """
 
 from __future__ import annotations
@@ -75,7 +76,7 @@ class FTuple():
 
     def __repr__(self):
         """Display data in the FTuple"""
-        return "((" + ", ".join(map(lambda x: repr(x), iter(self))) + "))"
+        return "((" + ", ".join(map(repr, self)) + "))"
 
     def __add__(self, other: FTuple) -> FTuple:
         """Concatenate two FTuples"""
@@ -95,12 +96,12 @@ class FTuple():
 
     def map(self, f: Callable[[Any], Any]) -> FTuple:
         """Apply function over the FTuple's contents. Filter out None values."""
-        return FTuple(*map(f, iter(self)))
+        return FTuple(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FTuple]) -> FTuple:
         """Apply function and flatten result by concatenating the results."""
         return FTuple(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
+            *map(iter, map(f, self))
         ))
 
     def mergeMap(self, f: Callable[[Any], FTuple]) -> FTuple:
@@ -108,7 +109,7 @@ class FTuple():
         merging the results until first FTuple is exhauted.
         """
         return FTuple(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
+            *map(iter, map(f, self))
         ))
 
     def exhaustMap(self, f: Callable[[Any], FTuple]) -> FTuple:
@@ -116,7 +117,7 @@ class FTuple():
         merging the results until all FTuples are exhauted.
         """
         return FTuple(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
+            *map(iter, map(f, self))
         ))
 
 if __name__ == "__main__":

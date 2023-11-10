@@ -18,26 +18,19 @@ Library of iterator related functions.
 """
 
 from __future__ import annotations
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Iterable
 
-__all__ = ['mapIter', 'concat', 'exhaust', 'merge']
+__all__ = ['concat', 'exhaust', 'merge']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -> Iterator[Any]:
-    """Lazily map a function over an iterator stream.
-
-    See also the map Python builtin function.
-    """
-    return (f(x) for x in iterator)
-
-def concat(*iterators: Iterator[Any]) -> Iterator[Any]:
+def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one.
 
-    See also the chain function from the itertools module.
+    WARNING: DEPRICATED - Use itertools.chain function instead
     """
-    for iterator in iterators:
+    for iterator in map(iter,iterables):
         while True:
             try:
                 value = next(iterator)
@@ -45,9 +38,9 @@ def concat(*iterators: Iterator[Any]) -> Iterator[Any]:
             except StopIteration:
                 break
 
-def merge(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]:
+def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted."""
-    iterList = list(iterators)
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) > 0:
         values = []
         # Break when first iterator is exhausted
@@ -65,9 +58,9 @@ def merge(*iterators: Iterator[Any], yieldPartial = False) -> Iterator[Any]:
             for value in values:
                 yield value
 
-def exhaust(*iterators: Iterator[Any], yieldPartial = True) -> Iterator[Any]:
+def exhaust(*iterables: Iterable[Any]) -> Iterator[Any]:
     """Merge multiple iterator streams until all are exhausted."""
-    iterList = list(iterators)
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) > 0:
         ii = 0
         values = []
@@ -87,6 +80,5 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -> Iterator[Any]:
                     break
                 del iterList[ii]
         # Yield any remaining values
-        if yieldPartial:
-            for value in values:
-                yield value
+        for value in values:
+            yield value

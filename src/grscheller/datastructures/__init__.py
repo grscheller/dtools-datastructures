@@ -30,7 +30,7 @@
 #  - forth digit (development only)
 #    - commit count
 #
-__version__ = "0.8.7.1"
+__version__ = "0.8.7.2"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
