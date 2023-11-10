@@ -201,9 +201,7 @@ class PStack(Stack):
 
         Merge the stacks produced sequentially front-to-back.
         """
-        newPStack = PStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*chain(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -213,9 +211,7 @@ class PStack(Stack):
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         """
-        newPStack = PStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*merge(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -225,9 +221,7 @@ class PStack(Stack):
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         """
-        newPStack = PStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*exhaust(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -309,9 +303,7 @@ class FStack(Stack):
 
         Merge the stacks produced sequentially front-to-back.
         """
-        return FStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Apply function and flatten result, returns new instance
@@ -319,9 +311,7 @@ class FStack(Stack):
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         """
-        return FStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Apply function and flatten result, returns new instance
@@ -329,9 +319,7 @@ class FStack(Stack):
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         """
-        return FStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 
 if __name__ == "__main__":

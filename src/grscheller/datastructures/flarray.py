@@ -28,7 +28,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 from itertools import chain
 from .core.iterlib import exhaust, merge
 
@@ -127,7 +127,7 @@ class FLArray():
         """Iterate over the current dtate of the flarray. Copy is made so
         original source can safely mutate.
         """
-        for data in iter(self._list.copy()):
+        for data in self._list.copy():
             yield data
 
     def __reversed__(self):
@@ -188,9 +188,7 @@ class FLArray():
 
         Merge the flarrays produced sequentially left-to-right.
         """
-        return FLArray(*chain(
-            *map(iter, map(f, self))
-        ))
+        return FLArray(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
         """Apply function and flatten result, returns only a instance
@@ -199,9 +197,7 @@ class FLArray():
         Round Robin Merge the flarrays produced until first cached
         flarray is exhausted.
         """
-        return FLArray(*merge(
-            *map(iter, map(f, self))
-        ))
+        return FLArray(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FLArray]) -> FLArray:
         """Apply function and flatten result, returns new instance
@@ -210,9 +206,7 @@ class FLArray():
         Round Robin Merge the flarrays produced until all cached
         flarrays are exhausted.
         """
-        return FLArray(*exhaust(
-            *map(iter, map(f, self))
-        ))
+        return FLArray(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == "__main__":
     pass

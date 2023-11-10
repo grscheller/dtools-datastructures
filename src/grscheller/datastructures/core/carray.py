@@ -31,8 +31,6 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Self, Union
-from itertools import chain
-from .iterlib import exhaust, merge
 
 class CArray:
     """Class implementing a stateful circular array with amortized O(1)

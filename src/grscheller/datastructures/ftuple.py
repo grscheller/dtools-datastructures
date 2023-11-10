@@ -85,13 +85,13 @@ class FTuple():
         return ftuple
 
     def copy(self) -> FTuple:
-        """Return shallow copy of the FTuple in O(n) time & space complexity"""
+        """Return shallow copy of the FTuple in O(1) time & space complexity"""
         ftuple = FTuple()
         ftuple._ds = self._ds
         return ftuple
 
     def reverse(self) -> FTuple:
-        """Return a reversed FTuple"""
+        """Return a reversed FTuple, new instance."""
         return(FTuple(*reversed(self)))
 
     def map(self, f: Callable[[Any], Any]) -> FTuple:
@@ -100,25 +100,19 @@ class FTuple():
 
     def flatMap(self, f: Callable[[Any], FTuple]) -> FTuple:
         """Apply function and flatten result by concatenating the results."""
-        return FTuple(*chain(
-            *map(iter, map(f, self))
-        ))
+        return FTuple(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FTuple]) -> FTuple:
         """Apply function and flatten result by round robin
         merging the results until first FTuple is exhauted.
         """
-        return FTuple(*merge(
-            *map(iter, map(f, self))
-        ))
+        return FTuple(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FTuple]) -> FTuple:
         """Apply function and flatten result by round robin
         merging the results until all FTuples are exhauted.
         """
-        return FTuple(*exhaust(
-            *map(iter, map(f, self))
-        ))
+        return FTuple(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == "__main__":
     pass

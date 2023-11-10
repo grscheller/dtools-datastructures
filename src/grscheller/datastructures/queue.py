@@ -138,25 +138,19 @@ class SQueue(Queue):
         """Apply function over the SQueue's contents and flatten result merging
         the SQueues produced sequentially front-to-back.
         """
-        self._carray = SQueue(*chain(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray
 
     def mergeMap(self, f: Callable[[Any], SQueue]) -> None:
         """Apply function over the SQueue's contents and flatten result by round
         robin merging until one of the first SQueues produced by f is exhausted.
         """
-        self._carray = SQueue(*merge(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray
 
     def exhaustMap(self, f: Callable[[Any], SQueue]) -> None:
         """Apply function over the SQueue's contents and flatten result by round
         robin merging until all the SQueues produced by f are exhausted.
         """
-        self._carray = SQueue(*exhaust(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray
 
 
 class DQueue(Queue):
@@ -227,25 +221,19 @@ class DQueue(Queue):
         """Apply function over the DQueue's contents and flatten result merging
         the DQueues produced sequentially front-to-back.
         """
-        self._carray = DQueue(*chain(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray
 
     def mergeMap(self, f: Callable[[Any], DQueue]) -> None:
         """Apply function over the DQueue's contents and flatten result by round
         robin merging until one of the first DQueues produced by f is exhausted.
         """
-        self._carray = DQueue(*merge(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray
 
     def exhaustMap(self, f: Callable[[Any], DQueue]) -> None:
         """Apply function over the DQueue's contents and flatten result by round
         robin merging until all the DQueues produced by f are exhausted.
         """
-        self._carray = DQueue(*exhaust(
-            *map(iter, map(f, self))
-        ))._carray
+        self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray
 
 
 if __name__ == "__main__":
