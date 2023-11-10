@@ -48,26 +48,19 @@ Library of iterator related functions.
 &#34;&#34;&#34;
 
 from __future__ import annotations
-from typing import Any, Callable, Iterator
+from typing import Any, Iterator, Iterable
 
-__all__ = [&#39;mapIter&#39;, &#39;concat&#39;, &#39;exhaust&#39;, &#39;merge&#39;]
+__all__ = [&#39;concat&#39;, &#39;exhaust&#39;, &#39;merge&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Lazily map a function over an iterator stream.
-
-    See also the map Python builtin function.
-    &#34;&#34;&#34;
-    return (f(x) for x in iterator)
-
-def concat(*iterators: Iterator[Any]) -&gt; Iterator[Any]:
+def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    See also the chain function from the itertools module.
+    WARNING: DEPRICATED - Use itertools.chain function instead
     &#34;&#34;&#34;
-    for iterator in iterators:
+    for iterator in map(iter,iterables):
         while True:
             try:
                 value = next(iterator)
@@ -75,9 +68,14 @@ def concat(*iterators: Iterator[Any]) -&gt; Iterator[Any]:
             except StopIteration:
                 break
 
-def merge(*iterators: Iterator[Any], yieldPartial = False) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.&#34;&#34;&#34;
-    iterList = list(iterators)
+def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
+    &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
+
+    If yieldPartial is True, also yield any unmatched extracted values from any
+    of the other iterators. This is useful to prevent data lose if there are
+    other references to any of the non-exhausted iterators floating around.
+    &#34;&#34;&#34;
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
         values = []
         # Break when first iterator is exhausted
@@ -95,9 +93,9 @@ def merge(*iterators: Iterator[Any], yieldPartial = False) -&gt; Iterator[Any]:
             for value in values:
                 yield value
 
-def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
+def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Merge multiple iterator streams until all are exhausted.&#34;&#34;&#34;
-    iterList = list(iterators)
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
         ii = 0
         values = []
@@ -117,9 +115,8 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
                     break
                 del iterList[ii]
         # Yield any remaining values
-        if yieldPartial:
-            for value in values:
-                yield value</code></pre>
+        for value in values:
+            yield value</code></pre>
 </details>
 </section>
 <section>
@@ -130,21 +127,21 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="grscheller.datastructures.core.iterlib.concat"><code class="name flex">
-<span>def <span class="ident">concat</span></span>(<span>*iterators: Iterator[Any]) ‑> Iterator[Any]</span>
+<span>def <span class="ident">concat</span></span>(<span>*iterables: Iterable[Any]) ‑> Iterator[Any]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Sequentually concatenate multiple iterators into one.</p>
-<p>See also the chain function from the itertools module.</p></div>
+<p>WARNING: DEPRICATED - Use itertools.chain function instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def concat(*iterators: Iterator[Any]) -&gt; Iterator[Any]:
+<pre><code class="python">def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    See also the chain function from the itertools module.
+    WARNING: DEPRICATED - Use itertools.chain function instead
     &#34;&#34;&#34;
-    for iterator in iterators:
+    for iterator in map(iter,iterables):
         while True:
             try:
                 value = next(iterator)
@@ -154,7 +151,7 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.iterlib.exhaust"><code class="name flex">
-<span>def <span class="ident">exhaust</span></span>(<span>*iterators: Iterator[Any], yieldPartial=True) ‑> Iterator[Any]</span>
+<span>def <span class="ident">exhaust</span></span>(<span>*iterables: Iterable[Any]) ‑> Iterator[Any]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Merge multiple iterator streams until all are exhausted.</p></div>
@@ -162,9 +159,9 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
+<pre><code class="python">def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Merge multiple iterator streams until all are exhausted.&#34;&#34;&#34;
-    iterList = list(iterators)
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
         ii = 0
         values = []
@@ -184,41 +181,30 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
                     break
                 del iterList[ii]
         # Yield any remaining values
-        if yieldPartial:
-            for value in values:
-                yield value</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.iterlib.mapIter"><code class="name flex">
-<span>def <span class="ident">mapIter</span></span>(<span>iterator: Iterator[Any], f: Callable[[Any], Any]) ‑> Iterator[Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Lazily map a function over an iterator stream.</p>
-<p>See also the map Python builtin function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mapIter(iterator: Iterator[Any], f: Callable[[Any], Any]) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Lazily map a function over an iterator stream.
-
-    See also the map Python builtin function.
-    &#34;&#34;&#34;
-    return (f(x) for x in iterator)</code></pre>
+        for value in values:
+            yield value</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.iterlib.merge"><code class="name flex">
-<span>def <span class="ident">merge</span></span>(<span>*iterators: Iterator[Any], yieldPartial=False) ‑> Iterator[Any]</span>
+<span>def <span class="ident">merge</span></span>(<span>*iterables: Iterable[Any], yieldPartial: bool = False) ‑> Iterator[Any]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Merge multiple iterator streams until one is exhausted.</p></div>
+<div class="desc"><p>Merge multiple iterator streams until one is exhausted.</p>
+<p>If yieldPartial is True, also yield any unmatched extracted values from any
+of the other iterators. This is useful to prevent data lose if there are
+other references to any of the non-exhausted iterators floating around.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def merge(*iterators: Iterator[Any], yieldPartial = False) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.&#34;&#34;&#34;
-    iterList = list(iterators)
+<pre><code class="python">def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
+    &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
+
+    If yieldPartial is True, also yield any unmatched extracted values from any
+    of the other iterators. This is useful to prevent data lose if there are
+    other references to any of the non-exhausted iterators floating around.
+    &#34;&#34;&#34;
+    iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
         values = []
         # Break when first iterator is exhausted
@@ -257,7 +243,6 @@ def exhaust(*iterators: Iterator[Any], yieldPartial = True) -&gt; Iterator[Any]:
 <ul class="">
 <li><code><a title="grscheller.datastructures.core.iterlib.concat" href="#grscheller.datastructures.core.iterlib.concat">concat</a></code></li>
 <li><code><a title="grscheller.datastructures.core.iterlib.exhaust" href="#grscheller.datastructures.core.iterlib.exhaust">exhaust</a></code></li>
-<li><code><a title="grscheller.datastructures.core.iterlib.mapIter" href="#grscheller.datastructures.core.iterlib.mapIter">mapIter</a></code></li>
 <li><code><a title="grscheller.datastructures.core.iterlib.merge" href="#grscheller.datastructures.core.iterlib.merge">merge</a></code></li>
 </ul>
 </li>

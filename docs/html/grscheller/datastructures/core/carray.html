@@ -66,8 +66,6 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable, Never, Self, Union
-from itertools import chain
-from .iterlib import exhaust, merge
 
 class CArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
@@ -179,7 +177,9 @@ class CArray:
                 raise IndexError(msg0)
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterator yielding current contents of carray, does not consume data&#34;&#34;&#34;
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CArray.
+        &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
             rear = self._rear
@@ -216,7 +216,7 @@ class CArray:
 
     def __repr__(self):
         &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
-        return &#34;(|&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;|)&#34;
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
     def copy(self) -&gt; CArray:
         &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
@@ -284,7 +284,7 @@ class CArray:
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         &#34;&#34;&#34;
-        newCArray  = CArray(*map(f, iter(self)))
+        newCArray  = CArray(*map(f, self))
         if mut:
             self._count = newCArray._count
             self._capacity = newCArray._capacity
@@ -430,7 +430,9 @@ indexing, prepending &amp; appending values, and length determination.</p>
                 raise IndexError(msg0)
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterator yielding current contents of carray, does not consume data&#34;&#34;&#34;
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CArray.
+        &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
             rear = self._rear
@@ -467,7 +469,7 @@ indexing, prepending &amp; appending values, and length determination.</p>
 
     def __repr__(self):
         &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
-        return &#34;(|&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;|)&#34;
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
     def copy(self) -&gt; CArray:
         &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
@@ -535,7 +537,7 @@ indexing, prepending &amp; appending values, and length determination.</p>
         Return new circular array if mut=False (the default)
         otherwise mutate the data structure and return self.
         &#34;&#34;&#34;
-        newCArray  = CArray(*map(f, iter(self)))
+        newCArray  = CArray(*map(f, self))
         if mut:
             self._count = newCArray._count
             self._capacity = newCArray._capacity
@@ -606,7 +608,7 @@ otherwise mutate the data structure and return self.</p></div>
     Return new circular array if mut=False (the default)
     otherwise mutate the data structure and return self.
     &#34;&#34;&#34;
-    newCArray  = CArray(*map(f, iter(self)))
+    newCArray  = CArray(*map(f, self))
     if mut:
         self._count = newCArray._count
         self._capacity = newCArray._capacity

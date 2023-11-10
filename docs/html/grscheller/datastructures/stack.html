@@ -28,6 +28,9 @@ nodes. The nodes can be safely shared between different Stack instances and
 are an implementation detail hidden from client code.</p>
 <p>Pushing to, popping from, and getting the length of the stack are all O(1)
 operations.</p>
+<h2 id="classes">Classes</h2>
+<p>grscheller.datastructure.PStack - LIFO stack, mutable, procedural interface
+grscheller.datastructure.FStack - LIFO stack, immutable, functional interface</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -54,6 +57,10 @@ operations.</p>
 
    Pushing to, popping from, and getting the length of the stack are all O(1)
    operations.
+
+Classes:
+  grscheller.datastructure.PStack - LIFO stack, mutable, procedural interface
+  grscheller.datastructure.FStack - LIFO stack, immutable, functional interface
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -120,7 +127,7 @@ class Stack():
         return self._count
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterator yielding data stored in the stack, starting at the head&#34;&#34;&#34;
+        &#34;&#34;&#34;Iterator yielding data stored on the stack, starting at the head&#34;&#34;&#34;
         node = self._head
         while node:
             yield node._data
@@ -179,7 +186,7 @@ class PStack(Stack):
 
     def __repr__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(lambda x: repr(x)))) + &#39; &gt;&lt;&#39;
+        return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; PStack:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -199,7 +206,7 @@ class PStack(Stack):
                 self._count += 1
         return self
 
-    def pop(self) -&gt; Any|None:
+    def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
         if self._head is None:
             return None
@@ -231,9 +238,7 @@ class PStack(Stack):
 
         Merge the stacks produced sequentially front-to-back.
         &#34;&#34;&#34;
-        newPStack = PStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*chain(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -243,9 +248,7 @@ class PStack(Stack):
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         &#34;&#34;&#34;
-        newPStack = PStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*merge(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -255,9 +258,7 @@ class PStack(Stack):
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         &#34;&#34;&#34;
-        newPStack = PStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*exhaust(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -282,7 +283,7 @@ class FStack(Stack):
 
     def __repr__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(lambda x: repr(x)))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -339,9 +340,7 @@ class FStack(Stack):
 
         Merge the stacks produced sequentially front-to-back.
         &#34;&#34;&#34;
-        return FStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -349,9 +348,7 @@ class FStack(Stack):
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         &#34;&#34;&#34;
-        return FStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -359,9 +356,7 @@ class FStack(Stack):
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         &#34;&#34;&#34;
-        return FStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 
 if __name__ == &#34;__main__&#34;:
@@ -415,7 +410,7 @@ which indicates an empty stack.</p>
 
     def __repr__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(lambda x: repr(x)))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -472,9 +467,7 @@ which indicates an empty stack.</p>
 
         Merge the stacks produced sequentially front-to-back.
         &#34;&#34;&#34;
-        return FStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -482,9 +475,7 @@ which indicates an empty stack.</p>
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         &#34;&#34;&#34;
-        return FStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -492,9 +483,7 @@ which indicates an empty stack.</p>
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         &#34;&#34;&#34;
-        return FStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))</code></pre>
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -561,9 +550,7 @@ exhausted.</p></div>
     Round Robin Merge the stacks produced until all the cached stacks are
     exhausted.
     &#34;&#34;&#34;
-    return FStack(*exhaust(
-        *map(reversed, map(f, reversed(self)))
-    ))</code></pre>
+    return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.stack.FStack.flatMap"><code class="name flex">
@@ -581,9 +568,7 @@ exhausted.</p></div>
 
     Merge the stacks produced sequentially front-to-back.
     &#34;&#34;&#34;
-    return FStack(*chain(
-        *map(reversed, map(f, reversed(self)))
-    ))</code></pre>
+    return FStack(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.stack.FStack.head"><code class="name flex">
@@ -640,9 +625,7 @@ exhausted.</p></div>
     Round Robin Merge the stacks produced until first cached stack is
     exhausted.
     &#34;&#34;&#34;
-    return FStack(*merge(
-        *map(reversed, map(f, reversed(self)))
-    ))</code></pre>
+    return FStack(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.stack.FStack.tail"><code class="name flex">
@@ -712,7 +695,7 @@ None which indicates an empty stack.</p>
 
     def __repr__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(lambda x: repr(x)))) + &#39; &gt;&lt;&#39;
+        return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; PStack:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -732,7 +715,7 @@ None which indicates an empty stack.</p>
                 self._count += 1
         return self
 
-    def pop(self) -&gt; Any|None:
+    def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
         if self._head is None:
             return None
@@ -764,9 +747,7 @@ None which indicates an empty stack.</p>
 
         Merge the stacks produced sequentially front-to-back.
         &#34;&#34;&#34;
-        newPStack = PStack(*chain(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*chain(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -776,9 +757,7 @@ None which indicates an empty stack.</p>
         Round Robin Merge the stacks produced until first cached stack is
         exhausted.
         &#34;&#34;&#34;
-        newPStack = PStack(*merge(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*merge(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 
@@ -788,9 +767,7 @@ None which indicates an empty stack.</p>
         Round Robin Merge the stacks produced until all the cached stacks are
         exhausted.
         &#34;&#34;&#34;
-        newPStack = PStack(*exhaust(
-            *map(reversed, map(f, reversed(self)))
-        ))
+        newPStack = PStack(*exhaust(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count</code></pre>
 </details>
@@ -834,9 +811,7 @@ exhausted.</p></div>
     Round Robin Merge the stacks produced until all the cached stacks are
     exhausted.
     &#34;&#34;&#34;
-    newPStack = PStack(*exhaust(
-        *map(reversed, map(f, reversed(self)))
-    ))
+    newPStack = PStack(*exhaust(*map(reversed, map(f, reversed(self)))))
     self._head = newPStack._head
     self._count = newPStack._count</code></pre>
 </details>
@@ -856,9 +831,7 @@ exhausted.</p></div>
 
     Merge the stacks produced sequentially front-to-back.
     &#34;&#34;&#34;
-    newPStack = PStack(*chain(
-        *map(reversed, map(f, reversed(self)))
-    ))
+    newPStack = PStack(*chain(*map(reversed, map(f, reversed(self)))))
     self._head = newPStack._head
     self._count = newPStack._count</code></pre>
 </details>
@@ -901,9 +874,7 @@ exhausted.</p></div>
     Round Robin Merge the stacks produced until first cached stack is
     exhausted.
     &#34;&#34;&#34;
-    newPStack = PStack(*merge(
-        *map(reversed, map(f, reversed(self)))
-    ))
+    newPStack = PStack(*merge(*map(reversed, map(f, reversed(self)))))
     self._head = newPStack._head
     self._count = newPStack._count</code></pre>
 </details>
@@ -928,7 +899,7 @@ If stack is empty, data does not exist so in that case return default.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.stack.PStack.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off of top of stack</p></div>
@@ -936,7 +907,7 @@ If stack is empty, data does not exist so in that case return default.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def pop(self) -&gt; Any|None:
+<pre><code class="python">def pop(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
     if self._head is None:
         return None

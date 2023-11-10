@@ -23,9 +23,10 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.flarray - Fixed length array</p>
-<p>Implements fixed length arrays of values of arbitrary types. O(1) data access
-which will store None values. The arrays must have length &gt; 0 and are
-guarnteed not to change size.</p>
+<p>Module implementing a data structure with a fixed length and O(1) data
+access. The arrays will have length &gt; 0 and are guaranteed not to change size.</p>
+<p>Note: None values are allowed in this data structures due to the
+fixed length size guarantees provided by the FLArray class.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -46,9 +47,11 @@ guarnteed not to change size.</p>
 
 &#34;&#34;&#34;Module grscheller.datastructure.flarray - Fixed length array
 
-Implements fixed length arrays of values of arbitrary types. O(1) data access
-which will store None values. The arrays must have length &gt; 0 and are
-guarnteed not to change size.
+Module implementing a data structure with a fixed length and O(1) data
+access. The arrays will have length &gt; 0 and are guaranteed not to change size.
+
+Note: None values are allowed in this data structures due to the
+      fixed length size guarantees provided by the FLArray class.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -58,7 +61,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 from itertools import chain
 from .core.iterlib import exhaust, merge
 
@@ -66,7 +69,7 @@ class FLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
     length &gt; 0.
 
-    Guarnteed to be of length |size| for size != 0
+    Guaranteed to be of length |size| for size != 0
 
     If size not indicated (or 0), size to data provided. Also when no data
     is provided, return array with a default value and a size = 1.
@@ -157,7 +160,7 @@ class FLArray():
         &#34;&#34;&#34;Iterate over the current dtate of the flarray. Copy is made so
         original source can safely mutate.
         &#34;&#34;&#34;
-        for data in iter(self._list.copy()):
+        for data in self._list.copy():
             yield data
 
     def __reversed__(self):
@@ -178,7 +181,7 @@ class FLArray():
     def __repr__(self):
         &#34;&#34;&#34;Display data in flarray&#34;&#34;&#34;
         # __iter__ already makes a defensive copy
-        return &#34;[|&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;|]&#34;
+        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: FLArray) -&gt; FLArray:
         &#34;&#34;&#34;Add FLArrays component-wise left to right.&#34;&#34;&#34;
@@ -199,17 +202,18 @@ class FLArray():
         &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; Self|FLArray:
+    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
         &#34;&#34;&#34;Apply function over flarray contents.
 
-        Return new FLArray if mut=False (the default)
-        otherwise mutate the data structure and return self.
+        Mutate the FLArray if mut=True (the default), otherwise return
+        a new FLArray with the mapped contents.
         &#34;&#34;&#34;
-        newFLArray  = FLArray(*map(f, iter(self)))
+        flarray = FLArray(*map(f, self))
         if mut:
-            self._list = newFLArray._list
-            return self
-        return newFLArray
+            self._list = flarray._list
+            return None
+        else:
+            return flarray
 
     def flatMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns only a
@@ -217,9 +221,7 @@ class FLArray():
 
         Merge the flarrays produced sequentially left-to-right.
         &#34;&#34;&#34;
-        return FLArray(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FLArray(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns only a instance
@@ -228,9 +230,7 @@ class FLArray():
         Round Robin Merge the flarrays produced until first cached
         flarray is exhausted.
         &#34;&#34;&#34;
-        return FLArray(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FLArray(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -239,9 +239,7 @@ class FLArray():
         Round Robin Merge the flarrays produced until all cached
         flarrays are exhausted.
         &#34;&#34;&#34;
-        return FLArray(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FLArray(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -263,7 +261,7 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p>Class implementing a stateful fixed length array data structure of
 length &gt; 0.</p>
-<p>Guarnteed to be of length |size| for size != 0</p>
+<p>Guaranteed to be of length |size| for size != 0</p>
 <p>If size not indicated (or 0), size to data provided. Also when no data
 is provided, return array with a default value and a size = 1.</p>
 <p>If size &gt; 0, pad data on right with a default or slice off trailing data.</p>
@@ -278,7 +276,7 @@ is provided, return array with a default value and a size = 1.</p>
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
     length &gt; 0.
 
-    Guarnteed to be of length |size| for size != 0
+    Guaranteed to be of length |size| for size != 0
 
     If size not indicated (or 0), size to data provided. Also when no data
     is provided, return array with a default value and a size = 1.
@@ -369,7 +367,7 @@ is provided, return array with a default value and a size = 1.</p>
         &#34;&#34;&#34;Iterate over the current dtate of the flarray. Copy is made so
         original source can safely mutate.
         &#34;&#34;&#34;
-        for data in iter(self._list.copy()):
+        for data in self._list.copy():
             yield data
 
     def __reversed__(self):
@@ -390,7 +388,7 @@ is provided, return array with a default value and a size = 1.</p>
     def __repr__(self):
         &#34;&#34;&#34;Display data in flarray&#34;&#34;&#34;
         # __iter__ already makes a defensive copy
-        return &#34;[|&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;|]&#34;
+        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: FLArray) -&gt; FLArray:
         &#34;&#34;&#34;Add FLArrays component-wise left to right.&#34;&#34;&#34;
@@ -411,17 +409,18 @@ is provided, return array with a default value and a size = 1.</p>
         &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; Self|FLArray:
+    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
         &#34;&#34;&#34;Apply function over flarray contents.
 
-        Return new FLArray if mut=False (the default)
-        otherwise mutate the data structure and return self.
+        Mutate the FLArray if mut=True (the default), otherwise return
+        a new FLArray with the mapped contents.
         &#34;&#34;&#34;
-        newFLArray  = FLArray(*map(f, iter(self)))
+        flarray = FLArray(*map(f, self))
         if mut:
-            self._list = newFLArray._list
-            return self
-        return newFLArray
+            self._list = flarray._list
+            return None
+        else:
+            return flarray
 
     def flatMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns only a
@@ -429,9 +428,7 @@ is provided, return array with a default value and a size = 1.</p>
 
         Merge the flarrays produced sequentially left-to-right.
         &#34;&#34;&#34;
-        return FLArray(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FLArray(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns only a instance
@@ -440,9 +437,7 @@ is provided, return array with a default value and a size = 1.</p>
         Round Robin Merge the flarrays produced until first cached
         flarray is exhausted.
         &#34;&#34;&#34;
-        return FLArray(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FLArray(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
         &#34;&#34;&#34;Apply function and flatten result, returns new instance
@@ -451,9 +446,7 @@ is provided, return array with a default value and a size = 1.</p>
         Round Robin Merge the flarrays produced until all cached
         flarrays are exhausted.
         &#34;&#34;&#34;
-        return FLArray(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))</code></pre>
+        return FLArray(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -490,9 +483,7 @@ flarrays are exhausted.</p></div>
     Round Robin Merge the flarrays produced until all cached
     flarrays are exhausted.
     &#34;&#34;&#34;
-    return FLArray(*exhaust(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FLArray(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.flarray.FLArray.flatMap"><code class="name flex">
@@ -512,33 +503,32 @@ new instance since size may change.</p>
 
     Merge the flarrays produced sequentially left-to-right.
     &#34;&#34;&#34;
-    return FLArray(*chain(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FLArray(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.flarray.FLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True) ‑> Union[Self, <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a>]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a> | None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over flarray contents.</p>
-<p>Return new FLArray if mut=False (the default)
-otherwise mutate the data structure and return self.</p></div>
+<p>Mutate the FLArray if mut=True (the default), otherwise return
+a new FLArray with the mapped contents.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; Self|FLArray:
+<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
     &#34;&#34;&#34;Apply function over flarray contents.
 
-    Return new FLArray if mut=False (the default)
-    otherwise mutate the data structure and return self.
+    Mutate the FLArray if mut=True (the default), otherwise return
+    a new FLArray with the mapped contents.
     &#34;&#34;&#34;
-    newFLArray  = FLArray(*map(f, iter(self)))
+    flarray = FLArray(*map(f, self))
     if mut:
-        self._list = newFLArray._list
-        return self
-    return newFLArray</code></pre>
+        self._list = flarray._list
+        return None
+    else:
+        return flarray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.flarray.FLArray.mergeMap"><code class="name flex">
@@ -560,9 +550,7 @@ flarray is exhausted.</p></div>
     Round Robin Merge the flarrays produced until first cached
     flarray is exhausted.
     &#34;&#34;&#34;
-    return FLArray(*merge(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FLArray(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.flarray.FLArray.reverse"><code class="name flex">

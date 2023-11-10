@@ -28,14 +28,14 @@
 also a O(1) operation. Implemented with a Python List based circular array.
 Does not store None as a value.</p>
 <h2 id="classes">Classes</h2>
-<p>grscheller.datastructure.queue
-- Single sided FIFO queue
-grscheller.datastructure.dqueue - Double sided FIFO/LIFO queue</p>
+<p>grscheller.datastructure.SQueue - Single sided FIFO queue
+grscheller.datastructure.DQueue - Double sided FIFO/LIFO queue</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">#
+<pre><code class="python"># Copyright 2023 Geoffrey R. Scheller
+#
 # Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -56,8 +56,8 @@ also a O(1) operation. Implemented with a Python List based circular array.
 Does not store None as a value.
 
 Classes:
-  grscheller.datastructure.queue  - Single sided FIFO queue
-  grscheller.datastructure.dqueue - Double sided FIFO/LIFO queue
+  grscheller.datastructure.SQueue - Single sided FIFO queue
+  grscheller.datastructure.DQueue - Double sided FIFO/LIFO queue
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -80,20 +80,17 @@ class Queue():
     ensure that None values do not get pushed onto the circular array.
     &#34;&#34;&#34;
     def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a queue data structure.
-
-        Null values will be culled from the intial data from ds.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
         self._carray = CArray()
         for d in ds:
             if d is not None:
                 self._carray.pushR(d)
 
-    def __bool__(self) -&gt; bool:
+    def __bool__(self):
         &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
         return len(self._carray) &gt; 0
 
-    def __len__(self) -&gt; int:
+    def __len__(self):
         &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
         return len(self._carray)
 
@@ -118,235 +115,162 @@ class Queue():
             return False
         return self._carray == other._carray
 
-    def copy(self) -&gt; Any:
-        &#34;&#34;&#34;Return shallow copy of the queue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        # Since types are objects, why can&#39;t Python match on Types???
-        match repr(type(self)):
-            case &#34;&lt;class &#39;grscheller.datastructures.queue.SQueue&#39;&gt;&#34;:
-                queue = SQueue()
-            case &#34;&lt;class &#39;grscheller.datastructures.queue.DQueue&#39;&gt;&#34;:
-                queue = DQueue()
-            case _:
-                msg = f&#39;{repr(type(self))} is not a supported class &#39;
-                msg += &#39;derived from the Stack base class.&#39;
-                raise NotImplementedError(msg)
-        queue._carray = self._carray.copy()
-        return queue
+    def copy(self) -&gt; Queue:
+        raise NotImplementedError
 
 
 class SQueue(Queue):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed on an squeue.
+    None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in queue.&#34;&#34;&#34;
-        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(lambda x: repr(x), iter(self))) + &#34; &lt;&lt;&#34;
-
-    def copy(self):
-        squeue = SQueue()
-        squeue._carray = self._carray.copy()
-        return squeue
+        &#34;&#34;&#34;Display the SQueue showing the contained data.&#34;&#34;&#34;
+        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(repr, self)) + &#34; &lt;&lt;&#34;
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of queue &amp; no return value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pop(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off front of queue.&#34;&#34;&#34;
+    def copy(self) -&gt; SQueue:
+        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        squeue = SQueue()
+        squeue._carray = self._carray.copy()
+        return squeue
+
+    def pop(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return last element pushed to queue without consuming it.&#34;&#34;&#34;
+    def peakLastIn(self) -&gt; Any:
+        &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return next element ready to pop from queue without consuming it.&#34;&#34;&#34;
+    def peakNextOut(self) -&gt; Any:
+        &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over Queue contents. If mut=True (the default) mutate
-        the Queue &amp; don&#39;t return anything. Othersise, return a new Queue leaving
-        the original unchanged. Suppress any None Values returned by f.
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents. Suppress any None values
+        returned by f.
         &#34;&#34;&#34;
-        queue  = SQueue(*map(f, iter(self)))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*map(f, self))._carray
 
-    def flatMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the queue&#39;s contents and flatten result merging
-        the queues produced sequentially front-to-back. If mut=True (default)
-        mutate the Queue &amp; don&#39;t return anything. Othersise, return a new Queue
-        leaving the original unchanged. Suppress any None Values contained in
-        any of the Queues returned by f.
+    def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
+        the SQueues produced sequentially front-to-back.
         &#34;&#34;&#34;
-        queue = SQueue(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray
 
-    def mergeMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-        robin merging until one of the first Queues produced by f is exhausted.
-        If mut=True (default) mutate the Queue &amp; don&#39;t return anything.
-        Othersise, return a new Queue leaving the original unchanged. Suppress
-        any None Values contained in any of the Queues returned by f.
+    def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+        robin merging until one of the first SQueues produced by f is exhausted.
         &#34;&#34;&#34;
-        queue = SQueue(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray
 
-    def exhaustMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-        robin merging until all the Queues produced by f are exhausted. If
-        mut=True (default) mutate the Queue &amp; don&#39;t return anything. Othersise,
-        return a new Queue leaving the original unchanged. Suppress any None
-        Values contained in any of the Queues returned by f.
+    def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+        robin merging until all the SQueues produced by f are exhausted.
         &#34;&#34;&#34;
-        queue = SQueue(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray
 
 
 class DQueue(Queue):
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed on a dqueue.
+    None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in dqueue.&#34;&#34;&#34;
-        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(lambda x: repr(x), iter(self))) + &#34; &gt;&lt;&#34;
+        &#34;&#34;&#34;Display the DQueue showing the data contained.&#34;&#34;&#34;
+        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(repr, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self):
+    def copy(self) -&gt; DQueue:
+        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DQueue()
         dqueue._carray = self._carray.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of dqueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of dqueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
 
-    def popR(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off rear of dqueue&#34;&#34;&#34;
+    def popR(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off front of dqueue&#34;&#34;&#34;
+    def popL(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return right-most element of dqueue if it exists.&#34;&#34;&#34;
+    def peakR(self) -&gt; Any:
+        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return left-most element of dqueue if it exists.&#34;&#34;&#34;
+    def peakL(self) -&gt; Any:
+        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; DQueue|None:
-        &#34;&#34;&#34;Apply function over DQueue contents. If mut=True (the default) mutate
-        the DQueue &amp; don&#39;t return anything. Othersise, return a new DQueue
-        leaving the original unchanged. Suppress any None Values returned by f.
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+        returned by f.
         &#34;&#34;&#34;
-        dqueue  = DQueue(*map(f, iter(self)))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*map(f, self))._carray
 
-    def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-        the DQueues produced sequentially front-to-back. If mut=True (default)
-        mutate the DQueue &amp; don&#39;t return anything. Othersise, return a new
-        DQueue leaving the original unchanged. Suppress any None Values
-        contained in any of the DQueues returned by f.
+        the DQueues produced sequentially front-to-back.
         &#34;&#34;&#34;
-        dqueue = DQueue(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray
 
-    def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
         robin merging until one of the first DQueues produced by f is exhausted.
-        If mut=True (default) mutate the DQueue &amp; don&#39;t return anything.
-        Othersise, return a new DQueue leaving the original unchanged. Suppress
-        any None Values contained in any of the DQueues returned by f.
         &#34;&#34;&#34;
-        dqueue = DQueue(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray
 
-    def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until all the DQueues produced by f are exhausted. If
-        mut=True (default) mutate the DQueue &amp; don&#39;t return anything. Othersise,
-        return a new DQueue leaving the original unchanged. Suppress any None
-        Values contained in any of the DQueues returned by f.
+        robin merging until all the DQueues produced by f are exhausted.
         &#34;&#34;&#34;
-        dqueue = DQueue(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray
+
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -367,124 +291,93 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p>Double sided queue datastructure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed on a dqueue.</p>
-<p>Construct a FIFO queue data structure.</p></div>
+None represents the absence of a value and ignored if pushed onto a DQueue.</p>
+<p>Construct a FIFO/LIFO double sided queue data structure.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DQueue(Queue):
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed on a dqueue.
+    None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in dqueue.&#34;&#34;&#34;
-        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(lambda x: repr(x), iter(self))) + &#34; &gt;&lt;&#34;
+        &#34;&#34;&#34;Display the DQueue showing the data contained.&#34;&#34;&#34;
+        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(repr, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self):
+    def copy(self) -&gt; DQueue:
+        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DQueue()
         dqueue._carray = self._carray.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of dqueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of dqueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
 
-    def popR(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off rear of dqueue&#34;&#34;&#34;
+    def popR(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off front of dqueue&#34;&#34;&#34;
+    def popL(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return right-most element of dqueue if it exists.&#34;&#34;&#34;
+    def peakR(self) -&gt; Any:
+        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return left-most element of dqueue if it exists.&#34;&#34;&#34;
+    def peakL(self) -&gt; Any:
+        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; DQueue|None:
-        &#34;&#34;&#34;Apply function over DQueue contents. If mut=True (the default) mutate
-        the DQueue &amp; don&#39;t return anything. Othersise, return a new DQueue
-        leaving the original unchanged. Suppress any None Values returned by f.
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+        returned by f.
         &#34;&#34;&#34;
-        dqueue  = DQueue(*map(f, iter(self)))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*map(f, self))._carray
 
-    def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-        the DQueues produced sequentially front-to-back. If mut=True (default)
-        mutate the DQueue &amp; don&#39;t return anything. Othersise, return a new
-        DQueue leaving the original unchanged. Suppress any None Values
-        contained in any of the DQueues returned by f.
+        the DQueues produced sequentially front-to-back.
         &#34;&#34;&#34;
-        dqueue = DQueue(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray
 
-    def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
         robin merging until one of the first DQueues produced by f is exhausted.
-        If mut=True (default) mutate the DQueue &amp; don&#39;t return anything.
-        Othersise, return a new DQueue leaving the original unchanged. Suppress
-        any None Values contained in any of the DQueues returned by f.
         &#34;&#34;&#34;
-        dqueue = DQueue(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue
+        self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray
 
-    def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+    def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until all the DQueues produced by f are exhausted. If
-        mut=True (default) mutate the DQueue &amp; don&#39;t return anything. Othersise,
-        return a new DQueue leaving the original unchanged. Suppress any None
-        Values contained in any of the DQueues returned by f.
+        robin merging until all the DQueues produced by f are exhausted.
         &#34;&#34;&#34;
-        dqueue = DQueue(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = dqueue._carray
-            return None
-        return dqueue</code></pre>
+        self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -493,141 +386,100 @@ None represents the absence of a value and ignored if pushed on a dqueue.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queue.DQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self)</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the queue in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the DQueue in O(n) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self):
+<pre><code class="python">def copy(self) -&gt; DQueue:
+    &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     dqueue = DQueue()
     dqueue._carray = self._carray.copy()
     return dqueue</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>], mut: bool = False) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a> | None</span>
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the DQueue's contents and flatten result by round
-robin merging until all the DQueues produced by f are exhausted. If
-mut=True (default) mutate the DQueue &amp; don't return anything. Othersise,
-return a new DQueue leaving the original unchanged. Suppress any None
-Values contained in any of the DQueues returned by f.</p></div>
+robin merging until all the DQueues produced by f are exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
     &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-    robin merging until all the DQueues produced by f are exhausted. If
-    mut=True (default) mutate the DQueue &amp; don&#39;t return anything. Othersise,
-    return a new DQueue leaving the original unchanged. Suppress any None
-    Values contained in any of the DQueues returned by f.
+    robin merging until all the DQueues produced by f are exhausted.
     &#34;&#34;&#34;
-    dqueue = DQueue(*exhaust(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = dqueue._carray
-        return None
-    return dqueue</code></pre>
+    self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>], mut: bool = False) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a> | None</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the DQueue's contents and flatten result merging
-the DQueues produced sequentially front-to-back. If mut=True (default)
-mutate the DQueue &amp; don't return anything. Othersise, return a new
-DQueue leaving the original unchanged. Suppress any None Values
-contained in any of the DQueues returned by f.</p></div>
+the DQueues produced sequentially front-to-back.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+<pre><code class="python">def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
     &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-    the DQueues produced sequentially front-to-back. If mut=True (default)
-    mutate the DQueue &amp; don&#39;t return anything. Othersise, return a new
-    DQueue leaving the original unchanged. Suppress any None Values
-    contained in any of the DQueues returned by f.
+    the DQueues produced sequentially front-to-back.
     &#34;&#34;&#34;
-    dqueue = DQueue(*chain(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = dqueue._carray
-        return None
-    return dqueue</code></pre>
+    self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = False) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a> | None</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over DQueue contents. If mut=True (the default) mutate
-the DQueue &amp; don't return anything. Othersise, return a new DQueue
-leaving the original unchanged. Suppress any None Values returned by f.</p></div>
+<div class="desc"><p>Apply function over the DQueue's contents. Suppress any None values
+returned by f.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; DQueue|None:
-    &#34;&#34;&#34;Apply function over DQueue contents. If mut=True (the default) mutate
-    the DQueue &amp; don&#39;t return anything. Othersise, return a new DQueue
-    leaving the original unchanged. Suppress any None Values returned by f.
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+    returned by f.
     &#34;&#34;&#34;
-    dqueue  = DQueue(*map(f, iter(self)))
-    if mut:
-        self._carray = dqueue._carray
-        return None
-    return dqueue</code></pre>
+    self._carray = DQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>], mut: bool = False) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a> | None</span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the DQueue's contents and flatten result by round
-robin merging until one of the first DQueues produced by f is exhausted.
-If mut=True (default) mutate the DQueue &amp; don't return anything.
-Othersise, return a new DQueue leaving the original unchanged. Suppress
-any None Values contained in any of the DQueues returned by f.</p></div>
+robin merging until one of the first DQueues produced by f is exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], DQueue], mut: bool=False) -&gt; DQueue|None:
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
     &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
     robin merging until one of the first DQueues produced by f is exhausted.
-    If mut=True (default) mutate the DQueue &amp; don&#39;t return anything.
-    Othersise, return a new DQueue leaving the original unchanged. Suppress
-    any None Values contained in any of the DQueues returned by f.
     &#34;&#34;&#34;
-    dqueue = DQueue(*merge(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = dqueue._carray
-        return None
-    return dqueue</code></pre>
+    self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return left-most element of dqueue if it exists.</p></div>
+<div class="desc"><p>Return left-most element of the DQueue if it exists.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakL(self) -&gt; Any|None:
-    &#34;&#34;&#34;Return left-most element of dqueue if it exists.&#34;&#34;&#34;
+<pre><code class="python">def peakL(self) -&gt; Any:
+    &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[0]
     else:
@@ -635,16 +487,16 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.peakR"><code class="name flex">
-<span>def <span class="ident">peakR</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return right-most element of dqueue if it exists.</p></div>
+<div class="desc"><p>Return right-most element of the DQueue if it exists.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakR(self) -&gt; Any|None:
-    &#34;&#34;&#34;Return right-most element of dqueue if it exists.&#34;&#34;&#34;
+<pre><code class="python">def peakR(self) -&gt; Any:
+    &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[-1]
     else:
@@ -652,16 +504,16 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of dqueue</p></div>
+<div class="desc"><p>Pop data off front of the DQueue</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popL(self) -&gt; Any|None:
-    &#34;&#34;&#34;Pop data off front of dqueue&#34;&#34;&#34;
+<pre><code class="python">def popL(self) -&gt; Any:
+    &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popL()
     else:
@@ -669,16 +521,16 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.DQueue.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of dqueue</p></div>
+<div class="desc"><p>Pop data off rear of the DQueue</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popR(self) -&gt; Any|None:
-    &#34;&#34;&#34;Pop data off rear of dqueue&#34;&#34;&#34;
+<pre><code class="python">def popR(self) -&gt; Any:
+    &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popR()
     else:
@@ -689,13 +541,13 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 <span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto front of dqueue.</p></div>
+<div class="desc"><p>Push data left to right onto front of DQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushL(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto front of dqueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._carray.pushL(d)</code></pre>
@@ -705,13 +557,13 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 <span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto rear of dqueue.</p></div>
+<div class="desc"><p>Push data left to right onto rear of the DQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushR(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto rear of dqueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._carray.pushR(d)</code></pre>
@@ -725,111 +577,80 @@ any None Values contained in any of the DQueues returned by f.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Single sided queue datastructure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed on an squeue.</p>
-<p>Construct a FIFO queue data structure.</p></div>
+None represents the absence of a value and ignored if pushed onto an SQueue.</p>
+<p>Construct a FIFO SQueue data structure.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SQueue(Queue):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed on an squeue.
+    None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
     def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO queue data structure.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in queue.&#34;&#34;&#34;
-        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(lambda x: repr(x), iter(self))) + &#34; &lt;&lt;&#34;
-
-    def copy(self):
-        squeue = SQueue()
-        squeue._carray = self._carray.copy()
-        return squeue
+        &#34;&#34;&#34;Display the SQueue showing the contained data.&#34;&#34;&#34;
+        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(repr, self)) + &#34; &lt;&lt;&#34;
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of queue &amp; no return value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pop(self) -&gt; Any|None:
-        &#34;&#34;&#34;Pop data off front of queue.&#34;&#34;&#34;
+    def copy(self) -&gt; SQueue:
+        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        squeue = SQueue()
+        squeue._carray = self._carray.copy()
+        return squeue
+
+    def pop(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return last element pushed to queue without consuming it.&#34;&#34;&#34;
+    def peakLastIn(self) -&gt; Any:
+        &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -&gt; Any|None:
-        &#34;&#34;&#34;Return next element ready to pop from queue without consuming it.&#34;&#34;&#34;
+    def peakNextOut(self) -&gt; Any:
+        &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over Queue contents. If mut=True (the default) mutate
-        the Queue &amp; don&#39;t return anything. Othersise, return a new Queue leaving
-        the original unchanged. Suppress any None Values returned by f.
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents. Suppress any None values
+        returned by f.
         &#34;&#34;&#34;
-        queue  = SQueue(*map(f, iter(self)))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*map(f, self))._carray
 
-    def flatMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the queue&#39;s contents and flatten result merging
-        the queues produced sequentially front-to-back. If mut=True (default)
-        mutate the Queue &amp; don&#39;t return anything. Othersise, return a new Queue
-        leaving the original unchanged. Suppress any None Values contained in
-        any of the Queues returned by f.
+    def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
+        the SQueues produced sequentially front-to-back.
         &#34;&#34;&#34;
-        queue = SQueue(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray
 
-    def mergeMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-        robin merging until one of the first Queues produced by f is exhausted.
-        If mut=True (default) mutate the Queue &amp; don&#39;t return anything.
-        Othersise, return a new Queue leaving the original unchanged. Suppress
-        any None Values contained in any of the Queues returned by f.
+    def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+        robin merging until one of the first SQueues produced by f is exhausted.
         &#34;&#34;&#34;
-        queue = SQueue(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue
+        self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray
 
-    def exhaustMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-        &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-        robin merging until all the Queues produced by f are exhausted. If
-        mut=True (default) mutate the Queue &amp; don&#39;t return anything. Othersise,
-        return a new Queue leaving the original unchanged. Suppress any None
-        Values contained in any of the Queues returned by f.
+    def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+        robin merging until all the SQueues produced by f are exhausted.
         &#34;&#34;&#34;
-        queue = SQueue(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
-        if mut:
-            self._carray = queue._carray
-            return None
-        return queue</code></pre>
+        self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -838,141 +659,100 @@ None represents the absence of a value and ignored if pushed on an squeue.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queue.SQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self)</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the queue in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the SQueue in O(n) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self):
+<pre><code class="python">def copy(self) -&gt; SQueue:
+    &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     squeue = SQueue()
     squeue._carray = self._carray.copy()
     return squeue</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>], mut: bool = True) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a> | None</span>
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the Queue's contents and flatten result by round
-robin merging until all the Queues produced by f are exhausted. If
-mut=True (default) mutate the Queue &amp; don't return anything. Othersise,
-return a new Queue leaving the original unchanged. Suppress any None
-Values contained in any of the Queues returned by f.</p></div>
+<div class="desc"><p>Apply function over the SQueue's contents and flatten result by round
+robin merging until all the SQueues produced by f are exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-    &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-    robin merging until all the Queues produced by f are exhausted. If
-    mut=True (default) mutate the Queue &amp; don&#39;t return anything. Othersise,
-    return a new Queue leaving the original unchanged. Suppress any None
-    Values contained in any of the Queues returned by f.
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+    robin merging until all the SQueues produced by f are exhausted.
     &#34;&#34;&#34;
-    queue = SQueue(*exhaust(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = queue._carray
-        return None
-    return queue</code></pre>
+    self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>], mut: bool = True) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a> | None</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the queue's contents and flatten result merging
-the queues produced sequentially front-to-back. If mut=True (default)
-mutate the Queue &amp; don't return anything. Othersise, return a new Queue
-leaving the original unchanged. Suppress any None Values contained in
-any of the Queues returned by f.</p></div>
+<div class="desc"><p>Apply function over the SQueue's contents and flatten result merging
+the SQueues produced sequentially front-to-back.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-    &#34;&#34;&#34;Apply function over the queue&#39;s contents and flatten result merging
-    the queues produced sequentially front-to-back. If mut=True (default)
-    mutate the Queue &amp; don&#39;t return anything. Othersise, return a new Queue
-    leaving the original unchanged. Suppress any None Values contained in
-    any of the Queues returned by f.
+<pre><code class="python">def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
+    the SQueues produced sequentially front-to-back.
     &#34;&#34;&#34;
-    queue = SQueue(*chain(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = queue._carray
-        return None
-    return queue</code></pre>
+    self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a> | None</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over Queue contents. If mut=True (the default) mutate
-the Queue &amp; don't return anything. Othersise, return a new Queue leaving
-the original unchanged. Suppress any None Values returned by f.</p></div>
+<div class="desc"><p>Apply function over the SQueue's contents. Suppress any None values
+returned by f.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; SQueue|None:
-    &#34;&#34;&#34;Apply function over Queue contents. If mut=True (the default) mutate
-    the Queue &amp; don&#39;t return anything. Othersise, return a new Queue leaving
-    the original unchanged. Suppress any None Values returned by f.
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents. Suppress any None values
+    returned by f.
     &#34;&#34;&#34;
-    queue  = SQueue(*map(f, iter(self)))
-    if mut:
-        self._carray = queue._carray
-        return None
-    return queue</code></pre>
+    self._carray = SQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>], mut: bool = True) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a> | None</span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the Queue's contents and flatten result by round
-robin merging until one of the first Queues produced by f is exhausted.
-If mut=True (default) mutate the Queue &amp; don't return anything.
-Othersise, return a new Queue leaving the original unchanged. Suppress
-any None Values contained in any of the Queues returned by f.</p></div>
+<div class="desc"><p>Apply function over the SQueue's contents and flatten result by round
+robin merging until one of the first SQueues produced by f is exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], SQueue], mut: bool=True) -&gt; SQueue|None:
-    &#34;&#34;&#34;Apply function over the Queue&#39;s contents and flatten result by round
-    robin merging until one of the first Queues produced by f is exhausted.
-    If mut=True (default) mutate the Queue &amp; don&#39;t return anything.
-    Othersise, return a new Queue leaving the original unchanged. Suppress
-    any None Values contained in any of the Queues returned by f.
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
+    robin merging until one of the first SQueues produced by f is exhausted.
     &#34;&#34;&#34;
-    queue = SQueue(*merge(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))
-    if mut:
-        self._carray = queue._carray
-        return None
-    return queue</code></pre>
+    self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.peakLastIn"><code class="name flex">
-<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return last element pushed to queue without consuming it.</p></div>
+<div class="desc"><p>Return last element pushed to the SQueue without consuming it</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakLastIn(self) -&gt; Any|None:
-    &#34;&#34;&#34;Return last element pushed to queue without consuming it.&#34;&#34;&#34;
+<pre><code class="python">def peakLastIn(self) -&gt; Any:
+    &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[-1]
     else:
@@ -980,16 +760,16 @@ any None Values contained in any of the Queues returned by f.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.peakNextOut"><code class="name flex">
-<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return next element ready to pop from queue without consuming it.</p></div>
+<div class="desc"><p>Return next element ready to pop from the SQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakNextOut(self) -&gt; Any|None:
-    &#34;&#34;&#34;Return next element ready to pop from queue without consuming it.&#34;&#34;&#34;
+<pre><code class="python">def peakNextOut(self) -&gt; Any:
+    &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[0]
     else:
@@ -997,16 +777,16 @@ any None Values contained in any of the Queues returned by f.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.SQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of queue.</p></div>
+<div class="desc"><p>Pop data off front of the SQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def pop(self) -&gt; Any|None:
-    &#34;&#34;&#34;Pop data off front of queue.&#34;&#34;&#34;
+<pre><code class="python">def pop(self) -&gt; Any:
+    &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popL()
     else:
@@ -1017,13 +797,13 @@ any None Values contained in any of the Queues returned by f.</p></div>
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data on rear of queue &amp; no return value.</p></div>
+<div class="desc"><p>Push data on rear of the SQueue &amp; no return value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def push(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data on rear of queue &amp; no return value.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._carray.pushR(d)</code></pre>

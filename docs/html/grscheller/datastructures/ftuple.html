@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.ftuple API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.ftuple - Functional tuples …" />
+<meta name="description" content="Module grscheller.datastructure.ftuple - functional tuples …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,8 +22,9 @@
 <h1 class="title">Module <code>grscheller.datastructures.ftuple</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.ftuple - Functional tuples</p>
-<p>Implements a tuple like object with funtional behaviors.</p>
+<p>Module grscheller.datastructure.ftuple - functional tuples</p>
+<p>Module implementing an immutable tuple like object with
+a funtional interface. Right now just a minimally viable product.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -42,9 +43,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.ftuple - Functional tuples
+&#34;&#34;&#34;Module grscheller.datastructure.ftuple - functional tuples
 
-Implements a tuple like object with funtional behaviors.
+Module implementing an immutable tuple like object with
+a funtional interface. Right now just a minimally viable product.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -105,7 +107,7 @@ class FTuple():
 
     def __repr__(self):
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
-        return &#34;((&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;))&#34;
+        return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
     def __add__(self, other: FTuple) -&gt; FTuple:
         &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
@@ -114,40 +116,34 @@ class FTuple():
         return ftuple
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(n) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
         ftuple = FTuple()
         ftuple._ds = self._ds
         return ftuple
 
     def reverse(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return a reversed FTuple&#34;&#34;&#34;
+        &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
 
     def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-        return FTuple(*map(f, iter(self)))
+        return FTuple(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-        return FTuple(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FTuple(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by round robin
         merging the results until first FTuple is exhauted.
         &#34;&#34;&#34;
-        return FTuple(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FTuple(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by round robin
         merging the results until all FTuples are exhauted.
         &#34;&#34;&#34;
-        return FTuple(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FTuple(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -220,7 +216,7 @@ if __name__ == &#34;__main__&#34;:
 
     def __repr__(self):
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
-        return &#34;((&#34; + &#34;, &#34;.join(map(lambda x: repr(x), iter(self))) + &#34;))&#34;
+        return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
     def __add__(self, other: FTuple) -&gt; FTuple:
         &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
@@ -229,40 +225,34 @@ if __name__ == &#34;__main__&#34;:
         return ftuple
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(n) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
         ftuple = FTuple()
         ftuple._ds = self._ds
         return ftuple
 
     def reverse(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return a reversed FTuple&#34;&#34;&#34;
+        &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
 
     def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-        return FTuple(*map(f, iter(self)))
+        return FTuple(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-        return FTuple(*chain(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FTuple(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by round robin
         merging the results until first FTuple is exhauted.
         &#34;&#34;&#34;
-        return FTuple(*merge(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))
+        return FTuple(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
         &#34;&#34;&#34;Apply function and flatten result by round robin
         merging the results until all FTuples are exhauted.
         &#34;&#34;&#34;
-        return FTuple(*exhaust(
-            *map(lambda x: iter(x), map(f, iter(self)))
-        ))</code></pre>
+        return FTuple(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -270,13 +260,13 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the FTuple in O(n) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; FTuple:
-    &#34;&#34;&#34;Return shallow copy of the FTuple in O(n) time &amp; space complexity&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
     ftuple = FTuple()
     ftuple._ds = self._ds
     return ftuple</code></pre>
@@ -296,9 +286,7 @@ merging the results until all FTuples are exhauted.</p></div>
     &#34;&#34;&#34;Apply function and flatten result by round robin
     merging the results until all FTuples are exhauted.
     &#34;&#34;&#34;
-    return FTuple(*exhaust(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FTuple(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.ftuple.FTuple.flatMap"><code class="name flex">
@@ -312,9 +300,7 @@ merging the results until all FTuples are exhauted.</p></div>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
     &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-    return FTuple(*chain(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FTuple(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.ftuple.FTuple.map"><code class="name flex">
@@ -328,7 +314,7 @@ merging the results until all FTuples are exhauted.</p></div>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
     &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-    return FTuple(*map(f, iter(self)))</code></pre>
+    return FTuple(*map(f, self))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.ftuple.FTuple.mergeMap"><code class="name flex">
@@ -345,22 +331,20 @@ merging the results until first FTuple is exhauted.</p></div>
     &#34;&#34;&#34;Apply function and flatten result by round robin
     merging the results until first FTuple is exhauted.
     &#34;&#34;&#34;
-    return FTuple(*merge(
-        *map(lambda x: iter(x), map(f, iter(self)))
-    ))</code></pre>
+    return FTuple(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.ftuple.FTuple.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a reversed FTuple</p></div>
+<div class="desc"><p>Return a reversed FTuple, new instance.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; FTuple:
-    &#34;&#34;&#34;Return a reversed FTuple&#34;&#34;&#34;
+    &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
     return(FTuple(*reversed(self)))</code></pre>
 </details>
 </dd>
