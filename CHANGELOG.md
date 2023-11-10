@@ -33,6 +33,22 @@
 
 ## Version - PyPI releases begin with "v"
 
+### Version v0.9.0 - PyPI release date: 2023-11-09
+
+* First Beta release of grscheller.datastructures on PyPI
+* Infrastructure stable
+* Existing datastructures only should need API additions
+* Type annotations working extremely well
+* Pydoc3 used to generate documentaton on GitHub
+  * see https://grscheller.github.io/datastructures/
+* All iterators conform to Python language "iterator protocol"
+* Improved docstrings
+* Future directions:
+  * Develop some "typed" containers
+  * Add sequence & transverse methods to functional subpackage classes
+  * Monad transformers???
+  * Need to use this package in other projects to gain insight
+
 ### Version v0.8.6.0 - PyPI release date: 2023-11-05
     
 * Finally got queue.py & stack.py inheritance sorted out
