@@ -33,7 +33,7 @@
 
 ## Version - PyPI releases begin with "v"
 
-### Version v0.9.0 - PyPI release date: 2023-11-09
+### Version v0.9.1 - PyPI release date: 2023-11-09
 
 * First Beta release of grscheller.datastructures on PyPI
 * Infrastructure stable
