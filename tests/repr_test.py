@@ -55,15 +55,20 @@ class Test_repr:
     def test_PStack(self):
         s1 = PStack()
         assert repr(s1) == '||  ><'
-        assert repr(s1.push(42)) == '|| 42 ><'
-        assert repr(s1.push()) == '|| 42 ><'
-        assert repr(s1.push('Buggy the clown')) == "|| 42 <- 'Buggy the clown' ><"
-        assert repr(s1.pop()) == "'Buggy the clown'"
+        s1.push(42)
+        assert repr(s1) == '|| 42 ><'
+        s1.push()
+        assert repr(s1) == '|| 42 ><'
+        s1.push('Buggy the clown')
+        assert repr(s1) == "|| 42 <- 'Buggy the clown' ><"
+        assert s1.pop() == 'Buggy the clown'
+
         foo = PStack(1)
         bar = foo.copy()
         bar.pop()
         foo.push(2,3,4)
-        baz = bar.push(2).push(3).push(4)
+        bar.push(2); bar.push(3); bar.push(4)
+        baz = bar
         assert repr(foo) == '|| 1 <- 2 <- 3 <- 4 ><'
         assert repr(baz) == '|| 2 <- 3 <- 4 ><'
         assert repr(bar) == '|| 2 <- 3 <- 4 ><'

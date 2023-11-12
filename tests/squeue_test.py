@@ -15,6 +15,18 @@
 from grscheller.datastructures.squeue import SQueue
 
 class TestQueue:
+    def test_mutate_returns_none(self):
+        s1 = SQueue()
+        ret = s1.push(1,2,3)
+        assert ret == None
+        ret = s1.push(1,2,3)
+        assert ret == None
+        ret = s1.map(lambda x: x-1)
+        assert ret == None
+        assert s1.pop() + 1 == s1.pop() == 1
+        assert s1.peakLastIn() == 2
+        assert s1.peakNextOut() == 2
+
     def test_push_then_pop(self):
         q = SQueue()
         pushed = 42; q.push(pushed)

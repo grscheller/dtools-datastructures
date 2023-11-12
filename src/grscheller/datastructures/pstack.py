@@ -63,7 +63,7 @@ class PStack(Stack):
         pstack._count = self._count
         return pstack
 
-    def push(self, *ds: Any) -> Self:
+    def push(self, *ds: Any) -> None:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
@@ -72,7 +72,6 @@ class PStack(Stack):
                 node = Node(d, self._head)
                 self._head = node
                 self._count += 1
-        return self
 
     def pop(self) -> Any:
         """Pop data off of top of stack"""

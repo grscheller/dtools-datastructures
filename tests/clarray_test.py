@@ -15,6 +15,24 @@
 from grscheller.datastructures.clarray import CLArray
 
 class TestCLArray:
+    def test_mutate_returns_none(self):
+        cl1 = CLArray(0,1,2,3,4)
+        cl1[2] = cl1[4]
+        assert cl1[0] == 0
+        assert cl1[1] == 1
+        assert cl1[2] == 4
+        assert cl1[3] == 3
+        assert cl1[4] == 4
+        ret = cl1.map(lambda x: x*x, default=-1)
+        assert ret == None
+        ret = cl1.reverse()
+        assert ret == None
+        assert cl1[0] == 16
+        assert cl1[1] == 9
+        assert cl1[2] == 16
+        assert cl1[3] == 1
+        assert cl1[4] == 0
+
     def test_default(self):
         cl1 = CLArray(default=0)
         cl2 = CLArray(default=0)

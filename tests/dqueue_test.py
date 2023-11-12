@@ -15,6 +15,16 @@
 from grscheller.datastructures.dqueue import DQueue
 
 class TestDqueue:
+    def test_mutate_returns_none(self):
+        dq = DQueue()
+        ret = dq.pushL(1,2,3)
+        assert ret == None
+        ret = dq.pushR(1,2,3)
+        assert ret == None
+        ret = dq.map(lambda x: x-1)
+        assert ret == None
+        assert dq.popL() == dq.popR() == 2
+
     def test_push_then_pop(self):
         dq = DQueue()
         pushed = 42; dq.pushL(pushed)

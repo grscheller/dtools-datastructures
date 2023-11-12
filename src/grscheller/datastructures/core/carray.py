@@ -203,7 +203,7 @@ class CArray:
         self._list[self._front] = data
         self._count += 1
 
-    def popR(self) -> Any|None:
+    def popR(self) -> Any:
         """Pop data off rear of circle array, returns None if empty"""
         if self._count == 0:
             return None
@@ -214,7 +214,7 @@ class CArray:
             self._count -= 1
             return data
 
-    def popL(self) -> Any|None:
+    def popL(self) -> Any:
         """Pop data off front of circle array, returns None if empty"""
         if self._count == 0:
             return None
@@ -243,7 +243,7 @@ class CArray:
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> Self|CArray:
+    def map(self, f: Callable[[Any], Any], mut: bool=False) -> None|CArray:
         """Apply function over the circular array's contents.
 
         Return new circular array if mut=False (the default)
@@ -256,7 +256,7 @@ class CArray:
             self._front = newCArray._front
             self._rear = newCArray._rear
             self._list = newCArray._list
-            return self
+            return None
         return newCArray
 
 if __name__ == "__main__":

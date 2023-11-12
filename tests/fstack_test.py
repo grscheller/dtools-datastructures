@@ -16,11 +16,19 @@ from grscheller.datastructures.fstack import FStack
 from itertools import chain
 
 class Test_FStack:
-    def test_consTail(self):
+    def test_consHeadTail(self):
         s1 = FStack()
         s2 = s1.cons(42)
         head = s2.head(())
         assert head == 42
+        head = s1.head(())
+        assert head == ()
+        s3 = s2.cons(1).cons(2).cons(3)
+        s4 = s3.tail()
+        assert s4 == FStack(42, 1, 2)
+        assert s1 == FStack()
+        s0 = s1.tail(s1.cons(42).cons(0))
+        assert s0 == FStack(42, 0)
 
     def test_headOfEmptyStack(self):
         s1 = FStack()

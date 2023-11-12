@@ -16,6 +16,11 @@ from grscheller.datastructures.pstack import PStack
 from itertools import chain
 
 class TestPStack:
+    def test_mutate_returns_none(self):
+        ps = PStack(41)
+        ret = ps.push(1,2,3)
+        assert ret == None
+
     def test_pushThenPop(self):
         s1 = PStack()
         pushed = 42; s1.push(pushed)
@@ -82,7 +87,8 @@ class TestPStack:
 
     def test_equality(self):
         s1 = PStack(*range(3))
-        s2 = s1.copy().push(42)
+        s2 = s1.copy()
+        s2.push(42)
         assert s1 is not s2
         assert s1 != s2
 

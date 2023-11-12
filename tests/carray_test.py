@@ -15,6 +15,22 @@
 from grscheller.datastructures.core.carray import CArray
 
 class TestCarray:
+    def test_mutate_returns_none(self):
+        ca1 = CArray()
+        ca1.pushL(1); ca1.pushL(2)
+        ret = ca1.pushL(3)
+        assert ret == None
+        ca1.pushR(1); ca1.pushR(2)
+        ret = ca1.pushR(3)
+        assert ret == None
+        ret = ca1.map(lambda x: x+1, mut=True)
+        assert ret == None
+        assert ca1.popL() == ca1.popR() == 4
+        ca2 = ca1.map(lambda x: x+1, mut=False)
+        assert ca1 is not ca2
+        assert ca1 != ca2
+        assert len(ca1) == len(ca2)
+
     def test_push_then_pop(self):
         c = CArray()
         pushed = 42; c.pushL(pushed)

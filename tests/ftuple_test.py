@@ -15,6 +15,15 @@
 from grscheller.datastructures.ftuple import FTuple
 
 class TestFTuple:
+    def test_method_returns_copy(self):
+        ft1 = FTuple(1, 2, 3, 4, 5, 6)
+        ft2 = ft1.map(lambda x: x % 3)
+        assert ft2[2] == ft2[5] == 0
+        assert 2*ft1[2] == ft1[5] == 6
+        ft3 = ft1.reverse()
+        assert ft3 == FTuple(6, 5, 4, 3, 2, 1)
+        assert ft1 == FTuple(1, 2, 3, 4, 5, 6)
+
     def test_empty(self):
         ft1 = FTuple()
         ft2 = FTuple()
