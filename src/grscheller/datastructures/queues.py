@@ -34,54 +34,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from itertools import chain
 from .core.iterlib import merge, exhaust
-from .core.carray import CArray
-
-class Queue():
-    """Abstract base class for the purposes of DRY inheritance of classes
-    implementing queue type data structures with a list based circular array.
-    Each queue object "has-a" (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each Queue subclass must
-    ensure that None values do not get pushed onto the circular array.
-    """
-    def __init__(self, *ds):
-        """Construct a queue data structure. Cull None values."""
-        self._carray = CArray()
-        for d in ds:
-            if d is not None:
-                self._carray.pushR(d)
-
-    def __bool__(self):
-        """Returns true if queue is not empty."""
-        return len(self._carray) > 0
-
-    def __len__(self):
-        """Returns current number of values in queue."""
-        return len(self._carray)
-
-    def __iter__(self):
-        """Iterator yielding data currently stored in queue. Data yielded in
-        natural FIFO order.
-        """
-        cached = self._carray.copy()
-        for pos in range(len(cached)):
-            yield cached[pos]
-
-    def __reversed__(self):
-        """Reverse iterate over the current state of the queue."""
-        for data in reversed(self._carray.copy()):
-            yield data
-
-    def __eq__(self, other):
-        """Returns True if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
-        """
-        if not isinstance(other, type(self)):
-            return False
-        return self._carray == other._carray
-
-    def copy(self) -> Queue:
-        raise NotImplementedError
-
+from .core.queue import Queue
 
 class SQueue(Queue):
     """Single sided queue datastructure. Will resize itself as needed.
