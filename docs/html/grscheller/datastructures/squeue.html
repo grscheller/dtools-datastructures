@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.queues API documentation</title>
+<title>grscheller.datastructures.squeue API documentation</title>
 <meta name="description" content="Module grscheller.datastructure.queue - queue based datastructures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.queues</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.squeue</code></h1>
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.queue - queue based datastructures</p>
@@ -27,9 +27,6 @@
 &amp; popping from the queue. Obtaining length (number of elements) of a queue is
 also a O(1) operation. Implemented with a Python List based circular array.
 Does not store None as a value.</p>
-<h2 id="classes">Classes</h2>
-<p>grscheller.datastructure.SQueue - Single sided FIFO queue
-grscheller.datastructure.DQueue - Double sided FIFO/LIFO queue</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -54,22 +51,16 @@ Module implementing stateful FIFO data structures with amortized O(1) pushing
 &amp; popping from the queue. Obtaining length (number of elements) of a queue is
 also a O(1) operation. Implemented with a Python List based circular array.
 Does not store None as a value.
-
-Classes:
-  grscheller.datastructure.SQueue - Single sided FIFO queue
-  grscheller.datastructure.DQueue - Double sided FIFO/LIFO queue
 &#34;&#34;&#34;
 
 from __future__ import annotations
 
-__all__ = [&#39;SQueue&#39;, &#39;DQueue&#39;]
+__all__ = [&#39;SQueue&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import merge, exhaust
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -124,71 +115,6 @@ class SQueue(Queue):
         self._carray = SQueue(*map(f, self))._carray
 
 
-class DQueue(Queue):
-    &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DQueue.
-    &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
-    def __repr__(self):
-        &#34;&#34;&#34;Display the DQueue showing the data contained.&#34;&#34;&#34;
-        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(repr, self)) + &#34; &gt;&lt;&#34;
-
-    def copy(self) -&gt; DQueue:
-        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
-        return dqueue
-
-    def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
-    def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushL(d)
-
-    def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popR()
-        else:
-            return None
-
-    def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
-        else:
-            return None
-
-    def peakR(self) -&gt; Any:
-        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
-        else:
-            return None
-
-    def peakL(self) -&gt; Any:
-        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
-        else:
-            return None
-
-    def map(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-        returned by f.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*map(f, self))._carray
-
-
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
 </details>
@@ -202,224 +128,7 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.queues.DQueue"><code class="flex name class">
-<span>class <span class="ident">DQueue</span></span>
-<span>(</span><span>*ds)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Double sided queue datastructure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto a DQueue.</p>
-<p>Construct a FIFO/LIFO double sided queue data structure.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class DQueue(Queue):
-    &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DQueue.
-    &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
-    def __repr__(self):
-        &#34;&#34;&#34;Display the DQueue showing the data contained.&#34;&#34;&#34;
-        return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(repr, self)) + &#34; &gt;&lt;&#34;
-
-    def copy(self) -&gt; DQueue:
-        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
-        return dqueue
-
-    def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
-    def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushL(d)
-
-    def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popR()
-        else:
-            return None
-
-    def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
-        else:
-            return None
-
-    def peakR(self) -&gt; Any:
-        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
-        else:
-            return None
-
-    def peakL(self) -&gt; Any:
-        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
-        else:
-            return None
-
-    def map(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-        returned by f.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*map(f, self))._carray</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
-</ul>
-<h3>Methods</h3>
-<dl>
-<dt id="grscheller.datastructures.queues.DQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DQueue" href="#grscheller.datastructures.queues.DQueue">DQueue</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return shallow copy of the DQueue in O(n) time &amp; space complexity.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def copy(self) -&gt; DQueue:
-    &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-    dqueue = DQueue()
-    dqueue._carray = self._carray.copy()
-    return dqueue</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the DQueue's contents. Suppress any None values
-returned by f.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-    returned by f.
-    &#34;&#34;&#34;
-    self._carray = DQueue(*map(f, self))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return left-most element of the DQueue if it exists.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def peakL(self) -&gt; Any:
-    &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[0]
-    else:
-        return None</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.peakR"><code class="name flex">
-<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return right-most element of the DQueue if it exists.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def peakR(self) -&gt; Any:
-    &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[-1]
-    else:
-        return None</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Pop data off front of the DQueue</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def popL(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray.popL()
-    else:
-        return None</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Pop data off rear of the DQueue</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def popR(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray.popR()
-    else:
-        return None</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.pushL"><code class="name flex">
-<span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Push data left to right onto front of DQueue.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def pushL(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
-    for d in ds:
-        if d != None:
-            self._carray.pushL(d)</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queues.DQueue.pushR"><code class="name flex">
-<span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Push data left to right onto rear of the DQueue.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def pushR(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
-    for d in ds:
-        if d != None:
-            self._carray.pushR(d)</code></pre>
-</details>
-</dd>
-</dl>
-</dd>
-<dt id="grscheller.datastructures.queues.SQueue"><code class="flex name class">
+<dt id="grscheller.datastructures.squeue.SQueue"><code class="flex name class">
 <span>class <span class="ident">SQueue</span></span>
 <span>(</span><span>*ds)</span>
 </code></dt>
@@ -488,8 +197,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queues.SQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.SQueue" href="#grscheller.datastructures.queues.SQueue">SQueue</a></span>
+<dt id="grscheller.datastructures.squeue.SQueue.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.squeue.SQueue" href="#grscheller.datastructures.squeue.SQueue">SQueue</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the SQueue in O(n) time &amp; space complexity.</p></div>
@@ -504,7 +213,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     return squeue</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queues.SQueue.map"><code class="name flex">
+<dt id="grscheller.datastructures.squeue.SQueue.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
@@ -521,7 +230,7 @@ returned by f.</p></div>
     self._carray = SQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queues.SQueue.peakLastIn"><code class="name flex">
+<dt id="grscheller.datastructures.squeue.SQueue.peakLastIn"><code class="name flex">
 <span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -538,7 +247,7 @@ returned by f.</p></div>
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queues.SQueue.peakNextOut"><code class="name flex">
+<dt id="grscheller.datastructures.squeue.SQueue.peakNextOut"><code class="name flex">
 <span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -555,7 +264,7 @@ returned by f.</p></div>
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queues.SQueue.pop"><code class="name flex">
+<dt id="grscheller.datastructures.squeue.SQueue.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -572,7 +281,7 @@ returned by f.</p></div>
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queues.SQueue.push"><code class="name flex">
+<dt id="grscheller.datastructures.squeue.SQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -607,27 +316,14 @@ returned by f.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.queues.DQueue" href="#grscheller.datastructures.queues.DQueue">DQueue</a></code></h4>
+<h4><code><a title="grscheller.datastructures.squeue.SQueue" href="#grscheller.datastructures.squeue.SQueue">SQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queues.DQueue.copy" href="#grscheller.datastructures.queues.DQueue.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.map" href="#grscheller.datastructures.queues.DQueue.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.peakL" href="#grscheller.datastructures.queues.DQueue.peakL">peakL</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.peakR" href="#grscheller.datastructures.queues.DQueue.peakR">peakR</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.popL" href="#grscheller.datastructures.queues.DQueue.popL">popL</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.popR" href="#grscheller.datastructures.queues.DQueue.popR">popR</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.pushL" href="#grscheller.datastructures.queues.DQueue.pushL">pushL</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DQueue.pushR" href="#grscheller.datastructures.queues.DQueue.pushR">pushR</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="grscheller.datastructures.queues.SQueue" href="#grscheller.datastructures.queues.SQueue">SQueue</a></code></h4>
-<ul class="two-column">
-<li><code><a title="grscheller.datastructures.queues.SQueue.copy" href="#grscheller.datastructures.queues.SQueue.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.SQueue.map" href="#grscheller.datastructures.queues.SQueue.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.SQueue.peakLastIn" href="#grscheller.datastructures.queues.SQueue.peakLastIn">peakLastIn</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.SQueue.peakNextOut" href="#grscheller.datastructures.queues.SQueue.peakNextOut">peakNextOut</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.SQueue.pop" href="#grscheller.datastructures.queues.SQueue.pop">pop</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.SQueue.push" href="#grscheller.datastructures.queues.SQueue.push">push</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.copy" href="#grscheller.datastructures.squeue.SQueue.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.map" href="#grscheller.datastructures.squeue.SQueue.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.peakLastIn" href="#grscheller.datastructures.squeue.SQueue.peakLastIn">peakLastIn</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.peakNextOut" href="#grscheller.datastructures.squeue.SQueue.peakNextOut">peakNextOut</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.pop" href="#grscheller.datastructures.squeue.SQueue.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.squeue.SQueue.push" href="#grscheller.datastructures.squeue.SQueue.push">push</a></code></li>
 </ul>
 </li>
 </ul>

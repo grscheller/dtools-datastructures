@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.queues import DQueue
+from grscheller.datastructures.dqueue import DQueue
 
 class TestDqueue:
     def test_push_then_pop(self):

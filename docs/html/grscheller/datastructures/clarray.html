@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.flarray API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.flarray - Fixed length array …" />
+<title>grscheller.datastructures.clarray API documentation</title>
+<meta name="description" content="Module grscheller.datastructure.clarray - constant length array …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,14 +19,14 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.flarray</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.clarray</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.flarray - Fixed length array</p>
+<p>Module grscheller.datastructure.clarray - constant length array</p>
 <p>Module implementing a data structure with a fixed length and O(1) data
 access. The arrays will have length &gt; 0 and are guaranteed not to change size.</p>
 <p>Note: None values are allowed in this data structures due to the
-fixed length size guarantees provided by the FLArray class.</p>
+fixed length size guarantees provided by the CLArray class.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -45,18 +45,18 @@ fixed length size guarantees provided by the FLArray class.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.flarray - Fixed length array
+&#34;&#34;&#34;Module grscheller.datastructure.clarray - constant length array
 
 Module implementing a data structure with a fixed length and O(1) data
 access. The arrays will have length &gt; 0 and are guaranteed not to change size.
 
 Note: None values are allowed in this data structures due to the
-      fixed length size guarantees provided by the FLArray class.
+      fixed length size guarantees provided by the CLArray class.
 &#34;&#34;&#34;
 
 from __future__ import annotations
 
-__all__ = [&#39;FLArray&#39;]
+__all__ = [&#39;CLArray&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
@@ -65,7 +65,7 @@ from typing import Any, Callable, Never, Union
 from itertools import chain
 from .core.iterlib import exhaust, merge
 
-class FLArray():
+class CLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
     length &gt; 0.
 
@@ -95,7 +95,7 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, True, _):
@@ -104,7 +104,7 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, _, True):
@@ -137,7 +137,7 @@ class FLArray():
         return False
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the size of the flarray&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
         return self._size
 
     def __getitem__(self, index: int) -&gt; Union[Any, Never]:
@@ -145,7 +145,7 @@ class FLArray():
         if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
-            msg = f&#39;FLArray index = {index} not between {l} and {h}&#39;
+            msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while getting value&#39;
             raise IndexError(msg)
         return self._list[index]
@@ -155,20 +155,20 @@ class FLArray():
         if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
-            msg = f&#39;FLArray index = {index} not between {l} and {h}&#39;
+            msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while setting value&#39;
             raise IndexError(msg)
         self._list[index] = value
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the flarray. Copy is made so
+        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
         original source can safely mutate.
         &#34;&#34;&#34;
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the flarray. Copy is
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
         made so original source can safely mutate.
         &#34;&#34;&#34;
         for data in reversed(self._list.copy()):
@@ -183,45 +183,45 @@ class FLArray():
         return self._list == other._list
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in flarray&#34;&#34;&#34;
+        &#34;&#34;&#34;Display data in the CLArray&#34;&#34;&#34;
         # __iter__ already makes a defensive copy
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
-    def __add__(self, other: FLArray) -&gt; FLArray:
-        &#34;&#34;&#34;Add FLArrays component-wise left to right.&#34;&#34;&#34;
+    def __add__(self, other: CLArray) -&gt; CLArray:
+        &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;
         if (lhs := self._size) != (rhs := other._size):
-            msg = &#39;FLArray size mismatch: &#39;
+            msg = &#39;CLArray size mismatch: &#39;
             msg += f&#39;LHS size={lhs} but RHS size={rhs}&#39;
             raise ValueError(msg)
-        flarray = FLArray(size=lhs)
+        clarray = CLArray(size=lhs)
         for ii in range(lhs):
-            flarray[ii] = self[ii] + other[ii]
-        return flarray
+            clarray[ii] = self[ii] + other[ii]
+        return clarray
 
-    def copy(self) -&gt; FLArray:
-        &#34;&#34;&#34;Return shallow copy of the flarray in O(n) time &amp; space complexity&#34;&#34;&#34;
-        return FLArray(*self)
+    def copy(self) -&gt; CLArray:
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
+        return CLArray(*self)
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
+        &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
     def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -&gt; FLArray|None:
-        &#34;&#34;&#34;Apply function over flarray contents.
+            size: int=0, default: Any = None) -&gt; CLArray|None:
+        &#34;&#34;&#34;Apply function over the CLArray contents.
           - mutate if mut is true (the default)
-          - otherwise return a new FLArray with the mapped contents
+          - otherwise return a new CLArray with the mapped contents
           - size is ignored if mut is true
           - default value to use if f returns None (default is None)
         &#34;&#34;&#34;
         if mut == True:
             size = 0
-        flarray = FLArray(*map(f, self), size=size, default=default)
+        clarray = CLArray(*map(f, self), size=size, default=default)
         if mut:
-            self._list = flarray._list
+            self._list = clarray._list
             return None
         else:
-            return flarray
+            return clarray
 
 
 if __name__ == &#34;__main__&#34;:
@@ -237,8 +237,8 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.flarray.FLArray"><code class="flex name class">
-<span>class <span class="ident">FLArray</span></span>
+<dt id="grscheller.datastructures.clarray.CLArray"><code class="flex name class">
+<span>class <span class="ident">CLArray</span></span>
 <span>(</span><span>*ds, size: int = 0, default: Any = None)</span>
 </code></dt>
 <dd>
@@ -255,7 +255,7 @@ is provided, return array with a default value and a size = 1.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FLArray():
+<pre><code class="python">class CLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
     length &gt; 0.
 
@@ -285,7 +285,7 @@ is provided, return array with a default value and a size = 1.</p>
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, True, _):
@@ -294,7 +294,7 @@ is provided, return array with a default value and a size = 1.</p>
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, _, True):
@@ -327,7 +327,7 @@ is provided, return array with a default value and a size = 1.</p>
         return False
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the size of the flarray&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
         return self._size
 
     def __getitem__(self, index: int) -&gt; Union[Any, Never]:
@@ -335,7 +335,7 @@ is provided, return array with a default value and a size = 1.</p>
         if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
-            msg = f&#39;FLArray index = {index} not between {l} and {h}&#39;
+            msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while getting value&#39;
             raise IndexError(msg)
         return self._list[index]
@@ -345,20 +345,20 @@ is provided, return array with a default value and a size = 1.</p>
         if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
-            msg = f&#39;FLArray index = {index} not between {l} and {h}&#39;
+            msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while setting value&#39;
             raise IndexError(msg)
         self._list[index] = value
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the flarray. Copy is made so
+        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
         original source can safely mutate.
         &#34;&#34;&#34;
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the flarray. Copy is
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
         made so original source can safely mutate.
         &#34;&#34;&#34;
         for data in reversed(self._list.copy()):
@@ -373,69 +373,69 @@ is provided, return array with a default value and a size = 1.</p>
         return self._list == other._list
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in flarray&#34;&#34;&#34;
+        &#34;&#34;&#34;Display data in the CLArray&#34;&#34;&#34;
         # __iter__ already makes a defensive copy
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
-    def __add__(self, other: FLArray) -&gt; FLArray:
-        &#34;&#34;&#34;Add FLArrays component-wise left to right.&#34;&#34;&#34;
+    def __add__(self, other: CLArray) -&gt; CLArray:
+        &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;
         if (lhs := self._size) != (rhs := other._size):
-            msg = &#39;FLArray size mismatch: &#39;
+            msg = &#39;CLArray size mismatch: &#39;
             msg += f&#39;LHS size={lhs} but RHS size={rhs}&#39;
             raise ValueError(msg)
-        flarray = FLArray(size=lhs)
+        clarray = CLArray(size=lhs)
         for ii in range(lhs):
-            flarray[ii] = self[ii] + other[ii]
-        return flarray
+            clarray[ii] = self[ii] + other[ii]
+        return clarray
 
-    def copy(self) -&gt; FLArray:
-        &#34;&#34;&#34;Return shallow copy of the flarray in O(n) time &amp; space complexity&#34;&#34;&#34;
-        return FLArray(*self)
+    def copy(self) -&gt; CLArray:
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
+        return CLArray(*self)
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
+        &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
     def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -&gt; FLArray|None:
-        &#34;&#34;&#34;Apply function over flarray contents.
+            size: int=0, default: Any = None) -&gt; CLArray|None:
+        &#34;&#34;&#34;Apply function over the CLArray contents.
           - mutate if mut is true (the default)
-          - otherwise return a new FLArray with the mapped contents
+          - otherwise return a new CLArray with the mapped contents
           - size is ignored if mut is true
           - default value to use if f returns None (default is None)
         &#34;&#34;&#34;
         if mut == True:
             size = 0
-        flarray = FLArray(*map(f, self), size=size, default=default)
+        clarray = CLArray(*map(f, self), size=size, default=default)
         if mut:
-            self._list = flarray._list
+            self._list = clarray._list
             return None
         else:
-            return flarray</code></pre>
+            return clarray</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.flarray.FLArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></span>
+<dt id="grscheller.datastructures.clarray.CLArray.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the flarray in O(n) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of the CLArray in O(n) time &amp; space complexity</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self) -&gt; FLArray:
-    &#34;&#34;&#34;Return shallow copy of the flarray in O(n) time &amp; space complexity&#34;&#34;&#34;
-    return FLArray(*self)</code></pre>
+<pre><code class="python">def copy(self) -&gt; CLArray:
+    &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
+    return CLArray(*self)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.flarray.FLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True, size: int = 0, default: Any = None) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a> | None</span>
+<dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True, size: int = 0, default: Any = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a> | None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over flarray contents.
+<div class="desc"><p>Apply function over the CLArray contents.
 - mutate if mut is true (the default)
-- otherwise return a new FLArray with the mapped contents
+- otherwise return a new CLArray with the mapped contents
 - size is ignored if mut is true
 - default value to use if f returns None (default is None)</p></div>
 <details class="source">
@@ -443,34 +443,34 @@ is provided, return array with a default value and a size = 1.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True, 
-        size: int=0, default: Any = None) -&gt; FLArray|None:
-    &#34;&#34;&#34;Apply function over flarray contents.
+        size: int=0, default: Any = None) -&gt; CLArray|None:
+    &#34;&#34;&#34;Apply function over the CLArray contents.
       - mutate if mut is true (the default)
-      - otherwise return a new FLArray with the mapped contents
+      - otherwise return a new CLArray with the mapped contents
       - size is ignored if mut is true
       - default value to use if f returns None (default is None)
     &#34;&#34;&#34;
     if mut == True:
         size = 0
-    flarray = FLArray(*map(f, self), size=size, default=default)
+    clarray = CLArray(*map(f, self), size=size, default=default)
     if mut:
-        self._list = flarray._list
+        self._list = clarray._list
         return None
     else:
-        return flarray</code></pre>
+        return clarray</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.flarray.FLArray.reverse"><code class="name flex">
+<dt id="grscheller.datastructures.clarray.CLArray.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reversed the FLArray</p></div>
+<div class="desc"><p>Reversed the CLArray</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; None:
-    &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
+    &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
     self._list.reverse()</code></pre>
 </details>
 </dd>
@@ -493,11 +493,11 @@ is provided, return array with a default value and a size = 1.</p>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></code></h4>
+<h4><code><a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></code></h4>
 <ul class="">
-<li><code><a title="grscheller.datastructures.flarray.FLArray.copy" href="#grscheller.datastructures.flarray.FLArray.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.flarray.FLArray.map" href="#grscheller.datastructures.flarray.FLArray.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.flarray.FLArray.reverse" href="#grscheller.datastructures.flarray.FLArray.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.copy" href="#grscheller.datastructures.clarray.CLArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.map" href="#grscheller.datastructures.clarray.CLArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.reverse" href="#grscheller.datastructures.clarray.CLArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

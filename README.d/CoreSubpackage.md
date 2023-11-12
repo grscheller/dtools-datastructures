@@ -21,10 +21,6 @@ grscheller.datastructures package. Freely stores None as a value.
 
 Module of functions used to manipulate Python iterators.
 
-* Function **mapIter**(iter: iterator, f: Callable[[Any], Any]) -> Iterator
-  * DEPRECATED - written before I knew Python map builtin
-  * lazily map a function over an iterator stream
-
 * Function **concat**(*iter: iterator) -> Iterator
   * DEPRECATED - use itertools.chain instead
   * Sequentually concatenate multiple iterators into one
@@ -39,16 +35,6 @@ Module of functions used to manipulate Python iterators.
 #### Examples
 
 ```python
-   In [1]: from grscheller.datastructures.iterlib import *
-
-   In [4]: for aa in mapIter(iter([1,2,3,42]), lambda x: x*x):
-      ...:     print(aa)
-      ...:
-   1
-   4
-   9
-   1764
-
    In [2]: for aa in concat(iter([1,2,3,4]), iter(['a','b'])):
       ...:     print(aa)
       ...:
@@ -66,6 +52,16 @@ Module of functions used to manipulate Python iterators.
    a
    2
    b
+
+   In [3]: for aa in exhaust(iter([1,2,3,4]), iter(['a','b'])):
+      ...:     print(aa)
+      ...:
+   1
+   a
+   2
+   b
+   3
+   4
 ```
 
 #### Why write my own iterator library module
@@ -81,7 +77,7 @@ I started implementing and using these types of tools.
 A generator is a type of iterator implemented via a function where at
 least one return statement is replaced by a yield statement. Python also
 has syntax to produce generators from "generator comprehensions" similar
-to the syntax used to produce lists from "list comprehensions."
+to the syntax used for "list comprehensions."
 
 Don't confuse an object being iterable with being an iterator.
 
@@ -118,8 +114,8 @@ the following two methods:
   * Return the next item from the iterator. If there are no further
     items, raise the StopIteration exception.
 
-Note that by using a generator for a class's __iter__ method will not
-only provide both of the the above methods, but the iteterators created
+Note that using a generator for a class's __iter__ method will not
+only provide both of the the above methods, but the iterators created
 by `for ... in` syntax and the `map` builtin are inaccessible to the
 rest of the code. This package defensively uses cache copies of data in
 such generators so that the original objects can safely mutate while the

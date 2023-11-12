@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.flarray - Fixed length array
+"""Module grscheller.datastructure.clarray - constant length array
 
 Module implementing a data structure with a fixed length and O(1) data
 access. The arrays will have length > 0 and are guaranteed not to change size.
 
 Note: None values are allowed in this data structures due to the
-      fixed length size guarantees provided by the FLArray class.
+      fixed length size guarantees provided by the CLArray class.
 """
 
 from __future__ import annotations
 
-__all__ = ['FLArray']
+__all__ = ['CLArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -32,7 +32,7 @@ from typing import Any, Callable, Never, Union
 from itertools import chain
 from .core.iterlib import exhaust, merge
 
-class FLArray():
+class CLArray():
     """Class implementing a stateful fixed length array data structure of
     length > 0.
 
@@ -62,7 +62,7 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, True, _):
@@ -71,7 +71,7 @@ class FLArray():
                     self._size = dsize
                     self._list = dlist
                 else:
-                    # ensure FLArray not empty
+                    # ensure CLArray not empty
                     self._size = 1
                     self._list = [default]
             case (_, _, True):
@@ -104,7 +104,7 @@ class FLArray():
         return False
 
     def __len__(self) -> int:
-        """Returns the size of the flarray"""
+        """Returns the size of the CLArray"""
         return self._size
 
     def __getitem__(self, index: int) -> Union[Any, Never]:
@@ -112,7 +112,7 @@ class FLArray():
         if not -size <= index < size:
             l = -size
             h = size - 1
-            msg = f'FLArray index = {index} not between {l} and {h}'
+            msg = f'CLArray index = {index} not between {l} and {h}'
             msg += ' while getting value'
             raise IndexError(msg)
         return self._list[index]
@@ -122,20 +122,20 @@ class FLArray():
         if not -size <= index < size:
             l = -size
             h = size - 1
-            msg = f'FLArray index = {index} not between {l} and {h}'
+            msg = f'CLArray index = {index} not between {l} and {h}'
             msg += ' while setting value'
             raise IndexError(msg)
         self._list[index] = value
 
     def __iter__(self):
-        """Iterate over the current dtate of the flarray. Copy is made so
+        """Iterate over the current dtate of the CLArray. Copy is made so
         original source can safely mutate.
         """
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the flarray. Copy is
+        """Reverse iterate over the current state of the CLArray. Copy is
         made so original source can safely mutate.
         """
         for data in reversed(self._list.copy()):
@@ -150,45 +150,45 @@ class FLArray():
         return self._list == other._list
 
     def __repr__(self):
-        """Display data in flarray"""
+        """Display data in the CLArray"""
         # __iter__ already makes a defensive copy
         return "[|" + ", ".join(map(repr, self)) + "|]"
 
-    def __add__(self, other: FLArray) -> FLArray:
-        """Add FLArrays component-wise left to right."""
+    def __add__(self, other: CLArray) -> CLArray:
+        """Add CLArray component-wise left to right."""
         if (lhs := self._size) != (rhs := other._size):
-            msg = 'FLArray size mismatch: '
+            msg = 'CLArray size mismatch: '
             msg += f'LHS size={lhs} but RHS size={rhs}'
             raise ValueError(msg)
-        flarray = FLArray(size=lhs)
+        clarray = CLArray(size=lhs)
         for ii in range(lhs):
-            flarray[ii] = self[ii] + other[ii]
-        return flarray
+            clarray[ii] = self[ii] + other[ii]
+        return clarray
 
-    def copy(self) -> FLArray:
-        """Return shallow copy of the flarray in O(n) time & space complexity"""
-        return FLArray(*self)
+    def copy(self) -> CLArray:
+        """Return shallow copy of the CLArray in O(n) time & space complexity"""
+        return CLArray(*self)
 
     def reverse(self) -> None:
-        """Reversed the FLArray"""
+        """Reversed the CLArray"""
         self._list.reverse()
 
     def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -> FLArray|None:
-        """Apply function over flarray contents.
+            size: int=0, default: Any = None) -> CLArray|None:
+        """Apply function over the CLArray contents.
           - mutate if mut is true (the default)
-          - otherwise return a new FLArray with the mapped contents
+          - otherwise return a new CLArray with the mapped contents
           - size is ignored if mut is true
           - default value to use if f returns None (default is None)
         """
         if mut == True:
             size = 0
-        flarray = FLArray(*map(f, self), size=size, default=default)
+        clarray = CLArray(*map(f, self), size=size, default=default)
         if mut:
-            self._list = flarray._list
+            self._list = clarray._list
             return None
         else:
-            return flarray
+            return clarray
 
 
 if __name__ == "__main__":

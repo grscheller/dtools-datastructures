@@ -18,22 +18,16 @@ Module implementing stateful FIFO data structures with amortized O(1) pushing
 & popping from the queue. Obtaining length (number of elements) of a queue is
 also a O(1) operation. Implemented with a Python List based circular array.
 Does not store None as a value.
-
-Classes:
-  grscheller.datastructure.SQueue - Single sided FIFO queue
-  grscheller.datastructure.DQueue - Double sided FIFO/LIFO queue
 """
 
 from __future__ import annotations
 
-__all__ = ['SQueue', 'DQueue']
+__all__ = ['SQueue']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import merge, exhaust
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -86,71 +80,6 @@ class SQueue(Queue):
         returned by f.
         """
         self._carray = SQueue(*map(f, self))._carray
-
-
-class DQueue(Queue):
-    """Double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DQueue.
-    """
-    def __init__(self, *ds):
-        """Construct a FIFO/LIFO double sided queue data structure."""
-        super().__init__(*ds)
-
-    def __repr__(self):
-        """Display the DQueue showing the data contained."""
-        return ">< " + " | ".join(map(repr, self)) + " ><"
-
-    def copy(self) -> DQueue:
-        """Return shallow copy of the DQueue in O(n) time & space complexity."""
-        dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
-        return dqueue
-
-    def pushR(self, *ds: Any) -> None:
-        """Push data left to right onto rear of the DQueue."""
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
-    def pushL(self, *ds: Any) -> None:
-        """Push data left to right onto front of DQueue."""
-        for d in ds:
-            if d != None:
-                self._carray.pushL(d)
-
-    def popR(self) -> Any:
-        """Pop data off rear of the DQueue"""
-        if len(self._carray) > 0:
-            return self._carray.popR()
-        else:
-            return None
-
-    def popL(self) -> Any:
-        """Pop data off front of the DQueue"""
-        if len(self._carray) > 0:
-            return self._carray.popL()
-        else:
-            return None
-
-    def peakR(self) -> Any:
-        """Return right-most element of the DQueue if it exists."""
-        if len(self._carray) > 0:
-            return self._carray[-1]
-        else:
-            return None
-
-    def peakL(self) -> Any:
-        """Return left-most element of the DQueue if it exists."""
-        if len(self._carray) > 0:
-            return self._carray[0]
-        else:
-            return None
-
-    def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the DQueue's contents. Suppress any None values
-        returned by f.
-        """
-        self._carray = DQueue(*map(f, self))._carray
 
 
 if __name__ == "__main__":

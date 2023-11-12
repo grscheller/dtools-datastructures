@@ -1,22 +1,26 @@
 # grscheller.datastructures package level modules
 
-Modules providing the package's top level data structures.
+Modules providing the package's top level data structures. Date
+structure classes whose names begin with an "F" have functional
+interfaces and are are immutable (like Python Tuples).
 
 ## Non-typed data structures
 
-* [flarray module](#flarray-module)
-* [ftuple module](#ftuple-module)
-* [queue module](#queue-module)
-* [stack module](#stack-module)
+* [clarray module](#clarray-module): provides CLArray class
+* [ftuple module](#ftuple-module): provides FTuple class
+* [squeue module](#squeue-module): provides SQueue class
+* [dqueue module](#dqueue-module): provides DQueue class
+* [pstack module](#pstack-module): provides PStack class
+* [fstack module](#fstack-module): provides FStack class
 
-### flarray module
+### clarray module
 
 Provides a fixed length array of elements of different types.
 
-* Class **FLArray**
+* Class **CLArray**
   * O(1) data access
   * once created, guaranteed not to change size
-  * will store None as a value due to fix length guarentees
+  * will store None as a value due to fix length guarantees
 
 ### ftuple module
 
@@ -27,17 +31,10 @@ Provides a functional tuple-like object.
   * O(1) data access
   * does not store None values
 
-### queue module
+### squeue module
 
-Provides a single & double ended queues. The queues are implemented with
-a circular arrays and will resize themselve as needed.
-
-* Class **DQueue**
-  * O(1) pushes & pops either end
-  * O(1) peaks either end
-  * O(1) length determination
-  * O(n) copy
-  * does not store None values
+Provides a single ended queue. The queue is implemented with a circular
+arrays and will resize themselve as needed.
 
 * Class **SQueue**
   * O(1) pushes & pops
@@ -46,13 +43,22 @@ a circular arrays and will resize themselve as needed.
   * O(n) copy
   * does not store None values
 
-These queues are implemented with circular arrays and will resize
-themseves as needed.
+### dqueue module
 
-### stack module
+Provides a double ended queue. The queue is implemented with a circular
+arrays and will resize themselve as needed.
+
+* Class **DQueue**
+  * O(1) pushes & pops either end
+  * O(1) peaks either end
+  * O(1) length determination
+  * O(n) copy
+  * does not store None values
+
+### pstack module
 
 Provides a LIFO singlelarly linked data structure designed to share
-data between different Stack objects.
+data between different PStack objects.
 
 * Class **PStack**
   * PStack objects are stateful with a procudural interface
@@ -61,6 +67,11 @@ data between different Stack objects.
   * O(1) length determination
   * O(1) copy
   * does not store None values
+
+### fstack module
+
+Provides a LIFO singlelarly linked data structure designed to share
+data between different FStack objects.
 
 * Class **FStack**
   * FStack objects are immutable with a functional interface

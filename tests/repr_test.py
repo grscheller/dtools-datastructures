@@ -16,8 +16,9 @@ from grscheller.datastructures.functional import Maybe, Nothing, Some
 from grscheller.datastructures.functional import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
-from grscheller.datastructures import SQueue, DQueue, FLArray
-from grscheller.datastructures import FLArray, FTuple
+from grscheller.datastructures import SQueue, DQueue
+from grscheller.datastructures import CLArray, FTuple
+from grscheller.datastructures import FTuple
 
 
 def addLt42(x: int, y: int) -> int|None:
@@ -113,10 +114,10 @@ class Test_repr:
         assert repr(dq1) == '>< 5 | 4 | 3 | 2 ><'
         assert repr(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
-    def test_flarray(self):
-        fl = FLArray(1,2,3,4,5)
-        fl[2] = 42
-        assert repr(fl) == '[|1, 2, 42, 4, 5|]'
+    def test_clarray(self):
+        cl = CLArray(1,2,3,4,5)
+        cl[2] = 42
+        assert repr(cl) == '[|1, 2, 42, 4, 5|]'
 
     def test_ftuple(self):
         ft1 = FTuple(1,2,3,4,5)

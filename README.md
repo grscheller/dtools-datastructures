@@ -1,7 +1,8 @@
 # Python grscheller.datastructures PyPI Package
 
 Data structures geared to different algorithmic use cases. Supportive of
-a functional style of programming, yet still endeavor to be Pythonic.
+a Functional Programming (FP) style of programming, yet still endeavor
+to be Pythonic.
 
 ## Overview
 
@@ -18,11 +19,13 @@ The data structures in this package:
 * Safely share data between multiple data structure instances by making
   shared data immutable and inaccessible to client code.
 * Don't force exception driven code paths upon client code.
+* Don't force FP on client code, FP is opt-in.
 * Code to the "happy" path & provide simple FP tools for "exceptional"
   events.
 
-Sometimes the real power of a data structure comes not from what it
-empowers you to do, but from what it prevents you from doing.
+Sometimes the real power of a data structure comes not from what
+it empowers you to do, but from what it prevents you from doing
+to yourself.
 
 ### Package overview grscheller.datastructures
 
@@ -69,11 +72,10 @@ external tooling work well. These features are slated for Python 3.13
 but work now in Python 3.11 by including *annotations* from
 `__future__`.
 
-The only good current information I have found on so far on type
-annotations is in the Python documentation [here][5]. The PyPI pdoc3
-package generates documentation based on annotations, docstrings, syntax
-tree, and other special comment strings. See pdoc3 documentation
-[here][6].
+The best current information I have found so far on type annotations is
+in the Python documentation [here][5]. The PyPI pdoc3 package generates
+documentation based on annotations, docstrings, syntax tree, and other
+special comment strings. See pdoc3 documentation [here][6].
 
 ---
 
