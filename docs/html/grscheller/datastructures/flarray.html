@@ -80,9 +80,13 @@ class FLArray():
 
     Permits storing None as a value.
     &#34;&#34;&#34;
-    def __init__(self, *ds, size: int = 0, default: Any = None):
+    def __init__(self, *ds, size: int = 0, default: Any=None):
         &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
-        dlist = list(ds)
+        def swapNones(d: Any):
+            if d is None:
+                return default
+            return d
+        dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
             case (0, _, _):
@@ -202,44 +206,23 @@ class FLArray():
         &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
+    def map(self, f: Callable[[Any], Any], mut: bool=True, 
+            size: int=0, default: Any = None) -&gt; FLArray|None:
         &#34;&#34;&#34;Apply function over flarray contents.
-
-        Mutate the FLArray if mut=True (the default), otherwise return
-        a new FLArray with the mapped contents.
+          - mutate if mut is true (the default)
+          - otherwise return a new FLArray with the mapped contents
+          - size is ignored if mut is true
+          - default value to use if f returns None (default is None)
         &#34;&#34;&#34;
-        flarray = FLArray(*map(f, self))
+        if mut == True:
+            size = 0
+        flarray = FLArray(*map(f, self), size=size, default=default)
         if mut:
             self._list = flarray._list
             return None
         else:
             return flarray
 
-    def flatMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns only a
-        new instance since size may change.
-
-        Merge the flarrays produced sequentially left-to-right.
-        &#34;&#34;&#34;
-        return FLArray(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns only a instance
-        since size may change.
-
-        Round Robin Merge the flarrays produced until first cached
-        flarray is exhausted.
-        &#34;&#34;&#34;
-        return FLArray(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-        only since size may change.
-
-        Round Robin Merge the flarrays produced until all cached
-        flarrays are exhausted.
-        &#34;&#34;&#34;
-        return FLArray(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -287,9 +270,13 @@ is provided, return array with a default value and a size = 1.</p>
 
     Permits storing None as a value.
     &#34;&#34;&#34;
-    def __init__(self, *ds, size: int = 0, default: Any = None):
+    def __init__(self, *ds, size: int = 0, default: Any=None):
         &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
-        dlist = list(ds)
+        def swapNones(d: Any):
+            if d is None:
+                return default
+            return d
+        dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
             case (0, _, _):
@@ -409,44 +396,22 @@ is provided, return array with a default value and a size = 1.</p>
         &#34;&#34;&#34;Reversed the FLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
+    def map(self, f: Callable[[Any], Any], mut: bool=True, 
+            size: int=0, default: Any = None) -&gt; FLArray|None:
         &#34;&#34;&#34;Apply function over flarray contents.
-
-        Mutate the FLArray if mut=True (the default), otherwise return
-        a new FLArray with the mapped contents.
+          - mutate if mut is true (the default)
+          - otherwise return a new FLArray with the mapped contents
+          - size is ignored if mut is true
+          - default value to use if f returns None (default is None)
         &#34;&#34;&#34;
-        flarray = FLArray(*map(f, self))
+        if mut == True:
+            size = 0
+        flarray = FLArray(*map(f, self), size=size, default=default)
         if mut:
             self._list = flarray._list
             return None
         else:
-            return flarray
-
-    def flatMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns only a
-        new instance since size may change.
-
-        Merge the flarrays produced sequentially left-to-right.
-        &#34;&#34;&#34;
-        return FLArray(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns only a instance
-        since size may change.
-
-        Round Robin Merge the flarrays produced until first cached
-        flarray is exhausted.
-        &#34;&#34;&#34;
-        return FLArray(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-        only since size may change.
-
-        Round Robin Merge the flarrays produced until all cached
-        flarrays are exhausted.
-        &#34;&#34;&#34;
-        return FLArray(*exhaust(*map(iter, map(f, self))))</code></pre>
+            return flarray</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -464,93 +429,35 @@ is provided, return array with a default value and a size = 1.</p>
     return FLArray(*self)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.flarray.FLArray.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a>]) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns new instance
-only since size may change.</p>
-<p>Round Robin Merge the flarrays produced until all cached
-flarrays are exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-    &#34;&#34;&#34;Apply function and flatten result, returns new instance
-    only since size may change.
-
-    Round Robin Merge the flarrays produced until all cached
-    flarrays are exhausted.
-    &#34;&#34;&#34;
-    return FLArray(*exhaust(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.flarray.FLArray.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a>]) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns only a
-new instance since size may change.</p>
-<p>Merge the flarrays produced sequentially left-to-right.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-    &#34;&#34;&#34;Apply function and flatten result, returns only a
-    new instance since size may change.
-
-    Merge the flarrays produced sequentially left-to-right.
-    &#34;&#34;&#34;
-    return FLArray(*chain(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
 <dt id="grscheller.datastructures.flarray.FLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a> | None</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True, size: int = 0, default: Any = None) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a> | None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over flarray contents.</p>
-<p>Mutate the FLArray if mut=True (the default), otherwise return
-a new FLArray with the mapped contents.</p></div>
+<div class="desc"><p>Apply function over flarray contents.
+- mutate if mut is true (the default)
+- otherwise return a new FLArray with the mapped contents
+- size is ignored if mut is true
+- default value to use if f returns None (default is None)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True) -&gt; FLArray|None:
+<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True, 
+        size: int=0, default: Any = None) -&gt; FLArray|None:
     &#34;&#34;&#34;Apply function over flarray contents.
-
-    Mutate the FLArray if mut=True (the default), otherwise return
-    a new FLArray with the mapped contents.
+      - mutate if mut is true (the default)
+      - otherwise return a new FLArray with the mapped contents
+      - size is ignored if mut is true
+      - default value to use if f returns None (default is None)
     &#34;&#34;&#34;
-    flarray = FLArray(*map(f, self))
+    if mut == True:
+        size = 0
+    flarray = FLArray(*map(f, self), size=size, default=default)
     if mut:
         self._list = flarray._list
         return None
     else:
         return flarray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.flarray.FLArray.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a>]) ‑> <a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns only a instance
-since size may change.</p>
-<p>Round Robin Merge the flarrays produced until first cached
-flarray is exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], FLArray]) -&gt; FLArray:
-    &#34;&#34;&#34;Apply function and flatten result, returns only a instance
-    since size may change.
-
-    Round Robin Merge the flarrays produced until first cached
-    flarray is exhausted.
-    &#34;&#34;&#34;
-    return FLArray(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.flarray.FLArray.reverse"><code class="name flex">
@@ -587,12 +494,9 @@ flarray is exhausted.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.flarray.FLArray" href="#grscheller.datastructures.flarray.FLArray">FLArray</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="grscheller.datastructures.flarray.FLArray.copy" href="#grscheller.datastructures.flarray.FLArray.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.flarray.FLArray.exhaustMap" href="#grscheller.datastructures.flarray.FLArray.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.flarray.FLArray.flatMap" href="#grscheller.datastructures.flarray.FLArray.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.flarray.FLArray.map" href="#grscheller.datastructures.flarray.FLArray.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.flarray.FLArray.mergeMap" href="#grscheller.datastructures.flarray.FLArray.mergeMap">mergeMap</a></code></li>
 <li><code><a title="grscheller.datastructures.flarray.FLArray.reverse" href="#grscheller.datastructures.flarray.FLArray.reverse">reverse</a></code></li>
 </ul>
 </li>

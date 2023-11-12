@@ -47,9 +47,13 @@ class FLArray():
 
     Permits storing None as a value.
     """
-    def __init__(self, *ds, size: int = 0, default: Any = None):
+    def __init__(self, *ds, size: int = 0, default: Any=None):
         """Construct a fixed length array, None values allowed."""
-        dlist = list(ds)
+        def swapNones(d: Any):
+            if d is None:
+                return default
+            return d
+        dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) > dsize):
             case (0, _, _):
@@ -169,44 +173,23 @@ class FLArray():
         """Reversed the FLArray"""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True) -> FLArray|None:
+    def map(self, f: Callable[[Any], Any], mut: bool=True, 
+            size: int=0, default: Any = None) -> FLArray|None:
         """Apply function over flarray contents.
-
-        Mutate the FLArray if mut=True (the default), otherwise return
-        a new FLArray with the mapped contents.
+          - mutate if mut is true (the default)
+          - otherwise return a new FLArray with the mapped contents
+          - size is ignored if mut is true
+          - default value to use if f returns None (default is None)
         """
-        flarray = FLArray(*map(f, self))
+        if mut == True:
+            size = 0
+        flarray = FLArray(*map(f, self), size=size, default=default)
         if mut:
             self._list = flarray._list
             return None
         else:
             return flarray
 
-    def flatMap(self, f: Callable[[Any], FLArray]) -> FLArray:
-        """Apply function and flatten result, returns only a
-        new instance since size may change.
-
-        Merge the flarrays produced sequentially left-to-right.
-        """
-        return FLArray(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FLArray]) -> FLArray:
-        """Apply function and flatten result, returns only a instance
-        since size may change.
-
-        Round Robin Merge the flarrays produced until first cached
-        flarray is exhausted.
-        """
-        return FLArray(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FLArray]) -> FLArray:
-        """Apply function and flatten result, returns new instance
-        only since size may change.
-
-        Round Robin Merge the flarrays produced until all cached
-        flarrays are exhausted.
-        """
-        return FLArray(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == "__main__":
     pass

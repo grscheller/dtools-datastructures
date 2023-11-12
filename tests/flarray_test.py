@@ -204,7 +204,7 @@ class TestFLArray:
         else:
             assert False
 
-    def test_mapFlatMap(self):
+    def test_map(self):
         fl1 = FLArray(1,2,3,10)
         fl2 = fl1.copy()
         fl3 = fl1.copy()
@@ -214,17 +214,6 @@ class TestFLArray:
         assert fl4 == FLArray(0, 3, 8, 99)
         assert fl1 is not fl4
         
-        fl5 = fl2.flatMap(lambda x: FLArray(1, x, x*x+1))
-        assert fl2 == FLArray(1,2,3,10)
-        assert fl5 == FLArray(1, 1, 2, 1, 2, 5, 1, 3, 10, 1, 10, 101)
-        assert fl5 is not fl2
-        
-        fl6 = fl3.mergeMap(lambda x: FLArray(1, x, x*x+1))
-        assert fl3 == FLArray(1,2,3,10)
-        assert fl6 == FLArray(1, 1, 1, 1, 1, 2, 3, 10, 2, 5, 10, 101)
-        assert fl6 is not fl3
-
-    def test_mapFlatMap_mutate(self):
         fl1 = FLArray(1,2,3,10)
         fl1.map(lambda x: x*x-1, mut=True)
         assert fl1 == FLArray(0, 3, 8, 99)

@@ -33,6 +33,14 @@
 
 ## Version - PyPI releases begin with "v"
 
+### Version 0.10.1.0 - commit date 2023-11-11
+
+* Removed flatMap methods from stateful objects
+  * FLArray, DQueue, SQueue, PStack
+  * kepted the map method for each
+* some restructuring so package will scale better in the future
+* updated documentation with pdoc3
+
 ### Version v0.9.1 - PyPI release date: 2023-11-09
 
 * First Beta release of grscheller.datastructures on PyPI

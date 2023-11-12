@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.core API documentation</title>
-<meta name="description" content="Package grscheller.datastructures.core …" />
+<title>grscheller.datastructures.core.queue API documentation</title>
+<meta name="description" content="Module grscheller.datastructure.core.queue …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,32 +19,12 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.core</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.core.queue</code></h1>
 </header>
 <section id="section-intro">
-<p>Package grscheller.datastructures.core</p>
-<p>Subpackage of grscheller.datastructures.</p>
-<p>Data modules supporting core infrastructure of grscheller.datastructures.</p>
-<ul>
-<li>grscheller.datastructures.core.iterlib iterator module</li>
-<li>
-<p>functions similar to itertools and more-itertools</p>
-<ul>
-<li>will use itertools over these since they are C language builtins</li>
-<li>not using PyPI more-itertools to avoid external dependencies</li>
-</ul>
-</li>
-<li>
-<p>grscheller.datastructures.core.carray module implementing a circular array</p>
-</li>
-<li>used in the implementation of several other data structures</li>
-<li>None freely stored in this data structure</li>
-<li>decided to not make private because<ul>
-<li>could be of utility on its own</li>
-<li>could be of use for users to create their own data structures</li>
-</ul>
-</li>
-</ul>
+<p>Module grscheller.datastructure.core.queue</p>
+<p>Abstract base class for stateful queue type data structures. Using a Python List
+based circular array for protected data storage.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -63,64 +43,173 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Package grscheller.datastructures.core
+&#34;&#34;&#34;Module grscheller.datastructure.core.queue
 
-Subpackage of grscheller.datastructures.
-
-Data modules supporting core infrastructure of grscheller.datastructures.
-
-
-- grscheller.datastructures.core.iterlib iterator module
-  - functions similar to itertools and more-itertools
-    - will use itertools over these since they are C language builtins
-    - not using PyPI more-itertools to avoid external dependencies
-
-- grscheller.datastructures.core.carray module implementing a circular array
-  - used in the implementation of several other data structures
-  - None freely stored in this data structure
-  - decided to not make private because
-    - could be of utility on its own
-    - could be of use for users to create their own data structures
+Abstract base class for stateful queue type data structures. Using a Python List
+based circular array for protected data storage.
 &#34;&#34;&#34;
 
+from __future__ import annotations
+
+__all__ = [&#39;Queue&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from .iterlib import *
-from .carray import *</code></pre>
+from typing import Any, Callable
+from itertools import chain
+from .carray import CArray
+
+class Queue():
+    &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
+    implementing queue type data structures with a list based circular array.
+    Each queue object &#34;has-a&#34; (contains) a circular array to store its data. The
+    circular array used will resize itself as needed. Each Queue subclass must
+    ensure that None values do not get pushed onto the circular array.
+    &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
+        self._carray = CArray()
+        for d in ds:
+            if d is not None:
+                self._carray.pushR(d)
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
+        return len(self._carray) &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
+        return len(self._carray)
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
+        natural FIFO order.
+        &#34;&#34;&#34;
+        cached = self._carray.copy()
+        for pos in range(len(cached)):
+            yield cached[pos]
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
+        for data in reversed(self._carray.copy()):
+            yield data
+
+    def __eq__(self, other):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+        return self._carray == other._carray
+
+    def __repr__(self) -&gt; type[Queue]:
+        raise NotImplementedError
+
+    def copy(self) -&gt; type[Queue]:
+        raise NotImplementedError
+
+
+if __name__ == &#34;__main__&#34;:
+    pass</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="grscheller.datastructures.core.carray" href="carray.html">grscheller.datastructures.core.carray</a></code></dt>
+<dt id="grscheller.datastructures.core.queue.Queue"><code class="flex name class">
+<span>class <span class="ident">Queue</span></span>
+<span>(</span><span>*ds)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Module grscheller.datastructure.core.carray - Double sided queue …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.core.iterlib" href="iterlib.html">grscheller.datastructures.core.iterlib</a></code></dt>
+<div class="desc"><p>Abstract base class for the purposes of DRY inheritance of classes
+implementing queue type data structures with a list based circular array.
+Each queue object "has-a" (contains) a circular array to store its data. The
+circular array used will resize itself as needed. Each Queue subclass must
+ensure that None values do not get pushed onto the circular array.</p>
+<p>Construct a queue data structure. Cull None values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Queue():
+    &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
+    implementing queue type data structures with a list based circular array.
+    Each queue object &#34;has-a&#34; (contains) a circular array to store its data. The
+    circular array used will resize itself as needed. Each Queue subclass must
+    ensure that None values do not get pushed onto the circular array.
+    &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
+        self._carray = CArray()
+        for d in ds:
+            if d is not None:
+                self._carray.pushR(d)
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
+        return len(self._carray) &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
+        return len(self._carray)
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
+        natural FIFO order.
+        &#34;&#34;&#34;
+        cached = self._carray.copy()
+        for pos in range(len(cached)):
+            yield cached[pos]
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
+        for data in reversed(self._carray.copy()):
+            yield data
+
+    def __eq__(self, other):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+        return self._carray == other._carray
+
+    def __repr__(self) -&gt; type[Queue]:
+        raise NotImplementedError
+
+    def copy(self) -&gt; type[Queue]:
+        raise NotImplementedError</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.queues.DQueue" href="../queues.html#grscheller.datastructures.queues.DQueue">DQueue</a></li>
+<li><a title="grscheller.datastructures.queues.SQueue" href="../queues.html#grscheller.datastructures.queues.SQueue">SQueue</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="grscheller.datastructures.core.queue.Queue.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> type[<a title="grscheller.datastructures.core.queue.Queue" href="#grscheller.datastructures.core.queue.Queue">Queue</a>]</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Module grscheller.datastructures.core.iterlib …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.core.nodes" href="nodes.html">grscheller.datastructures.core.nodes</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.core.nodes …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.core.queue" href="queue.html">grscheller.datastructures.core.queue</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.core.queue …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.core.stack" href="stack.html">grscheller.datastructures.core.stack</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.stack - LIFO stack: …</p></div>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; type[Queue]:
+    raise NotImplementedError</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -131,16 +220,17 @@ from .carray import *</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="grscheller.datastructures" href="../index.html">grscheller.datastructures</a></code></li>
+<li><code><a title="grscheller.datastructures.core" href="index.html">grscheller.datastructures.core</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="grscheller.datastructures.core.carray" href="carray.html">grscheller.datastructures.core.carray</a></code></li>
-<li><code><a title="grscheller.datastructures.core.iterlib" href="iterlib.html">grscheller.datastructures.core.iterlib</a></code></li>
-<li><code><a title="grscheller.datastructures.core.nodes" href="nodes.html">grscheller.datastructures.core.nodes</a></code></li>
-<li><code><a title="grscheller.datastructures.core.queue" href="queue.html">grscheller.datastructures.core.queue</a></code></li>
-<li><code><a title="grscheller.datastructures.core.stack" href="stack.html">grscheller.datastructures.core.stack</a></code></li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.queue.Queue" href="#grscheller.datastructures.core.queue.Queue">Queue</a></code></h4>
+<ul class="">
+<li><code><a title="grscheller.datastructures.core.queue.Queue.copy" href="#grscheller.datastructures.core.queue.Queue.copy">copy</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -30,8 +30,6 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Self
-from itertools import chain
-from .core.iterlib import merge, exhaust
 from .core.stack import Stack
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
@@ -96,39 +94,9 @@ class PStack(Stack):
 
     def map(self, f: Callable[[Any], PStack]) -> None:
         """Maps a function (or callable object) over the values on the stack.
-
-        Returns a new stack with new nodes.  None values surpressed.
+        Returns a new stack with new nodes. None values surpressed. O(n).
         """
         newPStack = PStack(*map(f, reversed(self)))
-        self._head = newPStack._head
-        self._count = newPStack._count
-
-    def flatMap(self, f: Callable[[Any], PStack]) -> None:
-        """Apply function and flatten result, returns new instance.
-
-        Merge the stacks produced sequentially front-to-back.
-        """
-        newPStack = PStack(*chain(*map(reversed, map(f, reversed(self)))))
-        self._head = newPStack._head
-        self._count = newPStack._count
-
-    def mergeMap(self, f: Callable[[Any], PStack]) -> None:
-        """Apply function and flatten result, returns new instance.
-
-        Round Robin Merge the stacks produced until first cached stack is
-        exhausted.
-        """
-        newPStack = PStack(*merge(*map(reversed, map(f, reversed(self)))))
-        self._head = newPStack._head
-        self._count = newPStack._count
-
-    def exhaustMap(self, f: Callable[[Any], PStack]) -> None:
-        """Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until all the cached stacks are
-        exhausted.
-        """
-        newPStack = PStack(*exhaust(*map(reversed, map(f, reversed(self)))))
         self._head = newPStack._head
         self._count = newPStack._count
 

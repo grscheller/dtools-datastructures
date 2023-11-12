@@ -44,7 +44,7 @@ class FTuple():
         return len(self._ds)
 
     def __getitem__(self, index: int) -> Any:
-        # TODO: Does not like being given a slice ... research
+        # TODO: Does not like being given a slice ... research how
         msg = ''
         if (cnt := len(self)) == 0:
             msg = 'Indexing an empty FTuple'

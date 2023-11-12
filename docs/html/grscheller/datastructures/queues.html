@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.queue API documentation</title>
+<title>grscheller.datastructures.queues API documentation</title>
 <meta name="description" content="Module grscheller.datastructure.queue - queue based datastructures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.queue</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.queues</code></h1>
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.queue - queue based datastructures</p>
@@ -70,54 +70,7 @@ __license__ = &#34;Appache License 2.0&#34;
 from typing import Any, Callable
 from itertools import chain
 from .core.iterlib import merge, exhaust
-from .core.carray import CArray
-
-class Queue():
-    &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
-    implementing queue type data structures with a list based circular array.
-    Each queue object &#34;has-a&#34; (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each Queue subclass must
-    ensure that None values do not get pushed onto the circular array.
-    &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
-        self._carray = CArray()
-        for d in ds:
-            if d is not None:
-                self._carray.pushR(d)
-
-    def __bool__(self):
-        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
-        return len(self._carray) &gt; 0
-
-    def __len__(self):
-        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
-        return len(self._carray)
-
-    def __iter__(self):
-        &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
-        natural FIFO order.
-        &#34;&#34;&#34;
-        cached = self._carray.copy()
-        for pos in range(len(cached)):
-            yield cached[pos]
-
-    def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
-        for data in reversed(self._carray.copy()):
-            yield data
-
-    def __eq__(self, other):
-        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
-        &#34;&#34;&#34;
-        if not isinstance(other, type(self)):
-            return False
-        return self._carray == other._carray
-
-    def copy(self) -&gt; Queue:
-        raise NotImplementedError
-
+from .core.queue import Queue
 
 class SQueue(Queue):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
@@ -169,24 +122,6 @@ class SQueue(Queue):
         returned by f.
         &#34;&#34;&#34;
         self._carray = SQueue(*map(f, self))._carray
-
-    def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
-        the SQueues produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray
-
-    def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-        robin merging until one of the first SQueues produced by f is exhausted.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray
-
-    def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-        robin merging until all the SQueues produced by f are exhausted.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray
 
 
 class DQueue(Queue):
@@ -253,24 +188,6 @@ class DQueue(Queue):
         &#34;&#34;&#34;
         self._carray = DQueue(*map(f, self))._carray
 
-    def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-        the DQueues produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray
-
-    def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until one of the first DQueues produced by f is exhausted.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray
-
-    def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until all the DQueues produced by f are exhausted.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray
-
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -285,7 +202,7 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.queue.DQueue"><code class="flex name class">
+<dt id="grscheller.datastructures.queues.DQueue"><code class="flex name class">
 <span>class <span class="ident">DQueue</span></span>
 <span>(</span><span>*ds)</span>
 </code></dt>
@@ -359,34 +276,16 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
         returned by f.
         &#34;&#34;&#34;
-        self._carray = DQueue(*map(f, self))._carray
-
-    def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-        the DQueues produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray
-
-    def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until one of the first DQueues produced by f is exhausted.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray
-
-    def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-        robin merging until all the DQueues produced by f are exhausted.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
+        self._carray = DQueue(*map(f, self))._carray</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>grscheller.datastructures.queue.Queue</li>
+<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queue.DQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a></span>
+<dt id="grscheller.datastructures.queues.DQueue.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DQueue" href="#grscheller.datastructures.queues.DQueue">DQueue</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the DQueue in O(n) time &amp; space complexity.</p></div>
@@ -401,41 +300,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     return dqueue</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the DQueue's contents and flatten result by round
-robin merging until all the DQueues produced by f are exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-    robin merging until all the DQueues produced by f are exhausted.
-    &#34;&#34;&#34;
-    self._carray = DQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.DQueue.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the DQueue's contents and flatten result merging
-the DQueues produced sequentially front-to-back.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result merging
-    the DQueues produced sequentially front-to-back.
-    &#34;&#34;&#34;
-    self._carray = DQueue(*chain(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.DQueue.map"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
@@ -452,24 +317,7 @@ returned by f.</p></div>
     self._carray = DQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the DQueue's contents and flatten result by round
-robin merging until one of the first DQueues produced by f is exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], DQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents and flatten result by round
-    robin merging until one of the first DQueues produced by f is exhausted.
-    &#34;&#34;&#34;
-    self._carray = DQueue(*merge(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.DQueue.peakL"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.peakL"><code class="name flex">
 <span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -486,7 +334,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.peakR"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.peakR"><code class="name flex">
 <span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -503,7 +351,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.popL"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.popL"><code class="name flex">
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -520,7 +368,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.popR"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.popR"><code class="name flex">
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -537,7 +385,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.pushL"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.pushL"><code class="name flex">
 <span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -553,7 +401,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
             self._carray.pushL(d)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.DQueue.pushR"><code class="name flex">
+<dt id="grscheller.datastructures.queues.DQueue.pushR"><code class="name flex">
 <span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -571,7 +419,7 @@ robin merging until one of the first DQueues produced by f is exhausted.</p></di
 </dd>
 </dl>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue"><code class="flex name class">
+<dt id="grscheller.datastructures.queues.SQueue"><code class="flex name class">
 <span>class <span class="ident">SQueue</span></span>
 <span>(</span><span>*ds)</span>
 </code></dt>
@@ -632,34 +480,16 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
         &#34;&#34;&#34;Apply function over the SQueue&#39;s contents. Suppress any None values
         returned by f.
         &#34;&#34;&#34;
-        self._carray = SQueue(*map(f, self))._carray
-
-    def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
-        the SQueues produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray
-
-    def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-        robin merging until one of the first SQueues produced by f is exhausted.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray
-
-    def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-        robin merging until all the SQueues produced by f are exhausted.
-        &#34;&#34;&#34;
-        self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
+        self._carray = SQueue(*map(f, self))._carray</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>grscheller.datastructures.queue.Queue</li>
+<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queue.SQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a></span>
+<dt id="grscheller.datastructures.queues.SQueue.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.SQueue" href="#grscheller.datastructures.queues.SQueue">SQueue</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the SQueue in O(n) time &amp; space complexity.</p></div>
@@ -674,41 +504,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     return squeue</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the SQueue's contents and flatten result by round
-robin merging until all the SQueues produced by f are exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-    robin merging until all the SQueues produced by f are exhausted.
-    &#34;&#34;&#34;
-    self._carray = SQueue(*exhaust(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.SQueue.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the SQueue's contents and flatten result merging
-the SQueues produced sequentially front-to-back.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result merging
-    the SQueues produced sequentially front-to-back.
-    &#34;&#34;&#34;
-    self._carray = SQueue(*chain(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.SQueue.map"><code class="name flex">
+<dt id="grscheller.datastructures.queues.SQueue.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
@@ -725,24 +521,7 @@ returned by f.</p></div>
     self._carray = SQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a>]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the SQueue's contents and flatten result by round
-robin merging until one of the first SQueues produced by f is exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], SQueue]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the SQueue&#39;s contents and flatten result by round
-    robin merging until one of the first SQueues produced by f is exhausted.
-    &#34;&#34;&#34;
-    self._carray = SQueue(*merge(*map(iter, map(f, self))))._carray</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.queue.SQueue.peakLastIn"><code class="name flex">
+<dt id="grscheller.datastructures.queues.SQueue.peakLastIn"><code class="name flex">
 <span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -759,7 +538,7 @@ robin merging until one of the first SQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue.peakNextOut"><code class="name flex">
+<dt id="grscheller.datastructures.queues.SQueue.peakNextOut"><code class="name flex">
 <span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -776,7 +555,7 @@ robin merging until one of the first SQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue.pop"><code class="name flex">
+<dt id="grscheller.datastructures.queues.SQueue.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -793,7 +572,7 @@ robin merging until one of the first SQueues produced by f is exhausted.</p></di
         return None</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.queue.SQueue.push"><code class="name flex">
+<dt id="grscheller.datastructures.queues.SQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -828,33 +607,27 @@ robin merging until one of the first SQueues produced by f is exhausted.</p></di
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.queue.DQueue" href="#grscheller.datastructures.queue.DQueue">DQueue</a></code></h4>
+<h4><code><a title="grscheller.datastructures.queues.DQueue" href="#grscheller.datastructures.queues.DQueue">DQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queue.DQueue.copy" href="#grscheller.datastructures.queue.DQueue.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.exhaustMap" href="#grscheller.datastructures.queue.DQueue.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.flatMap" href="#grscheller.datastructures.queue.DQueue.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.map" href="#grscheller.datastructures.queue.DQueue.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.mergeMap" href="#grscheller.datastructures.queue.DQueue.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.peakL" href="#grscheller.datastructures.queue.DQueue.peakL">peakL</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.peakR" href="#grscheller.datastructures.queue.DQueue.peakR">peakR</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.popL" href="#grscheller.datastructures.queue.DQueue.popL">popL</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.popR" href="#grscheller.datastructures.queue.DQueue.popR">popR</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.pushL" href="#grscheller.datastructures.queue.DQueue.pushL">pushL</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.DQueue.pushR" href="#grscheller.datastructures.queue.DQueue.pushR">pushR</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.copy" href="#grscheller.datastructures.queues.DQueue.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.map" href="#grscheller.datastructures.queues.DQueue.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.peakL" href="#grscheller.datastructures.queues.DQueue.peakL">peakL</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.peakR" href="#grscheller.datastructures.queues.DQueue.peakR">peakR</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.popL" href="#grscheller.datastructures.queues.DQueue.popL">popL</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.popR" href="#grscheller.datastructures.queues.DQueue.popR">popR</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.pushL" href="#grscheller.datastructures.queues.DQueue.pushL">pushL</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.DQueue.pushR" href="#grscheller.datastructures.queues.DQueue.pushR">pushR</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="grscheller.datastructures.queue.SQueue" href="#grscheller.datastructures.queue.SQueue">SQueue</a></code></h4>
+<h4><code><a title="grscheller.datastructures.queues.SQueue" href="#grscheller.datastructures.queues.SQueue">SQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queue.SQueue.copy" href="#grscheller.datastructures.queue.SQueue.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.exhaustMap" href="#grscheller.datastructures.queue.SQueue.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.flatMap" href="#grscheller.datastructures.queue.SQueue.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.map" href="#grscheller.datastructures.queue.SQueue.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.mergeMap" href="#grscheller.datastructures.queue.SQueue.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.peakLastIn" href="#grscheller.datastructures.queue.SQueue.peakLastIn">peakLastIn</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.peakNextOut" href="#grscheller.datastructures.queue.SQueue.peakNextOut">peakNextOut</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.pop" href="#grscheller.datastructures.queue.SQueue.pop">pop</a></code></li>
-<li><code><a title="grscheller.datastructures.queue.SQueue.push" href="#grscheller.datastructures.queue.SQueue.push">push</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.copy" href="#grscheller.datastructures.queues.SQueue.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.map" href="#grscheller.datastructures.queues.SQueue.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.peakLastIn" href="#grscheller.datastructures.queues.SQueue.peakLastIn">peakLastIn</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.peakNextOut" href="#grscheller.datastructures.queues.SQueue.peakNextOut">peakNextOut</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.pop" href="#grscheller.datastructures.queues.SQueue.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.SQueue.push" href="#grscheller.datastructures.queues.SQueue.push">push</a></code></li>
 </ul>
 </li>
 </ul>

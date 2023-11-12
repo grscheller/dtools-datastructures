@@ -171,7 +171,7 @@ class TestDqueue:
         def f1(ii: int) -> int:
             return ii*ii - 1
 
-        dq = DQueue(5,2,3,1,42)
+        dq = DQueue(5, 2, 3, 1, 42)
 
         q0 = DQueue()
         q1 = dq.copy()
@@ -182,72 +182,3 @@ class TestDqueue:
         assert dq == DQueue(5, 2, 3, 1, 42)
         assert q0 == DQueue()
         assert q1 == DQueue(24, 3, 8, 0, 1763)
-
-    def test_flatmaps(self):
-        def f0(_: int) -> DQueue:
-            return DQueue()
-
-        def f1(ii: int) -> DQueue:
-            return DQueue(1, ii, ii*ii+1)
-
-        def f2(jj: int) -> DQueue:
-            return DQueue(*range(2*jj, 3*jj))
-
-        def f3(kk: int) -> DQueue:
-            return DQueue(*([kk]*kk))
-
-        q1, q2, q3 = DQueue(), DQueue(), DQueue()
-        q1.flatMap(f0)
-        q2.mergeMap(f0)
-        q3.exhaustMap(f0)
-        assert q1 == q2 == q3 == DQueue()
-
-        q1.flatMap(f1)
-        q2.mergeMap(f1)
-        q3.exhaustMap(f1)
-        assert q1 == q2 == q3 == DQueue()
-
-        q1.flatMap(f2)
-        q2.mergeMap(f2)
-        q3.exhaustMap(f2)
-        assert q1 == q2 == q3 == DQueue()
-
-        q1.flatMap(f3)
-        q2.mergeMap(f3)
-        q3.exhaustMap(f2)
-        assert q1 == q2 == q3 == DQueue()
-
-        dq = DQueue(4,2,3,5)
-
-        q1, q2, q3 = dq.copy(), dq.copy(), dq.copy()
-        q1.flatMap(f0)
-        q2.mergeMap(f0)
-        q3.exhaustMap(f0)
-        assert q1 == DQueue()
-        assert q2 == DQueue()
-        assert q3 == DQueue()
-
-        q1, q2, q3 = dq.copy(), dq.copy(), dq.copy()
-        q1.flatMap(f1)
-        q2.mergeMap(f1)
-        q3.exhaustMap(f1)
-        assert q1 == DQueue(1, 4, 17, 1, 2, 5, 1, 3, 10, 1, 5, 26)
-        assert q2 == DQueue(1, 1, 1, 1, 4, 2, 3, 5, 17, 5, 10, 26)
-        assert q3 == DQueue(1, 1, 1, 1, 4, 2, 3, 5, 17, 5, 10, 26)
-
-        q1, q2, q3 = dq.copy(), dq.copy(), dq.copy()
-        q1.flatMap(f2)
-        q2.mergeMap(f2)
-        q3.exhaustMap(f2)
-        #                   #             #     #        #
-        assert q1 == DQueue(8, 9, 10, 11, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14)
-        assert q2 == DQueue(8, 4, 6, 10, 9, 5, 7, 11)
-        assert q3 == DQueue(8, 4, 6, 10, 9, 5, 7, 11, 10, 8, 12, 11, 13, 14)
-
-        q1, q2, q3 = dq.copy(), dq.copy(), dq.copy()
-        q1.flatMap(f3)
-        q2.mergeMap(f3)
-        q3.exhaustMap(f3)
-        assert q1 == DQueue(4, 4, 4, 4, 2, 2, 3, 3, 3, 5, 5, 5, 5, 5)
-        assert q2 == DQueue(4, 2, 3, 5, 4, 2, 3, 5)
-        assert q3 == DQueue(4, 2, 3, 5, 4, 2, 3, 5, 4, 3, 5, 4, 5, 5)
