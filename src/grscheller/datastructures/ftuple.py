@@ -25,11 +25,10 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import exhaust, merge
+from typing import Any
+from .core.fp_fwd import FPfwd
 
-class FTuple():
+class FTuple(FPfwd):
     """Class implementing tuple-like data structure with FP behaviors."""
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""
@@ -93,26 +92,6 @@ class FTuple():
     def reverse(self) -> FTuple:
         """Return a reversed FTuple, new instance."""
         return(FTuple(*reversed(self)))
-
-    def map(self, f: Callable[[Any], Any]) -> FTuple:
-        """Apply function over the FTuple's contents. Filter out None values."""
-        return FTuple(*map(f, self))
-
-    def flatMap(self, f: Callable[[Any], FTuple]) -> FTuple:
-        """Apply function and flatten result by concatenating the results."""
-        return FTuple(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FTuple]) -> FTuple:
-        """Apply function and flatten result by round robin
-        merging the results until first FTuple is exhauted.
-        """
-        return FTuple(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FTuple]) -> FTuple:
-        """Apply function and flatten result by round robin
-        merging the results until all FTuples are exhauted.
-        """
-        return FTuple(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == "__main__":
     pass

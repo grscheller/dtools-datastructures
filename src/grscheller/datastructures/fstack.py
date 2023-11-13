@@ -29,14 +29,15 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self
+from typing import Any, Callable
 from itertools import chain
 from .core.iterlib import merge, exhaust
 from .core.stack import Stack
+from .core.fp_rev import FPrev
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
 
-class FStack(Stack):
+class FStack(Stack, FPrev):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -51,7 +52,6 @@ class FStack(Stack):
     None represents the absence of a value and ignored if pushed on an FStack.
     """
     def __init__(self, *ds):
-        """Construct an immutable LIFO Stack"""
         super().__init__(*ds)
 
     def __repr__(self):
