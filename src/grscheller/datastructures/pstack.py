@@ -91,14 +91,6 @@ class PStack(Stack):
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], PStack]) -> None:
-        """Maps a function (or callable object) over the values on the stack.
-        Returns a new stack with new nodes. None values surpressed. O(n).
-        """
-        newPStack = PStack(*map(f, reversed(self)))
-        self._head = newPStack._head
-        self._count = newPStack._count
-
 
 if __name__ == "__main__":
     pass

@@ -88,12 +88,6 @@ class DQueue(Queue):
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the DQueue's contents. Suppress any None values
-        returned by f.
-        """
-        self._carray = DQueue(*map(f, self))._carray
-
 
 if __name__ == "__main__":
     pass

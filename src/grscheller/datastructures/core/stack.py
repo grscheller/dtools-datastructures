@@ -33,7 +33,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
+from typing import Any, Callable
 from .nodes import SL_Node as Node
 from .carray import CArray
 
@@ -102,6 +102,14 @@ class Stack():
             right = right._next
             nn -= 1
         return True
+
+    def map(self, f: Callable[[Any], Stack]) -> None:
+        """Maps a function (or callable object) over the values on the Stack.
+        Mutates the Stack object. O(n).
+        """
+        newStack = Stack(*map(f, reversed(self)))
+        self._head = newStack._head
+        self._count = newStack._count
 
     def __repr__(self) -> type[Stack]:
         raise NotImplementedError

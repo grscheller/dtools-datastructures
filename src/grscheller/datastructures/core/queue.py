@@ -72,6 +72,12 @@ class Queue():
             return False
         return self._carray == other._carray
 
+    def map(self, f: Callable[[Any], Any]) -> None:
+        """Apply function over the DQueue's contents. Suppress any None values
+        returned by f.
+        """
+        self._carray = Queue(*map(f, self))._carray
+
     def __repr__(self) -> type[Queue]:
         raise NotImplementedError
 
