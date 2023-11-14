@@ -91,6 +91,14 @@ class PStack(Stack):
             return default
         return self._head._data
 
+    def map(self, f: Callable[[Any], Stack]) -> None:
+        """Maps a function (or callable object) over the values on the Stack.
+        Mutates the Stack object. O(n).
+        """
+        newStack = Stack(*map(f, reversed(self)))
+        self._head = newStack._head
+        self._count = newStack._count
+
 
 if __name__ == "__main__":
     pass
