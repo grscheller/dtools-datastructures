@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.functional import Maybe, Nothing, Some
-from grscheller.datastructures.functional import Either, Left, Right
+from grscheller.datastructures.core import Maybe, Nothing, Some
+from grscheller.datastructures.core import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import SQueue, DQueue

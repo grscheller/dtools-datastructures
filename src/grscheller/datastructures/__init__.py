@@ -41,6 +41,6 @@ from .dqueue import *
 from .clarray import *
 from .ftuple import *
 from .fstack import *
-from .functional.maybe import *
-from .functional.either import *
-from .functional.util import *
+from .core.maybe import *
+from .core.either import *
+from .core.util import *

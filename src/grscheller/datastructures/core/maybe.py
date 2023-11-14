@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.functional.maybe
+"""Module grscheller.datastructures.core.maybe
 
 Implemention of the Maybe Monad, sometimes called the Option ot Optional Monad.
 """

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.functional.either
+"""Module grscheller.datastructures.core.either
 
 Implemention of the Either Monad.
 """

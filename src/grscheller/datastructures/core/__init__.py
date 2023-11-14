@@ -14,10 +14,7 @@
 
 """Package grscheller.datastructures.core
 
-Subpackage of grscheller.datastructures.
-
 Data modules supporting core infrastructure of grscheller.datastructures.
-
 
 - grscheller.datastructures.core.iterlib iterator module
   - functions similar to itertools and more-itertools
@@ -30,6 +27,15 @@ Data modules supporting core infrastructure of grscheller.datastructures.
   - decided to not make private because
     - could be of utility on its own
     - could be of use for users to create their own data structures
+
+- grscheller.datastructures.core.{maybe,either,util}
+  - data structures supporting a functional style of programming in Python
+    - immutable semantics - map & flatMap always return modified copies
+    - None is always treated as a non-existance value
+      - Python None value cannot be stored in any object in this subpackage
+      - semantically None does not exist
+      - None is used as an implementration detail
+  - TODO: combined these three into one module func_utils
 """
 
 __author__ = "Geoffrey R. Scheller"
@@ -38,3 +44,4 @@ __license__ = "Appache License 2.0"
 
 from .iterlib import *
 from .carray import *
+from .func_utils import *

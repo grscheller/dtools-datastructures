@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.functional import Maybe, Nothing, Some
-from grscheller.datastructures.functional import Either, Left, Right
+from grscheller.datastructures.core import Maybe, Nothing, Some
+from grscheller.datastructures.core import Either, Left, Right
 
 def add2(x):
     return x + 2
@@ -96,7 +96,7 @@ class TestMaybe:
 class TestEither:
     def test_identity(self):
         e1 = Left(42)
-        e2 = Left(42)
+        e2 = Either(42)
         e3 = Right('not 42')
         e4 = Right('not 42')
         e5 = Right('also not 42')
