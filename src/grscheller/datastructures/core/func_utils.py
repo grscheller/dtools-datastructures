@@ -19,6 +19,7 @@ Class Either: Implements a left biased Either Monad.
 """
 from __future__ import annotations
 from typing import Any, Callable
+from .fp import FP
 
 __all__ = [
     'Either', 'Left', 'Right',
@@ -29,7 +30,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-class Maybe():
+class Maybe(FP):
     """Class representing a potentially missing value.
 
     - Implements the Option Monad
@@ -75,18 +76,6 @@ class Maybe():
             return False
         return self._value == other._value
 
-    def map(self, f: Callable[[Any], Any]) -> Maybe:
-        if self:
-            return Maybe(f(self._value))
-        else:
-            return Maybe()
-
-    def flatMap(self, f: Callable[[Any], Maybe]) -> Maybe:
-        if self:
-            return f(self._value)
-        else:
-            return Maybe()
-
     def get(self, default: Any=None) -> Any:
         """Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
@@ -113,12 +102,14 @@ def Some(value=None):
 Nothing = Some()
 
 
-class Either():
-    """Class that either contains a Left value or Right value, but not both.
-
-    This version is biased to the Left, which is intended as the "happy path."
+class Either(FP):
+    """Class that either contains a Left value or Right value, but not both. If
+    right not given, set it to the empty str. This version is biased to the
+    Left, which is intended as the "happy path."
     """
-    def __init__(self, left: Any, right: Any=None):
+    def __init__(self, left: Any=None, right: Any=None):
+        if right is None:
+            right = ''
         if left == None:
             self._isLeft = False
             self._value = right
@@ -131,7 +122,7 @@ class Either():
         return self._isLeft
 
     def __len__(self) -> int:
-        """An Either always contains just one thing, even if it is None"""
+        """An Either always contains just one thing, which is not None"""
         return 1
 
     def __iter__(self):
@@ -172,9 +163,15 @@ class Either():
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
         """flatMap with a Right default."""
-        if self:
-            return f(self._value).mapRight(lambda _: right)
-        return self.copy()
+        if right is None:
+            return f(self._value)
+        return f(self._value).mapRight(lambda _: right)
+
+    def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
+        """flatMap with a Right default."""
+        if right is None:
+            return f(self._value)
+        return f(self._value).mapRight(lambda x: x + right)
 
     def get(self, default: Any=None) -> Any:
         """get value if a Left, otherwise return default value."""
