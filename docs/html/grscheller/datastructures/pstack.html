@@ -63,7 +63,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Self
+from typing import Any, Callable
 from .core.stack import Stack
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
@@ -96,6 +96,12 @@ class PStack(Stack):
         pstack._head = self._head
         pstack._count = self._count
         return pstack
+
+    def reverse(self) -&gt; None:
+        &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        pstack = PStack(reversed(self))
+        self._head = pstack._head
+        self._count = pstack._count
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
@@ -132,7 +138,6 @@ class PStack(Stack):
         newStack = Stack(*map(f, reversed(self)))
         self._head = newStack._head
         self._count = newStack._count
-
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -193,6 +198,12 @@ None which indicates an empty stack.</p>
         pstack._head = self._head
         pstack._count = self._count
         return pstack
+
+    def reverse(self) -&gt; None:
+        &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        pstack = PStack(reversed(self))
+        self._head = pstack._head
+        self._count = pstack._count
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
@@ -332,6 +343,22 @@ return the stack being pushed.</p></div>
             self._count += 1</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.pstack.PStack.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return shallow copy of a PStack in O(1) time &amp; space complexity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self) -&gt; None:
+    &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+    pstack = PStack(reversed(self))
+    self._head = pstack._head
+    self._count = pstack._count</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -352,12 +379,13 @@ return the stack being pushed.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.pstack.PStack" href="#grscheller.datastructures.pstack.PStack">PStack</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="grscheller.datastructures.pstack.PStack.copy" href="#grscheller.datastructures.pstack.PStack.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.pstack.PStack.map" href="#grscheller.datastructures.pstack.PStack.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.pstack.PStack.peak" href="#grscheller.datastructures.pstack.PStack.peak">peak</a></code></li>
 <li><code><a title="grscheller.datastructures.pstack.PStack.pop" href="#grscheller.datastructures.pstack.PStack.pop">pop</a></code></li>
 <li><code><a title="grscheller.datastructures.pstack.PStack.push" href="#grscheller.datastructures.pstack.PStack.push">push</a></code></li>
+<li><code><a title="grscheller.datastructures.pstack.PStack.reverse" href="#grscheller.datastructures.pstack.PStack.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

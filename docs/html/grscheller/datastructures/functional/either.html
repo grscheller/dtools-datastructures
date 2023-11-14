@@ -101,22 +101,25 @@ class Either():
             return Either(self._value)
         return Either(None, self._value)
 
-    def map(self, f: Callable[[Any], Any], right=&#39;&#39;) -&gt; Either:
+    def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
             return Either(f(self._value), right)
         return self.copy()
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
+        &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
         if self:
             return self.copy()
         return Either(None, g(self._value))
 
-    def flatMap(self, f: Callable[[Any], Either]) -&gt; Either:
+    def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+        &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
         if self:
-            return f(self._value)
+            return f(self._value).mapRight(lambda _: right)
         return self.copy()
 
     def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
         if self:
             return self._value
         return default
@@ -124,11 +127,11 @@ class Either():
 # Either convenience functions. First two act like subtype constructors.
 
 def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either&#34;&#34;&#34;
+    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either.&#34;&#34;&#34;
     return Either(left, right)
 
 def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a Right Either&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a Right Either.&#34;&#34;&#34;
     return Either(None, right)
 
 if __name__ == &#34;__main__&#34;:
@@ -146,13 +149,13 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">Left</span></span>(<span>left: Any, right: Any = None) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function returns Left Either if left != None, otherwise Right Either</p></div>
+<div class="desc"><p>Function returns Left Either if left != None, otherwise Right Either.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either&#34;&#34;&#34;
+    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either.&#34;&#34;&#34;
     return Either(left, right)</code></pre>
 </details>
 </dd>
@@ -160,13 +163,13 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">Right</span></span>(<span>right: Any) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to construct a Right Either</p></div>
+<div class="desc"><p>Function to construct a Right Either.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a Right Either&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a Right Either.&#34;&#34;&#34;
     return Either(None, right)</code></pre>
 </details>
 </dd>
@@ -232,22 +235,25 @@ if __name__ == &#34;__main__&#34;:
             return Either(self._value)
         return Either(None, self._value)
 
-    def map(self, f: Callable[[Any], Any], right=&#39;&#39;) -&gt; Either:
+    def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
             return Either(f(self._value), right)
         return self.copy()
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
+        &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
         if self:
             return self.copy()
         return Either(None, g(self._value))
 
-    def flatMap(self, f: Callable[[Any], Either]) -&gt; Either:
+    def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+        &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
         if self:
-            return f(self._value)
+            return f(self._value).mapRight(lambda _: right)
         return self.copy()
 
     def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
         if self:
             return self._value
         return default</code></pre>
@@ -270,17 +276,18 @@ if __name__ == &#34;__main__&#34;:
 </details>
 </dd>
 <dt id="grscheller.datastructures.functional.either.Either.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a>]) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>flatMap with a Right default.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], Either]) -&gt; Either:
+<pre><code class="python">def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+    &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
     if self:
-        return f(self._value)
+        return f(self._value).mapRight(lambda _: right)
     return self.copy()</code></pre>
 </details>
 </dd>
@@ -288,19 +295,20 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">get</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>get value if a Left, otherwise return default value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, default: Any=None) -&gt; Any:
+    &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
     if self:
         return self._value
     return default</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.functional.either.Either.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], right='') ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], right=None) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -308,7 +316,7 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], right=&#39;&#39;) -&gt; Either:
+<pre><code class="python">def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
     if self:
         return Either(f(self._value), right)
     return self.copy()</code></pre>
@@ -318,12 +326,13 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">mapRight</span></span>(<span>self, g: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.functional.either.Either" href="#grscheller.datastructures.functional.either.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Map over if a Right.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
+    &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
     if self:
         return self.copy()
     return Either(None, g(self._value))</code></pre>

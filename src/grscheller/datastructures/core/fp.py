@@ -35,43 +35,37 @@ class FP():
     def __iter__(self):
         raise NotImplementedError
 
-    def reverse(self):
-        raise NotImplementedError
-
     # For FIFO type data structures.
-    def map(self, f: Callable[[Any], Any]) -> FP:
+    def map(self, f: Callable[[Any], Any]) -> type[FP]:
         return type(self)(*map(f, self))
 
-    def flatMap(self, f: Callable[[Any], FP]) -> FP:
+    def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
         return type(self)(*chain(*map(iter, map(f, self))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -> FP:
+    def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
         return type(self)(*merge(*map(iter, map(f, self))))
 
-    def exhaustMap(self, f: Callable[[Any], FP]) -> FP:
+    def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
 
 class FP_rev(FP):
+    def __reversed__(self):
+        raise NotImplementedError
+
     # FP modified for FILO type data structures.
-    # Note: Can't just replace iter in the above with reversed which works with
-    #       more concrete implemetations. Type checker (Pyright) barfs, maybe
-    #       has something to do with iter() being a builtin function and
-    #       reversed() being a built-in class. This is forcing me to define
-    #       a reverse() method for my functional FILO classes.
+    def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
+        # return type(self)(*map(f, reversed(self)))
+        return type(self)(*map(f, reversed(self)))
 
-    def map(self, f: Callable[[Any], Any]) -> FP:
-        # return type(self)(*map(f, iter(self.reverse())))
-        return type(self)(*map(f, iter(self.reverse())))
+    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
-    def flatMap(self, f: Callable[[Any], FP]) -> FP:
-        return type(self)(*chain(*map(iter, map(f, self.reverse())))).reverse()
+    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -> FP:
-        return type(self)(*merge(*map(iter, map(f, self.reverse())))).reverse()
-
-    def exhaustMap(self, f: Callable[[Any], FP]) -> FP:
-        return type(self)(*exhaust(*map(iter, map(f, self.reverse())))).reverse()
+    def exhaustMap(self, f: Callable[[Any], type[FP]]) -> type[FP_rev]:
+        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 if __name__ == "__main__":
     pass

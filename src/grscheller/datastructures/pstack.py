@@ -63,6 +63,12 @@ class PStack(Stack):
         pstack._count = self._count
         return pstack
 
+    def reverse(self) -> None:
+        """Return shallow copy of a PStack in O(1) time & space complexity"""
+        pstack = PStack(reversed(self))
+        self._head = pstack._head
+        self._count = pstack._count
+
     def push(self, *ds: Any) -> None:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.

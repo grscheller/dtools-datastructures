@@ -63,9 +63,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import merge, exhaust
+from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
@@ -98,6 +96,9 @@ class FStack(Stack, FP_rev):
         fstack._head = self._head
         fstack._count = self._count
         return fstack
+
+    def reverse(self) -&gt; FStack:
+        return FStack(reversed(self))
 
     def head(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
@@ -134,37 +135,6 @@ class FStack(Stack, FP_rev):
             return stack
         else:
             return self.copy()
-
-    def map(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-
-        Returns a new stack with new nodes. None values surpressed.
-        &#34;&#34;&#34;
-        return FStack(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Merge the stacks produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until first cached stack is
-        exhausted.
-        &#34;&#34;&#34;
-        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until all the cached stacks are
-        exhausted.
-        &#34;&#34;&#34;
-        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
-
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -225,6 +195,9 @@ which indicates an empty stack.</p>
         fstack._count = self._count
         return fstack
 
+    def reverse(self) -&gt; FStack:
+        return FStack(reversed(self))
+
     def head(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
         If stack is empty, head does not exist so in that case return default.
@@ -259,37 +232,7 @@ which indicates an empty stack.</p>
             stack._count = self._count + 1
             return stack
         else:
-            return self.copy()
-
-    def map(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-
-        Returns a new stack with new nodes. None values surpressed.
-        &#34;&#34;&#34;
-        return FStack(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Merge the stacks produced sequentially front-to-back.
-        &#34;&#34;&#34;
-        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until first cached stack is
-        exhausted.
-        &#34;&#34;&#34;
-        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until all the cached stacks are
-        exhausted.
-        &#34;&#34;&#34;
-        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
+            return self.copy()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -341,44 +284,6 @@ stack. In that case, just return a copy of the stack.</p></div>
     return fstack</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.fstack.FStack.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns new instance</p>
-<p>Round Robin Merge the stacks produced until all the cached stacks are
-exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-    Round Robin Merge the stacks produced until all the cached stacks are
-    exhausted.
-    &#34;&#34;&#34;
-    return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.fstack.FStack.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns new instance</p>
-<p>Merge the stacks produced sequentially front-to-back.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-    Merge the stacks produced sequentially front-to-back.
-    &#34;&#34;&#34;
-    return FStack(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-</dd>
 <dt id="grscheller.datastructures.fstack.FStack.head"><code class="name flex">
 <span>def <span class="ident">head</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
@@ -398,42 +303,17 @@ If stack is empty, head does not exist so in that case return default.</p></div>
     return self._head._data</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.fstack.FStack.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
+<dt id="grscheller.datastructures.fstack.FStack.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Maps a function (or callable object) over the values on the stack.</p>
-<p>Returns a new stack with new nodes. None values surpressed.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-
-    Returns a new stack with new nodes. None values surpressed.
-    &#34;&#34;&#34;
-    return FStack(*map(f, reversed(self)))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.fstack.FStack.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result, returns new instance</p>
-<p>Round Robin Merge the stacks produced until first cached stack is
-exhausted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Apply function and flatten result, returns new instance
-
-    Round Robin Merge the stacks produced until first cached stack is
-    exhausted.
-    &#34;&#34;&#34;
-    return FStack(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
+<pre><code class="python">def reverse(self) -&gt; FStack:
+    return FStack(reversed(self))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.fstack.FStack.tail"><code class="name flex">
@@ -483,14 +363,11 @@ an empty FStack.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="grscheller.datastructures.fstack.FStack.cons" href="#grscheller.datastructures.fstack.FStack.cons">cons</a></code></li>
 <li><code><a title="grscheller.datastructures.fstack.FStack.copy" href="#grscheller.datastructures.fstack.FStack.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.fstack.FStack.exhaustMap" href="#grscheller.datastructures.fstack.FStack.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.fstack.FStack.flatMap" href="#grscheller.datastructures.fstack.FStack.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.fstack.FStack.head" href="#grscheller.datastructures.fstack.FStack.head">head</a></code></li>
-<li><code><a title="grscheller.datastructures.fstack.FStack.map" href="#grscheller.datastructures.fstack.FStack.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.fstack.FStack.mergeMap" href="#grscheller.datastructures.fstack.FStack.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.fstack.FStack.reverse" href="#grscheller.datastructures.fstack.FStack.reverse">reverse</a></code></li>
 <li><code><a title="grscheller.datastructures.fstack.FStack.tail" href="#grscheller.datastructures.fstack.FStack.tail">tail</a></code></li>
 </ul>
 </li>

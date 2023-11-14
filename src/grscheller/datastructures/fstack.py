@@ -29,9 +29,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import merge, exhaust
+from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
@@ -64,6 +62,9 @@ class FStack(Stack, FP_rev):
         fstack._head = self._head
         fstack._count = self._count
         return fstack
+
+    def reverse(self) -> FStack:
+        return FStack(reversed(self))
 
     def head(self, default: Any=None) -> Any:
         """Returns the data at the top of the stack. Does not consume the data.
@@ -100,36 +101,6 @@ class FStack(Stack, FP_rev):
             return stack
         else:
             return self.copy()
-
-    def map(self, f: Callable[[Any], FStack]) -> FStack:
-        """Maps a function (or callable object) over the values on the stack.
-
-        Returns a new stack with new nodes. None values surpressed.
-        """
-        return FStack(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Apply function and flatten result, returns new instance
-
-        Merge the stacks produced sequentially front-to-back.
-        """
-        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until first cached stack is
-        exhausted.
-        """
-        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Apply function and flatten result, returns new instance
-
-        Round Robin Merge the stacks produced until all the cached stacks are
-        exhausted.
-        """
-        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 if __name__ == "__main__":
     pass

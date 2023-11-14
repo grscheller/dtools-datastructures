@@ -65,43 +65,37 @@ class FP():
     def __iter__(self):
         raise NotImplementedError
 
-    def reverse(self):
-        raise NotImplementedError
-
     # For FIFO type data structures.
-    def map(self, f: Callable[[Any], Any]) -&gt; FP:
+    def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         return type(self)(*map(f, self))
 
-    def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*chain(*map(iter, map(f, self))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*merge(*map(iter, map(f, self))))
 
-    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
 
 class FP_rev(FP):
+    def __reversed__(self):
+        raise NotImplementedError
+
     # FP modified for FILO type data structures.
-    # Note: Can&#39;t just replace iter in the above with reversed which works with
-    #       more concrete implemetations. Type checker (Pyright) barfs, maybe
-    #       has something to do with iter() being a builtin function and
-    #       reversed() being a built-in class. This is forcing me to define
-    #       a reverse() method for my functional FILO classes.
+    def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
+        # return type(self)(*map(f, reversed(self)))
+        return type(self)(*map(f, reversed(self)))
 
-    def map(self, f: Callable[[Any], Any]) -&gt; FP:
-        # return type(self)(*map(f, iter(self.reverse())))
-        return type(self)(*map(f, iter(self.reverse())))
+    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
-    def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*chain(*map(iter, map(f, self.reverse())))).reverse()
+    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*merge(*map(iter, map(f, self.reverse())))).reverse()
-
-    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*exhaust(*map(iter, map(f, self.reverse())))).reverse()
+    def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -132,20 +126,17 @@ if __name__ == &#34;__main__&#34;:
     def __iter__(self):
         raise NotImplementedError
 
-    def reverse(self):
-        raise NotImplementedError
-
     # For FIFO type data structures.
-    def map(self, f: Callable[[Any], Any]) -&gt; FP:
+    def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         return type(self)(*map(f, self))
 
-    def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*chain(*map(iter, map(f, self))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*merge(*map(iter, map(f, self))))
 
-    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
+    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Subclasses</h3>
@@ -156,7 +147,7 @@ if __name__ == &#34;__main__&#34;:
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.core.fp.FP.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -164,12 +155,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
     return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -177,12 +168,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
+<pre><code class="python">def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
     return type(self)(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -190,12 +181,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; FP:
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
     return type(self)(*map(f, self))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -203,21 +194,8 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
     return type(self)(*merge(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def reverse(self):
-    raise NotImplementedError</code></pre>
 </details>
 </dd>
 </dl>
@@ -232,25 +210,22 @@ if __name__ == &#34;__main__&#34;:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FP_rev(FP):
+    def __reversed__(self):
+        raise NotImplementedError
+
     # FP modified for FILO type data structures.
-    # Note: Can&#39;t just replace iter in the above with reversed which works with
-    #       more concrete implemetations. Type checker (Pyright) barfs, maybe
-    #       has something to do with iter() being a builtin function and
-    #       reversed() being a built-in class. This is forcing me to define
-    #       a reverse() method for my functional FILO classes.
+    def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
+        # return type(self)(*map(f, reversed(self)))
+        return type(self)(*map(f, reversed(self)))
 
-    def map(self, f: Callable[[Any], Any]) -&gt; FP:
-        # return type(self)(*map(f, iter(self.reverse())))
-        return type(self)(*map(f, iter(self.reverse())))
+    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
-    def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*chain(*map(iter, map(f, self.reverse())))).reverse()
+    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*merge(*map(iter, map(f, self.reverse())))).reverse()
-
-    def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
-        return type(self)(*exhaust(*map(iter, map(f, self.reverse())))).reverse()</code></pre>
+    def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -263,7 +238,7 @@ if __name__ == &#34;__main__&#34;:
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.core.fp.FP_rev.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -271,12 +246,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FP]) -&gt; FP:
-    return type(self)(*exhaust(*map(iter, map(f, self.reverse())))).reverse()</code></pre>
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+    return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP_rev.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -284,12 +259,12 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], FP]) -&gt; FP:
-    return type(self)(*chain(*map(iter, map(f, self.reverse())))).reverse()</code></pre>
+<pre><code class="python">def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+    return type(self)(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP_rev.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -297,13 +272,13 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; FP:
-    # return type(self)(*map(f, iter(self.reverse())))
-    return type(self)(*map(f, iter(self.reverse())))</code></pre>
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
+    # return type(self)(*map(f, reversed(self)))
+    return type(self)(*map(f, reversed(self)))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP_rev.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -311,8 +286,8 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; FP:
-    return type(self)(*merge(*map(iter, map(f, self.reverse())))).reverse()</code></pre>
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+    return type(self)(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 </dl>
@@ -340,7 +315,6 @@ if __name__ == &#34;__main__&#34;:
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.reverse" href="#grscheller.datastructures.core.fp.FP.reverse">reverse</a></code></li>
 </ul>
 </li>
 <li>

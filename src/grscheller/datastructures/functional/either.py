@@ -71,22 +71,25 @@ class Either():
             return Either(self._value)
         return Either(None, self._value)
 
-    def map(self, f: Callable[[Any], Any], right='') -> Either:
+    def map(self, f: Callable[[Any], Any], right=None) -> Either:
         if self:
             return Either(f(self._value), right)
         return self.copy()
 
     def mapRight(self, g: Callable[[Any], Any]) -> Either:
+        """Map over if a Right."""
         if self:
             return self.copy()
         return Either(None, g(self._value))
 
-    def flatMap(self, f: Callable[[Any], Either]) -> Either:
+    def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
+        """flatMap with a Right default."""
         if self:
-            return f(self._value)
+            return f(self._value).mapRight(lambda _: right)
         return self.copy()
 
     def get(self, default: Any=None) -> Any:
+        """get value if a Left, otherwise return default value."""
         if self:
             return self._value
         return default
@@ -94,11 +97,11 @@ class Either():
 # Either convenience functions. First two act like subtype constructors.
 
 def Left(left: Any, right: Any=None) -> Either:
-    """Function returns Left Either if left != None, otherwise Right Either"""
+    """Function returns Left Either if left != None, otherwise Right Either."""
     return Either(left, right)
 
 def Right(right: Any) -> Either:
-    """Function to construct a Right Either"""
+    """Function to construct a Right Either."""
     return Either(None, right)
 
 if __name__ == "__main__":

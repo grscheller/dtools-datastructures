@@ -74,6 +74,16 @@ class TestMaybe:
         assert n1.get(13) == (10 + 3)
         assert n1.get(10/7) == (10/7)
 
+    def test_some(self):
+        o1 = Some(42)
+        n1 = Some(None)
+        n2 = Some()
+        assert n1 == n2
+        o2 = o1.map(lambda x: x // 2) 
+        assert o2 == Some(21)
+        o3 = o1.map(lambda _: None) 
+        assert o3 == Some() == Nothing
+
     def test_nothing(self):
         o1 = Maybe(42)
         n1 = Maybe()
@@ -175,3 +185,19 @@ class TestEither:
         assert e7 == e7
         assert e7 != e8
         assert e8 == e8
+
+    def either_test_right(self):
+        def noMoreThan5(x: int) -> int|None:
+            if x <= 5:
+                return x
+            else:
+                return None
+
+        s1 = Left(3, right = 'foofoo rules')
+        s2 = s1.map(noMoreThan5, 'more than 5')
+        s3 = Left(42, right = 'foofoo rules')
+        s4 = s3.map(noMoreThan5, 'more than 5')
+        assert s1 == Left(3)
+        assert 34 == Right('more than 5')
+        assert s1.get('nothing doing') == 3
+        assert s3.get('nothing doing') == 'nothing doing'
