@@ -12,56 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.core.util
+"""Module grscheller.datastructures.core.func_utils
 
-Utility functions for use with the data structures defined in the
-grscheller.datastructures.core package.
+Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
+Class Either: Implements a left biased Either Monad.
 """
-
-from __future__ import annotations
-from typing import Any
-
-__all__ = ['maybeToEither', 'eitherToMaybe']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
-
-from .maybe import *
-from .either import *
-
-def maybeToEither(m: Maybe, right: Any=None) -> Either:
-    """Convert a Maybe to an Either"""
-    return Either(m.get(), right)
-
-def eitherToMaybe(e: Either) -> Maybe:
-    """Convert an Either to a Maybe"""
-    return Maybe(e.get())
-
-if __name__ == "__main__":
-    pass
-# Copyright 2023 Geoffrey R. Scheller
-# 
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-# 
-#     http://www.apache.org/licenses/LICENSE-2.0
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Module grscheller.datastructures.core.maybe
-
-Implemention of the Maybe Monad, sometimes called the Option ot Optional Monad.
-"""
-
 from __future__ import annotations
 from typing import Any, Callable
 
-__all__ = ['Maybe', 'Some', 'Nothing']
+__all__ = [
+    'Either', 'Left', 'Right',
+    'Maybe', 'Some', 'Nothing',
+    'maybeToEither', 'eitherToMaybe'
+]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -133,9 +96,11 @@ class Maybe():
         else:
             return default
 
-# Maybe convenience functions/objects. Like "unit", "Nil", "()" in FP-languages.
-# These are not necessary to ues Maybe, but gives Maybe the flavor of a Union
-# type without using either inheritance or unnecessary internal state.
+# Maybe convenience functions/objects.
+
+def maybeToEither(m: Maybe, right: Any=None) -> Either:
+    """Convert a Maybe to an Either"""
+    return Either(m.get(), right)
 
 def Some(value=None):
     """Function for creating a Maybe from a value. If value is None or missing,
@@ -147,34 +112,6 @@ def Some(value=None):
 #: Nothing is not a singleton. Test via equality not identity.
 Nothing = Some()
 
-if __name__ == "__main__":
-    pass
-# Copyright 2023 Geoffrey R. Scheller
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Module grscheller.datastructures.core.either
-
-Implemention of the Either Monad.
-"""
-
-from __future__ import annotations
-from typing import Any, Callable
-
-__all__ = ['Either', 'Left', 'Right']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
 
 class Either():
     """Class that either contains a Left value or Right value, but not both.
@@ -245,7 +182,11 @@ class Either():
             return self._value
         return default
 
-# Either convenience functions. First two act like subtype constructors.
+# Either convenience functions, act like subtype constructors.
+
+def eitherToMaybe(e: Either) -> Maybe:
+    """Convert an Either to a Maybe"""
+    return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -> Either:
     """Function returns Left Either if left != None, otherwise Right Either."""

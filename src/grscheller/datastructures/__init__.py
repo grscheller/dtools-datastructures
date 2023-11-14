@@ -30,7 +30,7 @@
 #  - forth digit (development only)
 #    - commit count
 #
-__version__ = "0.10.3.0"
+__version__ = "0.10.4.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -41,6 +41,5 @@ from .dqueue import *
 from .clarray import *
 from .ftuple import *
 from .fstack import *
-from .core.maybe import *
-from .core.either import *
-from .core.util import *
+from .core.func_utils import *
+from .core.iterlib import *
