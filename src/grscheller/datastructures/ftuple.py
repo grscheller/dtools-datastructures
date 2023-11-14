@@ -26,9 +26,9 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any
-from .core.fp_fwd import FPfwd
+from .core.fp import FP
 
-class FTuple(FPfwd):
+class FTuple(FP):
     """Class implementing tuple-like data structure with FP behaviors."""
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""

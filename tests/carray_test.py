@@ -23,10 +23,10 @@ class TestCarray:
         ca1.pushR(1); ca1.pushR(2)
         ret = ca1.pushR(3)
         assert ret == None
-        ret = ca1.map(lambda x: x+1, mut=True)
+        ret = ca1.mapSelf(lambda x: x+1)
         assert ret == None
         assert ca1.popL() == ca1.popR() == 4
-        ca2 = ca1.map(lambda x: x+1, mut=False)
+        ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
         assert ca1 != ca2
         assert len(ca1) == len(ca2)
@@ -156,7 +156,7 @@ class TestCarray:
 
     def test_mapMutate(self):
         c1 = CArray(1,2,3,10)
-        c1.map(lambda x: x*x-1, mut=True)
+        c1.mapSelf(lambda x: x*x-1)
         assert c1 == CArray(0,3,8,99)
         assert len(c1) == 4
 

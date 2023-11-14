@@ -53,6 +53,7 @@ class CLArray():
             if d is None:
                 return default
             return d
+        self._default = default
         dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) > dsize):
@@ -173,23 +174,15 @@ class CLArray():
         """Reversed the CLArray"""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -> CLArray|None:
-        """Apply function over the CLArray contents.
-          - mutate if mut is true (the default)
-          - otherwise return a new CLArray with the mapped contents
-          - size is ignored if mut is true
-          - default value to use if f returns None (default is None)
+    def map(self, f: Callable[[Any], Any], size: int=0) -> CLArray:
+        """Apply function f over the CLArray contents. Return a new CLArray
+        with the mapped contents. Use self._default if f teturns None.
         """
-        if mut == True:
-            size = 0
-        clarray = CLArray(*map(f, self), size=size, default=default)
-        if mut:
-            self._list = clarray._list
-            return None
-        else:
-            return clarray
+        return CLArray(*map(f, self), size=size, default=self._default)
 
+    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+        """Mutate the CLArray by appling function over the CLArray contents."""
+        self._list = CLArray(*map(f, self), default=self._default)._list
 
 if __name__ == "__main__":
     pass

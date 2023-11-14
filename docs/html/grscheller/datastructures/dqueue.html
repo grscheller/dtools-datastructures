@@ -121,12 +121,6 @@ class DQueue(Queue):
         else:
             return None
 
-    def map(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-        returned by f.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*map(f, self))._carray
-
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -209,13 +203,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
         if len(self._carray) &gt; 0:
             return self._carray[0]
         else:
-            return None
-
-    def map(self, f: Callable[[Any], Any]) -&gt; None:
-        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-        returned by f.
-        &#34;&#34;&#34;
-        self._carray = DQueue(*map(f, self))._carray</code></pre>
+            return None</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -237,23 +225,6 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     dqueue = DQueue()
     dqueue._carray = self._carray.copy()
     return dqueue</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.dqueue.DQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the DQueue's contents. Suppress any None values
-returned by f.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; None:
-    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
-    returned by f.
-    &#34;&#34;&#34;
-    self._carray = DQueue(*map(f, self))._carray</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.peakL"><code class="name flex">
@@ -357,6 +328,14 @@ returned by f.</p></div>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.core.queue.Queue.map" href="core/queue.html#grscheller.datastructures.core.queue.Queue.map">map</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -378,7 +357,6 @@ returned by f.</p></div>
 <h4><code><a title="grscheller.datastructures.dqueue.DQueue" href="#grscheller.datastructures.dqueue.DQueue">DQueue</a></code></h4>
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.dqueue.DQueue.copy" href="#grscheller.datastructures.dqueue.DQueue.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.dqueue.DQueue.map" href="#grscheller.datastructures.dqueue.DQueue.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.dqueue.DQueue.peakL" href="#grscheller.datastructures.dqueue.DQueue.peakL">peakL</a></code></li>
 <li><code><a title="grscheller.datastructures.dqueue.DQueue.peakR" href="#grscheller.datastructures.dqueue.DQueue.peakR">peakR</a></code></li>
 <li><code><a title="grscheller.datastructures.dqueue.DQueue.popL" href="#grscheller.datastructures.dqueue.DQueue.popL">popL</a></code></li>

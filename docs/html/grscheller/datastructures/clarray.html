@@ -86,6 +86,7 @@ class CLArray():
             if d is None:
                 return default
             return d
+        self._default = default
         dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
@@ -206,23 +207,15 @@ class CLArray():
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -&gt; CLArray|None:
-        &#34;&#34;&#34;Apply function over the CLArray contents.
-          - mutate if mut is true (the default)
-          - otherwise return a new CLArray with the mapped contents
-          - size is ignored if mut is true
-          - default value to use if f returns None (default is None)
+    def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+        with the mapped contents. Use self._default if f teturns None.
         &#34;&#34;&#34;
-        if mut == True:
-            size = 0
-        clarray = CLArray(*map(f, self), size=size, default=default)
-        if mut:
-            self._list = clarray._list
-            return None
-        else:
-            return clarray
+        return CLArray(*map(f, self), size=size, default=self._default)
 
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+        self._list = CLArray(*map(f, self), default=self._default)._list
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -276,6 +269,7 @@ is provided, return array with a default value and a size = 1.</p>
             if d is None:
                 return default
             return d
+        self._default = default
         dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
@@ -396,22 +390,15 @@ is provided, return array with a default value and a size = 1.</p>
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], mut: bool=True, 
-            size: int=0, default: Any = None) -&gt; CLArray|None:
-        &#34;&#34;&#34;Apply function over the CLArray contents.
-          - mutate if mut is true (the default)
-          - otherwise return a new CLArray with the mapped contents
-          - size is ignored if mut is true
-          - default value to use if f returns None (default is None)
+    def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+        with the mapped contents. Use self._default if f teturns None.
         &#34;&#34;&#34;
-        if mut == True:
-            size = 0
-        clarray = CLArray(*map(f, self), size=size, default=default)
-        if mut:
-            self._list = clarray._list
-            return None
-        else:
-            return clarray</code></pre>
+        return CLArray(*map(f, self), size=size, default=self._default)
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+        self._list = CLArray(*map(f, self), default=self._default)._list</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -430,34 +417,34 @@ is provided, return array with a default value and a size = 1.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = True, size: int = 0, default: Any = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a> | None</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int = 0) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the CLArray contents.
-- mutate if mut is true (the default)
-- otherwise return a new CLArray with the mapped contents
-- size is ignored if mut is true
-- default value to use if f returns None (default is None)</p></div>
+<div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray
+with the mapped contents. Use self._default if f teturns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=True, 
-        size: int=0, default: Any = None) -&gt; CLArray|None:
-    &#34;&#34;&#34;Apply function over the CLArray contents.
-      - mutate if mut is true (the default)
-      - otherwise return a new CLArray with the mapped contents
-      - size is ignored if mut is true
-      - default value to use if f returns None (default is None)
+<pre><code class="python">def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+    &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+    with the mapped contents. Use self._default if f teturns None.
     &#34;&#34;&#34;
-    if mut == True:
-        size = 0
-    clarray = CLArray(*map(f, self), size=size, default=default)
-    if mut:
-        self._list = clarray._list
-        return None
-    else:
-        return clarray</code></pre>
+    return CLArray(*map(f, self), size=size, default=self._default)</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.mapSelf"><code class="name flex">
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mutate the CLArray by appling function over the CLArray contents.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+    self._list = CLArray(*map(f, self), default=self._default)._list</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.reverse"><code class="name flex">
@@ -497,6 +484,7 @@ is provided, return array with a default value and a size = 1.</p>
 <ul class="">
 <li><code><a title="grscheller.datastructures.clarray.CLArray.copy" href="#grscheller.datastructures.clarray.CLArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.map" href="#grscheller.datastructures.clarray.CLArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.mapSelf" href="#grscheller.datastructures.clarray.CLArray.mapSelf">mapSelf</a></code></li>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.reverse" href="#grscheller.datastructures.clarray.CLArray.reverse">reverse</a></code></li>
 </ul>
 </li>

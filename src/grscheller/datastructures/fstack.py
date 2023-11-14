@@ -33,11 +33,11 @@ from typing import Any, Callable
 from itertools import chain
 from .core.iterlib import merge, exhaust
 from .core.stack import Stack
-from .core.fp_rev import FPrev
+from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
 
-class FStack(Stack, FPrev):
+class FStack(Stack, FP_rev):
     """Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -130,7 +130,6 @@ class FStack(Stack, FPrev):
         exhausted.
         """
         return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
-
 
 if __name__ == "__main__":
     pass

@@ -103,6 +103,12 @@ class Queue():
             return False
         return self._carray == other._carray
 
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+        returned by f.
+        &#34;&#34;&#34;
+        self._carray = Queue(*map(f, self))._carray
+
     def __repr__(self) -&gt; type[Queue]:
         raise NotImplementedError
 
@@ -181,6 +187,12 @@ ensure that None values do not get pushed onto the circular array.</p>
             return False
         return self._carray == other._carray
 
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+        returned by f.
+        &#34;&#34;&#34;
+        self._carray = Queue(*map(f, self))._carray
+
     def __repr__(self) -&gt; type[Queue]:
         raise NotImplementedError
 
@@ -207,6 +219,23 @@ ensure that None values do not get pushed onto the circular array.</p>
     raise NotImplementedError</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.core.queue.Queue.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the DQueue's contents. Suppress any None values
+returned by f.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
+    returned by f.
+    &#34;&#34;&#34;
+    self._carray = Queue(*map(f, self))._carray</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -229,6 +258,7 @@ ensure that None values do not get pushed onto the circular array.</p>
 <h4><code><a title="grscheller.datastructures.core.queue.Queue" href="#grscheller.datastructures.core.queue.Queue">Queue</a></code></h4>
 <ul class="">
 <li><code><a title="grscheller.datastructures.core.queue.Queue.copy" href="#grscheller.datastructures.core.queue.Queue.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.core.queue.Queue.map" href="#grscheller.datastructures.core.queue.Queue.map">map</a></code></li>
 </ul>
 </li>
 </ul>

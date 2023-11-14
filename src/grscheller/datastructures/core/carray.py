@@ -14,13 +14,15 @@
 
 """Module grscheller.datastructure.core.carray - Double sided queue
 
-Circular array with amortized O(1) indexing, prepending & appending values, and
-length determination. Implemented with a Python List.
+Module implementing an auto-resizing circular array.
 
-Mainly used to implement other grscheller.datastructure classes where
-functionality is more likely restricted than augmented. This class is
-not opinionated regarding None as a value. It freely stores and returns
-None values. Use in a boolean context to determine if empty.
+Mainly used to implement other grscheller.datastructure classes in a has-a
+relationship where functionality is more likely restricted than augmented.
+
+This class is not opinionated regarding None as a value. It freely stores and
+returns None values. Use in a boolean context to determine if empty.
+
+Implemented with a Python List.
 """
 
 from __future__ import annotations
@@ -34,9 +36,15 @@ from typing import Any, Callable, Never, Self, Union
 
 class CArray:
     """Class implementing a stateful circular array with amortized O(1)
-    indexing, prepending & appending values, and length determination.
+    indexing, prepending & appending values, length determination, and
+    indexing for getting & setting values.
+
+    Class creaes stateful objects with a mixed functional/imperative
+    interface.
 
     Raises IndexError exceptions.
+
+    Freely stores None as a value.
     """
     def __init__(self, *data):
         """Construct a double sided queue"""
@@ -155,6 +163,20 @@ class CArray:
                 pos = (pos + 1) % cap
             yield currList[pos]
 
+    def __reversed__(self):
+        """Generator yielding the cached contents of the current state of
+        the CArray in reversed order.
+        """
+        if self._count > 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -182,6 +204,9 @@ class CArray:
     def __repr__(self):
         """Display data in the circle array"""
         return "(|" + ", ".join(map(repr, self)) + "|)"
+
+    def reverse(self) -> CArray:
+        return CArray(reversed(self))
 
     def copy(self) -> CArray:
         """Return shallow copy of the circle array in O(n) time/space complexity"""
@@ -243,21 +268,22 @@ class CArray:
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -> None|CArray:
-        """Apply function over the circular array's contents.
+    def map(self, f: Callable[[Any], Any]) -> CArray:
+        """Apply function over the circular array's contents and return new
+        circular array.
+        """
+        return CArray(*map(f, self))
 
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+        """Apply function over the circular array's contents mutatng the
+        circular array, don't return anything.
         """
         newCArray  = CArray(*map(f, self))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return None
-        return newCArray
+        self._count = newCArray._count
+        self._capacity = newCArray._capacity
+        self._front = newCArray._front
+        self._rear = newCArray._rear
+        self._list = newCArray._list
 
 if __name__ == "__main__":
     pass

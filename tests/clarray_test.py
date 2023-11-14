@@ -15,15 +15,15 @@
 from grscheller.datastructures.clarray import CLArray
 
 class TestCLArray:
-    def test_mutate_returns_none(self):
-        cl1 = CLArray(0,1,2,3,4)
+    def test_mapSelf(self):
+        cl1 = CLArray(0, 1, 2, 3, 4)
         cl1[2] = cl1[4]
         assert cl1[0] == 0
         assert cl1[1] == 1
         assert cl1[2] == 4
         assert cl1[3] == 3
         assert cl1[4] == 4
-        ret = cl1.map(lambda x: x*x, default=-1)
+        ret = cl1.mapSelf(lambda x: x*x)
         assert ret == None
         ret = cl1.reverse()
         assert ret == None
@@ -33,6 +33,28 @@ class TestCLArray:
         assert cl1[3] == 1
         assert cl1[4] == 0
 
+    def test_map1(self):
+        cl1 = CLArray(0, 1, 2, 3, default=-1)
+        cl2 = cl1.map(lambda x: x+1, size=-6)
+        assert cl2[0] == cl2[1] == -1
+        assert cl1[0] + 1 == cl2[2] == 1
+        assert cl1[1] + 1 == cl2[3] == 2
+        assert cl1[2] + 1 == cl2[4] == 3
+        assert cl1[3] + 1 == cl2[5] == 4
+
+    def test_map2(self):
+        cl1 = CLArray(1, 2, 3, 10)
+
+        cl2 = cl1.map(lambda x: x*x-1)
+        assert cl2 is not None
+        assert cl1 is not cl2
+        assert cl1 == CLArray(1, 2, 3, 10)
+        assert cl2 == CLArray(0, 3, 8, 99)
+        
+        ret = cl1.mapSelf(lambda x: x*x-1)
+        assert ret is None
+        assert cl1 == CLArray(0, 3, 8, 99)
+        
     def test_default(self):
         cl1 = CLArray(default=0)
         cl2 = CLArray(default=0)
@@ -222,19 +244,6 @@ class TestCLArray:
         else:
             assert False
 
-    def test_map(self):
-        cl1 = CLArray(1, 2, 3, 10)
-
-        cl2 = cl1.map(lambda x: x*x-1, mut=False)
-        assert cl2 is not None
-        assert cl1 is not cl2
-        assert cl1 == CLArray(1, 2, 3, 10)
-        assert cl2 == CLArray(0, 3, 8, 99)
-        
-        ret = cl1.map(lambda x: x*x-1, mut=True)
-        assert ret is None
-        assert cl1 == CLArray(0, 3, 8, 99)
-        
     def test_bool(self):
         cl_allNotNone = CLArray(True, 0, '')
         cl_allNone = CLArray(None, None, None)

@@ -56,11 +56,10 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable
-from itertools import chain
-from .core.iterlib import exhaust, merge
+from typing import Any
+from .core.fp import FP
 
-class FTuple():
+class FTuple(FP):
     &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
@@ -124,26 +123,6 @@ class FTuple():
     def reverse(self) -&gt; FTuple:
         &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
-
-    def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-        return FTuple(*map(f, self))
-
-    def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-        return FTuple(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by round robin
-        merging the results until first FTuple is exhauted.
-        &#34;&#34;&#34;
-        return FTuple(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by round robin
-        merging the results until all FTuples are exhauted.
-        &#34;&#34;&#34;
-        return FTuple(*exhaust(*map(iter, map(f, self))))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -169,7 +148,7 @@ if __name__ == &#34;__main__&#34;:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FTuple():
+<pre><code class="python">class FTuple(FP):
     &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
@@ -232,28 +211,12 @@ if __name__ == &#34;__main__&#34;:
 
     def reverse(self) -&gt; FTuple:
         &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
-        return(FTuple(*reversed(self)))
-
-    def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-        return FTuple(*map(f, self))
-
-    def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-        return FTuple(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by round robin
-        merging the results until first FTuple is exhauted.
-        &#34;&#34;&#34;
-        return FTuple(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-        &#34;&#34;&#34;Apply function and flatten result by round robin
-        merging the results until all FTuples are exhauted.
-        &#34;&#34;&#34;
-        return FTuple(*exhaust(*map(iter, map(f, self))))</code></pre>
+        return(FTuple(*reversed(self)))</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
+</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.ftuple.FTuple.copy"><code class="name flex">
@@ -270,68 +233,6 @@ if __name__ == &#34;__main__&#34;:
     ftuple = FTuple()
     ftuple._ds = self._ds
     return ftuple</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.ftuple.FTuple.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a>]) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result by round robin
-merging the results until all FTuples are exhauted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-    &#34;&#34;&#34;Apply function and flatten result by round robin
-    merging the results until all FTuples are exhauted.
-    &#34;&#34;&#34;
-    return FTuple(*exhaust(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.ftuple.FTuple.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a>]) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result by concatenating the results.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-    &#34;&#34;&#34;Apply function and flatten result by concatenating the results.&#34;&#34;&#34;
-    return FTuple(*chain(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.ftuple.FTuple.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function over the FTuple's contents. Filter out None values.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; FTuple:
-    &#34;&#34;&#34;Apply function over the FTuple&#39;s contents. Filter out None values.&#34;&#34;&#34;
-    return FTuple(*map(f, self))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.ftuple.FTuple.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a>]) ‑> <a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply function and flatten result by round robin
-merging the results until first FTuple is exhauted.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], FTuple]) -&gt; FTuple:
-    &#34;&#34;&#34;Apply function and flatten result by round robin
-    merging the results until first FTuple is exhauted.
-    &#34;&#34;&#34;
-    return FTuple(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.ftuple.FTuple.reverse"><code class="name flex">
@@ -368,12 +269,8 @@ merging the results until first FTuple is exhauted.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.ftuple.FTuple" href="#grscheller.datastructures.ftuple.FTuple">FTuple</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="grscheller.datastructures.ftuple.FTuple.copy" href="#grscheller.datastructures.ftuple.FTuple.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.ftuple.FTuple.exhaustMap" href="#grscheller.datastructures.ftuple.FTuple.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.ftuple.FTuple.flatMap" href="#grscheller.datastructures.ftuple.FTuple.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.ftuple.FTuple.map" href="#grscheller.datastructures.ftuple.FTuple.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.ftuple.FTuple.mergeMap" href="#grscheller.datastructures.ftuple.FTuple.mergeMap">mergeMap</a></code></li>
 <li><code><a title="grscheller.datastructures.ftuple.FTuple.reverse" href="#grscheller.datastructures.ftuple.FTuple.reverse">reverse</a></code></li>
 </ul>
 </li>

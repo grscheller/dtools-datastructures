@@ -23,12 +23,12 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.core.carray - Double sided queue</p>
-<p>Circular array with amortized O(1) indexing, prepending &amp; appending values, and
-length determination. Implemented with a Python List.</p>
-<p>Mainly used to implement other grscheller.datastructure classes where
-functionality is more likely restricted than augmented. This class is
-not opinionated regarding None as a value. It freely stores and returns
-None values. Use in a boolean context to determine if empty.</p>
+<p>Module implementing an auto-resizing circular array.</p>
+<p>Mainly used to implement other grscheller.datastructure classes in a has-a
+relationship where functionality is more likely restricted than augmented.</p>
+<p>This class is not opinionated regarding None as a value. It freely stores and
+returns None values. Use in a boolean context to determine if empty.</p>
+<p>Implemented with a Python List.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -49,13 +49,15 @@ None values. Use in a boolean context to determine if empty.</p>
 
 &#34;&#34;&#34;Module grscheller.datastructure.core.carray - Double sided queue
 
-Circular array with amortized O(1) indexing, prepending &amp; appending values, and
-length determination. Implemented with a Python List.
+Module implementing an auto-resizing circular array.
 
-Mainly used to implement other grscheller.datastructure classes where
-functionality is more likely restricted than augmented. This class is
-not opinionated regarding None as a value. It freely stores and returns
-None values. Use in a boolean context to determine if empty.
+Mainly used to implement other grscheller.datastructure classes in a has-a
+relationship where functionality is more likely restricted than augmented.
+
+This class is not opinionated regarding None as a value. It freely stores and
+returns None values. Use in a boolean context to determine if empty.
+
+Implemented with a Python List.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -69,9 +71,15 @@ from typing import Any, Callable, Never, Self, Union
 
 class CArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
-    indexing, prepending &amp; appending values, and length determination.
+    indexing, prepending &amp; appending values, length determination, and
+    indexing for getting &amp; setting values.
+
+    Class creaes stateful objects with a mixed functional/imperative
+    interface.
 
     Raises IndexError exceptions.
+
+    Freely stores None as a value.
     &#34;&#34;&#34;
     def __init__(self, *data):
         &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
@@ -190,6 +198,20 @@ class CArray:
                 pos = (pos + 1) % cap
             yield currList[pos]
 
+    def __reversed__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CArray in reversed order.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -218,6 +240,9 @@ class CArray:
         &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
         return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
+    def reverse(self) -&gt; CArray:
+        return CArray(reversed(self))
+
     def copy(self) -&gt; CArray:
         &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
         return CArray(*self)
@@ -238,7 +263,7 @@ class CArray:
         self._list[self._front] = data
         self._count += 1
 
-    def popR(self) -&gt; Any|None:
+    def popR(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -249,7 +274,7 @@ class CArray:
             self._count -= 1
             return data
 
-    def popL(self) -&gt; Any|None:
+    def popL(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -278,21 +303,22 @@ class CArray:
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; Self|CArray:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents.
+    def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+        circular array.
+        &#34;&#34;&#34;
+        return CArray(*map(f, self))
 
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+        circular array, don&#39;t return anything.
         &#34;&#34;&#34;
         newCArray  = CArray(*map(f, self))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return self
-        return newCArray
+        self._count = newCArray._count
+        self._capacity = newCArray._capacity
+        self._front = newCArray._front
+        self._rear = newCArray._rear
+        self._list = newCArray._list
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -313,8 +339,12 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a stateful circular array with amortized O(1)
-indexing, prepending &amp; appending values, and length determination.</p>
+indexing, prepending &amp; appending values, length determination, and
+indexing for getting &amp; setting values.</p>
+<p>Class creaes stateful objects with a mixed functional/imperative
+interface.</p>
 <p>Raises IndexError exceptions.</p>
+<p>Freely stores None as a value.</p>
 <p>Construct a double sided queue</p></div>
 <details class="source">
 <summary>
@@ -322,9 +352,15 @@ indexing, prepending &amp; appending values, and length determination.</p>
 </summary>
 <pre><code class="python">class CArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
-    indexing, prepending &amp; appending values, and length determination.
+    indexing, prepending &amp; appending values, length determination, and
+    indexing for getting &amp; setting values.
+
+    Class creaes stateful objects with a mixed functional/imperative
+    interface.
 
     Raises IndexError exceptions.
+
+    Freely stores None as a value.
     &#34;&#34;&#34;
     def __init__(self, *data):
         &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
@@ -443,6 +479,20 @@ indexing, prepending &amp; appending values, and length determination.</p>
                 pos = (pos + 1) % cap
             yield currList[pos]
 
+    def __reversed__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CArray in reversed order.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -471,6 +521,9 @@ indexing, prepending &amp; appending values, and length determination.</p>
         &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
         return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
 
+    def reverse(self) -&gt; CArray:
+        return CArray(reversed(self))
+
     def copy(self) -&gt; CArray:
         &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
         return CArray(*self)
@@ -491,7 +544,7 @@ indexing, prepending &amp; appending values, and length determination.</p>
         self._list[self._front] = data
         self._count += 1
 
-    def popR(self) -&gt; Any|None:
+    def popR(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -502,7 +555,7 @@ indexing, prepending &amp; appending values, and length determination.</p>
             self._count -= 1
             return data
 
-    def popL(self) -&gt; Any|None:
+    def popL(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
         if self._count == 0:
             return None
@@ -531,21 +584,22 @@ indexing, prepending &amp; appending values, and length determination.</p>
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; Self|CArray:
-        &#34;&#34;&#34;Apply function over the circular array&#39;s contents.
+    def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+        circular array.
+        &#34;&#34;&#34;
+        return CArray(*map(f, self))
 
-        Return new circular array if mut=False (the default)
-        otherwise mutate the data structure and return self.
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+        circular array, don&#39;t return anything.
         &#34;&#34;&#34;
         newCArray  = CArray(*map(f, self))
-        if mut:
-            self._count = newCArray._count
-            self._capacity = newCArray._capacity
-            self._front = newCArray._front
-            self._rear = newCArray._rear
-            self._list = newCArray._list
-            return self
-        return newCArray</code></pre>
+        self._count = newCArray._count
+        self._capacity = newCArray._capacity
+        self._front = newCArray._front
+        self._rear = newCArray._rear
+        self._list = newCArray._list</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -592,35 +646,46 @@ indexing, prepending &amp; appending values, and length determination.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.carray.CArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], mut: bool = False) ‑> Union[Self, <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a>]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the circular array's contents.</p>
-<p>Return new circular array if mut=False (the default)
-otherwise mutate the data structure and return self.</p></div>
+<div class="desc"><p>Apply function over the circular array's contents and return new
+circular array.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], mut: bool=False) -&gt; Self|CArray:
-    &#34;&#34;&#34;Apply function over the circular array&#39;s contents.
-
-    Return new circular array if mut=False (the default)
-    otherwise mutate the data structure and return self.
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+    &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+    circular array.
+    &#34;&#34;&#34;
+    return CArray(*map(f, self))</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.carray.CArray.mapSelf"><code class="name flex">
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the circular array's contents mutatng the
+circular array, don't return anything.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+    circular array, don&#39;t return anything.
     &#34;&#34;&#34;
     newCArray  = CArray(*map(f, self))
-    if mut:
-        self._count = newCArray._count
-        self._capacity = newCArray._capacity
-        self._front = newCArray._front
-        self._rear = newCArray._rear
-        self._list = newCArray._list
-        return self
-    return newCArray</code></pre>
+    self._count = newCArray._count
+    self._capacity = newCArray._capacity
+    self._front = newCArray._front
+    self._rear = newCArray._rear
+    self._list = newCArray._list</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.carray.CArray.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of circle array, returns None if empty</p></div>
@@ -628,7 +693,7 @@ otherwise mutate the data structure and return self.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popL(self) -&gt; Any|None:
+<pre><code class="python">def popL(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
     if self._count == 0:
         return None
@@ -641,7 +706,7 @@ otherwise mutate the data structure and return self.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.carray.CArray.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> typing.Any | None</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of circle array, returns None if empty</p></div>
@@ -649,7 +714,7 @@ otherwise mutate the data structure and return self.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popR(self) -&gt; Any|None:
+<pre><code class="python">def popR(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
     if self._count == 0:
         return None
@@ -717,6 +782,19 @@ otherwise mutate the data structure and return self.</p></div>
     return self</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.core.carray.CArray.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self) -&gt; CArray:
+    return CArray(reversed(self))</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -742,11 +820,13 @@ otherwise mutate the data structure and return self.</p></div>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.copy" href="#grscheller.datastructures.core.carray.CArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.fractionFilled" href="#grscheller.datastructures.core.carray.CArray.fractionFilled">fractionFilled</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.map" href="#grscheller.datastructures.core.carray.CArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.carray.CArray.mapSelf" href="#grscheller.datastructures.core.carray.CArray.mapSelf">mapSelf</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.popL" href="#grscheller.datastructures.core.carray.CArray.popL">popL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.popR" href="#grscheller.datastructures.core.carray.CArray.popR">popR</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.pushL" href="#grscheller.datastructures.core.carray.CArray.pushL">pushL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.pushR" href="#grscheller.datastructures.core.carray.CArray.pushR">pushR</a></code></li>
 <li><code><a title="grscheller.datastructures.core.carray.CArray.resize" href="#grscheller.datastructures.core.carray.CArray.resize">resize</a></code></li>
+<li><code><a title="grscheller.datastructures.core.carray.CArray.reverse" href="#grscheller.datastructures.core.carray.CArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

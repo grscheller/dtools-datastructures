@@ -97,7 +97,7 @@ class PStack(Stack):
         pstack._count = self._count
         return pstack
 
-    def push(self, *ds: Any) -&gt; Self:
+    def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
         return the stack being pushed.
         &#34;&#34;&#34;
@@ -106,7 +106,6 @@ class PStack(Stack):
                 node = Node(d, self._head)
                 self._head = node
                 self._count += 1
-        return self
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
@@ -126,13 +125,13 @@ class PStack(Stack):
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], PStack]) -&gt; None:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-        Returns a new stack with new nodes. None values surpressed. O(n).
+    def map(self, f: Callable[[Any], Stack]) -&gt; None:
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
+        Mutates the Stack object. O(n).
         &#34;&#34;&#34;
-        newPStack = PStack(*map(f, reversed(self)))
-        self._head = newPStack._head
-        self._count = newPStack._count
+        newStack = Stack(*map(f, reversed(self)))
+        self._head = newStack._head
+        self._count = newStack._count
 
 
 if __name__ == &#34;__main__&#34;:
@@ -195,7 +194,7 @@ None which indicates an empty stack.</p>
         pstack._count = self._count
         return pstack
 
-    def push(self, *ds: Any) -&gt; Self:
+    def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
         return the stack being pushed.
         &#34;&#34;&#34;
@@ -204,7 +203,6 @@ None which indicates an empty stack.</p>
                 node = Node(d, self._head)
                 self._head = node
                 self._count += 1
-        return self
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
@@ -224,13 +222,13 @@ None which indicates an empty stack.</p>
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], PStack]) -&gt; None:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-        Returns a new stack with new nodes. None values surpressed. O(n).
+    def map(self, f: Callable[[Any], Stack]) -&gt; None:
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
+        Mutates the Stack object. O(n).
         &#34;&#34;&#34;
-        newPStack = PStack(*map(f, reversed(self)))
-        self._head = newPStack._head
-        self._count = newPStack._count</code></pre>
+        newStack = Stack(*map(f, reversed(self)))
+        self._head = newStack._head
+        self._count = newStack._count</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -256,22 +254,22 @@ None which indicates an empty stack.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.pstack.PStack.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.pstack.PStack" href="#grscheller.datastructures.pstack.PStack">PStack</a>]) ‑> None</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Stack]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Maps a function (or callable object) over the values on the stack.
-Returns a new stack with new nodes. None values surpressed. O(n).</p></div>
+<div class="desc"><p>Maps a function (or callable object) over the values on the Stack.
+Mutates the Stack object. O(n).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], PStack]) -&gt; None:
-    &#34;&#34;&#34;Maps a function (or callable object) over the values on the stack.
-    Returns a new stack with new nodes. None values surpressed. O(n).
+<pre><code class="python">def map(self, f: Callable[[Any], Stack]) -&gt; None:
+    &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
+    Mutates the Stack object. O(n).
     &#34;&#34;&#34;
-    newPStack = PStack(*map(f, reversed(self)))
-    self._head = newPStack._head
-    self._count = newPStack._count</code></pre>
+    newStack = Stack(*map(f, reversed(self)))
+    self._head = newStack._head
+    self._count = newStack._count</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.pstack.PStack.peak"><code class="name flex">
@@ -314,7 +312,7 @@ If stack is empty, data does not exist so in that case return default.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.pstack.PStack.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> Self</span>
+<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data that is not NONE onto top of stack,
@@ -323,7 +321,7 @@ return the stack being pushed.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def push(self, *ds: Any) -&gt; Self:
+<pre><code class="python">def push(self, *ds: Any) -&gt; None:
     &#34;&#34;&#34;Push data that is not NONE onto top of stack,
     return the stack being pushed.
     &#34;&#34;&#34;
@@ -331,8 +329,7 @@ return the stack being pushed.</p></div>
         if d is not None:
             node = Node(d, self._head)
             self._head = node
-            self._count += 1
-    return self</code></pre>
+            self._count += 1</code></pre>
 </details>
 </dd>
 </dl>

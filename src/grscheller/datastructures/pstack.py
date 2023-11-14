@@ -29,7 +29,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Self
+from typing import Any, Callable
 from .core.stack import Stack
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
@@ -98,7 +98,6 @@ class PStack(Stack):
         newStack = Stack(*map(f, reversed(self)))
         self._head = newStack._head
         self._count = newStack._count
-
 
 if __name__ == "__main__":
     pass
