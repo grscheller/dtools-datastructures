@@ -47,7 +47,7 @@ class Test_repr:
     def test_Either(self):
         assert repr(Either(10)) == 'Left(10)'
         assert repr(Either(addLt42(10, -4))) == 'Left(6)'
-        assert repr(Either(addLt42(10, 40))) == 'Right(None)'
+        assert repr(Either(addLt42(10, 40))) == "Right('')"
         assert repr(Either(None, 'Foofoo rules')) == "Right('Foofoo rules')"
         assert repr(Left(42)) == 'Left(42)'
         assert repr(Right(13)) == 'Right(13)'
