@@ -149,8 +149,9 @@ class CLArray():
         return self._list == other._list
 
     def __repr__(self):
-        """Display data in the CLArray"""
-        # __iter__ already makes a defensive copy
+        return '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'.format(self=self)
+
+    def __str__(self):
         return "[|" + ", ".join(map(repr, self)) + "|]"
 
     def __add__(self, other: CLArray) -> CLArray:

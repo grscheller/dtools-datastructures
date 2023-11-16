@@ -39,8 +39,10 @@ class DQueue(Queue):
         super().__init__(*ds)
 
     def __repr__(self):
-        """Display the DQueue showing the data contained."""
-        return ">< " + " | ".join(map(repr, self)) + " ><"
+        return '{self.__class__.__name__}(*{list(self._carray._list)})'.format(self=self)
+
+    def __str__(self):
+        return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DQueue:
         """Return shallow copy of the DQueue in O(n) time & space complexity."""

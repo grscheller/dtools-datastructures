@@ -39,8 +39,10 @@ class SQueue(Queue):
         super().__init__(*ds)
 
     def __repr__(self):
-        """Display the SQueue showing the contained data."""
-        return "<< " + " < ".join(map(repr, self)) + " <<"
+        return '{self.__class__.__name__}(*{list(self._carray._list)})'.format(self=self)
+
+    def __str__(self):
+        return "<< " + " < ".join(map(str, self)) + " <<"
 
     def push(self, *ds: Any) -> None:
         """Push data on rear of the SQueue & no return value."""
