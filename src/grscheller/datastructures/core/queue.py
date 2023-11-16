@@ -42,17 +42,6 @@ class Queue():
             if d is not None:
                 self._carray.pushR(d)
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
-
-    def __bool__(self):
-        """Returns true if queue is not empty."""
-        return len(self._carray) > 0
-
-    def __len__(self):
-        """Returns current number of values in queue."""
-        return len(self._carray)
-
     def __iter__(self):
         """Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
@@ -65,6 +54,17 @@ class Queue():
         """Reverse iterate over the current state of the queue."""
         for data in reversed(self._carray.copy()):
             yield data
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+
+    def __bool__(self):
+        """Returns true if queue is not empty."""
+        return len(self._carray) > 0
+
+    def __len__(self):
+        """Returns current number of values in queue."""
+        return len(self._carray)
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.

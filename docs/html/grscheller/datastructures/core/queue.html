@@ -73,17 +73,6 @@ class Queue():
             if d is not None:
                 self._carray.pushR(d)
 
-    def __repr__(self):
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
-
-    def __bool__(self):
-        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
-        return len(self._carray) &gt; 0
-
-    def __len__(self):
-        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
-        return len(self._carray)
-
     def __iter__(self):
         &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
@@ -96,6 +85,17 @@ class Queue():
         &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
         for data in reversed(self._carray.copy()):
             yield data
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
+        return len(self._carray) &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
+        return len(self._carray)
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
@@ -153,17 +153,6 @@ ensure that None values do not get pushed onto the circular array.</p>
             if d is not None:
                 self._carray.pushR(d)
 
-    def __repr__(self):
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
-
-    def __bool__(self):
-        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
-        return len(self._carray) &gt; 0
-
-    def __len__(self):
-        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
-        return len(self._carray)
-
     def __iter__(self):
         &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
@@ -176,6 +165,17 @@ ensure that None values do not get pushed onto the circular array.</p>
         &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
         for data in reversed(self._carray.copy()):
             yield data
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
+        return len(self._carray) &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
+        return len(self._carray)
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.

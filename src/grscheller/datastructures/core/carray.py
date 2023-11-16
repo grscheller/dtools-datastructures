@@ -58,6 +58,34 @@ class CArray:
         self._list.append(None)
         self._list.append(None)
 
+    def __iter__(self):
+        """Generator yielding the cached contents of the current state of
+        the CArray.
+        """
+        if self._count > 0:
+            cap = self._capacity
+            rear = self._rear
+            pos = self._front
+            currList = self._list.copy()
+            while pos != rear:
+                yield currList[pos]
+                pos = (pos + 1) % cap
+            yield currList[pos]
+
+    def __reversed__(self):
+        """Generator yielding the cached contents of the current state of
+        the CArray in reversed order.
+        """
+        if self._count > 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
     def __repr__(self):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
@@ -154,34 +182,6 @@ class CArray:
                 raise IndexError(msg)
             else:
                 raise IndexError(msg0)
-
-    def __iter__(self):
-        """Generator yielding the cached contents of the current state of
-        the CArray.
-        """
-        if self._count > 0:
-            cap = self._capacity
-            rear = self._rear
-            pos = self._front
-            currList = self._list.copy()
-            while pos != rear:
-                yield currList[pos]
-                pos = (pos + 1) % cap
-            yield currList[pos]
-
-    def __reversed__(self):
-        """Generator yielding the cached contents of the current state of
-        the CArray in reversed order.
-        """
-        if self._count > 0:
-            cap = self._capacity
-            front = self._front
-            pos = self._rear
-            currList = self._list.copy()
-            while pos != front:
-                yield currList[pos]
-                pos = (pos - 1) % cap
-            yield currList[pos]
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.

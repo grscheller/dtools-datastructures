@@ -45,6 +45,17 @@ class Maybe(FP):
     def __init__(self, value: Any=None):
         self._value = value
 
+    def __iter__(self):
+        """Yields its value if not a Nothing"""
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return 'Some(' + repr(self._value) + ')'
+        else:
+            return 'Nothing'
+
     def __bool__(self) -> bool:
         """Return false if a Nothing, otherwise true."""
         return self._value != None
@@ -56,17 +67,6 @@ class Maybe(FP):
         if self:
             return 1
         return 0
-
-    def __iter__(self):
-        """Yields its value if not a Nothing"""
-        if self:
-            yield self._value
-
-    def __repr__(self) -> str:
-        if self:
-            return 'Some(' + repr(self._value) + ')'
-        else:
-            return 'Nothing'
 
     def __eq__(self, other: Maybe) -> bool:
         """Returns true if both sides are Nothings, or if both sides are Somes
@@ -117,6 +117,17 @@ class Either(FP):
             self._isLeft = True
             self._value = left
 
+    def __iter__(self):
+        """Yields its value if a Left"""
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return 'Left(' + repr(self._value) + ')'
+        else:
+            return 'Right(' + repr(self._value) + ')'
+
     def __bool__(self) -> bool:
         """Return true if a Left, false if a Right"""
         return self._isLeft
@@ -124,17 +135,6 @@ class Either(FP):
     def __len__(self) -> int:
         """An Either always contains just one thing, which is not None"""
         return 1
-
-    def __iter__(self):
-        """Yields its value if a Left"""
-        if self:
-            yield self._value
-
-    def __repr__(self) -> str:
-        if self:
-            return 'Left(' + repr(self._value) + ')'
-        else:
-            return 'Right(' + repr(self._value) + ')'
 
     def __eq__(self, other: Either) -> bool:
         """True if both sides are same "type" and values compare as equal"""

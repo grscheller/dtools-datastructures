@@ -51,7 +51,7 @@ nodes inaccessible to client code.
 
 from __future__ import annotations
 
-__all__ = [&#39;SL_Node&#39;]
+__all__ = [&#39;SL_Node&#39;, &#39;Tree_Node&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
@@ -133,6 +133,34 @@ next SL_Node or None to indicate the bottom of the linked list of nodes.</p>
         return True</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.core.nodes.Tree_Node"><code class="flex name class">
+<span>class <span class="ident">Tree_Node</span></span>
+<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class implementing nodes that can be linked together to form a tree-like
+data structure. A node always contain data.</p>
+<p>Construct an element of a doubly linked list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Tree_Node():
+    &#34;&#34;&#34;Class implementing nodes that can be linked together to form a tree-like
+    data structure. A node always contain data.
+    &#34;&#34;&#34;
+    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._data = data
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        &#34;&#34;&#34;Always return true since a Tree_Node always contains data, even if
+        that data is None.&#34;&#34;&#34;
+        return True</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 </article>
@@ -151,6 +179,9 @@ next SL_Node or None to indicate the bottom of the linked list of nodes.</p>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>
+</li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a></code></h4>
 </li>
 </ul>
 </li>

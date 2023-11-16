@@ -20,7 +20,7 @@ nodes inaccessible to client code.
 
 from __future__ import annotations
 
-__all__ = ['SL_Node']
+__all__ = ['SL_Node', 'Tree_Node']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

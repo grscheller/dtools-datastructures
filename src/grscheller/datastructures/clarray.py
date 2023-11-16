@@ -95,6 +95,26 @@ class CLArray():
                     self._size = -size
                     self._list = dlist[dsize+size:]
 
+    def __iter__(self):
+        """Iterate over the current dtate of the CLArray. Copy is made so
+        original source can safely mutate.
+        """
+        for data in self._list.copy():
+            yield data
+
+    def __reversed__(self):
+        """Reverse iterate over the current state of the CLArray. Copy is
+        made so original source can safely mutate.
+        """
+        for data in reversed(self._list.copy()):
+            yield data
+
+    def __repr__(self):
+        return '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'.format(self=self)
+
+    def __str__(self):
+        return "[|" + ", ".join(map(repr, self)) + "|]"
+
     def __bool__(self):
         """Return true if all stored values are not None."""
         for value in self:
@@ -126,20 +146,6 @@ class CLArray():
             raise IndexError(msg)
         self._list[index] = value
 
-    def __iter__(self):
-        """Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
-        """
-        for data in self._list.copy():
-            yield data
-
-    def __reversed__(self):
-        """Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
-        """
-        for data in reversed(self._list.copy()):
-            yield data
-
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -147,12 +153,6 @@ class CLArray():
         if not isinstance(other, type(self)):
             return False
         return self._list == other._list
-
-    def __repr__(self):
-        return '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'.format(self=self)
-
-    def __str__(self):
-        return "[|" + ", ".join(map(repr, self)) + "|]"
 
     def __add__(self, other: CLArray) -> CLArray:
         """Add CLArray component-wise left to right."""

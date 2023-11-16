@@ -128,6 +128,26 @@ class CLArray():
                     self._size = -size
                     self._list = dlist[dsize+size:]
 
+    def __iter__(self):
+        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
+        original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in self._list.copy():
+            yield data
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
+        made so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in reversed(self._list.copy()):
+            yield data
+
+    def __repr__(self):
+        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+
+    def __str__(self):
+        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
+
     def __bool__(self):
         &#34;&#34;&#34;Return true if all stored values are not None.&#34;&#34;&#34;
         for value in self:
@@ -159,20 +179,6 @@ class CLArray():
             raise IndexError(msg)
         self._list[index] = value
 
-    def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
-        &#34;&#34;&#34;
-        for data in self._list.copy():
-            yield data
-
-    def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
-        &#34;&#34;&#34;
-        for data in reversed(self._list.copy()):
-            yield data
-
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -180,12 +186,6 @@ class CLArray():
         if not isinstance(other, type(self)):
             return False
         return self._list == other._list
-
-    def __repr__(self):
-        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
-
-    def __str__(self):
-        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: CLArray) -&gt; CLArray:
         &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;
@@ -312,6 +312,26 @@ is provided, return array with a default value and a size = 1.</p>
                     self._size = -size
                     self._list = dlist[dsize+size:]
 
+    def __iter__(self):
+        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
+        original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in self._list.copy():
+            yield data
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
+        made so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in reversed(self._list.copy()):
+            yield data
+
+    def __repr__(self):
+        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+
+    def __str__(self):
+        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
+
     def __bool__(self):
         &#34;&#34;&#34;Return true if all stored values are not None.&#34;&#34;&#34;
         for value in self:
@@ -343,20 +363,6 @@ is provided, return array with a default value and a size = 1.</p>
             raise IndexError(msg)
         self._list[index] = value
 
-    def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
-        &#34;&#34;&#34;
-        for data in self._list.copy():
-            yield data
-
-    def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
-        &#34;&#34;&#34;
-        for data in reversed(self._list.copy()):
-            yield data
-
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
@@ -364,12 +370,6 @@ is provided, return array with a default value and a size = 1.</p>
         if not isinstance(other, type(self)):
             return False
         return self._list == other._list
-
-    def __repr__(self):
-        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
-
-    def __str__(self):
-        return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: CLArray) -&gt; CLArray:
         &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;

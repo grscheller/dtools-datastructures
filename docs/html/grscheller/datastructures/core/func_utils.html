@@ -76,6 +76,17 @@ class Maybe(FP):
     def __init__(self, value: Any=None):
         self._value = value
 
+    def __iter__(self):
+        &#34;&#34;&#34;Yields its value if not a Nothing&#34;&#34;&#34;
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return &#39;Some(&#39; + repr(self._value) + &#39;)&#39;
+        else:
+            return &#39;Nothing&#39;
+
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return false if a Nothing, otherwise true.&#34;&#34;&#34;
         return self._value != None
@@ -87,17 +98,6 @@ class Maybe(FP):
         if self:
             return 1
         return 0
-
-    def __iter__(self):
-        &#34;&#34;&#34;Yields its value if not a Nothing&#34;&#34;&#34;
-        if self:
-            yield self._value
-
-    def __repr__(self) -&gt; str:
-        if self:
-            return &#39;Some(&#39; + repr(self._value) + &#39;)&#39;
-        else:
-            return &#39;Nothing&#39;
 
     def __eq__(self, other: Maybe) -&gt; bool:
         &#34;&#34;&#34;Returns true if both sides are Nothings, or if both sides are Somes
@@ -148,6 +148,17 @@ class Either(FP):
             self._isLeft = True
             self._value = left
 
+    def __iter__(self):
+        &#34;&#34;&#34;Yields its value if a Left&#34;&#34;&#34;
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return &#39;Left(&#39; + repr(self._value) + &#39;)&#39;
+        else:
+            return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
+
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return true if a Left, false if a Right&#34;&#34;&#34;
         return self._isLeft
@@ -155,17 +166,6 @@ class Either(FP):
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;An Either always contains just one thing, which is not None&#34;&#34;&#34;
         return 1
-
-    def __iter__(self):
-        &#34;&#34;&#34;Yields its value if a Left&#34;&#34;&#34;
-        if self:
-            yield self._value
-
-    def __repr__(self) -&gt; str:
-        if self:
-            return &#39;Left(&#39; + repr(self._value) + &#39;)&#39;
-        else:
-            return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
 
     def __eq__(self, other: Either) -&gt; bool:
         &#34;&#34;&#34;True if both sides are same &#34;type&#34; and values compare as equal&#34;&#34;&#34;
@@ -357,6 +357,17 @@ Left, which is intended as the "happy path."</p></div>
             self._isLeft = True
             self._value = left
 
+    def __iter__(self):
+        &#34;&#34;&#34;Yields its value if a Left&#34;&#34;&#34;
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return &#39;Left(&#39; + repr(self._value) + &#39;)&#39;
+        else:
+            return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
+
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return true if a Left, false if a Right&#34;&#34;&#34;
         return self._isLeft
@@ -364,17 +375,6 @@ Left, which is intended as the "happy path."</p></div>
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;An Either always contains just one thing, which is not None&#34;&#34;&#34;
         return 1
-
-    def __iter__(self):
-        &#34;&#34;&#34;Yields its value if a Left&#34;&#34;&#34;
-        if self:
-            yield self._value
-
-    def __repr__(self) -&gt; str:
-        if self:
-            return &#39;Left(&#39; + repr(self._value) + &#39;)&#39;
-        else:
-            return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
 
     def __eq__(self, other: Either) -&gt; bool:
         &#34;&#34;&#34;True if both sides are same &#34;type&#34; and values compare as equal&#34;&#34;&#34;
@@ -564,6 +564,17 @@ Left, which is intended as the "happy path."</p></div>
     def __init__(self, value: Any=None):
         self._value = value
 
+    def __iter__(self):
+        &#34;&#34;&#34;Yields its value if not a Nothing&#34;&#34;&#34;
+        if self:
+            yield self._value
+
+    def __repr__(self):
+        if self:
+            return &#39;Some(&#39; + repr(self._value) + &#39;)&#39;
+        else:
+            return &#39;Nothing&#39;
+
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return false if a Nothing, otherwise true.&#34;&#34;&#34;
         return self._value != None
@@ -575,17 +586,6 @@ Left, which is intended as the "happy path."</p></div>
         if self:
             return 1
         return 0
-
-    def __iter__(self):
-        &#34;&#34;&#34;Yields its value if not a Nothing&#34;&#34;&#34;
-        if self:
-            yield self._value
-
-    def __repr__(self) -&gt; str:
-        if self:
-            return &#39;Some(&#39; + repr(self._value) + &#39;)&#39;
-        else:
-            return &#39;Nothing&#39;
 
     def __eq__(self, other: Maybe) -&gt; bool:
         &#34;&#34;&#34;Returns true if both sides are Nothings, or if both sides are Somes

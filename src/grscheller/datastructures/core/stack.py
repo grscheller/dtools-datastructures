@@ -56,14 +56,6 @@ class Stack():
                 self._head = node
                 self._count += 1
 
-    def __bool__(self):
-        """Returns true if stack is not empty"""
-        return self._count > 0
-
-    def __len__(self):
-        """Returns current number of values on the stack"""
-        return self._count
-
     def __iter__(self):
         """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
@@ -74,6 +66,17 @@ class Stack():
     def __reversed__(self):
         """Reverse iterate over the contents of the stack"""
         return reversed(CArray(*self))
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+
+    def __bool__(self):
+        """Returns true if stack is not empty"""
+        return self._count > 0
+
+    def __len__(self):
+        """Returns current number of values on the stack"""
+        return self._count
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored on the two stacks are the same
@@ -102,12 +105,6 @@ class Stack():
             right = right._next
             nn -= 1
         return True
-
-    def __repr__(self) -> type[Stack]:
-        raise NotImplementedError
-
-    def copy(self) -> type[Stack]:
-        raise NotImplementedError
 
 if __name__ == "__main__":
     pass

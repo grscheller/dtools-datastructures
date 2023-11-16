@@ -34,6 +34,20 @@ class FTuple(FP):
         """Wrap a tuple and filter out None values"""
         self._ds = tuple(filter(lambda x: x != None, ds))
 
+    def __iter__(self):
+        """Iterate over the immutable state of the FTuple"""
+        for d in self._ds:
+            yield d
+
+    def __reversed__(self):
+        """Reverse iterate over the immutable state of the FTuple"""
+        for d in reversed(self._ds):
+            yield d
+
+    def __repr__(self):
+        """Display data in the FTuple"""
+        return "((" + ", ".join(map(repr, self)) + "))"
+
     def __bool__(self):
         """Returns true if not empty"""
         return self._ds != ()
@@ -58,24 +72,10 @@ class FTuple(FP):
 
         return self._ds[index]
 
-    def __iter__(self):
-        """Iterate over the immutable state of the FTuple"""
-        for d in self._ds:
-            yield d
-
-    def __reversed__(self):
-        """Reverse iterate over the immutable state of the FTuple"""
-        for d in reversed(self._ds):
-            yield d
-
     def __eq__(self, other):
         if not isinstance(other, type(self)):
             return False
         return self._ds == other._ds
-
-    def __repr__(self):
-        """Display data in the FTuple"""
-        return "((" + ", ".join(map(repr, self)) + "))"
 
     def __add__(self, other: FTuple) -> FTuple:
         """Concatenate two FTuples"""
