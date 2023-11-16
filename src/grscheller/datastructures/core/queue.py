@@ -26,7 +26,6 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from itertools import chain
 from .carray import CArray
 
 class Queue():
@@ -83,7 +82,6 @@ class Queue():
 
     def copy(self) -> type[Queue]:
         raise NotImplementedError
-
 
 if __name__ == "__main__":
     pass

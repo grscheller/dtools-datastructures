@@ -145,33 +145,42 @@ class Either(FP):
             return self._value == other._value
         return False
 
-    def copy(self) -> Either:
-        if self:
-            return Either(self._value)
-        return Either(None, self._value)
-
     def map(self, f: Callable[[Any], Any], right=None) -> Either:
         if self:
             return Either(f(self._value), right)
-        return self.copy()
+        return self
 
     def mapRight(self, g: Callable[[Any], Any]) -> Either:
         """Map over if a Right."""
         if self:
-            return self.copy()
-        return Either(None, g(self._value))
+            return self
+        return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default."""
-        if right is None:
-            return f(self._value)
-        return f(self._value).mapRight(lambda _: right)
+        """flatMap with a Right default. Replace Right with right"""
+        if self:
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda _: right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default."""
-        if right is None:
-            return f(self._value)
-        return f(self._value).mapRight(lambda x: x + right)
+        """flatMap with a Right default. Merge right into Right via +"""
+        if self:
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda x: x + right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda x: x + right)
 
     def get(self, default: Any=None) -> Any:
         """get value if a Left, otherwise return default value."""

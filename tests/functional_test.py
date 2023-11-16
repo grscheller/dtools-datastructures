@@ -100,45 +100,28 @@ class TestEither:
         e3 = Right('not 42')
         e4 = Right('not 42')
         e5 = Right('also not 42')
-        e6 = e3.copy()
-        e7 = e3
-        e8 = e1.copy()
+        e6 = e3
         assert e1 is e1
         assert e1 is not e2
         assert e1 is not e3
         assert e1 is not e4
         assert e1 is not e5
         assert e1 is not e6
-        assert e1 is not e7
-        assert e1 is not e8
         assert e2 is e2
         assert e2 is not e3
         assert e2 is not e4
         assert e2 is not e5
         assert e2 is not e6
-        assert e2 is not e7
-        assert e2 is not e8
         assert e3 is e3
         assert e3 is not e4
         assert e3 is not e5
-        assert e3 is not e6
-        assert e3 is e7
-        assert e3 is not e8
+        assert e3 is e6
         assert e4 is e4
         assert e4 is not e5
         assert e4 is not e6
-        assert e4 is not e7
-        assert e4 is not e8
         assert e5 is e5
         assert e5 is not e6
-        assert e5 is not e7
-        assert e5 is not e8
         assert e6 is e6
-        assert e6 is not e7
-        assert e6 is not e8
-        assert e7 is e7
-        assert e7 is not e8
-        assert e8 is e8
 
     def test_equality(self):
         e1 = Left(42)
@@ -146,45 +129,28 @@ class TestEither:
         e3 = Right('not 42')
         e4 = Right('not 42')
         e5 = Right('also not 42')
-        e6 = e3.copy()
         e7 = e3
-        e8 = e1.copy()
         assert e1 == e1
         assert e1 == e2
         assert e1 != e3
         assert e1 != e4
         assert e1 != e5
-        assert e1 != e6
         assert e1 != e7
-        assert e1 == e8
         assert e2 == e2
         assert e2 != e3
         assert e2 != e4
         assert e2 != e5
-        assert e2 != e6
         assert e2 != e7
-        assert e2 == e8
         assert e3 == e3
         assert e3 == e4
         assert e3 != e5
-        assert e3 == e6
         assert e3 == e7
-        assert e3 != e8
         assert e4 == e4
         assert e4 != e5
-        assert e4 == e6
         assert e4 == e7
-        assert e4 != e8
         assert e5 == e5
-        assert e5 != e6
         assert e5 != e7
-        assert e5 != e8
-        assert e6 == e6
-        assert e6 == e7
-        assert e6 != e8
         assert e7 == e7
-        assert e7 != e8
-        assert e8 == e8
 
     def either_test_right(self):
         def noMoreThan5(x: int) -> int|None:
@@ -198,6 +164,7 @@ class TestEither:
         s3 = Left(42, right = 'foofoo rules')
         s4 = s3.map(noMoreThan5, 'more than 5')
         assert s1 == Left(3)
-        assert 34 == Right('more than 5')
+        assert s2 == Left(3)
+        assert s4 == Right('more than 5')
         assert s1.get('nothing doing') == 3
         assert s3.get('nothing doing') == 'nothing doing'

@@ -43,7 +43,6 @@ class SL_Node():
         """Always return true, None will return as false"""
         return True
 
-
 class Tree_Node():
     """Class implementing nodes that can be linked together to form a tree-like
     data structure. A node always contain data.
@@ -58,7 +57,6 @@ class Tree_Node():
         """Always return true since a Tree_Node always contains data, even if
         that data is None."""
         return True
-
 
 if __name__ == "__main__":
     pass

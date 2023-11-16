@@ -33,7 +33,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any
 from .nodes import SL_Node as Node
 from .carray import CArray
 
@@ -108,7 +108,6 @@ class Stack():
 
     def copy(self) -> type[Stack]:
         raise NotImplementedError
-
 
 if __name__ == "__main__":
     pass

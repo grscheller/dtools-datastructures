@@ -78,7 +78,6 @@ class FP():
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
-
 class FP_rev(FP):
     def __reversed__(self):
         raise NotImplementedError
@@ -142,6 +141,8 @@ if __name__ == &#34;__main__&#34;:
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
+<li><a title="grscheller.datastructures.core.func_utils.Either" href="func_utils.html#grscheller.datastructures.core.func_utils.Either">Either</a></li>
+<li><a title="grscheller.datastructures.core.func_utils.Maybe" href="func_utils.html#grscheller.datastructures.core.func_utils.Maybe">Maybe</a></li>
 <li><a title="grscheller.datastructures.ftuple.FTuple" href="../ftuple.html#grscheller.datastructures.ftuple.FTuple">FTuple</a></li>
 </ul>
 <h3>Methods</h3>

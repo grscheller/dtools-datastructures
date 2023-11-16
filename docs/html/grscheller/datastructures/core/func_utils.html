@@ -50,6 +50,7 @@ Class Either: Implements a left biased Either Monad.
 &#34;&#34;&#34;
 from __future__ import annotations
 from typing import Any, Callable
+from .fp import FP
 
 __all__ = [
     &#39;Either&#39;, &#39;Left&#39;, &#39;Right&#39;,
@@ -60,7 +61,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-class Maybe():
+class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
@@ -106,18 +107,6 @@ class Maybe():
             return False
         return self._value == other._value
 
-    def map(self, f: Callable[[Any], Any]) -&gt; Maybe:
-        if self:
-            return Maybe(f(self._value))
-        else:
-            return Maybe()
-
-    def flatMap(self, f: Callable[[Any], Maybe]) -&gt; Maybe:
-        if self:
-            return f(self._value)
-        else:
-            return Maybe()
-
     def get(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
@@ -144,12 +133,14 @@ def Some(value=None):
 Nothing = Some()
 
 
-class Either():
-    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both.
-
-    This version is biased to the Left, which is intended as the &#34;happy path.&#34;
+class Either(FP):
+    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
+    right not given, set it to the empty str. This version is biased to the
+    Left, which is intended as the &#34;happy path.&#34;
     &#34;&#34;&#34;
-    def __init__(self, left: Any, right: Any=None):
+    def __init__(self, left: Any=None, right: Any=None):
+        if right is None:
+            right = &#39;&#39;
         if left == None:
             self._isLeft = False
             self._value = right
@@ -162,7 +153,7 @@ class Either():
         return self._isLeft
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;An Either always contains just one thing, even if it is None&#34;&#34;&#34;
+        &#34;&#34;&#34;An Either always contains just one thing, which is not None&#34;&#34;&#34;
         return 1
 
     def __iter__(self):
@@ -185,27 +176,42 @@ class Either():
             return self._value == other._value
         return False
 
-    def copy(self) -&gt; Either:
-        if self:
-            return Either(self._value)
-        return Either(None, self._value)
-
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
             return Either(f(self._value), right)
-        return self.copy()
+        return self
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
         &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
         if self:
-            return self.copy()
-        return Either(None, g(self._value))
+            return self
+        return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
         if self:
-            return f(self._value).mapRight(lambda _: right)
-        return self.copy()
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda _: right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda _: right)
+
+    def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        if self:
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda x: x + right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda x: x + right)
 
     def get(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
@@ -326,21 +332,24 @@ returns a Nothing.</p></div>
 <dl>
 <dt id="grscheller.datastructures.core.func_utils.Either"><code class="flex name class">
 <span>class <span class="ident">Either</span></span>
-<span>(</span><span>left: Any, right: Any = None)</span>
+<span>(</span><span>left: Any = None, right: Any = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class that either contains a Left value or Right value, but not both.</p>
-<p>This version is biased to the Left, which is intended as the "happy path."</p></div>
+<div class="desc"><p>Class that either contains a Left value or Right value, but not both. If
+right not given, set it to the empty str. This version is biased to the
+Left, which is intended as the "happy path."</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Either():
-    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both.
-
-    This version is biased to the Left, which is intended as the &#34;happy path.&#34;
+<pre><code class="python">class Either(FP):
+    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
+    right not given, set it to the empty str. This version is biased to the
+    Left, which is intended as the &#34;happy path.&#34;
     &#34;&#34;&#34;
-    def __init__(self, left: Any, right: Any=None):
+    def __init__(self, left: Any=None, right: Any=None):
+        if right is None:
+            right = &#39;&#39;
         if left == None:
             self._isLeft = False
             self._value = right
@@ -353,7 +362,7 @@ returns a Nothing.</p></div>
         return self._isLeft
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;An Either always contains just one thing, even if it is None&#34;&#34;&#34;
+        &#34;&#34;&#34;An Either always contains just one thing, which is not None&#34;&#34;&#34;
         return 1
 
     def __iter__(self):
@@ -376,27 +385,42 @@ returns a Nothing.</p></div>
             return self._value == other._value
         return False
 
-    def copy(self) -&gt; Either:
-        if self:
-            return Either(self._value)
-        return Either(None, self._value)
-
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
             return Either(f(self._value), right)
-        return self.copy()
+        return self
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
         &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
         if self:
-            return self.copy()
-        return Either(None, g(self._value))
+            return self
+        return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
         if self:
-            return f(self._value).mapRight(lambda _: right)
-        return self.copy()
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda _: right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda _: right)
+
+    def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        if self:
+            if right is None:
+                return f(self._value)
+            else:
+                return f(self._value).mapRight(lambda x: x + right)
+        else:
+            if right is None:
+                return self
+            else:
+                return self.mapRight(lambda x: x + right)
 
     def get(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
@@ -404,37 +428,33 @@ returns a Nothing.</p></div>
             return self._value
         return default</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.core.fp.FP" href="fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
+</ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.core.func_utils.Either.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def copy(self) -&gt; Either:
-    if self:
-        return Either(self._value)
-    return Either(None, self._value)</code></pre>
-</details>
-</dd>
 <dt id="grscheller.datastructures.core.func_utils.Either.flatMap"><code class="name flex">
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>flatMap with a Right default.</p></div>
+<div class="desc"><p>flatMap with a Right default. Replace Right with right</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-    &#34;&#34;&#34;flatMap with a Right default.&#34;&#34;&#34;
+    &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
     if self:
-        return f(self._value).mapRight(lambda _: right)
-    return self.copy()</code></pre>
+        if right is None:
+            return f(self._value)
+        else:
+            return f(self._value).mapRight(lambda _: right)
+    else:
+        if right is None:
+            return self
+        else:
+            return self.mapRight(lambda _: right)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.func_utils.Either.get"><code class="name flex">
@@ -465,7 +485,7 @@ returns a Nothing.</p></div>
 <pre><code class="python">def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
     if self:
         return Either(f(self._value), right)
-    return self.copy()</code></pre>
+    return self</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.func_utils.Either.mapRight"><code class="name flex">
@@ -480,8 +500,31 @@ returns a Nothing.</p></div>
 <pre><code class="python">def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
     &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
     if self:
-        return self.copy()
-    return Either(None, g(self._value))</code></pre>
+        return self
+    return Right(g(self._value))</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.func_utils.Either.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>flatMap with a Right default. Merge right into Right via +</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
+    &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+    if self:
+        if right is None:
+            return f(self._value)
+        else:
+            return f(self._value).mapRight(lambda x: x + right)
+    else:
+        if right is None:
+            return self
+        else:
+            return self.mapRight(lambda x: x + right)</code></pre>
 </details>
 </dd>
 </dl>
@@ -506,7 +549,7 @@ returns a Nothing.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Maybe():
+<pre><code class="python">class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
@@ -552,18 +595,6 @@ returns a Nothing.</p></div>
             return False
         return self._value == other._value
 
-    def map(self, f: Callable[[Any], Any]) -&gt; Maybe:
-        if self:
-            return Maybe(f(self._value))
-        else:
-            return Maybe()
-
-    def flatMap(self, f: Callable[[Any], Maybe]) -&gt; Maybe:
-        if self:
-            return f(self._value)
-        else:
-            return Maybe()
-
     def get(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
@@ -573,24 +604,12 @@ returns a Nothing.</p></div>
         else:
             return default</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.core.fp.FP" href="fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
+</ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.core.func_utils.Maybe.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.func_utils.Maybe" href="#grscheller.datastructures.core.func_utils.Maybe">Maybe</a>]) ‑> <a title="grscheller.datastructures.core.func_utils.Maybe" href="#grscheller.datastructures.core.func_utils.Maybe">Maybe</a></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], Maybe]) -&gt; Maybe:
-    if self:
-        return f(self._value)
-    else:
-        return Maybe()</code></pre>
-</details>
-</dd>
 <dt id="grscheller.datastructures.core.func_utils.Maybe.get"><code class="name flex">
 <span>def <span class="ident">get</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
@@ -609,22 +628,6 @@ responsible with dealing with a None return value.</p></div>
         return self._value
     else:
         return default</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.func_utils.Maybe.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.func_utils.Maybe" href="#grscheller.datastructures.core.func_utils.Maybe">Maybe</a></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; Maybe:
-    if self:
-        return Maybe(f(self._value))
-    else:
-        return Maybe()</code></pre>
 </details>
 </dd>
 </dl>
@@ -662,19 +665,17 @@ responsible with dealing with a None return value.</p></div>
 <li>
 <h4><code><a title="grscheller.datastructures.core.func_utils.Either" href="#grscheller.datastructures.core.func_utils.Either">Either</a></code></h4>
 <ul class="">
-<li><code><a title="grscheller.datastructures.core.func_utils.Either.copy" href="#grscheller.datastructures.core.func_utils.Either.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.core.func_utils.Either.flatMap" href="#grscheller.datastructures.core.func_utils.Either.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.func_utils.Either.get" href="#grscheller.datastructures.core.func_utils.Either.get">get</a></code></li>
 <li><code><a title="grscheller.datastructures.core.func_utils.Either.map" href="#grscheller.datastructures.core.func_utils.Either.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.func_utils.Either.mapRight" href="#grscheller.datastructures.core.func_utils.Either.mapRight">mapRight</a></code></li>
+<li><code><a title="grscheller.datastructures.core.func_utils.Either.mergeMap" href="#grscheller.datastructures.core.func_utils.Either.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.core.func_utils.Maybe" href="#grscheller.datastructures.core.func_utils.Maybe">Maybe</a></code></h4>
 <ul class="">
-<li><code><a title="grscheller.datastructures.core.func_utils.Maybe.flatMap" href="#grscheller.datastructures.core.func_utils.Maybe.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.func_utils.Maybe.get" href="#grscheller.datastructures.core.func_utils.Maybe.get">get</a></code></li>
-<li><code><a title="grscheller.datastructures.core.func_utils.Maybe.map" href="#grscheller.datastructures.core.func_utils.Maybe.map">map</a></code></li>
 </ul>
 </li>
 </ul>

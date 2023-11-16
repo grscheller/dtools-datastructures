@@ -29,8 +29,6 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union
-from itertools import chain
-from .core.iterlib import exhaust, merge
 
 class CLArray():
     """Class implementing a stateful fixed length array data structure of

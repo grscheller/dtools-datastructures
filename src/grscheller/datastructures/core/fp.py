@@ -48,7 +48,6 @@ class FP():
     def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
-
 class FP_rev(FP):
     def __reversed__(self):
         raise NotImplementedError
