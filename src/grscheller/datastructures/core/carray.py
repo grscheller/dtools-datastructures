@@ -201,15 +201,16 @@ class CArray:
             nn += 1
         return True
 
-    def __repr__(self):
-        """Display data in the circle array"""
+    def __str__(self):
         return "(|" + ", ".join(map(repr, self)) + "|)"
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
     def reverse(self) -> CArray:
         return CArray(reversed(self))
 
     def copy(self) -> CArray:
-        """Return shallow copy of the circle array in O(n) time/space complexity"""
         return CArray(*self)
 
     def pushR(self, data: Any) -> None:
