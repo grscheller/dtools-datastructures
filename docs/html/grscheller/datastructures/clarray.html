@@ -182,8 +182,9 @@ class CLArray():
         return self._list == other._list
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in the CLArray&#34;&#34;&#34;
-        # __iter__ already makes a defensive copy
+        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+
+    def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: CLArray) -&gt; CLArray:
@@ -365,8 +366,9 @@ is provided, return array with a default value and a size = 1.</p>
         return self._list == other._list
 
     def __repr__(self):
-        &#34;&#34;&#34;Display data in the CLArray&#34;&#34;&#34;
-        # __iter__ already makes a defensive copy
+        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+
+    def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __add__(self, other: CLArray) -&gt; CLArray:

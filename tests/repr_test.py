@@ -28,7 +28,7 @@ def addLt42(x: int, y: int) -> int|None:
     return None
 
 class Test_repr:
-    def testCArray(self):
+    def test_CArray(self):
         ca1 = CArray()
         assert repr(ca1) == 'CArray()'
         ca2 = eval(repr(ca1))
@@ -54,4 +54,58 @@ class Test_repr:
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
+
+    def test_DQueue(self):
+        ca1 = DQueue()
+        assert repr(ca1) == 'DQueue()'
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
+
+        ca1.pushR(1)
+        ca1.pushL('foo')
+        assert repr(ca1) == "DQueue('foo', 1)"
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
+
+        assert ca1.popL() == 'foo'
+        ca1.pushR(2)
+        ca1.pushR(3)
+        ca1.pushR(4)
+        ca1.pushR(5)
+        assert ca1.popL() == 1
+        ca1.pushL(42)
+        ca1.popR()
+        assert repr(ca1) == "DQueue(42, 2, 3, 4)"
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
+
+    def test_SQueue(self):
+        sq1 = SQueue()
+        assert repr(sq1) == 'SQueue()'
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
+
+        sq1.push(1)
+        sq1.push('foo')
+        assert repr(sq1) == "SQueue(1, 'foo')"
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
+
+        assert sq1.pop() == 1
+        sq1.push(2)
+        sq1.push(3)
+        sq1.push(4)
+        sq1.push(5)
+        assert sq1.pop() == 'foo'
+        sq1.push(42)
+        sq1.pop()
+        assert repr(sq1) == "SQueue(3, 4, 5, 42)"
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
 

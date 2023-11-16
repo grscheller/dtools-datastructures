@@ -38,9 +38,6 @@ class DQueue(Queue):
         """Construct a FIFO/LIFO double sided queue data structure."""
         super().__init__(*ds)
 
-    def __repr__(self):
-        return '{self.__class__.__name__}(*{list(self._carray._list)})'.format(self=self)
-
     def __str__(self):
         return ">< " + " | ".join(map(str, self)) + " ><"
 

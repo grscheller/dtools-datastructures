@@ -42,6 +42,9 @@ class Queue():
             if d is not None:
                 self._carray.pushR(d)
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+
     def __bool__(self):
         """Returns true if queue is not empty."""
         return len(self._carray) > 0
@@ -76,12 +79,6 @@ class Queue():
         returned by f.
         """
         self._carray = Queue(*map(f, self))._carray
-
-    def __repr__(self) -> type[Queue]:
-        raise NotImplementedError
-
-    def copy(self) -> type[Queue]:
-        raise NotImplementedError
 
 if __name__ == "__main__":
     pass

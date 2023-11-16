@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -37,9 +37,6 @@ class SQueue(Queue):
     def __init__(self, *ds):
         """Construct a FIFO SQueue data structure."""
         super().__init__(*ds)
-
-    def __repr__(self):
-        return '{self.__class__.__name__}(*{list(self._carray._list)})'.format(self=self)
 
     def __str__(self):
         return "<< " + " < ".join(map(str, self)) + " <<"

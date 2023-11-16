@@ -93,6 +93,12 @@ class CArray:
         self._list.append(None)
         self._list.append(None)
 
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
+
     def _double(self) -&gt; Self:
         &#34;&#34;&#34;Double capacity of circle array&#34;&#34;&#34;
         if self._front &gt; self._rear:
@@ -236,15 +242,10 @@ class CArray:
             nn += 1
         return True
 
-    def __repr__(self):
-        &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
-        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
-
     def reverse(self) -&gt; CArray:
         return CArray(reversed(self))
 
     def copy(self) -&gt; CArray:
-        &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
         return CArray(*self)
 
     def pushR(self, data: Any) -&gt; None:
@@ -374,6 +375,12 @@ interface.</p>
         self._list.append(None)
         self._list.append(None)
 
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
+
     def _double(self) -&gt; Self:
         &#34;&#34;&#34;Double capacity of circle array&#34;&#34;&#34;
         if self._front &gt; self._rear:
@@ -517,15 +524,10 @@ interface.</p>
             nn += 1
         return True
 
-    def __repr__(self):
-        &#34;&#34;&#34;Display data in the circle array&#34;&#34;&#34;
-        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
-
     def reverse(self) -&gt; CArray:
         return CArray(reversed(self))
 
     def copy(self) -&gt; CArray:
-        &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
         return CArray(*self)
 
     def pushR(self, data: Any) -&gt; None:
@@ -621,13 +623,12 @@ interface.</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the circle array in O(n) time/space complexity</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; CArray:
-    &#34;&#34;&#34;Return shallow copy of the circle array in O(n) time/space complexity&#34;&#34;&#34;
     return CArray(*self)</code></pre>
 </details>
 </dd>

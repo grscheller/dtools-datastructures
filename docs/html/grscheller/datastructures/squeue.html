@@ -60,7 +60,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable
+from typing import Any
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -71,9 +71,8 @@ class SQueue(Queue):
         &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
-    def __repr__(self):
-        &#34;&#34;&#34;Display the SQueue showing the contained data.&#34;&#34;&#34;
-        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(repr, self)) + &#34; &lt;&lt;&#34;
+    def __str__(self):
+        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
@@ -141,9 +140,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
         &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
         super().__init__(*ds)
 
-    def __repr__(self):
-        &#34;&#34;&#34;Display the SQueue showing the contained data.&#34;&#34;&#34;
-        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(repr, self)) + &#34; &lt;&lt;&#34;
+    def __str__(self):
+        return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;

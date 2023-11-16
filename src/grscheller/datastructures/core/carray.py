@@ -58,6 +58,12 @@ class CArray:
         self._list.append(None)
         self._list.append(None)
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+
+    def __str__(self):
+        return "(|" + ", ".join(map(repr, self)) + "|)"
+
     def _double(self) -> Self:
         """Double capacity of circle array"""
         if self._front > self._rear:
@@ -200,12 +206,6 @@ class CArray:
                 return False
             nn += 1
         return True
-
-    def __str__(self):
-        return "(|" + ", ".join(map(repr, self)) + "|)"
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
     def reverse(self) -> CArray:
         return CArray(reversed(self))
