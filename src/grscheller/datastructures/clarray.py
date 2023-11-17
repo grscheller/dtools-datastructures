@@ -110,8 +110,7 @@ class CLArray():
             yield data
 
     def __repr__(self):
-        fmt = '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'
-        return fmt.format(self=self)
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + f', default={self._default})'
 
     def __str__(self):
         return "[|" + ", ".join(map(repr, self)) + "|]"

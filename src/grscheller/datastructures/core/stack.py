@@ -68,7 +68,7 @@ class Stack():
         return reversed(CArray(*self))
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __bool__(self):
         """Returns true if stack is not empty"""

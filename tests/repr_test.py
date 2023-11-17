@@ -109,3 +109,131 @@ class Test_repr:
         assert sq2 == sq1
         assert sq2 is not sq1
 
+    def test_clarray(self):
+        cla1 = CLArray()
+        assert repr(cla1) == 'CLArray(None, default=None)'
+        cla2 = eval(repr(cla1))
+        assert cla2 == cla1
+        assert cla2 is not cla1
+
+        cla1 = CLArray('foo', [10, 22], size=-3, default=42)
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=42)"
+        cla2 = eval(repr(cla1))
+        assert cla2 == cla1
+        assert cla2 is not cla1
+
+        cla1[2].append(42)
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=42)"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=42)"
+        popped = cla1[2].pop()
+        assert popped == 42
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=42)"
+
+        # beware immutable collections of mutable objects
+        cla1 = CLArray(42, 'foo', [10, 22])
+        cla2 = cla1.copy()
+        cla1[2].append(42)
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=None)"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22, 42], default=None)"
+        popped = cla2[2].pop()
+        assert popped == 42
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=None)"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=None)"
+
+    def test_ftuple(self):
+        ft1 = FTuple()
+        assert repr(ft1) == 'FTuple()'
+        ft2 = eval(repr(ft1))
+        assert ft2 == ft1
+        assert ft2 is not ft1
+
+        ft1 = FTuple(42, 'foo', [10, 22])
+        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
+        ft2 = eval(repr(ft1))
+        assert ft2 == ft1
+        assert ft2 is not ft1
+
+        ft1[2].append(42)
+        assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
+        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+        popped = ft1[2].pop()
+        assert popped == 42
+        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
+        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+
+        # beware immutable collections of mutable objects
+        ft1 = FTuple(42, 'foo', [10, 22])
+        ft2 = ft1.copy()
+        ft1[2].append(42)
+        assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
+        assert repr(ft2) == "FTuple(42, 'foo', [10, 22, 42])"
+        popped = ft2[2].pop()
+        assert popped == 42
+        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
+        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+
+    def test_PStack(self):
+        ps1 = PStack()
+        assert repr(ps1) == 'PStack()'
+        ps2 = eval(repr(ps1))
+        assert ps2 == ps1
+        assert ps2 is not ps1
+
+        ps1.push(1)
+        ps1.push('foo')
+        assert repr(ps1) == "PStack(1, 'foo')"
+        ps2 = eval(repr(ps1))
+        assert ps2 == ps1
+        assert ps2 is not ps1
+
+        assert ps1.pop() == 'foo'
+        ps1.push(2)
+        ps1.push(3)
+        ps1.push(4)
+        ps1.push(5)
+        assert ps1.pop() == 5
+        ps1.push(42)
+        assert repr(ps1) == "PStack(1, 2, 3, 4, 42)"
+        ps2 = eval(repr(ps1))
+        assert ps2 == ps1
+        assert ps2 is not ps1
+
+    def test_FStack(self):
+        fs1 = FStack()
+        assert repr(fs1) == 'FStack()'
+        fs2 = eval(repr(fs1))
+        assert fs2 == fs1
+        assert fs2 is not fs1
+
+        fs1 = fs1.cons(1).cons('foo')
+        assert repr(fs1) == "FStack(1, 'foo')"
+        fs2 = eval(repr(fs1))
+        assert fs2 == fs1
+        assert fs2 is not fs1
+
+        assert fs1.head() == 'foo'
+        fs1 = fs1.tail()
+        fs1 = fs1.cons(2).cons(3).cons(4).cons(5)
+        assert fs1.head() == 5
+        fs1 = fs1.tail().cons(42)
+        assert repr(fs1) == "FStack(1, 2, 3, 4, 42)"
+        fs2 = eval(repr(fs1))
+        assert fs2 == fs1
+        assert fs2 is not fs1
+
+    def test_maybe(self):
+        mb1 = Nothing
+        mb2 = Some()
+        mb3 = Some(None)
+        assert mb1 == mb2 == mb3 == Nothing
+        assert repr(mb2) == "Nothing"
+        mb4 = eval(repr(mb3))
+        assert mb4 == mb3
+        # DO NOT USE THE NEXT 4!!!
+        assert mb4 is not mb3
+        assert mb4 is not mb2
+        assert mb2 is not mb3
+        assert mb4 is mb1
+
+
