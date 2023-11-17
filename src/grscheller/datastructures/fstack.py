@@ -52,7 +52,7 @@ class FStack(Stack, FP_rev):
     def __init__(self, *ds):
         super().__init__(*ds)
 
-    def __repr__(self):
+    def __str__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
 

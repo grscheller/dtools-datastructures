@@ -52,8 +52,9 @@ class Queue():
 
     def __reversed__(self):
         """Reverse iterate over the current state of the queue."""
-        for data in reversed(self._carray.copy()):
-            yield data
+        cached = self._carray.copy()
+        for pos in range(len(cached)-1, -1, -1):
+            yield cached[pos]
 
     def __repr__(self):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'

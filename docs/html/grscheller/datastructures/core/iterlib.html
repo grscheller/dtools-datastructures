@@ -58,7 +58,7 @@ __license__ = &#34;Appache License 2.0&#34;
 def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRICATED - Use itertools.chain function instead
+    WARNING: DEPRECATED - Use itertools.chain function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:
@@ -131,7 +131,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 </code></dt>
 <dd>
 <div class="desc"><p>Sequentually concatenate multiple iterators into one.</p>
-<p>WARNING: DEPRICATED - Use itertools.chain function instead</p></div>
+<p>WARNING: DEPRECATED - Use itertools.chain function instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -139,7 +139,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <pre><code class="python">def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRICATED - Use itertools.chain function instead
+    WARNING: DEPRECATED - Use itertools.chain function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:

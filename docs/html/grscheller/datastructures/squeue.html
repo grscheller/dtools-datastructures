@@ -74,17 +74,17 @@ class SQueue(Queue):
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
-    def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
         squeue._carray = self._carray.copy()
         return squeue
+
+    def push(self, *ds: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
+        for d in ds:
+            if d != None:
+                self._carray.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
@@ -143,17 +143,17 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
-    def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
         squeue._carray = self._carray.copy()
         return squeue
+
+    def push(self, *ds: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
+        for d in ds:
+            if d != None:
+                self._carray.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;

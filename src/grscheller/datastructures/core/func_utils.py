@@ -58,15 +58,18 @@ class Maybe(FP):
 
     def __bool__(self) -> bool:
         """Return false if a Nothing, otherwise true."""
-        return self._value != None
+        return self._value is not None
 
     def __len__(self) -> int:
         """A Maybe either contains something or not.
-        Return 1 if a Some, 0 if a Nothing.
+
+        Return 1 if a Some
+        Return 0 if a Nothing
         """
         if self:
             return 1
-        return 0
+        else:
+            return 0
 
     def __eq__(self, other: Maybe) -> bool:
         """Returns true if both sides are Nothings, or if both sides are Somes
@@ -140,10 +143,15 @@ class Either(FP):
         """True if both sides are same "type" and values compare as equal"""
         if not isinstance(other, type(self)):
             return False
-
         if (self and other) or (not self and not other):
             return self._value == other._value
         return False
+
+    def get(self, default: Any=None) -> Any:
+        """get value if a Left, otherwise return default value."""
+        if self:
+            return self._value
+        return default
 
     def map(self, f: Callable[[Any], Any], right=None) -> Either:
         if self:
@@ -181,12 +189,6 @@ class Either(FP):
                 return self
             else:
                 return self.mapRight(lambda x: x + right)
-
-    def get(self, default: Any=None) -> Any:
-        """get value if a Left, otherwise return default value."""
-        if self:
-            return self._value
-        return default
 
 # Either convenience functions, act like subtype constructors.
 

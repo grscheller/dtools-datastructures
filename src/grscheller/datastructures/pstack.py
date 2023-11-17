@@ -52,7 +52,7 @@ class PStack(Stack):
         """Construct a stateful LIFO Stack"""
         super().__init__(*ds)
 
-    def __repr__(self):
+    def __str__(self):
         """Display the data in the stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
 

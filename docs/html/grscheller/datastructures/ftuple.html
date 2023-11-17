@@ -76,6 +76,9 @@ class FTuple(FP):
             yield d
 
     def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
@@ -165,6 +168,9 @@ if __name__ == &#34;__main__&#34;:
             yield d
 
     def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 

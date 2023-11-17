@@ -129,21 +129,22 @@ class CLArray():
                     self._list = dlist[dsize+size:]
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
+        &#34;&#34;&#34;Iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         &#34;&#34;&#34;
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         &#34;&#34;&#34;
         for data in reversed(self._list.copy()):
             yield data
 
     def __repr__(self):
-        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+        fmt = &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;
+        return fmt.format(self=self)
 
     def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
@@ -313,21 +314,22 @@ is provided, return array with a default value and a size = 1.</p>
                     self._list = dlist[dsize+size:]
 
     def __iter__(self):
-        &#34;&#34;&#34;Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
+        &#34;&#34;&#34;Iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         &#34;&#34;&#34;
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         &#34;&#34;&#34;
         for data in reversed(self._list.copy()):
             yield data
 
     def __repr__(self):
-        return &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;.format(self=self)
+        fmt = &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;
+        return fmt.format(self=self)
 
     def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;

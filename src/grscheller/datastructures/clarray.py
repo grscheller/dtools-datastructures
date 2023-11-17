@@ -96,21 +96,22 @@ class CLArray():
                     self._list = dlist[dsize+size:]
 
     def __iter__(self):
-        """Iterate over the current dtate of the CLArray. Copy is made so
-        original source can safely mutate.
+        """Iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         """
         for data in self._list.copy():
             yield data
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the CLArray. Copy is
-        made so original source can safely mutate.
+        """Reverse iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
         """
         for data in reversed(self._list.copy()):
             yield data
 
     def __repr__(self):
-        return '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'.format(self=self)
+        fmt = '{self.__class__.__name__}({self._list}, {self._size}, {self._default})'
+        return fmt.format(self=self)
 
     def __str__(self):
         return "[|" + ", ".join(map(repr, self)) + "|]"

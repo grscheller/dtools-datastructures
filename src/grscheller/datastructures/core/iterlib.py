@@ -28,7 +28,7 @@ __license__ = "Appache License 2.0"
 def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRICATED - Use itertools.chain function instead
+    WARNING: DEPRECATED - Use itertools.chain function instead
     """
     for iterator in map(iter,iterables):
         while True:

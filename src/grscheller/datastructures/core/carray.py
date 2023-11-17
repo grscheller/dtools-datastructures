@@ -92,53 +92,6 @@ class CArray:
     def __str__(self):
         return "(|" + ", ".join(map(repr, self)) + "|)"
 
-    def _double(self) -> Self:
-        """Double capacity of circle array"""
-        if self._front > self._rear:
-            frontPart = self._list[self._front:]
-            rearPart = self._list[:self._rear+1]
-        else:
-            frontPart = self._list
-            rearPart = []
-        self._list = frontPart + rearPart + [None]*(self._capacity)
-        self._capacity *= 2
-        self._front = 0
-        self._rear = self._count - 1
-        return self
-
-    def _compact(self) -> Self:
-        """Compact the datastructure as much as possible"""
-        match self._count:
-            case 0:
-                self._list = [None]*2
-                self._capacity = 2
-                self._front = 0
-                self._rear = 1
-            case 1:
-                self._list = [self._list[self._front], None]
-                self._capacity = 2
-                self._front = 0
-                self._rear = 0
-            case _:
-                if self._front > self._rear:
-                    frontPart = self._list[self._front:]
-                    rearPart = self._list[:self._rear+1]
-                else:
-                    frontPart = self._list[self._front:self._rear+1]
-                    rearPart = []
-                self._list = frontPart + rearPart
-                self._capacity = self._count
-                self._front = 0
-                self._rear = self._capacity - 1
-        return self
-
-    def _empty(self) -> Self:
-        """Empty circular array, keep current capacity"""
-        self._list = [None]*self._capacity
-        self._front = 0
-        self._rear = self._capacity - 1
-        return self
-
     def __bool__(self):
         """Returns true if circular array is not empty"""
         return self._count > 0
@@ -207,11 +160,58 @@ class CArray:
             nn += 1
         return True
 
-    def reverse(self) -> CArray:
-        return CArray(reversed(self))
+    def _double(self) -> Self:
+        """Double capacity of circle array"""
+        if self._front > self._rear:
+            frontPart = self._list[self._front:]
+            rearPart = self._list[:self._rear+1]
+        else:
+            frontPart = self._list
+            rearPart = []
+        self._list = frontPart + rearPart + [None]*(self._capacity)
+        self._capacity *= 2
+        self._front = 0
+        self._rear = self._count - 1
+        return self
+
+    def _compact(self) -> Self:
+        """Compact the datastructure as much as possible"""
+        match self._count:
+            case 0:
+                self._list = [None]*2
+                self._capacity = 2
+                self._front = 0
+                self._rear = 1
+            case 1:
+                self._list = [self._list[self._front], None]
+                self._capacity = 2
+                self._front = 0
+                self._rear = 0
+            case _:
+                if self._front > self._rear:
+                    frontPart = self._list[self._front:]
+                    rearPart = self._list[:self._rear+1]
+                else:
+                    frontPart = self._list[self._front:self._rear+1]
+                    rearPart = []
+                self._list = frontPart + rearPart
+                self._capacity = self._count
+                self._front = 0
+                self._rear = self._capacity - 1
+        return self
+
+    def _empty(self) -> Self:
+        """Empty circular array, keep current capacity"""
+        self._list = [None]*self._capacity
+        self._front = 0
+        self._rear = self._capacity - 1
+        return self
 
     def copy(self) -> CArray:
         return CArray(*self)
+
+    def reverse(self) -> CArray:
+        return CArray(reversed(self))
 
     def pushR(self, data: Any) -> None:
         """Push data on rear of circle"""

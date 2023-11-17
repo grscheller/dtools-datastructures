@@ -41,17 +41,17 @@ class SQueue(Queue):
     def __str__(self):
         return "<< " + " < ".join(map(str, self)) + " <<"
 
-    def push(self, *ds: Any) -> None:
-        """Push data on rear of the SQueue & no return value."""
-        for d in ds:
-            if d != None:
-                self._carray.pushR(d)
-
     def copy(self) -> SQueue:
         """Return shallow copy of the SQueue in O(n) time & space complexity."""
         squeue = SQueue()
         squeue._carray = self._carray.copy()
         return squeue
+
+    def push(self, *ds: Any) -> None:
+        """Push data on rear of the SQueue & no return value."""
+        for d in ds:
+            if d != None:
+                self._carray.pushR(d)
 
     def pop(self) -> Any:
         """Pop data off front of the SQueue."""

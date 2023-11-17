@@ -86,7 +86,7 @@ class PStack(Stack):
         &#34;&#34;&#34;Construct a stateful LIFO Stack&#34;&#34;&#34;
         super().__init__(*ds)
 
-    def __repr__(self):
+    def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
@@ -188,7 +188,7 @@ None which indicates an empty stack.</p>
         &#34;&#34;&#34;Construct a stateful LIFO Stack&#34;&#34;&#34;
         super().__init__(*ds)
 
-    def __repr__(self):
+    def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 

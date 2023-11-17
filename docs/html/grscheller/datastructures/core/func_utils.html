@@ -89,15 +89,18 @@ class Maybe(FP):
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return false if a Nothing, otherwise true.&#34;&#34;&#34;
-        return self._value != None
+        return self._value is not None
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;A Maybe either contains something or not.
-        Return 1 if a Some, 0 if a Nothing.
+
+        Return 1 if a Some
+        Return 0 if a Nothing
         &#34;&#34;&#34;
         if self:
             return 1
-        return 0
+        else:
+            return 0
 
     def __eq__(self, other: Maybe) -&gt; bool:
         &#34;&#34;&#34;Returns true if both sides are Nothings, or if both sides are Somes
@@ -171,10 +174,15 @@ class Either(FP):
         &#34;&#34;&#34;True if both sides are same &#34;type&#34; and values compare as equal&#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
-
         if (self and other) or (not self and not other):
             return self._value == other._value
         return False
+
+    def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
+        if self:
+            return self._value
+        return default
 
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
@@ -212,12 +220,6 @@ class Either(FP):
                 return self
             else:
                 return self.mapRight(lambda x: x + right)
-
-    def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
-        if self:
-            return self._value
-        return default
 
 # Either convenience functions, act like subtype constructors.
 
@@ -380,10 +382,15 @@ Left, which is intended as the "happy path."</p></div>
         &#34;&#34;&#34;True if both sides are same &#34;type&#34; and values compare as equal&#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
-
         if (self and other) or (not self and not other):
             return self._value == other._value
         return False
+
+    def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
+        if self:
+            return self._value
+        return default
 
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
         if self:
@@ -420,13 +427,7 @@ Left, which is intended as the "happy path."</p></div>
             if right is None:
                 return self
             else:
-                return self.mapRight(lambda x: x + right)
-
-    def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
-        if self:
-            return self._value
-        return default</code></pre>
+                return self.mapRight(lambda x: x + right)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -577,15 +578,18 @@ Left, which is intended as the "happy path."</p></div>
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Return false if a Nothing, otherwise true.&#34;&#34;&#34;
-        return self._value != None
+        return self._value is not None
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;A Maybe either contains something or not.
-        Return 1 if a Some, 0 if a Nothing.
+
+        Return 1 if a Some
+        Return 0 if a Nothing
         &#34;&#34;&#34;
         if self:
             return 1
-        return 0
+        else:
+            return 0
 
     def __eq__(self, other: Maybe) -&gt; bool:
         &#34;&#34;&#34;Returns true if both sides are Nothings, or if both sides are Somes

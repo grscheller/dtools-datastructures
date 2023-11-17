@@ -32,9 +32,6 @@ class FP():
     def __init__(self):
         pass
 
-    def __iter__(self):
-        raise NotImplementedError
-
     # For FIFO type data structures.
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
         return type(self)(*map(f, self))

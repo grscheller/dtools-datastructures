@@ -45,6 +45,9 @@ class FTuple(FP):
             yield d
 
     def __repr__(self):
+        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+
+    def __str__(self):
         """Display data in the FTuple"""
         return "((" + ", ".join(map(repr, self)) + "))"
 
