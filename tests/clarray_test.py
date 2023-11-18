@@ -56,27 +56,27 @@ class TestCLArray:
         assert cl1 == CLArray(0, 3, 8, 99)
         
     def test_default(self):
-        cl1 = CLArray(default=0)
-        cl2 = CLArray(default=0)
-        assert cl1 == cl2
-        assert cl1 is not cl2
-        assert cl1
-        assert cl2
+        cl1 = CLArray(default=1)
+        cl2 = CLArray(default=2)
+        assert cl1 != cl2
+        assert not cl1
+        assert not cl2
         assert len(cl1) == 1
         assert len(cl2) == 1
         cl3 = cl1 + cl2
-        assert cl3 == cl2 == cl3
-        assert cl3 is not cl1
-        assert cl3 is not cl2
+        assert cl3[0] == 1
+        assert cl3[1] == 2
+        assert len(cl3) == 2
         assert cl3
-        assert len(cl3) == 1
         assert type(cl3) == CLArray
         cl4 = cl3.copy()
         assert cl4 == cl3
         assert cl4 is not cl3
-        cl1_copy = cl1.copy()
-        cl1.reverse()
-        assert cl1 == cl1_copy   # only one element
+        cl3_copy = cl3.copy()
+        cl3.reverse()
+        assert cl3 != cl3_copy
+        assert cl3[0] == 2
+        assert cl3[1] == 1
 
         foo = 42
         baz = 'hello world'
@@ -90,7 +90,7 @@ class TestCLArray:
             assert True
         finally:
             assert True
-            assert foo == 0
+            assert foo == 1
 
         try:
             baz = cl2[42]
@@ -106,12 +106,13 @@ class TestCLArray:
         cl1 = CLArray(default=12)
         cl2 = CLArray(default=30)
         assert cl1 != cl2
-        assert cl1
-        assert cl2
+        assert not cl1
+        assert not cl2
         assert len(cl1) == 1
         assert len(cl2) == 1
         cl3 = cl1 + cl2
-        assert cl3[0] == 42
+        assert cl3[0] == 12
+        assert cl3[1] == 30
 
         cl1 = CLArray()
         cl2 = CLArray(None, None, None)
@@ -121,9 +122,10 @@ class TestCLArray:
         assert not cl2
         assert len(cl1) == 1
         assert len(cl2) == 3
+        assert cl1[0] == cl2[0] == cl2[1] == cl2[2] == ()
 
-        cl1 = CLArray(1, 2, size=3)
-        cl2 = CLArray(1, 2, None)
+        cl1 = CLArray(1, 2, size=3, default=42)
+        cl2 = CLArray(1, 2, None, default=42)
         assert cl1 == cl2
         assert cl1 is not cl2
         assert cl1
@@ -132,7 +134,7 @@ class TestCLArray:
         assert len(cl2) == 3
 
         cl1 = CLArray(1, 2, size=-3)
-        cl2 = CLArray(None, 1, 2)
+        cl2 = CLArray((), 1, 2)
         assert cl1 == cl2
         assert cl1 is not cl2
         assert cl1
@@ -145,8 +147,7 @@ class TestCLArray:
 
     def test_set_then_get(self):
         cl = CLArray(size=5, default=0)
-        got = cl[1]
-        assert got == 0
+        assert cl[1] == 0
         cl[3] = set = 42
         got = cl[3]
         assert set == got
@@ -246,7 +247,7 @@ class TestCLArray:
 
     def test_bool(self):
         cl_allNotNone = CLArray(True, 0, '')
-        cl_allNone = CLArray(None, None, None)
+        cl_allNone = CLArray(None, None, None, default=42)
         cl_firstNone = CLArray(None, False, [])
         cl_lastNone = CLArray(0.0, True, False, None)
         cl_someNone = CLArray(0, None, 42, None, False)
@@ -258,7 +259,7 @@ class TestCLArray:
         assert cl_lastNone
         assert cl_someNone
         assert not cl_defaultNone
-        assert cl_defaultNotNone
+        assert not cl_defaultNotNone
 
         cl_Nones = CLArray(None, size=4321)
         cl_0 = CLArray(0, 0, 0)
@@ -304,19 +305,15 @@ class TestCLArray:
     def test_add(self):
         cl1 = CLArray(1,2,3)
         cl2 = CLArray(4,5,6)
-        assert cl1 + cl2 == CLArray(5,7,9)
-        assert cl2 + cl1 == CLArray(5,7,9)
+        assert cl1 + cl2 == CLArray(1,2,3,4,5,6)
+        assert cl2 + cl1 == CLArray(4,5,6,1,2,3)
 
-        try:
-            cl1 = CLArray(1,2,3)
-            cl2 = CLArray(4,5,6,7,8,9)
-            cl12 = cl1 + cl2
-            cl21 = cl2 + cl1
-            assert cl12 == cl21 == CLArray(5,7,9)
-        except ValueError:
-            assert True
-        else:
-            assert False
+        cl1 = CLArray(1,2,3)
+        cl2 = CLArray(4,5,6,7,8,9)
+        cl12 = cl1 + cl2
+        cl21 = cl2 + cl1
+        assert cl12 == CLArray(1,2,3,4,5,6,7,8,9)
+        assert cl21 == CLArray(4,5,6,7,8,9,1,2,3)
 
     def test_reverse(self):
         cl1 = CLArray(1, 2, 3, 'foo', 'bar')

@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+from typing import Any
 from grscheller.datastructures.core import Maybe, Nothing, Some
 from grscheller.datastructures.core import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
@@ -20,12 +23,6 @@ from grscheller.datastructures import SQueue, DQueue
 from grscheller.datastructures import CLArray, FTuple
 from grscheller.datastructures import FTuple
 
-
-def addLt42(x: int, y: int) -> int|None:
-    sum = x + y
-    if sum < 42:
-        return sum
-    return None
 
 class Test_repr:
     def test_CArray(self):
@@ -111,7 +108,7 @@ class Test_repr:
 
     def test_clarray(self):
         cla1 = CLArray()
-        assert repr(cla1) == 'CLArray(None, default=None)'
+        assert repr(cla1) == 'CLArray((), default=())'
         cla2 = eval(repr(cla1))
         assert cla2 == cla1
         assert cla2 is not cla1
@@ -134,12 +131,12 @@ class Test_repr:
         cla1 = CLArray(42, 'foo', [10, 22])
         cla2 = cla1.copy()
         cla1[2].append(42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=None)"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22, 42], default=None)"
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=())"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22, 42], default=())"
         popped = cla2[2].pop()
         assert popped == 42
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=None)"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=None)"
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=())"
+        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=())"
 
     def test_ftuple(self):
         ft1 = FTuple()
@@ -217,7 +214,7 @@ class Test_repr:
         fs1 = fs1.cons(2).cons(3).cons(4).cons(5)
         assert fs1.head() == 5
         fs1 = fs1.tail().cons(42)
-        assert repr(fs1) == "FStack(1, 2, 3, 4, 42)"
+        assert repr(fs1) == 'FStack(1, 2, 3, 4, 42)'
         fs2 = eval(repr(fs1))
         assert fs2 == fs1
         assert fs2 is not fs1
@@ -227,7 +224,7 @@ class Test_repr:
         mb2 = Some()
         mb3 = Some(None)
         assert mb1 == mb2 == mb3 == Nothing
-        assert repr(mb2) == "Nothing"
+        assert repr(mb2) == 'Nothing'
         mb4 = eval(repr(mb3))
         assert mb4 == mb3
         # DO NOT USE THE NEXT 4!!!
@@ -236,4 +233,105 @@ class Test_repr:
         assert mb2 is not mb3
         assert mb4 is mb1
 
+        def lt5OrNone(x: Any) -> Any:
+            if x < 5:
+                return x
+            else:
+                return None
 
+        def lt5OrNoneMaybe(x: Any) -> Maybe:
+            if x < 5:
+                return Some(x)
+            else:
+                return Nothing
+
+        mb1 = Some(lt5OrNone(2))
+        mb2 = lt5OrNoneMaybe(2)
+        mb3 = lt5OrNoneMaybe(3)
+        mb7 = Some(lt5OrNone(7))
+        mb8 = lt5OrNoneMaybe(8)
+
+        assert mb1 == mb2
+        assert mb2 != mb3
+        assert mb7 == mb8
+
+        assert repr(mb1) == repr(mb2) ==  'Some(2)'
+        assert repr(mb3) ==  'Some(3)'
+        assert repr(mb7) == repr(mb8) ==  'Nothing'
+
+        foofoo = Some(Some('foo'))
+        foofoo2 = eval(repr(foofoo))
+        assert foofoo2 == foofoo
+        assert repr(foofoo) == "Some(Some('foo'))"
+
+    def test_either(self):
+        e1 = Right('Nobody home!')
+        e2 = Left(None, 'Nobody home!')
+        e3 = Left(None)
+        assert e1 == e2 == Right('Nobody home!')
+        e5 = eval(repr(e2))
+        assert e2 == Right('Nobody home!')
+        assert e5 == e2
+        assert e5 != e3
+        assert e5 is not e2
+        assert e5 is not e3
+
+        def lt5OrNone(x: Any) -> Any:
+            if x < 5:
+                return x
+            else:
+                return None
+
+        def lt5OrNoneEither(x: Any) -> Either:
+            if x < 5:
+                return Left(x)
+            else:
+                return Right(f'was to be {x}')
+
+        e1 = Left(lt5OrNone(2))
+        e2 = lt5OrNoneEither(2)
+        e3 = lt5OrNoneEither(3)
+        e7 = Left(lt5OrNone(7), 'was to be 7')
+        e8 = lt5OrNoneEither(8)
+
+        assert e1 == e2
+        assert e2 != e3
+        assert e7 != e8
+        assert e7 == eval(repr(e7))
+
+        assert repr(e1) == repr(e2) ==  'Left(2)'
+        assert repr(e3) ==  'Left(3)'
+        assert repr(e7) == "Right('was to be 7')"
+        assert repr(e8) ==  "Right('was to be 8')"
+
+        foofoo00 = Left(Left('foo'))
+        foofoo01 = Left(Right('foo'))
+        foofoo10 = Right(Left('foo'))
+        foofoo11 = Right(Right('foo'))
+        assert repr(foofoo00) == "Left(Left('foo'))"
+        assert repr(foofoo01) == "Left(Right('foo'))"
+        assert repr(foofoo10) == "Right(Left('foo'))"
+        assert repr(foofoo11) == "Right(Right('foo'))"
+
+        foofoo10clone = eval(repr(foofoo10))
+        assert foofoo10clone != foofoo11
+        assert foofoo10clone == foofoo10
+        assert foofoo10clone is not foofoo10
+
+class Test_repr_mix:
+    def test_mix1(self):
+        thing1 = Left(SQueue(
+            FTuple(42, Some(42), Left(None, 'nobody home')),
+            CLArray([1, 2, 3, Nothing], 42, Left('foofoo'))
+        ))
+
+        thing2 = eval(repr(thing1))
+        assert thing2 == thing1
+        assert thing2 is not thing1
+
+        repr_thing1 = repr(thing1)
+        repr_thing2 = repr(thing2)
+        assert repr_thing2 == repr_thing1
+
+        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), CLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=())))"
+        assert repr_thing1 == repr_str
