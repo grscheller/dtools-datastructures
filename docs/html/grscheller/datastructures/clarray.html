@@ -25,8 +25,10 @@
 <p>Module grscheller.datastructure.clarray - constant length array</p>
 <p>Module implementing a data structure with a fixed length and O(1) data
 access. The arrays will have length &gt; 0 and are guaranteed not to change size.</p>
-<p>Note: None values are allowed in this data structures due to the
-fixed length size guarantees provided by the CLArray class.</p>
+<p>Note: None values are not allowed in this data structures. Due to the
+fixed length size guarantees provided by the CLArray class, a "default"
+value is needed if a None is attemped to be stored. If no default value
+is given, the empty tuple () is used.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -50,8 +52,10 @@ fixed length size guarantees provided by the CLArray class.</p>
 Module implementing a data structure with a fixed length and O(1) data
 access. The arrays will have length &gt; 0 and are guaranteed not to change size.
 
-Note: None values are allowed in this data structures due to the
-      fixed length size guarantees provided by the CLArray class.
+Note: None values are not allowed in this data structures. Due to the
+      fixed length size guarantees provided by the CLArray class, a &#34;default&#34;
+      value is needed if a None is attemped to be stored. If no default value
+      is given, the empty tuple () is used.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -76,15 +80,23 @@ class CLArray():
 
     If size &lt; 0, pad data on left with a default or slice off initial data.
 
-    Permits storing None as a value.
+    Does not permits storing None as a value. If a default value is not given,
+    the empty tuple () is used. A better choice would be to generate an
+    &#34;unhappy path&#34; monadic &#34;subtype&#34; with Nothing or Right().
     &#34;&#34;&#34;
     def __init__(self, *ds, size: int = 0, default: Any=None):
-        &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a fixed length array, None values not allowed.&#34;&#34;&#34;
+        if default is None:
+            # a better &#34;psuedo-bottom&#34; value than None, at least it is iterable.
+            self._default = ()
+        else:
+            self._default = default
+        
         def swapNones(d: Any):
             if d is None:
-                return default
+                return self._default
             return d
-        self._default = default
+
         dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
@@ -96,7 +108,7 @@ class CLArray():
                 else:
                     # ensure CLArray not empty
                     self._size = 1
-                    self._list = [default]
+                    self._list = [self._default]
             case (_, True, _):
                 # no size inconsistencies
                 if dsize &gt; 0:
@@ -105,19 +117,19 @@ class CLArray():
                 else:
                     # ensure CLArray not empty
                     self._size = 1
-                    self._list = [default]
+                    self._list = [self._default]
             case (_, _, True):
                 if size &gt; 0:
                     # pad higher indexes (on &#34;right&#34;)
                     self._size = size
-                    self._list = dlist + [default]*(size - dsize)
+                    self._list = dlist + [self._default]*(size - dsize)
                 else:
                     # pad lower indexes (on &#34;left&#34;)
                     dlist.reverse()
-                    dlist += [default]*(-size - dsize)
+                    dlist += [self._default]*(-size - dsize)
                     dlist.reverse()
                     self._size = -size
-                    self._list = dlist + [default]*(size - dsize)
+                    self._list = dlist + [self._default]*(size - dsize)
             case _:
                 if size &gt; 0:
                     # take left slice, ignore extra data at end
@@ -143,16 +155,16 @@ class CLArray():
             yield data
 
     def __repr__(self):
-        fmt = &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;
-        return fmt.format(self=self)
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + f&#39;, default={self._default})&#39;
 
     def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __bool__(self):
-        &#34;&#34;&#34;Return true if all stored values are not None.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return false only is all array values are equal to the default value.&#34;&#34;&#34;
+        default = self._default
         for value in self:
-            if value is not None:
+            if value != default:
                 return True
         return False
 
@@ -178,7 +190,10 @@ class CLArray():
             msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while setting value&#39;
             raise IndexError(msg)
-        self._list[index] = value
+        if value is not None:
+            self._list[index] = value
+        else:
+            self._list[index] = self._default
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
@@ -189,19 +204,28 @@ class CLArray():
         return self._list == other._list
 
     def __add__(self, other: CLArray) -&gt; CLArray:
-        &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;
-        if (lhs := self._size) != (rhs := other._size):
-            msg = &#39;CLArray size mismatch: &#39;
-            msg += f&#39;LHS size={lhs} but RHS size={rhs}&#39;
+        &#34;&#34;&#34;Concatenate components and return new CLArray with default value of
+        the LHS CLArray&#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            msg = &#39;Type mismatch: CLArrays concatenate only with other CLArrays&#39;
             raise ValueError(msg)
-        clarray = CLArray(size=lhs)
-        for ii in range(lhs):
-            clarray[ii] = self[ii] + other[ii]
-        return clarray
+        return CLArray(*self, *other, default=self._default)
 
-    def copy(self) -&gt; CLArray:
-        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
-        return CLArray(*self)
+    def set_default(self, default: Any) -&gt; None:
+        &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
+        if default is None:
+            msg = &#39;CLArray default value cannot be None: &#39;
+            raise ValueError(msg)
+        self._default = default
+
+    def copy(self, default: Any=None) -&gt; CLArray:
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
+        Optionally change the CLArray&#39;s default value. Does not affect any
+        contained values of the previous default value.
+        &#34;&#34;&#34;
+        if default is None:
+            default = self._default
+        return CLArray(*self, default=default)
 
     def reverse(self) -&gt; None:
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
@@ -242,8 +266,10 @@ length &gt; 0.</p>
 is provided, return array with a default value and a size = 1.</p>
 <p>If size &gt; 0, pad data on right with a default or slice off trailing data.</p>
 <p>If size &lt; 0, pad data on left with a default or slice off initial data.</p>
-<p>Permits storing None as a value.</p>
-<p>Construct a fixed length array, None values allowed.</p></div>
+<p>Does not permits storing None as a value. If a default value is not given,
+the empty tuple () is used. A better choice would be to generate an
+"unhappy path" monadic "subtype" with Nothing or Right().</p>
+<p>Construct a fixed length array, None values not allowed.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -261,15 +287,23 @@ is provided, return array with a default value and a size = 1.</p>
 
     If size &lt; 0, pad data on left with a default or slice off initial data.
 
-    Permits storing None as a value.
+    Does not permits storing None as a value. If a default value is not given,
+    the empty tuple () is used. A better choice would be to generate an
+    &#34;unhappy path&#34; monadic &#34;subtype&#34; with Nothing or Right().
     &#34;&#34;&#34;
     def __init__(self, *ds, size: int = 0, default: Any=None):
-        &#34;&#34;&#34;Construct a fixed length array, None values allowed.&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a fixed length array, None values not allowed.&#34;&#34;&#34;
+        if default is None:
+            # a better &#34;psuedo-bottom&#34; value than None, at least it is iterable.
+            self._default = ()
+        else:
+            self._default = default
+        
         def swapNones(d: Any):
             if d is None:
-                return default
+                return self._default
             return d
-        self._default = default
+
         dlist = list(map(swapNones, ds))
         dsize = len(dlist)
         match (size, abs(size) == dsize, abs(size) &gt; dsize):
@@ -281,7 +315,7 @@ is provided, return array with a default value and a size = 1.</p>
                 else:
                     # ensure CLArray not empty
                     self._size = 1
-                    self._list = [default]
+                    self._list = [self._default]
             case (_, True, _):
                 # no size inconsistencies
                 if dsize &gt; 0:
@@ -290,19 +324,19 @@ is provided, return array with a default value and a size = 1.</p>
                 else:
                     # ensure CLArray not empty
                     self._size = 1
-                    self._list = [default]
+                    self._list = [self._default]
             case (_, _, True):
                 if size &gt; 0:
                     # pad higher indexes (on &#34;right&#34;)
                     self._size = size
-                    self._list = dlist + [default]*(size - dsize)
+                    self._list = dlist + [self._default]*(size - dsize)
                 else:
                     # pad lower indexes (on &#34;left&#34;)
                     dlist.reverse()
-                    dlist += [default]*(-size - dsize)
+                    dlist += [self._default]*(-size - dsize)
                     dlist.reverse()
                     self._size = -size
-                    self._list = dlist + [default]*(size - dsize)
+                    self._list = dlist + [self._default]*(size - dsize)
             case _:
                 if size &gt; 0:
                     # take left slice, ignore extra data at end
@@ -328,16 +362,16 @@ is provided, return array with a default value and a size = 1.</p>
             yield data
 
     def __repr__(self):
-        fmt = &#39;{self.__class__.__name__}({self._list}, {self._size}, {self._default})&#39;
-        return fmt.format(self=self)
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + f&#39;, default={self._default})&#39;
 
     def __str__(self):
         return &#34;[|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|]&#34;
 
     def __bool__(self):
-        &#34;&#34;&#34;Return true if all stored values are not None.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return false only is all array values are equal to the default value.&#34;&#34;&#34;
+        default = self._default
         for value in self:
-            if value is not None:
+            if value != default:
                 return True
         return False
 
@@ -363,7 +397,10 @@ is provided, return array with a default value and a size = 1.</p>
             msg = f&#39;CLArray index = {index} not between {l} and {h}&#39;
             msg += &#39; while setting value&#39;
             raise IndexError(msg)
-        self._list[index] = value
+        if value is not None:
+            self._list[index] = value
+        else:
+            self._list[index] = self._default
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
@@ -374,19 +411,28 @@ is provided, return array with a default value and a size = 1.</p>
         return self._list == other._list
 
     def __add__(self, other: CLArray) -&gt; CLArray:
-        &#34;&#34;&#34;Add CLArray component-wise left to right.&#34;&#34;&#34;
-        if (lhs := self._size) != (rhs := other._size):
-            msg = &#39;CLArray size mismatch: &#39;
-            msg += f&#39;LHS size={lhs} but RHS size={rhs}&#39;
+        &#34;&#34;&#34;Concatenate components and return new CLArray with default value of
+        the LHS CLArray&#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            msg = &#39;Type mismatch: CLArrays concatenate only with other CLArrays&#39;
             raise ValueError(msg)
-        clarray = CLArray(size=lhs)
-        for ii in range(lhs):
-            clarray[ii] = self[ii] + other[ii]
-        return clarray
+        return CLArray(*self, *other, default=self._default)
 
-    def copy(self) -&gt; CLArray:
-        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
-        return CLArray(*self)
+    def set_default(self, default: Any) -&gt; None:
+        &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
+        if default is None:
+            msg = &#39;CLArray default value cannot be None: &#39;
+            raise ValueError(msg)
+        self._default = default
+
+    def copy(self, default: Any=None) -&gt; CLArray:
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
+        Optionally change the CLArray&#39;s default value. Does not affect any
+        contained values of the previous default value.
+        &#34;&#34;&#34;
+        if default is None:
+            default = self._default
+        return CLArray(*self, default=default)
 
     def reverse(self) -&gt; None:
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
@@ -405,17 +451,24 @@ is provided, return array with a default value and a size = 1.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.clarray.CLArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self, default: Any = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the CLArray in O(n) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of the CLArray in O(n) time &amp; space complexity.
+Optionally change the CLArray's default value. Does not affect any
+contained values of the previous default value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self) -&gt; CLArray:
-    &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity&#34;&#34;&#34;
-    return CLArray(*self)</code></pre>
+<pre><code class="python">def copy(self, default: Any=None) -&gt; CLArray:
+    &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
+    Optionally change the CLArray&#39;s default value. Does not affect any
+    contained values of the previous default value.
+    &#34;&#34;&#34;
+    if default is None:
+        default = self._default
+    return CLArray(*self, default=default)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
@@ -463,6 +516,23 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
     self._list.reverse()</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.clarray.CLArray.set_default"><code class="name flex">
+<span>def <span class="ident">set_default</span></span>(<span>self, default: Any) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change the default value for the CLArray</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_default(self, default: Any) -&gt; None:
+    &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
+    if default is None:
+        msg = &#39;CLArray default value cannot be None: &#39;
+        raise ValueError(msg)
+    self._default = default</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -488,6 +558,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.map" href="#grscheller.datastructures.clarray.CLArray.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.mapSelf" href="#grscheller.datastructures.clarray.CLArray.mapSelf">mapSelf</a></code></li>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.reverse" href="#grscheller.datastructures.clarray.CLArray.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.set_default" href="#grscheller.datastructures.clarray.CLArray.set_default">set_default</a></code></li>
 </ul>
 </li>
 </ul>

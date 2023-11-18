@@ -105,7 +105,7 @@ class Stack():
         return reversed(CArray(*self))
 
     def __repr__(self):
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
 
     def __bool__(self):
         &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
@@ -204,7 +204,7 @@ get pushed onto the the stack.</p>
         return reversed(CArray(*self))
 
     def __repr__(self):
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
 
     def __bool__(self):
         &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
