@@ -6,30 +6,12 @@ interfaces and are are immutable (like Python Tuples).
 
 ## Non-typed data structures
 
-* [clarray module](#clarray-module): provides CLArray class
-* [ftuple module](#ftuple-module): provides FTuple class
 * [squeue module](#squeue-module): provides SQueue class
 * [dqueue module](#dqueue-module): provides DQueue class
 * [pstack module](#pstack-module): provides PStack class
 * [fstack module](#fstack-module): provides FStack class
-
-### clarray module
-
-Provides a fixed length array of elements of different types.
-
-* Class **CLArray**
-  * O(1) data access
-  * once created, guaranteed not to change size
-  * will store None as a value due to fix length guarantees
-
-### ftuple module
-
-Provides a functional tuple-like object.
-
-* Class **FTuple**
-  * immutable
-  * O(1) data access
-  * does not store None values
+* [ftuple module](#ftuple-module): provides FTuple class
+* [clarray module](#clarray-module): provides CLArray class
 
 ### squeue module
 
@@ -89,3 +71,22 @@ Stack objects themselves are light weight and have only two attributes,
 a count containing the number of elements on the stack, and a head
 containing either None, for an empty stack, or a reference to the first
 node of the stack.
+
+### ftuple module
+
+Provides a functional tuple-like object.
+
+* Class **FTuple**
+  * immutable
+  * O(1) data access
+  * does not store None values
+
+### clarray module
+
+Provides a fixed length array of elements of different types.
+
+WARNING: API is currently in a state of flux.
+
+* Class **CLArray**
+  * O(1) data access
+  * once created, guaranteed not to change size

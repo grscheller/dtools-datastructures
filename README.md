@@ -1,7 +1,7 @@
 # Python grscheller.datastructures PyPI Package
 
-Data structures geared to different algorithmic use cases. Supportive of
-a Functional Programming (FP) style of programming, yet still endeavor
+Data structures geared to different algorithmic use cases. Supportive
+of functional and imperative styles of programming while endeavoring
 to be Pythonic.
 
 ## Overview
@@ -19,7 +19,7 @@ The data structures in this package:
 * Safely share data between multiple data structure instances by making
   shared data immutable and inaccessible to client code.
 * Don't force exception driven code paths upon client code.
-* Don't force FP on client code, FP is opt-in.
+* Don't force Functional Programming (FP) on client code, FP is opt-in.
 * Code to the "happy" path & provide simple FP tools for "exceptional"
   events.
 
@@ -29,13 +29,14 @@ to yourself.
 
 ### Package overview grscheller.datastructures
 
-* [Data structures][1]
-* [Functional Subpackage][2]
-* [Core Subpackage][3]
+* [Data Structures][1]
+* [Functional Programming Module][2]
+* [Iterator Library Module][3]
+* [Circular Array Module][4]
 
 ### Detailed API for grscheller.datastructures package
 
-* [Detailed grscheller.datastructures API's][4]
+* [Detailed grscheller.datastructures API's][5]
 
 ### Design choices
 
@@ -55,33 +56,29 @@ better ways to handle "missing" data.
 
 #### Methods which mutate objects don't return anything.
 
-For the main data structures at the top level of this package, methods
-which mutate the data structures do not return any values. I try to
-follow the Python convention followed by the builtin types of not
-returning anything when mutated. Like the append method of the Python
-list builtin.
+Data structures when mutated do not return any values. This package
+follows the convention used by Python builtins types of not returning
+anything when mutated, like the append method of the Python list.
 
 #### Type annotations
 
-This package was developed using Pyright to provide LSP
-information to Neovim. This allowed the types to guide the design of
-this package. 
-
-Type annotations used in this package are extremely useful in helping
-external tooling work well. These features are slated for Python 3.13
-but work now in Python 3.11 by including *annotations* from
-`__future__`.
+Type annotations are extremely helpul for external tooling to work well.
+This package was developed using Pyright to provide LSP information to
+Neovim. This allowed the types to guide the design of this package.
+While slated for Python 3.13, type annotations work now for Python 3.11
+by including *annotations* from `__future__`.
 
 The best current information I have found so far on type annotations is
-in the Python documentation [here][5]. The PyPI pdoc3 package generates
+in the Python documentation [here][6]. The PyPI pdoc3 package generates
 documentation based on annotations, docstrings, syntax tree, and other
-special comment strings. See pdoc3 documentation [here][6].
+special comment strings. See pdoc3 documentation [here][7].
 
 ---
 
-[1]: https://github.com/grscheller/datastructures/blob/main/README.d/Datastructures.md
-[2]: https://github.com/grscheller/datastructures/blob/main/README.d/FunctionalSubpackage.md
-[3]: https://github.com/grscheller/datastructures/blob/main/README.d/CoreSubpackage.md
-[4]: https://grscheller.github.io/datastructures/
-[5]: https://docs.python.org/3.13/library/typing.html
-[6]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
+[1]: https://github.com/grscheller/datastructures/blob/main/README.d/datastructures.md
+[2]: https://github.com/grscheller/datastructures/blob/main/README.d/fp.md
+[3]: https://github.com/grscheller/datastructures/blob/main/README.d/iterlib.md
+[4]: https://github.com/grscheller/datastructures/blob/main/README.d/carray.md
+[5]: https://grscheller.github.io/datastructures/
+[6]: https://docs.python.org/3.13/library/typing.html
+[7]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0

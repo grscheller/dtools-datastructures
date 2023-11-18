@@ -1,4 +1,4 @@
-# Subpackage grscheller.datastructures.functional
+# Submodule grscheller.datastructures.core.functional
 
 Monadic data structures supporting a functional style of programming.
 
@@ -26,7 +26,7 @@ Monadic data structures supporting a functional style of programming.
 ### Module either
 
 * Class **Either**
-  * Represents a single value in one of two mutually exclusive contexts
+  * Represents a single value in one of two mututally exclusive contexts
   * Implements a Left biased Either Monad
   * Functions like a Union type
     * Left(value)

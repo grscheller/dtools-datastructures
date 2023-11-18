@@ -33,13 +33,24 @@
 
 ## Version - PyPI releases begin with "v"
 
+### Version 0.10.7.0 - commit date 2023-11-18
+
+* Overhauled __repr__ & __str__ methods for all classes
+  * tests that ds == eval(repr(ds)) fo all data structures ds in package
+* CLArray API is in a state of flux
+  * no longer stores None as a value
+  * __add__ concatenates, no longer component adds
+  * maybe allow zero length CLArrays?
+    * would make it a monoid and not just a semigroup
+    * make an immutable version too?
+* Updated markdown overview documentation
+
 ### Version 0.10.1.0 - commit date 2023-11-11
 
 * Removed flatMap methods from stateful objects
   * FLArray, DQueue, SQueue, PStack
   * kepted the map method for each
 * some restructuring so package will scale better in the future
-* updated documentation with pdoc3
 
 ### Version v0.9.1 - PyPI release date: 2023-11-09
 
@@ -47,7 +58,7 @@
 * Infrastructure stable
 * Existing datastructures only should need API additions
 * Type annotations working extremely well
-* Pydoc3 used to generate documentaton on GitHub
+* Using Pdoc3 to generate documentaton on GitHub
   * see https://grscheller.github.io/datastructures/
 * All iterators conform to Python language "iterator protocol"
 * Improved docstrings
