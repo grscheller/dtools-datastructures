@@ -17,7 +17,7 @@ from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import CLArray, FTuple
+from grscheller.datastructures import FCLArray, FTuple
 from grscheller.datastructures import FTuple
 
 
@@ -119,8 +119,8 @@ class Test_str:
         assert str(dq1) == '>< 5 | 4 | 3 | 2 ><'
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
-    def test_clarray(self):
-        cl = CLArray(1,2,3,4,5)
+    def test_fclarray(self):
+        cl = FCLArray(1,2,3,4,5)
         cl[2] = 42
         assert str(cl) == '[|1, 2, 42, 4, 5|]'
 

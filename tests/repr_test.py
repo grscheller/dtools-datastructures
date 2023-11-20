@@ -20,7 +20,7 @@ from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.carray import CArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import CLArray, FTuple
+from grscheller.datastructures import FCLArray, FTuple
 from grscheller.datastructures import FTuple
 
 
@@ -107,36 +107,36 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_clarray(self):
-        cla1 = CLArray()
-        assert repr(cla1) == 'CLArray((), default=())'
+        cla1 = FCLArray()
+        assert repr(cla1) == 'FCLArray((), default=())'
         cla2 = eval(repr(cla1))
         assert cla2 == cla1
         assert cla2 is not cla1
 
-        cla1 = CLArray('foo', [10, 22], size=-3, default=42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=42)"
+        cla1 = FCLArray('foo', [10, 22], size=-3, default=42)
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
         cla2 = eval(repr(cla1))
         assert cla2 == cla1
         assert cla2 is not cla1
 
         cla1[2].append(42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=42)"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=42)"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
         popped = cla1[2].pop()
         assert popped == 42
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=42)"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
 
         # beware immutable collections of mutable objects
-        cla1 = CLArray(42, 'foo', [10, 22])
+        cla1 = FCLArray(42, 'foo', [10, 22])
         cla2 = cla1.copy()
         cla1[2].append(42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], default=())"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22, 42], default=())"
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
         popped = cla2[2].pop()
         assert popped == 42
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], default=())"
-        assert repr(cla2) == "CLArray(42, 'foo', [10, 22], default=())"
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=())"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=())"
 
     def test_ftuple(self):
         ft1 = FTuple()
@@ -322,7 +322,7 @@ class Test_repr_mix:
     def test_mix1(self):
         thing1 = Left(SQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
-            CLArray([1, 2, 3, Nothing], 42, Left('foofoo'))
+            FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'))
         ))
 
         thing2 = eval(repr(thing1))
@@ -333,5 +333,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), CLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=())))"
+        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=())))"
         assert repr_thing1 == repr_str

@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.clarray import CLArray
+from grscheller.datastructures.fclarray import FCLArray
 
-class TestCLArray:
+class TestFCLArray:
     def test_mapSelf(self):
-        cl1 = CLArray(0, 1, 2, 3, 4)
+        cl1 = FCLArray(0, 1, 2, 3, 4)
         cl1[2] = cl1[4]
         assert cl1[0] == 0
         assert cl1[1] == 1
@@ -34,41 +34,52 @@ class TestCLArray:
         assert cl1[4] == 0
 
     def test_map1(self):
-        cl1 = CLArray(0, 1, 2, 3, default=-1)
-        cl2 = cl1.map(lambda x: x+1, size=-6)
-        assert cl2[0] == cl2[1] == -1
-        assert cl1[0] + 1 == cl2[2] == 1
-        assert cl1[1] + 1 == cl2[3] == 2
-        assert cl1[2] + 1 == cl2[4] == 3
-        assert cl1[3] + 1 == cl2[5] == 4
+        cl1 = FCLArray(0, 1, 2, 3, size=-6, default=-1)
+        cl2 = cl1.map(lambda x: x+1)
+        assert cl1[0] + 1 == cl2[0] == 0
+        assert cl1[1] + 1 == cl2[1] == 0
+        assert cl1[2] + 1 == cl2[2] == 1
+        assert cl1[3] + 1 == cl2[3] == 2
+        assert cl1[4] + 1 == cl2[4] == 3
+        assert cl1[5] + 1 == cl2[5] == 4
 
     def test_map2(self):
-        cl1 = CLArray(1, 2, 3, 10)
+        cl1 = FCLArray(0, 1, 2, 3, size=6, default=-1)
+        cl2 = cl1.map(lambda x: x+1)
+        assert cl1[0] + 1 == cl2[0] == 1
+        assert cl1[1] + 1 == cl2[1] == 2
+        assert cl1[2] + 1 == cl2[2] == 3
+        assert cl1[3] + 1 == cl2[3] == 4
+        assert cl1[4] + 1 == cl2[4] == 0
+        assert cl1[5] + 1 == cl2[5] == 0
+
+    def test_map3(self):
+        cl1 = FCLArray(1, 2, 3, 10)
 
         cl2 = cl1.map(lambda x: x*x-1)
         assert cl2 is not None
         assert cl1 is not cl2
-        assert cl1 == CLArray(1, 2, 3, 10)
-        assert cl2 == CLArray(0, 3, 8, 99)
+        assert cl1 == FCLArray(1, 2, 3, 10)
+        assert cl2 == FCLArray(0, 3, 8, 99)
         
         ret = cl1.mapSelf(lambda x: x*x-1)
         assert ret is None
-        assert cl1 == CLArray(0, 3, 8, 99)
+        assert cl1 == FCLArray(0, 3, 8, 99)
         
     def test_default(self):
-        cl1 = CLArray(default=1)
-        cl2 = CLArray(default=2)
-        assert cl1 != cl2
+        cl1 = FCLArray(size=1, default=1)
+        cl2 = FCLArray(size=1, default=2)
+        assert cl1 == cl2
         assert not cl1
         assert not cl2
-        assert len(cl1) == 1
-        assert len(cl2) == 1
+        assert len(cl1) == 0
+        assert len(cl2) == 0
         cl3 = cl1 + cl2
         assert cl3[0] == 1
         assert cl3[1] == 2
         assert len(cl3) == 2
         assert cl3
-        assert type(cl3) == CLArray
+        assert type(cl3) == FCLArray
         cl4 = cl3.copy()
         assert cl4 == cl3
         assert cl4 is not cl3
@@ -103,8 +114,8 @@ class TestCLArray:
             assert True
             assert baz == 'hello world'
 
-        cl1 = CLArray(default=12)
-        cl2 = CLArray(default=30)
+        cl1 = FCLArray(default=12)
+        cl2 = FCLArray(default=30)
         assert cl1 != cl2
         assert not cl1
         assert not cl2
@@ -114,8 +125,8 @@ class TestCLArray:
         assert cl3[0] == 12
         assert cl3[1] == 30
 
-        cl1 = CLArray()
-        cl2 = CLArray(None, None, None)
+        cl1 = FCLArray()
+        cl2 = FCLArray(None, None, None)
         assert cl1 != cl2
         assert cl1 is not cl2
         assert not cl1
@@ -124,8 +135,8 @@ class TestCLArray:
         assert len(cl2) == 3
         assert cl1[0] == cl2[0] == cl2[1] == cl2[2] == ()
 
-        cl1 = CLArray(1, 2, size=3, default=42)
-        cl2 = CLArray(1, 2, None, default=42)
+        cl1 = FCLArray(1, 2, size=3, default=42)
+        cl2 = FCLArray(1, 2, None, default=42)
         assert cl1 == cl2
         assert cl1 is not cl2
         assert cl1
@@ -133,8 +144,8 @@ class TestCLArray:
         assert len(cl1) == 3
         assert len(cl2) == 3
 
-        cl1 = CLArray(1, 2, size=-3)
-        cl2 = CLArray((), 1, 2)
+        cl1 = FCLArray(1, 2, size=-3)
+        cl2 = FCLArray((), 1, 2)
         assert cl1 == cl2
         assert cl1 is not cl2
         assert cl1
@@ -142,19 +153,19 @@ class TestCLArray:
         assert len(cl1) == 3
         assert len(cl2) == 3
 
-        cl5 = CLArray(*range(1,4), size=-5, default=42)
-        assert cl5 == CLArray(42, 42, 1, 2, 3)
+        cl5 = FCLArray(*range(1,4), size=-5, default=42)
+        assert cl5 == FCLArray(42, 42, 1, 2, 3)
 
     def test_set_then_get(self):
-        cl = CLArray(size=5, default=0)
+        cl = FCLArray(size=5, default=0)
         assert cl[1] == 0
         cl[3] = set = 42
         got = cl[3]
         assert set == got
 
     def test_equality(self):
-        cl1 = CLArray(1, 2, 'Forty-Two', (7, 11, 'foobar'))
-        cl2 = CLArray(1, 3, 'Forty-Two', [1, 2, 3])
+        cl1 = FCLArray(1, 2, 'Forty-Two', (7, 11, 'foobar'))
+        cl2 = FCLArray(1, 3, 'Forty-Two', [1, 2, 3])
         assert cl1 != cl2
         cl2[1] = 2
         assert cl1 != cl2
@@ -162,16 +173,16 @@ class TestCLArray:
         assert cl1 == cl2
 
     def test_len_getting_indexing_padding_slicing(self):
-        cl = CLArray(*range(2000))
+        cl = FCLArray(*range(2000))
         assert len(cl) == 2000
 
-        cl = CLArray(*range(542), size=42)
+        cl = FCLArray(*range(542), size=42)
         assert len(cl) == 42
         assert cl[0] == 0
         assert cl[41] == cl[-1] == 41
         assert cl[2] == cl[-40]
 
-        cl = CLArray(*range(1042), size=-42)
+        cl = FCLArray(*range(1042), size=-42)
         assert len(cl) == 42
         assert cl[0] == 1000
         assert cl[41] == 1041
@@ -180,7 +191,7 @@ class TestCLArray:
         assert cl[1] == cl[-41] == 1001
         assert cl[0] == cl[-42]
 
-        cl = CLArray(*[1, 'a', (1, 2)], size=5, default=42)
+        cl = FCLArray(*[1, 'a', (1, 2)], size=5, default=42)
         assert cl[0] == 1
         assert cl[1] == 'a'
         assert cl[2] == (1, 2)
@@ -211,7 +222,7 @@ class TestCLArray:
         else:
             assert False
 
-        cl = CLArray(*[1, 'a', (1, 2)], size=-6, default=42)
+        cl = FCLArray(*[1, 'a', (1, 2)], size=-6, default=42)
         assert cl[0] == 42
         assert cl[1] == 42
         assert cl[2] == 42
@@ -246,13 +257,13 @@ class TestCLArray:
             assert False
 
     def test_bool(self):
-        cl_allNotNone = CLArray(True, 0, '')
-        cl_allNone = CLArray(None, None, None, default=42)
-        cl_firstNone = CLArray(None, False, [])
-        cl_lastNone = CLArray(0.0, True, False, None)
-        cl_someNone = CLArray(0, None, 42, None, False)
-        cl_defaultNone = CLArray(default = None)
-        cl_defaultNotNone = CLArray(default = False)
+        cl_allNotNone = FCLArray(True, 0, '')
+        cl_allNone = FCLArray(None, None, None, default=42)
+        cl_firstNone = FCLArray(None, False, [])
+        cl_lastNone = FCLArray(0.0, True, False, None)
+        cl_someNone = FCLArray(0, None, 42, None, False)
+        cl_defaultNone = FCLArray(default = None)
+        cl_defaultNotNone = FCLArray(default = False)
         assert cl_allNotNone
         assert not cl_allNone
         assert cl_firstNone
@@ -261,11 +272,11 @@ class TestCLArray:
         assert not cl_defaultNone
         assert not cl_defaultNotNone
 
-        cl_Nones = CLArray(None, size=4321)
-        cl_0 = CLArray(0, 0, 0)
-        cl_42s = CLArray(*([42]*42))
-        cl_emptyStr = CLArray('')
-        cl_hw = CLArray('hello', 'world')
+        cl_Nones = FCLArray(None, size=4321)
+        cl_0 = FCLArray(0, 0, 0)
+        cl_42s = FCLArray(*([42]*42))
+        cl_emptyStr = FCLArray('')
+        cl_hw = FCLArray('hello', 'world')
         assert not cl_Nones
         assert cl_0
         assert cl_42s
@@ -273,8 +284,8 @@ class TestCLArray:
         assert cl_hw
 
     def test_copy(self):
-        cl4 = CLArray(*range(43), size = 5)
-        cl42 = CLArray(*range(43), size = -5)
+        cl4 = FCLArray(*range(43), size = 5)
+        cl42 = FCLArray(*range(43), size = -5)
         cl4_copy = cl4.copy()
         cl42_copy = cl42.copy()
         assert cl4 == cl4_copy
@@ -288,7 +299,7 @@ class TestCLArray:
 
     def test_reversed_iter(self):
         """Tests that prior state of cl is used, not current one"""
-        cl = CLArray(1,2,3,4,5)
+        cl = FCLArray(1,2,3,4,5)
         clrevIter = reversed(cl)
         aa = next(clrevIter)
         assert cl[4] == aa == 5
@@ -303,21 +314,21 @@ class TestCLArray:
         assert cl[0] == aa == 1
 
     def test_add(self):
-        cl1 = CLArray(1,2,3)
-        cl2 = CLArray(4,5,6)
-        assert cl1 + cl2 == CLArray(1,2,3,4,5,6)
-        assert cl2 + cl1 == CLArray(4,5,6,1,2,3)
+        cl1 = FCLArray(1,2,3)
+        cl2 = FCLArray(4,5,6)
+        assert cl1 + cl2 == FCLArray(1,2,3,4,5,6)
+        assert cl2 + cl1 == FCLArray(4,5,6,1,2,3)
 
-        cl1 = CLArray(1,2,3)
-        cl2 = CLArray(4,5,6,7,8,9)
+        cl1 = FCLArray(1,2,3)
+        cl2 = FCLArray(4,5,6,7,8,9)
         cl12 = cl1 + cl2
         cl21 = cl2 + cl1
-        assert cl12 == CLArray(1,2,3,4,5,6,7,8,9)
-        assert cl21 == CLArray(4,5,6,7,8,9,1,2,3)
+        assert cl12 == FCLArray(1,2,3,4,5,6,7,8,9)
+        assert cl21 == FCLArray(4,5,6,7,8,9,1,2,3)
 
     def test_reverse(self):
-        cl1 = CLArray(1, 2, 3, 'foo', 'bar')
-        cl2 = CLArray('bar', 'foo', 3, 2, 1)
+        cl1 = FCLArray(1, 2, 3, 'foo', 'bar')
+        cl2 = FCLArray('bar', 'foo', 3, 2, 1)
         assert cl1 != cl2
         cl2.reverse()
         assert cl1 == cl2

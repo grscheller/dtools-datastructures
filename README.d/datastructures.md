@@ -11,7 +11,7 @@ interfaces and are are immutable (like Python Tuples).
 * [pstack module](#pstack-module): provides PStack class
 * [fstack module](#fstack-module): provides FStack class
 * [ftuple module](#ftuple-module): provides FTuple class
-* [clarray module](#clarray-module): provides CLArray class
+* [fclarray module](#fclarray-module): provides FCLArray class
 
 ### squeue module
 
@@ -72,6 +72,16 @@ a count containing the number of elements on the stack, and a head
 containing either None, for an empty stack, or a reference to the first
 node of the stack.
 
+### fclarray module
+
+Provides a constant length mutable array of elements of different types.
+Any methods which mutate this data structure are guaranteed not to
+change its size. Otherwise, it has a functional interface.
+
+* Class **FCLArray**
+  * O(1) data access
+  * when mutated guaranteed not to change size
+
 ### ftuple module
 
 Provides a functional tuple-like object.
@@ -80,13 +90,3 @@ Provides a functional tuple-like object.
   * immutable
   * O(1) data access
   * does not store None values
-
-### clarray module
-
-Provides a fixed length array of elements of different types.
-
-WARNING: API is currently in a state of flux.
-
-* Class **CLArray**
-  * O(1) data access
-  * once created, guaranteed not to change size
