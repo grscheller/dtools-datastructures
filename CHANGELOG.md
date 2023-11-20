@@ -33,6 +33,15 @@
 
 ## Version - PyPI releases begin with "v"
 
+### Version 0.10.8.0 - commit date 2023-11-18
+
+* Bumping requires-python = ">=3.11" in pyproject.toml
+  * 0.10.7.X will be on the GitHub pypy3 branch
+    * Pypy3 (7.3.13) using Python (3.10.13)
+    * tests pass but are 4X slower
+    * LSP almost useless due to more primative typing module
+  * Currently developing & testing on Python 3.11.5
+
 ### Version 0.10.7.0 - commit date 2023-11-18
 
 * Overhauled __repr__ & __str__ methods for all classes
