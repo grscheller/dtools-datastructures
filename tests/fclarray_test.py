@@ -35,13 +35,14 @@ class TestFCLArray:
 
     def test_map1(self):
         cl1 = FCLArray(0, 1, 2, 3, size=-6, default=-1)
-        cl2 = cl1.map(lambda x: x+1)
+        cl2 = cl1.map(lambda x: x+1, size=7, default=42)
         assert cl1[0] + 1 == cl2[0] == 0
         assert cl1[1] + 1 == cl2[1] == 0
         assert cl1[2] + 1 == cl2[2] == 1
         assert cl1[3] + 1 == cl2[3] == 2
         assert cl1[4] + 1 == cl2[4] == 3
         assert cl1[5] + 1 == cl2[5] == 4
+        assert cl2[6] == 42
 
     def test_map2(self):
         cl1 = FCLArray(0, 1, 2, 3, size=6, default=-1)
@@ -69,11 +70,13 @@ class TestFCLArray:
     def test_default(self):
         cl1 = FCLArray(size=1, default=1)
         cl2 = FCLArray(size=1, default=2)
-        assert cl1 == cl2
+        assert cl1 != cl2
+        assert cl1[0] == 1
+        assert cl2[0] == 2
         assert not cl1
         assert not cl2
-        assert len(cl1) == 0
-        assert len(cl2) == 0
+        assert len(cl1) == 1
+        assert len(cl2) == 1
         cl3 = cl1 + cl2
         assert cl3[0] == 1
         assert cl3[1] == 2
@@ -114,8 +117,8 @@ class TestFCLArray:
             assert True
             assert baz == 'hello world'
 
-        cl1 = FCLArray(default=12)
-        cl2 = FCLArray(default=30)
+        cl1 = FCLArray(size=1, default=12)
+        cl2 = FCLArray(size=1, default=30)
         assert cl1 != cl2
         assert not cl1
         assert not cl2
@@ -126,14 +129,14 @@ class TestFCLArray:
         assert cl3[1] == 30
 
         cl1 = FCLArray()
-        cl2 = FCLArray(None, None, None)
+        cl2 = FCLArray(None, None, None, size=2)
         assert cl1 != cl2
         assert cl1 is not cl2
         assert not cl1
         assert not cl2
-        assert len(cl1) == 1
-        assert len(cl2) == 3
-        assert cl1[0] == cl2[0] == cl2[1] == cl2[2] == ()
+        assert len(cl1) == 0
+        assert len(cl2) == 2
+        assert cl2[0] == cl2[1] == ()
 
         cl1 = FCLArray(1, 2, size=3, default=42)
         cl2 = FCLArray(1, 2, None, default=42)
@@ -143,6 +146,7 @@ class TestFCLArray:
         assert cl2
         assert len(cl1) == 3
         assert len(cl2) == 3
+        assert cl1[2] == cl2[2] == cl1[-1] == cl2[-1] == 42
 
         cl1 = FCLArray(1, 2, size=-3)
         cl2 = FCLArray((), 1, 2)

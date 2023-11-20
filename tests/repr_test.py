@@ -108,7 +108,7 @@ class Test_repr:
 
     def test_clarray(self):
         cla1 = FCLArray()
-        assert repr(cla1) == 'FCLArray((), default=())'
+        assert repr(cla1) == 'FCLArray(default=())'
         cla2 = eval(repr(cla1))
         assert cla2 == cla1
         assert cla2 is not cla1

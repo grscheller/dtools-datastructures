@@ -80,7 +80,8 @@ change its size. Otherwise, it has a functional interface.
 
 * Class **FCLArray**
   * O(1) data access
-  * when mutated guaranteed not to change size
+  * immutable length
+  * immutable default value used in lieu of storing None as a value
 
 ### ftuple module
 

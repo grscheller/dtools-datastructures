@@ -21,7 +21,9 @@ data structure.
 Note: None values are not allowed in this data structures. Due to the
       fixed length size guarantees provided by the FCLArray class, a "default"
       value is needed if a None is attemped to be stored. If no default value
-      is given, the empty tuple () is used.
+      is given, the empty tuple () is used. Once set, the default value is
+      immutable. A copy method is provided to create a new FCLArray with
+      a different default value.
 """
 
 from __future__ import annotations
@@ -42,9 +44,7 @@ class FCLArray(FP):
     structure.
 
     If size set to None, size to data provided.
-
     If size > 0, pad data on right with default value or slice off trailing data.
-
     If size < 0, pad data on left with default value or slice off initial data.
 
     Does not permits storing None as a value. If a default value is not given,
@@ -171,8 +171,9 @@ class FCLArray(FP):
             self._list[index] = self._default
 
     def __eq__(self, other: Any):
-        """Returns True if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
+        """Returns True if all the data stored in both compare as equal. Worst
+        case is O(n) behavior for the true case. The default value play no ro;e
+        in determining equality.
         """
         if not isinstance(other, type(self)):
             return False
@@ -186,32 +187,29 @@ class FCLArray(FP):
             raise ValueError(msg)
         return FCLArray(*self, *other, default=self._default)
 
-    def set_default(self, default: Any) -> None:
-        """Change the default value for the FCLArray. Imperative (mutating)
-        method. Use with care if you have multiple references."""
-        if default is None:
-            msg = 'FCLArray default value cannot be None: '
-            raise ValueError(msg)
-        self._default = default
-
-    def copy(self, default: Any=None) -> FCLArray:
+    def copy(self, size: int|None=None, default: Any=None) -> FCLArray:
         """Return shallow copy of the FCLArray in O(n) time & space complexity.
         Optionally change the FCLArray's default value. Does not affect any
         contained values of the previous default value.
         """
-        if default is None:
-            default = self._default
-        return FCLArray(*self, default=default)
+        return self.map(lambda x: x, size=size, default=default)
+
+    def default(self) -> Any:
+        """Return the default value used to swap with None."""
+        return self._default
 
     def reverse(self) -> None:
-        """Return a reversed copy of the FCLArray"""
+        """Reverse the elements of the FCLArray. Mutates the FCLArray."""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], size: int=0) -> FCLArray:
+    def map(self, f: Callable[[Any], Any], size: int|None=None, default: Any=None) -> FCLArray:
         """Apply function f over the FCLArray contents. Return a new FCLArray
-        with the mapped contents. Use self._default if f returns None.
+        with the mapped contents. Size to the data unless size is given. Use
+        self._default if f returns None and a default is not given.
         """
-        return FCLArray(*map(f, self), size=size, default=self._default)
+        if default is None:
+            default = self._default
+        return FCLArray(*map(f, self), size=size, default=default)
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
