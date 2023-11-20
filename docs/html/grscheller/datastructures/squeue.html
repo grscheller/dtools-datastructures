@@ -60,7 +60,6 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -80,27 +79,27 @@ class SQueue(Queue):
         squeue._carray = self._carray.copy()
         return squeue
 
-    def push(self, *ds: Any) -&gt; None:
+    def push(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pop(self) -&gt; Any:
+    def pop(self) -&gt; object:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -&gt; Any:
+    def peakLastIn(self) -&gt; object:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -&gt; Any:
+    def peakNextOut(self) -&gt; object:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
@@ -149,27 +148,27 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
         squeue._carray = self._carray.copy()
         return squeue
 
-    def push(self, *ds: Any) -&gt; None:
+    def push(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pop(self) -&gt; Any:
+    def pop(self) -&gt; object:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -&gt; Any:
+    def peakLastIn(self) -&gt; object:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -&gt; Any:
+    def peakNextOut(self) -&gt; object:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
@@ -199,7 +198,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.squeue.SQueue.peakLastIn"><code class="name flex">
-<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return last element pushed to the SQueue without consuming it</p></div>
@@ -207,7 +206,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakLastIn(self) -&gt; Any:
+<pre><code class="python">def peakLastIn(self) -&gt; object:
     &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[-1]
@@ -216,7 +215,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.squeue.SQueue.peakNextOut"><code class="name flex">
-<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return next element ready to pop from the SQueue.</p></div>
@@ -224,7 +223,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakNextOut(self) -&gt; Any:
+<pre><code class="python">def peakNextOut(self) -&gt; object:
     &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[0]
@@ -233,7 +232,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.squeue.SQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the SQueue.</p></div>
@@ -241,7 +240,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def pop(self) -&gt; Any:
+<pre><code class="python">def pop(self) -&gt; object:
     &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popL()
@@ -250,7 +249,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.squeue.SQueue.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">push</span></span>(<span>self, *ds: object) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data on rear of the SQueue &amp; no return value.</p></div>
@@ -258,7 +257,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def push(self, *ds: Any) -&gt; None:
+<pre><code class="python">def push(self, *ds: object) -&gt; None:
     &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
     for d in ds:
         if d != None:

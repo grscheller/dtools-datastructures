@@ -65,8 +65,6 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Never, Union
-
 class CLArray():
     &#34;&#34;&#34;Class implementing a stateful fixed length array data structure of
     length &gt; 0.
@@ -84,7 +82,7 @@ class CLArray():
     the empty tuple () is used. A better choice would be to generate an
     &#34;unhappy path&#34; monadic &#34;subtype&#34; with Nothing or Right().
     &#34;&#34;&#34;
-    def __init__(self, *ds, size: int = 0, default: Any=None):
+    def __init__(self, *ds, size: int = 0, default=None):
         &#34;&#34;&#34;Construct a fixed length array, None values not allowed.&#34;&#34;&#34;
         if default is None:
             # a better &#34;psuedo-bottom&#34; value than None, at least it is iterable.
@@ -92,7 +90,7 @@ class CLArray():
         else:
             self._default = default
         
-        def swapNones(d: Any):
+        def swapNones(d: object):
             if d is None:
                 return self._default
             return d
@@ -172,7 +170,7 @@ class CLArray():
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
         return self._size
 
-    def __getitem__(self, index: int) -&gt; Union[Any, Never]:
+    def __getitem__(self, index: int) -&gt; object:
         size = self._size
         if not -size &lt;= index &lt; size:
             l = -size
@@ -182,7 +180,7 @@ class CLArray():
             raise IndexError(msg)
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -&gt; Union[None, Never]:
+    def __setitem__(self, index: int, value: object) -&gt; object:
         size = self._size
         if not -size &lt;= index &lt; size:
             l = -size
@@ -211,14 +209,14 @@ class CLArray():
             raise ValueError(msg)
         return CLArray(*self, *other, default=self._default)
 
-    def set_default(self, default: Any) -&gt; None:
+    def set_default(self, default: object) -&gt; None:
         &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
         if default is None:
             msg = &#39;CLArray default value cannot be None: &#39;
             raise ValueError(msg)
         self._default = default
 
-    def copy(self, default: Any=None) -&gt; CLArray:
+    def copy(self, default=None) -&gt; CLArray:
         &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
         Optionally change the CLArray&#39;s default value. Does not affect any
         contained values of the previous default value.
@@ -231,13 +229,13 @@ class CLArray():
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+    def map(self, f, size=0) -&gt; CLArray:
         &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
         with the mapped contents. Use self._default if f teturns None.
         &#34;&#34;&#34;
         return CLArray(*map(f, self), size=size, default=self._default)
 
-    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    def mapSelf(self, f) -&gt; None:
         &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
         self._list = CLArray(*map(f, self), default=self._default)._list
 
@@ -256,7 +254,7 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.clarray.CLArray"><code class="flex name class">
 <span>class <span class="ident">CLArray</span></span>
-<span>(</span><span>*ds, size: int = 0, default: Any = None)</span>
+<span>(</span><span>*ds, size: int = 0, default=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a stateful fixed length array data structure of
@@ -291,7 +289,7 @@ the empty tuple () is used. A better choice would be to generate an
     the empty tuple () is used. A better choice would be to generate an
     &#34;unhappy path&#34; monadic &#34;subtype&#34; with Nothing or Right().
     &#34;&#34;&#34;
-    def __init__(self, *ds, size: int = 0, default: Any=None):
+    def __init__(self, *ds, size: int = 0, default=None):
         &#34;&#34;&#34;Construct a fixed length array, None values not allowed.&#34;&#34;&#34;
         if default is None:
             # a better &#34;psuedo-bottom&#34; value than None, at least it is iterable.
@@ -299,7 +297,7 @@ the empty tuple () is used. A better choice would be to generate an
         else:
             self._default = default
         
-        def swapNones(d: Any):
+        def swapNones(d: object):
             if d is None:
                 return self._default
             return d
@@ -379,7 +377,7 @@ the empty tuple () is used. A better choice would be to generate an
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
         return self._size
 
-    def __getitem__(self, index: int) -&gt; Union[Any, Never]:
+    def __getitem__(self, index: int) -&gt; object:
         size = self._size
         if not -size &lt;= index &lt; size:
             l = -size
@@ -389,7 +387,7 @@ the empty tuple () is used. A better choice would be to generate an
             raise IndexError(msg)
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -&gt; Union[None, Never]:
+    def __setitem__(self, index: int, value: object) -&gt; object:
         size = self._size
         if not -size &lt;= index &lt; size:
             l = -size
@@ -418,14 +416,14 @@ the empty tuple () is used. A better choice would be to generate an
             raise ValueError(msg)
         return CLArray(*self, *other, default=self._default)
 
-    def set_default(self, default: Any) -&gt; None:
+    def set_default(self, default: object) -&gt; None:
         &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
         if default is None:
             msg = &#39;CLArray default value cannot be None: &#39;
             raise ValueError(msg)
         self._default = default
 
-    def copy(self, default: Any=None) -&gt; CLArray:
+    def copy(self, default=None) -&gt; CLArray:
         &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
         Optionally change the CLArray&#39;s default value. Does not affect any
         contained values of the previous default value.
@@ -438,20 +436,20 @@ the empty tuple () is used. A better choice would be to generate an
         &#34;&#34;&#34;Reversed the CLArray&#34;&#34;&#34;
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+    def map(self, f, size=0) -&gt; CLArray:
         &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
         with the mapped contents. Use self._default if f teturns None.
         &#34;&#34;&#34;
         return CLArray(*map(f, self), size=size, default=self._default)
 
-    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    def mapSelf(self, f) -&gt; None:
         &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
         self._list = CLArray(*map(f, self), default=self._default)._list</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.clarray.CLArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self, default: Any = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self, default=None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the CLArray in O(n) time &amp; space complexity.
@@ -461,7 +459,7 @@ contained values of the previous default value.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self, default: Any=None) -&gt; CLArray:
+<pre><code class="python">def copy(self, default=None) -&gt; CLArray:
     &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) time &amp; space complexity.
     Optionally change the CLArray&#39;s default value. Does not affect any
     contained values of the previous default value.
@@ -472,7 +470,7 @@ contained values of the previous default value.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int = 0) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f, size=0) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray
@@ -481,7 +479,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any], size: int=0) -&gt; CLArray:
+<pre><code class="python">def map(self, f, size=0) -&gt; CLArray:
     &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
     with the mapped contents. Use self._default if f teturns None.
     &#34;&#34;&#34;
@@ -489,7 +487,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.mapSelf"><code class="name flex">
-<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Mutate the CLArray by appling function over the CLArray contents.</p></div>
@@ -497,7 +495,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+<pre><code class="python">def mapSelf(self, f) -&gt; None:
     &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
     self._list = CLArray(*map(f, self), default=self._default)._list</code></pre>
 </details>
@@ -517,7 +515,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.set_default"><code class="name flex">
-<span>def <span class="ident">set_default</span></span>(<span>self, default: Any) ‑> None</span>
+<span>def <span class="ident">set_default</span></span>(<span>self, default: object) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Change the default value for the CLArray</p></div>
@@ -525,7 +523,7 @@ with the mapped contents. Use self._default if f teturns None.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def set_default(self, default: Any) -&gt; None:
+<pre><code class="python">def set_default(self, default: object) -&gt; None:
     &#34;&#34;&#34;Change the default value for the CLArray&#34;&#34;&#34;
     if default is None:
         msg = &#39;CLArray default value cannot be None: &#39;

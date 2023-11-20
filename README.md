@@ -4,6 +4,16 @@ Data structures geared to different algorithmic use cases. Supportive
 of functional and imperative styles of programming while endeavoring
 to be Pythonic.
 
+## EXPERIMENTAL BRANCH
+This is an experimental branch to see how well this package works with
+Pypy3 (7.3.13) using Python (3.10.13). These are the latest versions.
+Tests run slower 0.45 vs 0.11 seconds, guess I am not paing the JIT tax?
+Also, lost alot of the LSP capabilities provided by the typing module.
+
+This branch requires Python >=3.10 otherwise Pip for the the current
+version of Pypy3 would reject it. Bumping the required versions for the
+devel and main banches to Python >= 3.11.
+
 ## Overview
 
 The data structures in this package:

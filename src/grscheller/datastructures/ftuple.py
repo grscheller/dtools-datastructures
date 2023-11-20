@@ -25,7 +25,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
 from .core.fp import FP
 
 class FTuple(FP):
@@ -59,7 +58,7 @@ class FTuple(FP):
         """Returns the number of elements in the ftuple"""
         return len(self._ds)
 
-    def __getitem__(self, index: int) -> Any:
+    def __getitem__(self, index: int) -> object:
         # TODO: Does not like being given a slice ... research how
         msg = ''
         if (cnt := len(self)) == 0:

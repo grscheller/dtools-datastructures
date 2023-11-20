@@ -27,7 +27,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
 from .core.queue import Queue
 
 class SQueue(Queue):
@@ -47,27 +46,27 @@ class SQueue(Queue):
         squeue._carray = self._carray.copy()
         return squeue
 
-    def push(self, *ds: Any) -> None:
+    def push(self, *ds: object) -> None:
         """Push data on rear of the SQueue & no return value."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pop(self) -> Any:
+    def pop(self) -> object:
         """Pop data off front of the SQueue."""
         if len(self._carray) > 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakLastIn(self) -> Any:
+    def peakLastIn(self) -> object:
         """Return last element pushed to the SQueue without consuming it"""
         if len(self._carray) > 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakNextOut(self) -> Any:
+    def peakNextOut(self) -> object:
         """Return next element ready to pop from the SQueue."""
         if len(self._carray) > 0:
             return self._carray[0]

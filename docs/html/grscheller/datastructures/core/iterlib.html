@@ -48,14 +48,13 @@ Library of iterator related functions.
 &#34;&#34;&#34;
 
 from __future__ import annotations
-from typing import Any, Iterator, Iterable
 
 __all__ = [&#39;concat&#39;, &#39;exhaust&#39;, &#39;merge&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
+def concat(*iterables: object) -&gt; object:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
     WARNING: DEPRECATED - Use itertools.chain function instead
@@ -68,7 +67,7 @@ def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
             except StopIteration:
                 break
 
-def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
+def merge(*iterables: object, yieldPartial: bool=False) -&gt; object:
     &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
 
     If yieldPartial is True, also yield any unmatched extracted values from any
@@ -93,7 +92,7 @@ def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[An
             for value in values:
                 yield value
 
-def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
+def exhaust(*iterables: object) -&gt; object:
     &#34;&#34;&#34;Merge multiple iterator streams until all are exhausted.&#34;&#34;&#34;
     iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
@@ -127,7 +126,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="grscheller.datastructures.core.iterlib.concat"><code class="name flex">
-<span>def <span class="ident">concat</span></span>(<span>*iterables: Iterable[Any]) ‑> Iterator[Any]</span>
+<span>def <span class="ident">concat</span></span>(<span>*iterables: object) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Sequentually concatenate multiple iterators into one.</p>
@@ -136,7 +135,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
+<pre><code class="python">def concat(*iterables: object) -&gt; object:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
     WARNING: DEPRECATED - Use itertools.chain function instead
@@ -151,7 +150,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.iterlib.exhaust"><code class="name flex">
-<span>def <span class="ident">exhaust</span></span>(<span>*iterables: Iterable[Any]) ‑> Iterator[Any]</span>
+<span>def <span class="ident">exhaust</span></span>(<span>*iterables: object) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Merge multiple iterator streams until all are exhausted.</p></div>
@@ -159,7 +158,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
+<pre><code class="python">def exhaust(*iterables: object) -&gt; object:
     &#34;&#34;&#34;Merge multiple iterator streams until all are exhausted.&#34;&#34;&#34;
     iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) &gt; 0:
@@ -186,7 +185,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.iterlib.merge"><code class="name flex">
-<span>def <span class="ident">merge</span></span>(<span>*iterables: Iterable[Any], yieldPartial: bool = False) ‑> Iterator[Any]</span>
+<span>def <span class="ident">merge</span></span>(<span>*iterables: object, yieldPartial: bool = False) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Merge multiple iterator streams until one is exhausted.</p>
@@ -197,7 +196,7 @@ other references to any of the non-exhausted iterators floating around.</p></div
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
+<pre><code class="python">def merge(*iterables: object, yieldPartial: bool=False) -&gt; object:
     &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
 
     If yieldPartial is True, also yield any unmatched extracted values from any

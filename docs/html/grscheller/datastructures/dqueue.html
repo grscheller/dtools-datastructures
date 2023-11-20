@@ -60,7 +60,6 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable
 from .core.queue import Queue
 
 class DQueue(Queue):
@@ -80,40 +79,40 @@ class DQueue(Queue):
         dqueue._carray = self._carray.copy()
         return dqueue
 
-    def pushR(self, *ds: Any) -&gt; None:
+    def pushR(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pushL(self, *ds: Any) -&gt; None:
+    def pushL(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
 
-    def popR(self) -&gt; Any:
+    def popR(self) -&gt; object:
         &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -&gt; Any:
+    def popL(self) -&gt; object:
         &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -&gt; Any:
+    def peakR(self) -&gt; object:
         &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -&gt; Any:
+    def peakL(self) -&gt; object:
         &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
@@ -162,40 +161,40 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
         dqueue._carray = self._carray.copy()
         return dqueue
 
-    def pushR(self, *ds: Any) -&gt; None:
+    def pushR(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pushL(self, *ds: Any) -&gt; None:
+    def pushL(self, *ds: object) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
 
-    def popR(self) -&gt; Any:
+    def popR(self) -&gt; object:
         &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -&gt; Any:
+    def popL(self) -&gt; object:
         &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -&gt; Any:
+    def peakR(self) -&gt; object:
         &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -&gt; Any:
+    def peakL(self) -&gt; object:
         &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
         if len(self._carray) &gt; 0:
             return self._carray[0]
@@ -225,7 +224,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakL</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return left-most element of the DQueue if it exists.</p></div>
@@ -233,7 +232,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakL(self) -&gt; Any:
+<pre><code class="python">def peakL(self) -&gt; object:
     &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[0]
@@ -242,7 +241,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.peakR"><code class="name flex">
-<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakR</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return right-most element of the DQueue if it exists.</p></div>
@@ -250,7 +249,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def peakR(self) -&gt; Any:
+<pre><code class="python">def peakR(self) -&gt; object:
     &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray[-1]
@@ -259,7 +258,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the DQueue</p></div>
@@ -267,7 +266,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popL(self) -&gt; Any:
+<pre><code class="python">def popL(self) -&gt; object:
     &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popL()
@@ -276,7 +275,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of the DQueue</p></div>
@@ -284,7 +283,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def popR(self) -&gt; Any:
+<pre><code class="python">def popR(self) -&gt; object:
     &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
     if len(self._carray) &gt; 0:
         return self._carray.popR()
@@ -293,7 +292,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.pushL"><code class="name flex">
-<span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">pushL</span></span>(<span>self, *ds: object) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data left to right onto front of DQueue.</p></div>
@@ -301,7 +300,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def pushL(self, *ds: Any) -&gt; None:
+<pre><code class="python">def pushL(self, *ds: object) -&gt; None:
     &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
@@ -309,7 +308,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.pushR"><code class="name flex">
-<span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">pushR</span></span>(<span>self, *ds: object) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data left to right onto rear of the DQueue.</p></div>
@@ -317,7 +316,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def pushR(self, *ds: Any) -&gt; None:
+<pre><code class="python">def pushR(self, *ds: object) -&gt; None:
     &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:

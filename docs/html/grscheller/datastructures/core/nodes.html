@@ -56,15 +56,13 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any
-
 class SL_Node():
     &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
     singularly linked list. This type of node always contain data, it
     either has a reference to the next SL_Node or None to indicate the
     bottom of the linked list of nodes.
     &#34;&#34;&#34;
-    def __init__(self, data: Any, next: SL_Node|None):
+    def __init__(self, data: object, next: SL_Node|None):
         &#34;&#34;&#34;Construct an element of a linked list&#34;&#34;&#34;
         self._data = data
         self._next = next
@@ -77,7 +75,7 @@ class Tree_Node():
     &#34;&#34;&#34;Class implementing nodes that can be linked together to form
     a tree-like data structure. This type of node always contain data.
     &#34;&#34;&#34;
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+    def __init__(self, data: object, left: Tree_Node|None, right: Tree_Node|None):
         &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
         self._data = data
         self._left = left
@@ -103,7 +101,7 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.core.nodes.SL_Node"><code class="flex name class">
 <span>class <span class="ident">SL_Node</span></span>
-<span>(</span><span>data: Any, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
+<span>(</span><span>data: object, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing nodes that can be linked together to form a
@@ -121,7 +119,7 @@ bottom of the linked list of nodes.</p>
     either has a reference to the next SL_Node or None to indicate the
     bottom of the linked list of nodes.
     &#34;&#34;&#34;
-    def __init__(self, data: Any, next: SL_Node|None):
+    def __init__(self, data: object, next: SL_Node|None):
         &#34;&#34;&#34;Construct an element of a linked list&#34;&#34;&#34;
         self._data = data
         self._next = next
@@ -133,7 +131,7 @@ bottom of the linked list of nodes.</p>
 </dd>
 <dt id="grscheller.datastructures.core.nodes.Tree_Node"><code class="flex name class">
 <span>class <span class="ident">Tree_Node</span></span>
-<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None)</span>
+<span>(</span><span>data: object, left: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing nodes that can be linked together to form
@@ -147,7 +145,7 @@ a tree-like data structure. This type of node always contain data.</p>
     &#34;&#34;&#34;Class implementing nodes that can be linked together to form
     a tree-like data structure. This type of node always contain data.
     &#34;&#34;&#34;
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+    def __init__(self, data: object, left: Tree_Node|None, right: Tree_Node|None):
         &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
         self._data = data
         self._left = left

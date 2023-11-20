@@ -30,8 +30,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Union
-
 class CLArray():
     """Class implementing a stateful fixed length array data structure of
     length > 0.
@@ -49,7 +47,7 @@ class CLArray():
     the empty tuple () is used. A better choice would be to generate an
     "unhappy path" monadic "subtype" with Nothing or Right().
     """
-    def __init__(self, *ds, size: int = 0, default: Any=None):
+    def __init__(self, *ds, size: int = 0, default=None):
         """Construct a fixed length array, None values not allowed."""
         if default is None:
             # a better "psuedo-bottom" value than None, at least it is iterable.
@@ -57,7 +55,7 @@ class CLArray():
         else:
             self._default = default
         
-        def swapNones(d: Any):
+        def swapNones(d: object):
             if d is None:
                 return self._default
             return d
@@ -137,7 +135,7 @@ class CLArray():
         """Returns the size of the CLArray"""
         return self._size
 
-    def __getitem__(self, index: int) -> Union[Any, Never]:
+    def __getitem__(self, index: int) -> object:
         size = self._size
         if not -size <= index < size:
             l = -size
@@ -147,7 +145,7 @@ class CLArray():
             raise IndexError(msg)
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
+    def __setitem__(self, index: int, value: object) -> object:
         size = self._size
         if not -size <= index < size:
             l = -size
@@ -176,14 +174,14 @@ class CLArray():
             raise ValueError(msg)
         return CLArray(*self, *other, default=self._default)
 
-    def set_default(self, default: Any) -> None:
+    def set_default(self, default: object) -> None:
         """Change the default value for the CLArray"""
         if default is None:
             msg = 'CLArray default value cannot be None: '
             raise ValueError(msg)
         self._default = default
 
-    def copy(self, default: Any=None) -> CLArray:
+    def copy(self, default=None) -> CLArray:
         """Return shallow copy of the CLArray in O(n) time & space complexity.
         Optionally change the CLArray's default value. Does not affect any
         contained values of the previous default value.
@@ -196,13 +194,13 @@ class CLArray():
         """Reversed the CLArray"""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], size: int=0) -> CLArray:
+    def map(self, f, size=0) -> CLArray:
         """Apply function f over the CLArray contents. Return a new CLArray
         with the mapped contents. Use self._default if f teturns None.
         """
         return CLArray(*map(f, self), size=size, default=self._default)
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+    def mapSelf(self, f) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
         self._list = CLArray(*map(f, self), default=self._default)._list
 

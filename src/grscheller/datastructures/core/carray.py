@@ -32,8 +32,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Self, Union
-
 class CArray:
     """Class implementing a stateful circular array with amortized O(1)
     indexing, prepending & appending values, length determination, and
@@ -100,7 +98,7 @@ class CArray:
         """Returns current number of values in the circlular array"""
         return self._count
 
-    def __getitem__(self, index: int) -> Union[Any, Never]:
+    def __getitem__(self, index: int) -> object:
         """Get value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
@@ -118,7 +116,7 @@ class CArray:
             else:
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
+    def __setitem__(self, index: int, value: object) -> None:
         """Set value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
@@ -160,7 +158,7 @@ class CArray:
             nn += 1
         return True
 
-    def _double(self) -> Self:
+    def _double(self) -> CArray:
         """Double capacity of circle array"""
         if self._front > self._rear:
             frontPart = self._list[self._front:]
@@ -174,7 +172,7 @@ class CArray:
         self._rear = self._count - 1
         return self
 
-    def _compact(self) -> Self:
+    def _compact(self) -> CArray:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
@@ -200,7 +198,7 @@ class CArray:
                 self._rear = self._capacity - 1
         return self
 
-    def _empty(self) -> Self:
+    def _empty(self) -> CArray:
         """Empty circular array, keep current capacity"""
         self._list = [None]*self._capacity
         self._front = 0
@@ -213,7 +211,7 @@ class CArray:
     def reverse(self) -> CArray:
         return CArray(reversed(self))
 
-    def pushR(self, data: Any) -> None:
+    def pushR(self, data: object) -> None:
         """Push data on rear of circle"""
         if self._count == self._capacity:
             self._double()
@@ -221,7 +219,7 @@ class CArray:
         self._list[self._rear] = data
         self._count += 1
 
-    def pushL(self, data: Any) -> None:
+    def pushL(self, data: object) -> None:
         """Push data on front of circle"""
         if self._count == self._capacity:
             self._double()
@@ -229,7 +227,7 @@ class CArray:
         self._list[self._front] = data
         self._count += 1
 
-    def popR(self) -> Any:
+    def popR(self) -> object:
         """Pop data off rear of circle array, returns None if empty"""
         if self._count == 0:
             return None
@@ -240,7 +238,7 @@ class CArray:
             self._count -= 1
             return data
 
-    def popL(self) -> Any:
+    def popL(self) -> object:
         """Pop data off front of circle array, returns None if empty"""
         if self._count == 0:
             return None
@@ -259,7 +257,7 @@ class CArray:
         """Returns current capacity of circle array"""
         return self._count/self._capacity
 
-    def resize(self, addCapacity = 0) -> Self:
+    def resize(self, addCapacity = 0) -> CArray:
         """Compact circle array and add extra capacity"""
         self._compact()
         if addCapacity > 0:
@@ -269,13 +267,13 @@ class CArray:
                 self._rear = self._capacity - 1
         return self
 
-    def map(self, f: Callable[[Any], Any]) -> CArray:
+    def map(self, f) -> CArray:
         """Apply function over the circular array's contents and return new
         circular array.
         """
         return CArray(*map(f, self))
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+    def mapSelf(self, f) -> None:
         """Apply function over the circular array's contents mutatng the
         circular array, don't return anything.
         """

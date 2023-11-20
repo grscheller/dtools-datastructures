@@ -29,7 +29,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
@@ -66,7 +65,7 @@ class FStack(Stack, FP_rev):
     def reverse(self) -> FStack:
         return FStack(reversed(self))
 
-    def head(self, default: Any=None) -> Any:
+    def head(self, default=None) -> object:
         """Returns the data at the top of the stack. Does not consume the data.
         If stack is empty, head does not exist so in that case return default.
         """
@@ -89,7 +88,7 @@ class FStack(Stack, FP_rev):
         else:
             return default
 
-    def cons(self, data: Any) -> FStack:
+    def cons(self, data: object) -> FStack:
         """Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.

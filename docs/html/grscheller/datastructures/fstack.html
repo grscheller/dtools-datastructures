@@ -63,7 +63,6 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
@@ -100,7 +99,7 @@ class FStack(Stack, FP_rev):
     def reverse(self) -&gt; FStack:
         return FStack(reversed(self))
 
-    def head(self, default: Any=None) -&gt; Any:
+    def head(self, default=None) -&gt; object:
         &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
         If stack is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
@@ -123,7 +122,7 @@ class FStack(Stack, FP_rev):
         else:
             return default
 
-    def cons(self, data: Any) -&gt; FStack:
+    def cons(self, data: object) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
@@ -198,7 +197,7 @@ which indicates an empty stack.</p>
     def reverse(self) -&gt; FStack:
         return FStack(reversed(self))
 
-    def head(self, default: Any=None) -&gt; Any:
+    def head(self, default=None) -&gt; object:
         &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
         If stack is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
@@ -221,7 +220,7 @@ which indicates an empty stack.</p>
         else:
             return default
 
-    def cons(self, data: Any) -&gt; FStack:
+    def cons(self, data: object) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
@@ -243,7 +242,7 @@ which indicates an empty stack.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.fstack.FStack.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, data: Any) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
+<span>def <span class="ident">cons</span></span>(<span>self, data: object) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a new stack with data as head and self as tail. Constructing
@@ -253,7 +252,7 @@ stack. In that case, just return a copy of the stack.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cons(self, data: Any) -&gt; FStack:
+<pre><code class="python">def cons(self, data: object) -&gt; FStack:
     &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
     a stack using a non-existent value as head results in a non-existent
     stack. In that case, just return a copy of the stack.
@@ -285,7 +284,7 @@ stack. In that case, just return a copy of the stack.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.fstack.FStack.head"><code class="name flex">
-<span>def <span class="ident">head</span></span>(<span>self, default: Any = None) ‑> Any</span>
+<span>def <span class="ident">head</span></span>(<span>self, default=None) ‑> object</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the stack. Does not consume the data.
@@ -294,7 +293,7 @@ If stack is empty, head does not exist so in that case return default.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def head(self, default: Any=None) -&gt; Any:
+<pre><code class="python">def head(self, default=None) -&gt; object:
     &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
     If stack is empty, head does not exist so in that case return default.
     &#34;&#34;&#34;

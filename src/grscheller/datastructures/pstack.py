@@ -29,7 +29,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
 from .core.stack import Stack
 from .core.nodes import SL_Node as Node
 from .core.carray import CArray
@@ -69,7 +68,7 @@ class PStack(Stack):
         self._head = pstack._head
         self._count = pstack._count
 
-    def push(self, *ds: Any) -> None:
+    def push(self, *ds: object) -> None:
         """Push data that is not NONE onto top of stack,
         return the stack being pushed.
         """
@@ -79,7 +78,7 @@ class PStack(Stack):
                 self._head = node
                 self._count += 1
 
-    def pop(self) -> Any:
+    def pop(self) -> object:
         """Pop data off of top of stack"""
         if self._head is None:
             return None
@@ -89,7 +88,7 @@ class PStack(Stack):
             self._count -= 1
             return data
 
-    def peak(self, default: Any=None) -> Any:
+    def peak(self, default=None) -> object:
         """Returns the data at the top of the stack. Does not consume the data.
         If stack is empty, data does not exist so in that case return default.
         """
@@ -97,7 +96,7 @@ class PStack(Stack):
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], Stack]) -> None:
+    def map(self, f) -> None:
         """Maps a function (or callable object) over the values on the Stack.
         Mutates the Stack object. O(n).
         """

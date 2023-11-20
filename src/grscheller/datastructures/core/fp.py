@@ -30,7 +30,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
 from itertools import chain
 from .iterlib import exhaust, merge
 
@@ -39,16 +38,16 @@ class FP():
         pass
 
     # For FIFO type data structures.
-    def map(self, f: Callable[[Any], Any]) -> type[FP]:
+    def map(self, f) -> type[FP]:
         return type(self)(*map(f, self))
 
-    def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def flatMap(self, f) -> type[FP]:
         return type(self)(*chain(*map(iter, map(f, self))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def mergeMap(self, f) -> type[FP]:
         return type(self)(*merge(*map(iter, map(f, self))))
 
-    def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def exhaustMap(self, f) -> type[FP]:
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
 class FP_rev(FP):
@@ -56,17 +55,17 @@ class FP_rev(FP):
         raise NotImplementedError
 
     # FP modified for FILO type data structures.
-    def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
+    def map(self, f) -> type[FP_rev]:
         # return type(self)(*map(f, reversed(self)))
         return type(self)(*map(f, reversed(self)))
 
-    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+    def flatMap(self, f) -> type[FP_rev]:
         return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
-    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+    def mergeMap(self, f) -> type[FP_rev]:
         return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
-    def exhaustMap(self, f: Callable[[Any], type[FP]]) -> type[FP_rev]:
+    def exhaustMap(self, f) -> type[FP_rev]:
         return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 class Maybe(FP):
@@ -81,7 +80,7 @@ class Maybe(FP):
       - semantically None does not exist
       - None only has any real existance as an implementration detail
     """
-    def __init__(self, value: Any=None):
+    def __init__(self, value: object=None):
         self._value = value
 
     def __iter__(self):
@@ -118,7 +117,7 @@ class Maybe(FP):
             return False
         return self._value == other._value
 
-    def get(self, default: Any=None) -> Any:
+    def get(self, default: object=None) -> object:
         """Get contents if they exist, otherwise return None. Caller is
         responsible with dealing with a None return value.
         """
@@ -129,7 +128,7 @@ class Maybe(FP):
 
 # Maybe convenience functions/objects.
 
-def maybeToEither(m: Maybe, right: Any=None) -> Either:
+def maybeToEither(m: Maybe, right: object=None) -> Either:
     """Convert a Maybe to an Either"""
     return Either(m.get(), right)
 
@@ -149,7 +148,7 @@ class Either(FP):
     right not given, set it to the empty str. This version is biased to the
     Left, which is intended as the "happy path."
     """
-    def __init__(self, left: Any=None, right: Any=None):
+    def __init__(self, left: object=None, right: object=None):
         if right is None:
             right = ''
         if left == None:
@@ -186,24 +185,24 @@ class Either(FP):
             return self._value == other._value
         return False
 
-    def get(self, default: Any=None) -> Any:
+    def get(self, default: object=None) -> object:
         """get value if a Left, otherwise return default value."""
         if self:
             return self._value
         return default
 
-    def map(self, f: Callable[[Any], Any], right=None) -> Either:
+    def map(self, f) -> Either:
         if self:
             return Either(f(self._value), right)
         return self
 
-    def mapRight(self, g: Callable[[Any], Any]) -> Either:
+    def mapRight(self, g) -> Either:
         """Map over if a Right."""
         if self:
             return self
         return Right(g(self._value))
 
-    def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
+    def flatMap(self, f) -> Either:
         """flatMap with a Right default. Replace Right with right"""
         if self:
             if right is None:
@@ -216,7 +215,7 @@ class Either(FP):
             else:
                 return self.mapRight(lambda _: right)
 
-    def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
+    def mergeMap(self, f) -> Either:
         """flatMap with a Right default. Merge right into Right via +"""
         if self:
             if right is None:
@@ -235,11 +234,11 @@ def eitherToMaybe(e: Either) -> Maybe:
     """Convert an Either to a Maybe"""
     return Maybe(e.get())
 
-def Left(left: Any, right: Any=None) -> Either:
+def Left(left: object, right: object=None) -> Either:
     """Function returns Left Either if left != None, otherwise Right Either."""
     return Either(left, right)
 
-def Right(right: Any) -> Either:
+def Right(right: object) -> Either:
     """Function to construct a Right Either."""
     return Either(None, right)
 

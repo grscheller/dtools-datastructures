@@ -18,14 +18,13 @@ Library of iterator related functions.
 """
 
 from __future__ import annotations
-from typing import Any, Iterator, Iterable
 
 __all__ = ['concat', 'exhaust', 'merge']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
+def concat(*iterables: object) -> object:
     """Sequentually concatenate multiple iterators into one.
 
     WARNING: DEPRECATED - Use itertools.chain function instead
@@ -38,7 +37,7 @@ def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
             except StopIteration:
                 break
 
-def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -> Iterator[Any]:
+def merge(*iterables: object, yieldPartial: bool=False) -> object:
     """Merge multiple iterator streams until one is exhausted.
 
     If yieldPartial is True, also yield any unmatched extracted values from any
@@ -63,7 +62,7 @@ def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -> Iterator[Any]:
             for value in values:
                 yield value
 
-def exhaust(*iterables: Iterable[Any]) -> Iterator[Any]:
+def exhaust(*iterables: object) -> object:
     """Merge multiple iterator streams until all are exhausted."""
     iterList = list(map(iter, iterables))
     if (numIters := len(iterList)) > 0:

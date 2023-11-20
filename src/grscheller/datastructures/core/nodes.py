@@ -25,15 +25,13 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
-
 class SL_Node():
     """Class implementing nodes that can be linked together to form a
     singularly linked list. This type of node always contain data, it
     either has a reference to the next SL_Node or None to indicate the
     bottom of the linked list of nodes.
     """
-    def __init__(self, data: Any, next: SL_Node|None):
+    def __init__(self, data: object, next: SL_Node|None):
         """Construct an element of a linked list"""
         self._data = data
         self._next = next
@@ -46,7 +44,7 @@ class Tree_Node():
     """Class implementing nodes that can be linked together to form
     a tree-like data structure. This type of node always contain data.
     """
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+    def __init__(self, data: object, left: Tree_Node|None, right: Tree_Node|None):
         """Construct an element of a doubly linked list"""
         self._data = data
         self._left = left

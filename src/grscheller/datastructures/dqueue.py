@@ -27,7 +27,6 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
 from .core.queue import Queue
 
 class DQueue(Queue):
@@ -47,40 +46,40 @@ class DQueue(Queue):
         dqueue._carray = self._carray.copy()
         return dqueue
 
-    def pushR(self, *ds: Any) -> None:
+    def pushR(self, *ds: object) -> None:
         """Push data left to right onto rear of the DQueue."""
         for d in ds:
             if d != None:
                 self._carray.pushR(d)
 
-    def pushL(self, *ds: Any) -> None:
+    def pushL(self, *ds: object) -> None:
         """Push data left to right onto front of DQueue."""
         for d in ds:
             if d != None:
                 self._carray.pushL(d)
 
-    def popR(self) -> Any:
+    def popR(self) -> object:
         """Pop data off rear of the DQueue"""
         if len(self._carray) > 0:
             return self._carray.popR()
         else:
             return None
 
-    def popL(self) -> Any:
+    def popL(self) -> object:
         """Pop data off front of the DQueue"""
         if len(self._carray) > 0:
             return self._carray.popL()
         else:
             return None
 
-    def peakR(self) -> Any:
+    def peakR(self) -> object:
         """Return right-most element of the DQueue if it exists."""
         if len(self._carray) > 0:
             return self._carray[-1]
         else:
             return None
 
-    def peakL(self) -> Any:
+    def peakL(self) -> object:
         """Return left-most element of the DQueue if it exists."""
         if len(self._carray) > 0:
             return self._carray[0]
