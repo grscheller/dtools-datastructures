@@ -25,7 +25,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any
+from typing import Any, Never, Union
 from .core.fp import FP
 
 class FTuple(FP):
@@ -59,10 +59,10 @@ class FTuple(FP):
         """Returns the number of elements in the ftuple"""
         return len(self._ds)
 
-    def __getitem__(self, index: int) -> Any:
+    def __getitem__(self, index: int) -> Union[Any,Never]:
         # TODO: Does not like being given a slice ... research how
         msg = ''
-        if (cnt := len(self)) == 0:
+        if (cnt := len(self._ds)) == 0:
             msg = 'Indexing an empty FTuple'
         elif not -cnt <= index < cnt:
             l = -cnt
