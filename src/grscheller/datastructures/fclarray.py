@@ -124,8 +124,8 @@ class FCLArray(FP):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
     def __bool__(self):
-        """Return false only is all array
-        values are equal to the default value.
+        """Return true only only if there existsan array
+        value ot equal to the default value.
         """
         default = self._default
         for value in self:
@@ -137,13 +137,13 @@ class FCLArray(FP):
         """Returns the size of the FCLArray"""
         return self._size
 
-    def __getitem__(self, index: int) -> Union[Any, Never]:
+    def __getitem__(self, index: int) -> Union[Any,Never]:
         size = self._size
         if size == 0:
             msg = 'Attempt to index an empty FCLArray'
             raise IndexError(msg)
 
-        if index < -size or index >= size:
+        if not -size <= index < size:
             l = -size
             h = size - 1
             msg = f'FCLArray index = {index} not between {l} and {h}'
@@ -152,13 +152,13 @@ class FCLArray(FP):
 
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
+    def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
         size = self._size
         if size == 0:
             msg = 'Attempt to index an empty FCLArray'
             raise IndexError(msg)
 
-        if index < -size or index >= size:
+        if not -size <= index < size:
             l = -size
             h = size - 1
             msg = f'FCLArray index = {index} not between {l} and {h}'
@@ -172,7 +172,7 @@ class FCLArray(FP):
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored in both compare as equal. Worst
-        case is O(n) behavior for the true case. The default value play no ro;e
+        case is O(n) behavior for the true case. The default value play no role
         in determining equality.
         """
         if not isinstance(other, type(self)):

@@ -1,4 +1,4 @@
-# Python grscheller.datastructures PyPI Package
+# PyPI grscheller.datastructures release v0.10.9
 
 Data structures geared to different algorithmic use cases. Supportive
 of functional and imperative styles of programming while endeavoring
