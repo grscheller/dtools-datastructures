@@ -192,7 +192,11 @@ class FCLArray(FP):
         Optionally change the FCLArray's default value. Does not affect any
         contained values of the previous default value.
         """
-        return self.map(lambda x: x, size=size, default=default)
+        if size is None:
+            size = self._size
+        if default is None:
+            default = self._default
+        return FCLArray(*self, size=size, default=default)
 
     def default(self) -> Any:
         """Return the default value used to swap with None."""
@@ -207,9 +211,12 @@ class FCLArray(FP):
         with the mapped contents. Size to the data unless size is given. Use
         self._default if f returns None and a default is not given.
         """
+        if size is None:
+            size = self._size
         if default is None:
             default = self._default
-        return FCLArray(*map(f, self), size=size, default=default)
+        #return FCLArray(*map(f, self), size=size, default=default)
+        return FCLArray(*map(f, self), default=default)
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""

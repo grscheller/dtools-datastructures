@@ -30,7 +30,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Type
 from itertools import chain
 from .iterlib import exhaust, merge
 
@@ -142,7 +142,6 @@ def Some(value=None):
 #: Maybe object representing a missing value,
 #: Nothing is not a singleton. Test via equality not identity.
 Nothing = Some()
-
 
 class Either(FP):
     """Class that either contains a Left value or Right value, but not both. If

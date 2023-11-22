@@ -83,10 +83,13 @@ class TestFCLArray:
         assert len(cl3) == 2
         assert cl3
         assert type(cl3) == FCLArray
+        assert cl3.default() == 1
         cl4 = cl3.copy()
+        assert cl4.default() == 1
         assert cl4 == cl3
         assert cl4 is not cl3
         cl3_copy = cl3.copy()
+        assert cl3_copy == cl3
         cl3.reverse()
         assert cl3 != cl3_copy
         assert cl3[0] == 2
@@ -287,6 +290,55 @@ class TestFCLArray:
         assert cl_emptyStr
         assert cl_hw
 
+    def test_reversed_iter(self):
+        """Tests that prior state of cl is used, not current one"""
+        cl = FCLArray(1,2,3,4,5)
+        clrevIter = reversed(cl)
+        aa = next(clrevIter)
+        assert cl[4] == aa == 5
+        cl[2] = 42
+        aa = next(clrevIter)
+        assert cl[3] == aa == 4
+        aa = next(clrevIter)
+        assert cl[2] != aa == 3
+        aa = next(clrevIter)
+        assert cl[1] == aa == 2
+        aa = next(clrevIter)
+        assert cl[0] == aa == 1
+
+    def test_add(self):
+        cl1 = FCLArray(1,2,3)
+        cl2 = FCLArray(4,5,6)
+        assert cl1 + cl2 == FCLArray(1,2,3,4,5,6)
+        assert cl2 + cl1 == FCLArray(4,5,6,1,2,3)
+
+        cl1 = FCLArray(1,2,3)
+        cl2 = FCLArray(4,5,6,7,8,9)
+        cl12 = cl1 + cl2
+        cl21 = cl2 + cl1
+        assert cl12 == FCLArray(1,2,3,4,5,6,7,8,9)
+        assert cl21 == FCLArray(4,5,6,7,8,9,1,2,3)
+
+    def test_reverse(self):
+        cl1 = FCLArray(1, 2, 3, 'foo', 'bar')
+        cl2 = FCLArray('bar', 'foo', 3, 2, 1)
+        assert cl1 != cl2
+        cl2.reverse()
+        assert cl1 == cl2
+        cl1.reverse()
+        assert cl1 != cl2
+        assert cl1[1] == cl2[-2]
+
+        cl4 = cl2.copy()
+        cl5 = cl2.copy()
+        assert cl4 == cl5
+        cl4.reverse()
+        cl5.reverse()
+        assert cl4 != cl2
+        assert cl5 != cl2
+        cl2.reverse()
+        assert cl4 == cl2
+
     def test_copy_map(self):
         cl4 = FCLArray(*range(43), size = 5)
         cl42 = FCLArray(*range(43), size = -5)
@@ -336,51 +388,38 @@ class TestFCLArray:
         assert fcl0.copy(size=3) == FCLArray(5, 4, 3)
         assert fcl0.copy(size=-3) == FCLArray(3, 2, 1)
 
-    def test_reversed_iter(self):
-        """Tests that prior state of cl is used, not current one"""
-        cl = FCLArray(1,2,3,4,5)
-        clrevIter = reversed(cl)
-        aa = next(clrevIter)
-        assert cl[4] == aa == 5
-        cl[2] = 42
-        aa = next(clrevIter)
-        assert cl[3] == aa == 4
-        aa = next(clrevIter)
-        assert cl[2] != aa == 3
-        aa = next(clrevIter)
-        assert cl[1] == aa == 2
-        aa = next(clrevIter)
-        assert cl[0] == aa == 1
+    def test_flatMap(self):
+        fcl0 = FCLArray(None, *range(1, 6), None, size=7, default=0)
+        assert fcl0 == FCLArray(0, 1, 2, 3, 4, 5, 0)
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(*range(x%3), default=1))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(*range(x%3), default=0))
+        assert fcl1 == fcl2
 
-    def test_add(self):
-        cl1 = FCLArray(1,2,3)
-        cl2 = FCLArray(4,5,6)
-        assert cl1 + cl2 == FCLArray(1,2,3,4,5,6)
-        assert cl2 + cl1 == FCLArray(4,5,6,1,2,3)
+        def ge2(n: int) -> int|None:
+     #      if n < 2:
+     #          return None
+            return n
 
-        cl1 = FCLArray(1,2,3)
-        cl2 = FCLArray(4,5,6,7,8,9)
-        cl12 = cl1 + cl2
-        cl21 = cl2 + cl1
-        assert cl12 == FCLArray(1,2,3,4,5,6,7,8,9)
-        assert cl21 == FCLArray(4,5,6,7,8,9,1,2,3)
+        fcl3 = fcl1.map(ge2)
+        fcl4 = fcl2.map(ge2)
+        assert fcl3 != fcl4
+        assert fcl3 == FCLArray(0, 0, 0, 3, 4, 5, 0)
+        assert fcl4 == FCLArray(2, 2, 2, 3, 4, 5, 2)
+        assert fcl3.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
+        assert fcl3.copy(size=6).copy(size=3) == FCLArray(0, 0, 0)
+        assert fcl4.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
+        assert fcl4.copy(size=6).copy(size=3) == FCLArray(2, 2, 2)
+        fcl5 = fcl3.copy(default=2)
+        fcl6 = fcl4.copy(default=2)
+        assert fcl6 != fcl5
+        fcl7 = fcl5.copy(default=-1)
+        fcl8 = fcl6.copy(default=-1)
+        assert fcl8 != fcl7
+        assert fcl8.map(ge3) == fcl7.map(ge3)
+        assert fcl8.default() == fcl7.default() == -1
+        assert fcl7.map(ge3) == FCLArray(-1, -1, -1, 3, 4, 5, -1, default = -1)
+        assert repr(fcl8.map(ge3)) == 'FCLArray(-1, -1, -1, 3, 4, 5, -1, default=-1)'
 
-    def test_reverse(self):
-        cl1 = FCLArray(1, 2, 3, 'foo', 'bar')
-        cl2 = FCLArray('bar', 'foo', 3, 2, 1)
-        assert cl1 != cl2
-        cl2.reverse()
-        assert cl1 == cl2
-        cl1.reverse()
-        assert cl1 != cl2
-        assert cl1[1] == cl2[-2]
-
-        cl4 = cl2.copy()
-        cl5 = cl2.copy()
-        assert cl4 == cl5
-        cl4.reverse()
-        cl5.reverse()
-        assert cl4 != cl2
-        assert cl5 != cl2
-        cl2.reverse()
-        assert cl4 == cl2
+        fcl0 = FCLArray(5,4,3,2,1)
+        assert fcl0.copy(size=3) == FCLArray(5, 4, 3)
+        assert fcl0.copy(size=-3) == FCLArray(3, 2, 1)
