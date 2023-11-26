@@ -18,12 +18,10 @@ Module implementing an mutable fixed length data structure with O(1) data
 access. All mutating methods are guaranteed not to change the length of the
 data structure.
 
-Note: None values are not allowed in this data structures. Due to the
-      fixed length size guarantees provided by the FCLArray class, a "default"
-      value is needed if a None is attemped to be stored. If no default value
-      is given, the empty tuple () is used. Once set, the default value is
-      immutable. A copy method is provided to create a new FCLArray with
-      a different default value.
+None values are not allowed in this data structures. An immutable default value
+is set upon instantiating. If no default value is given, the empty tuple () is
+used in lieu of None, but is not set as the default value. Method which return
+new FCLArray values can set a different default value for the new instance.
 """
 
 from __future__ import annotations
@@ -34,12 +32,14 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union
-from .core.fp import FP
+from itertools import chain
+from .core.fp import FP, Some
+from .core.iterlib import merge, exhaust
 
 class FCLArray(FP):
     """Functional Constant Length Array
 
-    Class implementing an mutable fixed length array data structure whose
+    Class implementing a mutable fixed length array data structure whose
     mutaing methods are guaranteed not to change the length of the data
     structure.
 
@@ -47,23 +47,23 @@ class FCLArray(FP):
     If size > 0, pad data on right with default value or slice off trailing data.
     If size < 0, pad data on left with default value or slice off initial data.
 
-    Does not permits storing None as a value. If a default value is not given,
-    the empty tuple () is used. A better choice would be to generate an
-    "unhappy path" monadic "subtype" with Nothing or Right().
+    Does not permits storing None as a value. If a default value is not set, the
+    empty tuple () is used in lieu of None, but () is not set as the default
+    value.
     """
     def __init__(self, *ds, size: int|None=None, default: Any=None):
         """Construct a fixed length array, None values not allowed."""
-        if default is None:
-            self._default = ()
-        else:
-            self._default = default
+
+        self._defaultMB = Some(default)
+        self._sizeMB = Some(size)
 
         dlist = []
+        dfault = self._defaultMB.get(())
         for d in ds:
             if d is not None:
                 dlist.append(d)
             else:
-                dlist.append(self._default)
+                dlist.append(dfault)
         dsize = len(dlist)
 
         if size is None:
@@ -73,29 +73,29 @@ class FCLArray(FP):
 
         if abs_size == dsize:
             # no size inconsistencies
-            self._size = dsize
+            self._sizeMB = Some(dsize)
             self._list = dlist
         elif abs_size > dsize:
             if size > 0:
                 # pad higher indexes (on "right")
-                self._size = size
-                self._list = dlist + [self._default]*(size - dsize)
+                self._list = dlist + [dfault]*(size - dsize)
+                self._sizeMB = Some(size)
             else:
                 # pad lower indexes (on "left")
                 dlist.reverse()
-                dlist += [self._default]*(-size - dsize)
+                dlist += [dfault]*(-size - dsize)
                 dlist.reverse()
-                self._size = -size
-                self._list = dlist + [self._default]*(size - dsize)
+                self._list = dlist + [dfault]*(size - dsize)
+                self._sizeMB = Some(-size)
         else:
             if size > 0:
                 # take left slice, ignore extra data at end
-                self._size = size
                 self._list = dlist[0:size]
+                self._sizeMB = Some(size)
             else:
                 # take right slice, ignore extra data at beginning
-                self._size = -size
                 self._list = dlist[dsize+size:]
+                self._sizeMB = Some(-size)
 
     def __iter__(self):
         """Iterate over the current state of the FCLArray. Copy is made
@@ -115,19 +115,19 @@ class FCLArray(FP):
         repr1 = f'{self.__class__.__name__}('
         repr2 = ', '.join(map(repr, self))
         if repr2 == '':
-            repr3 = f'default={self._default})'
+            repr3 = f'default={self._defaultMB.get()})'
         else:
-            repr3 = f', default={self._default})'
+            repr3 = f', default={self._defaultMB.get()})'
         return repr1 + repr2 + repr3
 
     def __str__(self):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
     def __bool__(self):
-        """Return true only only if there existsan array
-        value ot equal to the default value.
+        """Return true only if there exists an array value not equal to the
+        default value. Empty arrays always return false.
         """
-        default = self._default
+        default = self._defaultMB.get()
         for value in self:
             if value != default:
                 return True
@@ -135,10 +135,10 @@ class FCLArray(FP):
 
     def __len__(self) -> int:
         """Returns the size of the FCLArray"""
-        return self._size
+        return self._sizeMB.get()
 
     def __getitem__(self, index: int) -> Union[Any,Never]:
-        size = self._size
+        size = self._sizeMB.get()
         if size == 0:
             msg = 'Attempt to index an empty FCLArray'
             raise IndexError(msg)
@@ -153,7 +153,7 @@ class FCLArray(FP):
         return self._list[index]
 
     def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
-        size = self._size
+        size = self._sizeMB.get()
         if size == 0:
             msg = 'Attempt to index an empty FCLArray'
             raise IndexError(msg)
@@ -168,7 +168,7 @@ class FCLArray(FP):
         if value is not None:
             self._list[index] = value
         else:
-            self._list[index] = self._default
+            self._list[index] = self._defaultMB.get(())
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored in both compare as equal. Worst
@@ -181,46 +181,117 @@ class FCLArray(FP):
 
     def __add__(self, other: Any) -> FCLArray:
         """Concatenate components and return new FCLArray with default value set
-        to that of the LHS FCLArray"""
+        to that of the LHS FCLArray. If undefined, set to that of RHS, if that
+        too undefined, leave undefined."""
         if not isinstance(other, type(self)):
             msg = 'Type mismatch: FCLArrays concatenate only with other FCLArrays'
             raise ValueError(msg)
-        return FCLArray(*self, *other, default=self._default)
+        if self._defaultMB:
+            default = self._defaultMB.get()
+        elif other._defaultMB:
+            default = other._defaultMB.get()
+        else:
+            default = None
+        return FCLArray(*self, *other, default=default)
 
     def copy(self, size: int|None=None, default: Any=None) -> FCLArray:
         """Return shallow copy of the FCLArray in O(n) time & space complexity.
-        Optionally change the FCLArray's default value. Does not affect any
-        contained values of the previous default value.
+        Optionally change the FCLArray's default value and size. Does not affect
+        any contained values of the previous default value.
         """
-        if size is None:
-            size = self._size
         if default is None:
-            default = self._default
-        return FCLArray(*self, size=size, default=default)
+            default = self._defaultMB.get()
+
+        if size is None:
+            return FCLArray(*self, default=default)
+        else:
+            return FCLArray(*self, size=size, default=default)
 
     def default(self) -> Any:
         """Return the default value used to swap with None."""
-        return self._default
+        return self._defaultMB.get()
 
     def reverse(self) -> None:
         """Reverse the elements of the FCLArray. Mutates the FCLArray."""
         self._list.reverse()
 
-    def map(self, f: Callable[[Any], Any], size: int|None=None, default: Any=None) -> FCLArray:
+    def map(self, f: Callable[[Any], Any],
+            size: int|None=None,
+            default: Any=None) -> FCLArray:
         """Apply function f over the FCLArray contents. Return a new FCLArray
-        with the mapped contents. Size to the data unless size is given. Use
-        self._default if f returns None and a default is not given.
+        with the mapped contents. Size to the data unless size is given. If
+        a default value is not given, use the previous FCLArray's default value
+        if defined, otherwise leave undefined.
         """
-        if size is None:
-            size = self._size
         if default is None:
-            default = self._default
-        #return FCLArray(*map(f, self), size=size, default=default)
-        return FCLArray(*map(f, self), default=default)
+            default = self._defaultMB.get()
 
+        if size is None:
+            return FCLArray(*map(f, self), default=default)
+        else:
+            return FCLArray(*map(f, self), size=size, default=default)
+            
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
-        self._list = FCLArray(*map(f, self), default=self._default)._list
+        self._list = FCLArray(*map(f, self), default=self._defaultMB.get())._list
+        
+    def flatMap(self, f: Callable[[Any], FCLArray],
+                default: Any|None=None) -> FCLArray:
+        """Map f across self and flatten result by concatenating the FCLArray
+        elements generated by f. If a default value is not given, use the
+        default value of the FLArray being flatMapped if it has been set,
+        otherwise leave it unset.
+
+        Note: Any default values of the FLArrays created by f need not have
+        anything to do with the default value of the FPArray being flat mapped
+        over.
+        """
+        if self._defaultMB:
+            if default is None:
+                default = self._defaultMB.get()
+
+        return FCLArray(
+            *chain(
+                *self.map(f, default=default)
+            ),
+            default=default
+        )
+
+    def mergeMap(self, f: Callable[[Any], FCLArray],
+                default: Any|None=None) -> FCLArray:
+        """Map f across self and flatten result by merging the FCLArray elements
+        generated by f until the first is exhausted. If a default value is not
+        given, use the default value of the FLArray being flatMapped if it has
+        been set, otherwise leave it unset.
+        """
+        if self._defaultMB:
+            if default is None:
+                default = self._defaultMB.get()
+
+        return FCLArray(
+            *merge(
+                *self.map(f, default=default)
+            ),
+            default=default
+        )
+
+    def exhastMap(self, f: Callable[[Any], FCLArray],
+                default: Any|None=None) -> FCLArray:
+        """Map f across self and flatten result by merging the FCLArray elements
+        generated by f until all are exhausted. If a default value is not given,
+        use the default value of the FLArray being flatMapped if it has been
+        set, otherwise leave it unset.
+        """
+        if self._defaultMB:
+            if default is None:
+                default = self._defaultMB.get()
+
+        return FCLArray(
+            *exhaust(
+                *self.map(f, default=default)
+            ),
+            default=default
+        )
 
 if __name__ == "__main__":
     pass

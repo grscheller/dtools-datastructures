@@ -130,13 +130,17 @@ class TestFCLArray:
         cl3 = cl1 + cl2
         assert cl3[0] == 12
         assert cl3[1] == 30
+        del cl3
 
-        cl1 = FCLArray()
+        cl1 = FCLArray(default=())
         cl2 = FCLArray(None, None, None, size=2)
+        cl3 = FCLArray(None, None, None, size=2, default=())
         assert cl1 != cl2
+        assert cl2 == cl3
         assert cl1 is not cl2
         assert not cl1
-        assert not cl2
+        assert cl2
+        assert not cl3
         assert len(cl1) == 0
         assert len(cl2) == 2
         assert cl2[0] == cl2[1] == ()
@@ -279,14 +283,16 @@ class TestFCLArray:
         assert not cl_defaultNone
         assert not cl_defaultNotNone
 
-        cl_Nones = FCLArray(None, size=4321)
+        cl_Nones = FCLArray(None, size=4321, default=())
         cl_0 = FCLArray(0, 0, 0)
         cl_42s = FCLArray(*([42]*42))
+        cl_42s_d42 = FCLArray(*([42]*42), default=42)
         cl_emptyStr = FCLArray('')
         cl_hw = FCLArray('hello', 'world')
         assert not cl_Nones
         assert cl_0
         assert cl_42s
+        assert not cl_42s_d42
         assert cl_emptyStr
         assert cl_hw
 
@@ -340,6 +346,12 @@ class TestFCLArray:
         assert cl4 == cl2
 
     def test_copy_map(self):
+
+        def ge3(n: int) -> int|None:
+            if n < 3:
+                return None
+            return n
+
         cl4 = FCLArray(*range(43), size = 5)
         cl42 = FCLArray(*range(43), size = -5)
         cl4_copy = cl4.copy()
@@ -355,71 +367,184 @@ class TestFCLArray:
 
         fcl0 = FCLArray(None, *range(1, 6), None, size=7, default=0)
         assert fcl0 == FCLArray(0, 1, 2, 3, 4, 5, 0)
+        assert fcl0.default() == 0
         fcl1 = fcl0.copy()
-        fcl2 = fcl0.copy(default=2)
-        assert fcl1 == fcl2
+        fcl2 = fcl0.copy(default=4)
+        assert fcl1 == fcl2 == fcl0
+        assert fcl1.default() == 0
+        assert fcl2.default() == 4
 
-        def ge3(n: int) -> int|None:
-            if n < 3:
-                return None
-            return n
-
+        fcl00 = fcl0.map(ge3)
         fcl3 = fcl1.map(ge3)
         fcl4 = fcl2.map(ge3)
-        assert fcl3 != fcl4
+        assert fcl00.default() == 0
+        assert fcl0.default() == 0
+        assert fcl00 == FCLArray(0, 0, 0, 3, 4, 5, 0)
         assert fcl3 == FCLArray(0, 0, 0, 3, 4, 5, 0)
-        assert fcl4 == FCLArray(2, 2, 2, 3, 4, 5, 2)
+        assert fcl4 == FCLArray(4, 4, 4, 3, 4, 5, 4)
         assert fcl3.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
         assert fcl3.copy(size=6).copy(size=3) == FCLArray(0, 0, 0)
         assert fcl4.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
-        assert fcl4.copy(size=6).copy(size=3) == FCLArray(2, 2, 2)
+        assert fcl4.copy(size=6).copy(size=3) == FCLArray(4, 4, 4)
         fcl5 = fcl3.copy(default=2)
         fcl6 = fcl4.copy(default=2)
         assert fcl6 != fcl5
         fcl7 = fcl5.copy(default=-1)
         fcl8 = fcl6.copy(default=-1)
         assert fcl8 != fcl7
-        assert fcl8.map(ge3) == fcl7.map(ge3)
+        assert fcl8.default() == fcl7.default() == -1
+        assert fcl8.map(ge3) != fcl7.map(ge3)
         assert fcl8.default() == fcl7.default() == -1
         assert fcl7.map(ge3) == FCLArray(-1, -1, -1, 3, 4, 5, -1, default = -1)
-        assert repr(fcl8.map(ge3)) == 'FCLArray(-1, -1, -1, 3, 4, 5, -1, default=-1)'
+        assert repr(fcl8.map(ge3)) == 'FCLArray(4, 4, 4, 3, 4, 5, 4, default=-1)'
 
         fcl0 = FCLArray(5,4,3,2,1)
         assert fcl0.copy(size=3) == FCLArray(5, 4, 3)
         assert fcl0.copy(size=-3) == FCLArray(3, 2, 1)
+        assert repr(fcl0.map(ge3)) == 'FCLArray(5, 4, 3, (), (), default=None)'
+        fcl1 = fcl0.copy(default=0)
+        fcl1.mapSelf(ge3)
+        assert repr(fcl1.map(ge3)) == 'FCLArray(5, 4, 3, 0, 0, default=0)'
 
     def test_flatMap(self):
-        fcl0 = FCLArray(None, *range(1, 6), None, size=7, default=0)
-        assert fcl0 == FCLArray(0, 1, 2, 3, 4, 5, 0)
-        fcl1 = fcl0.flatMap(lambda x: FCLArray(*range(x%3), default=1))
-        fcl2 = fcl0.flatMap(lambda x: FCLArray(*range(x%3), default=0))
-        assert fcl1 == fcl2
 
-        def ge2(n: int) -> int|None:
-     #      if n < 2:
-     #          return None
-            return n
+        def ge1(n: int) -> int|None:
+            if n >= 1:
+                return n
+            return None
 
-        fcl3 = fcl1.map(ge2)
-        fcl4 = fcl2.map(ge2)
-        assert fcl3 != fcl4
-        assert fcl3 == FCLArray(0, 0, 0, 3, 4, 5, 0)
-        assert fcl4 == FCLArray(2, 2, 2, 3, 4, 5, 2)
-        assert fcl3.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
-        assert fcl3.copy(size=6).copy(size=3) == FCLArray(0, 0, 0)
-        assert fcl4.copy(size=6).copy(size=-3) == FCLArray(3, 4, 5)
-        assert fcl4.copy(size=6).copy(size=3) == FCLArray(2, 2, 2)
-        fcl5 = fcl3.copy(default=2)
-        fcl6 = fcl4.copy(default=2)
-        assert fcl6 != fcl5
-        fcl7 = fcl5.copy(default=-1)
-        fcl8 = fcl6.copy(default=-1)
-        assert fcl8 != fcl7
-        assert fcl8.map(ge3) == fcl7.map(ge3)
-        assert fcl8.default() == fcl7.default() == -1
-        assert fcl7.map(ge3) == FCLArray(-1, -1, -1, 3, 4, 5, -1, default = -1)
-        assert repr(fcl8.map(ge3)) == 'FCLArray(-1, -1, -1, 3, 4, 5, -1, default=-1)'
+        def lt2(n: int) -> int|None:
+            if n < 2:
+                return n
+            return None
 
-        fcl0 = FCLArray(5,4,3,2,1)
-        assert fcl0.copy(size=3) == FCLArray(5, 4, 3)
-        assert fcl0.copy(size=-3) == FCLArray(3, 2, 1)
+        # Keep defaults all the same
+        fcl0 = FCLArray(*range(10), default=6)
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=6))
+        fcl3 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)), default=6)
+        fcl4 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=7), default=6)
+        assert fcl1 == fcl2 == fcl3 == fcl4
+        assert fcl1 == FCLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        assert fcl0.default() == fcl1.default() == fcl2.default()
+        assert fcl2.default() == fcl3.default() == fcl4.default() == 6
+        fcl11 = fcl1.map(ge1)
+        fcl12 = fcl2.map(ge1)
+        fcl13 = fcl3.map(ge1)
+        fcl14 = fcl4.map(ge1)
+        assert fcl11 == fcl12 == fcl13 == fcl14
+        assert fcl11 == FCLArray(6,6,1,6,1,2,6,1,2,3,6,6,1,6,1,2,6,1,2,3)
+        assert fcl11.default() == fcl12.default() == fcl13.default()
+        assert fcl13.default() == fcl14.default() == 6
+        fcl1.mapSelf(lt2)
+        fcl2.mapSelf(lt2)
+        fcl3.mapSelf(lt2)
+        fcl4.mapSelf(lt2)
+        assert fcl1 == fcl2 == fcl3 == fcl4
+        assert fcl1 == FCLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert fcl1.default() == 6
+        assert fcl2.default() == 6
+        assert fcl3.default() == 6
+        assert fcl4.default() == 6
+
+        # Vary up the defaults
+        fcl0 = FCLArray(*range(10), default=6)
+        assert fcl0.default() == 6
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=7))
+        fcl3 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)), default=8)
+        fcl4 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=-1), default=9)
+        assert fcl1 == fcl2 == fcl3 == fcl4
+        assert fcl1 == FCLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        assert fcl1.default() == 6
+        assert fcl2.default() == 6
+        assert fcl3.default() == 8
+        assert fcl4.default() == 9
+        fcl11 = fcl1.map(lt2)
+        fcl12 = fcl2.map(lt2)
+        fcl13 = fcl3.map(lt2)
+        fcl14 = fcl4.map(lt2)
+        assert fcl11 == FCLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert fcl12 == FCLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert fcl13 == FCLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
+        assert fcl14 == FCLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
+        assert fcl11.default() == 6
+        assert fcl12.default() == 6
+        assert fcl13.default() == 8
+        assert fcl14.default() == 9
+
+        # Vary up the defaults, no default set on initial FCLArray
+        fcl0 = FCLArray(*range(10))
+        assert fcl0.default() == None
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=7))
+        fcl3 = fcl0.flatMap(lambda x: FCLArray(*range(x%5)), default=8)
+        fcl4 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=-1), default=9)
+        assert fcl1 == fcl2 == fcl3 == fcl4
+        assert fcl1 == FCLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        assert fcl1.default() == None
+        assert fcl2.default() == None
+        assert fcl3.default() == 8
+        assert fcl4.default() == 9
+        fcl11 = fcl1.map(lt2)
+        fcl12 = fcl2.map(lt2)
+        fcl13 = fcl3.map(lt2)
+        fcl14 = fcl4.map(lt2)
+        assert fcl11 == FCLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+        assert fcl12 == FCLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+        assert fcl13 == FCLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
+        assert fcl14 == FCLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
+        assert fcl11.default() == None
+        assert fcl12.default() == None
+        assert fcl13.default() == 8
+        assert fcl14.default() == 9
+
+        # Let f change default, set default set on initial FCLArray
+        fcl0 = FCLArray(*range(3), default=6)
+        assert fcl0.default() == 6
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(None, *range(x)))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=x*x))
+        fcl3 = fcl0.flatMap(lambda x: FCLArray(None, *range(x)), default=8)
+        fcl4 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=-1), default=9)
+        fcl5 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=fcl0.default()))
+        fcl6 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=8), default=8)
+        assert fcl1 == FCLArray((), (), 0, (), 0, 1)
+        assert fcl2 == FCLArray(0, 1, 0, 4, 0, 1)
+        assert fcl3 == FCLArray((), (), 0, (), 0, 1)
+        assert fcl4 == FCLArray(-1, -1, 0, -1, 0, 1)
+        assert fcl5 == FCLArray(6, 6, 0, 6, 0, 1)
+        assert fcl6 == FCLArray(8, 8, 0, 8, 0, 1)
+        assert fcl1.default() == 6
+        assert fcl2.default() == 6
+        assert fcl3.default() == 8
+        assert fcl4.default() == 9
+        assert fcl5.default() == 6
+        assert fcl6.default() == 8
+
+        # Let f change default, no default set on initial FCLArray
+        fcl0 = FCLArray(*range(3))
+        assert fcl0.default() == None
+        fcl1 = fcl0.flatMap(lambda x: FCLArray(None, *range(x)))
+        fcl2 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=x*x))
+        fcl3 = fcl0.flatMap(lambda x: FCLArray(None, *range(x)), default=8)
+        fcl4 = fcl0.flatMap(lambda x: FCLArray(None, *range(x), default=-1), default=9)
+        assert fcl1 == FCLArray((), (), 0, (), 0, 1)
+        assert fcl2 == FCLArray(0, 1, 0, 4, 0, 1)
+        assert fcl3 == FCLArray((), (), 0, (), 0, 1)
+        assert fcl4 == FCLArray(-1, -1, 0, -1, 0, 1)
+        assert fcl1.default() == None
+        assert fcl2.default() == None
+        assert fcl3.default() == 8
+        assert fcl4.default() == 9
+    #   fcl11 = fcl1.map(lt2)
+    #   fcl12 = fcl2.map(lt2)
+    #   fcl13 = fcl3.map(lt2)
+    #   fcl14 = fcl4.map(lt2)
+    #   assert fcl11 == FCLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+    #   assert fcl12 == FCLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+    #   assert fcl13 == FCLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
+    #   assert fcl14 == FCLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
+    #   assert fcl11.default() == None
+    #   assert fcl12.default() == None
+    #   assert fcl13.default() == 8
+    #   assert fcl14.default() == 9

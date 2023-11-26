@@ -17,7 +17,6 @@
 Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
 Class Either: Implements a left biased Either Monad.
 """
-
 from __future__ import annotations
 
 __all__ = [
@@ -35,8 +34,6 @@ from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
-    def __init__(self):
-        pass
 
     # For FIFO type data structures.
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
@@ -118,14 +115,14 @@ class Maybe(FP):
             return False
         return self._value == other._value
 
-    def get(self, default: Any=None) -> Any:
-        """Get contents if they exist, otherwise return None. Caller is
-        responsible with dealing with a None return value.
+    def get(self, alternate: Any=None) -> Any:
+        """Get contents if they exist, otherwise return an alternate value.
+        Caller is responsible with dealing with a None alternate return value.
         """
         if self:
             return self._value
         else:
-            return default
+            return alternate
 
 # Maybe convenience functions/objects.
 

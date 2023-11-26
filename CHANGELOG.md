@@ -33,6 +33,16 @@
 
 ## Version - PyPI releases begin with "v"
 
+
+### Version 0.10.10.0 - commit date 2023-11-18
+
+* More or less finalized FCLArray API
+  * finished overriding default flatMap, mergeMap & exhaustMap from FP
+  * need mergeMap & exhaustMap versions of unit tests
+  * found this data structure very interesting
+    * hopefully find a use for it
+  * considering a simplier CLArray version
+
 ### Version 0.10.8.0 - commit date 2023-11-18
 
 * Bumping requires-python = ">=3.11" in pyproject.toml

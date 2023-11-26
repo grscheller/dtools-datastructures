@@ -106,9 +106,9 @@ class Test_repr:
         assert sq2 == sq1
         assert sq2 is not sq1
 
-    def test_clarray(self):
+    def test_fclarray(self):
         cla1 = FCLArray()
-        assert repr(cla1) == 'FCLArray(default=())'
+        assert repr(cla1) == 'FCLArray(default=None)'
         cla2 = eval(repr(cla1))
         assert cla2 == cla1
         assert cla2 is not cla1
@@ -128,15 +128,17 @@ class Test_repr:
         assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
 
         # beware immutable collections of mutable objects
-        cla1 = FCLArray(42, 'foo', [10, 22])
+        cla1 = FCLArray(42, 'foo', [10, 22], default=42)
         cla2 = cla1.copy()
-        cla1[2].append(42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
+        cla3 = cla1.copy(default=63)
+        cla1[2].append(-1)
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, -1], default=42)"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22, -1], default=42)"
         popped = cla2[2].pop()
-        assert popped == 42
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=())"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=())"
+        assert popped == -1
+        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
+        assert repr(cla3) == "FCLArray(42, 'foo', [10, 22], default=63)"
 
     def test_ftuple(self):
         ft1 = FTuple()
@@ -333,5 +335,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=())))"
+        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=None)))"
         assert repr_thing1 == repr_str
