@@ -55,14 +55,15 @@ class CLArray():
 
         self._sizeMB = Some(size)
         self._swNoneIterMB = Some(noneSwap)
-        dfault = self._swNoneIterMB.get(infiniteEmptyTPs)
+        self._swap = self._swNoneIterMB.get(infiniteEmptyTPs())
+        swap = self._swap
 
         ca = CArray()
         for d in ds:
             if d is not None:
                 ca.pushR(d)
             else:
-                ca.pushR(next(dfault))
+                ca.pushR(next(swap))
         ds_size = len(ca)
 
         if size is None:
@@ -77,12 +78,12 @@ class CLArray():
             if size > 0:
                 # pad higher indexes (on "right")
                 for _ in range(size-ds_size):
-                    ca.pushR(next(dfault))
+                    ca.pushR(next(swap))
                 self._ca, self._sizeMB = ca, Some(size)
             else:
                 # pad lower indexes (on "left")
                 for _ in range(-size - ds_size):
-                    ca.pushL(next(dfault))
+                    ca.pushL(next(swap))
                 self._ca, self._sizeMB = ca, Some(-size)
         else:
             if size > 0:
@@ -140,12 +141,11 @@ class CLArray():
         return self._ca[index]
 
     def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
-        swap = self._swNoneIterMB.get(infiniteEmptyTPs)
         if value is not None:
             self._ca[index] = value
         else:
             # TODO: need to handle "StopIteration"
-            self._ca[index] = next(swap)
+            self._ca[index] = next(self._swap)
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored in both compare as equal. Worst
@@ -159,7 +159,7 @@ class CLArray():
     def copy(self, noneSwap: Any=None) -> CLArray:
         """Return shallow copy of the CLArray in O(n) complexity."""
         if noneSwap is None:
-            noneSwap = self._swNoneIterMB.get(infiniteEmptyTPs)
+            noneSwap = self._swNoneIterMB.get(infiniteEmptyTPs())
         return CLArray(*self, noneSwap=noneSwap)
 
     def reverse(self) -> None:
@@ -168,12 +168,12 @@ class CLArray():
 
     def map(self, f: Callable[[Any], Any]) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
-        noneSwap=self._swNoneIterMB.get(infiniteEmptyTPs)
-        self._ca = CLArray(*map(f, self), noneSwap=noneSwap)._ca
+        # Is sharing this iterator what I want to do???
+        self._ca = CLArray(*map(f, self), self._swap)._ca
 
     def resize(self, size: int):
         self._sizeMB, self._ca = Some(size), CLArray(
-            *self, size=size, noneSwap=self._swNoneIterMB.get())._ca
+            *self, size=size, noneSwap=self._swNoneIterMB.get(infiniteEmptyTPs()))._ca
         
 if __name__ == "__main__":
     pass
