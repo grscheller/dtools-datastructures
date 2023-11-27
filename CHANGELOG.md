@@ -33,8 +33,20 @@
 
 ## Version - PyPI releases begin with "v"
 
+### Version 0.10.11.0 - commit date 2023-11-27
 
-### Version 0.10.10.0 - commit date 2023-11-18
+* Created new datastructures class CLArray
+  * more imperitive version of FCLArray
+    * has an iterator to swap None values instead of a default value
+      * when iterator is exhausted, will swap in () for None
+    * no flatMap type methods
+    * map method mutates self
+    * can be resized
+    * returns false when CLArray contains no non-() elements
+  * TODO: does not yet handle StopIteration events properly
+* made package more overall "atomic"
+
+### Version 0.10.10.0 - commit date 2023-11-26
 
 * More or less finalized FCLArray API
   * finished overriding default flatMap, mergeMap & exhaustMap from FP

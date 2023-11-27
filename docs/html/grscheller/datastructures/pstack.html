@@ -93,15 +93,13 @@ class PStack(Stack):
     def copy(self) -&gt; PStack:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
         pstack = PStack()
-        pstack._head = self._head
-        pstack._count = self._count
+        pstack._head, pstack._count = self._head, self._count
         return pstack
 
     def reverse(self) -&gt; None:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
         pstack = PStack(reversed(self))
-        self._head = pstack._head
-        self._count = pstack._count
+        self._head, self._count = pstack._head, pstack._count
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
@@ -110,8 +108,7 @@ class PStack(Stack):
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
-                self._head = node
-                self._count += 1
+                self._head, self._count = node, self._count+1
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
@@ -119,8 +116,7 @@ class PStack(Stack):
             return None
         else:
             data = self._head._data
-            self._head = self._head._next
-            self._count -= 1
+            self._head, self._count = self._head._next, self._count-1
             return data
 
     def peak(self, default: Any=None) -&gt; Any:
@@ -136,8 +132,7 @@ class PStack(Stack):
         Mutates the Stack object. O(n).
         &#34;&#34;&#34;
         newStack = Stack(*map(f, reversed(self)))
-        self._head = newStack._head
-        self._count = newStack._count
+        self._head, self._count = newStack._head, newStack._count
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -195,15 +190,13 @@ None which indicates an empty stack.</p>
     def copy(self) -&gt; PStack:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
         pstack = PStack()
-        pstack._head = self._head
-        pstack._count = self._count
+        pstack._head, pstack._count = self._head, self._count
         return pstack
 
     def reverse(self) -&gt; None:
         &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
         pstack = PStack(reversed(self))
-        self._head = pstack._head
-        self._count = pstack._count
+        self._head, self._count = pstack._head, pstack._count
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data that is not NONE onto top of stack,
@@ -212,8 +205,7 @@ None which indicates an empty stack.</p>
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
-                self._head = node
-                self._count += 1
+                self._head, self._count = node, self._count+1
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
@@ -221,8 +213,7 @@ None which indicates an empty stack.</p>
             return None
         else:
             data = self._head._data
-            self._head = self._head._next
-            self._count -= 1
+            self._head, self._count = self._head._next, self._count-1
             return data
 
     def peak(self, default: Any=None) -&gt; Any:
@@ -238,8 +229,7 @@ None which indicates an empty stack.</p>
         Mutates the Stack object. O(n).
         &#34;&#34;&#34;
         newStack = Stack(*map(f, reversed(self)))
-        self._head = newStack._head
-        self._count = newStack._count</code></pre>
+        self._head, self._count = newStack._head, newStack._count</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -259,8 +249,7 @@ None which indicates an empty stack.</p>
 <pre><code class="python">def copy(self) -&gt; PStack:
     &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
     pstack = PStack()
-    pstack._head = self._head
-    pstack._count = self._count
+    pstack._head, pstack._count = self._head, self._count
     return pstack</code></pre>
 </details>
 </dd>
@@ -279,8 +268,7 @@ Mutates the Stack object. O(n).</p></div>
     Mutates the Stack object. O(n).
     &#34;&#34;&#34;
     newStack = Stack(*map(f, reversed(self)))
-    self._head = newStack._head
-    self._count = newStack._count</code></pre>
+    self._head, self._count = newStack._head, newStack._count</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.pstack.PStack.peak"><code class="name flex">
@@ -317,8 +305,7 @@ If stack is empty, data does not exist so in that case return default.</p></div>
         return None
     else:
         data = self._head._data
-        self._head = self._head._next
-        self._count -= 1
+        self._head, self._count = self._head._next, self._count-1
         return data</code></pre>
 </details>
 </dd>
@@ -339,8 +326,7 @@ return the stack being pushed.</p></div>
     for d in ds:
         if d is not None:
             node = Node(d, self._head)
-            self._head = node
-            self._count += 1</code></pre>
+            self._head, self._count = node, self._count+1</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.pstack.PStack.reverse"><code class="name flex">
@@ -355,8 +341,7 @@ return the stack being pushed.</p></div>
 <pre><code class="python">def reverse(self) -&gt; None:
     &#34;&#34;&#34;Return shallow copy of a PStack in O(1) time &amp; space complexity&#34;&#34;&#34;
     pstack = PStack(reversed(self))
-    self._head = pstack._head
-    self._count = pstack._count</code></pre>
+    self._head, self._count = pstack._head, pstack._count</code></pre>
 </details>
 </dd>
 </dl>

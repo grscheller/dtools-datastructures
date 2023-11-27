@@ -73,29 +73,26 @@ class FCLArray(FP):
 
         if abs_size == dsize:
             # no size inconsistencies
-            self._sizeMB = Some(dsize)
-            self._list = dlist
+            self._list, self._sizeMB = dlist, Some(dsize)
         elif abs_size > dsize:
             if size > 0:
                 # pad higher indexes (on "right")
-                self._list = dlist + [dfault]*(size - dsize)
-                self._sizeMB = Some(size)
+                dlist += [dfault]*(size - dsize)
+                self._list, self._sizeMB = dlist, Some(size)
             else:
                 # pad lower indexes (on "left")
                 dlist.reverse()
                 dlist += [dfault]*(-size - dsize)
                 dlist.reverse()
-                self._list = dlist + [dfault]*(size - dsize)
-                self._sizeMB = Some(-size)
+                dlist += [dfault]*(size - dsize)
+                self._list, self._sizeMB = dlist, Some(-size)
         else:
             if size > 0:
                 # take left slice, ignore extra data at end
-                self._list = dlist[0:size]
-                self._sizeMB = Some(size)
+                self._list, self._sizeMB = dlist[0:size], Some(size)
             else:
                 # take right slice, ignore extra data at beginning
-                self._list = dlist[dsize+size:]
-                self._sizeMB = Some(-size)
+                self._list, self._sizeMB = dlist[dsize+size:], Some(-size)
 
     def __iter__(self):
         """Iterate over the current state of the FCLArray. Copy is made

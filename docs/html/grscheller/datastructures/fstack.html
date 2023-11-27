@@ -123,14 +123,14 @@ class FStack(Stack, FP_rev):
         else:
             return default
 
-    def cons(self, data: Any) -&gt; FStack:
+    def cons(self, d: Any) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
         &#34;&#34;&#34;
-        if data is not None:
+        if d is not None:
             stack = FStack()
-            stack._head = Node(data, self._head)
+            stack._head = Node(d, self._head)
             stack._count = self._count + 1
             return stack
         else:
@@ -221,14 +221,14 @@ which indicates an empty stack.</p>
         else:
             return default
 
-    def cons(self, data: Any) -&gt; FStack:
+    def cons(self, d: Any) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
         &#34;&#34;&#34;
-        if data is not None:
+        if d is not None:
             stack = FStack()
-            stack._head = Node(data, self._head)
+            stack._head = Node(d, self._head)
             stack._count = self._count + 1
             return stack
         else:
@@ -243,7 +243,7 @@ which indicates an empty stack.</p>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.fstack.FStack.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, data: Any) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
+<span>def <span class="ident">cons</span></span>(<span>self, d: Any) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a new stack with data as head and self as tail. Constructing
@@ -253,14 +253,14 @@ stack. In that case, just return a copy of the stack.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cons(self, data: Any) -&gt; FStack:
+<pre><code class="python">def cons(self, d: Any) -&gt; FStack:
     &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
     a stack using a non-existent value as head results in a non-existent
     stack. In that case, just return a copy of the stack.
     &#34;&#34;&#34;
-    if data is not None:
+    if d is not None:
         stack = FStack()
-        stack._head = Node(data, self._head)
+        stack._head = Node(d, self._head)
         stack._count = self._count + 1
         return stack
     else:

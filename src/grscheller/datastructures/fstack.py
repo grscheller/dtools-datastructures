@@ -89,14 +89,14 @@ class FStack(Stack, FP_rev):
         else:
             return default
 
-    def cons(self, data: Any) -> FStack:
+    def cons(self, d: Any) -> FStack:
         """Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
         """
-        if data is not None:
+        if d is not None:
             stack = FStack()
-            stack._head = Node(data, self._head)
+            stack._head = Node(d, self._head)
             stack._count = self._count + 1
             return stack
         else:

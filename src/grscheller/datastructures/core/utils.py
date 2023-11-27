@@ -12,23 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Package grscheller.datastructures
+"""Module grscheller.datastructure.core.utils
 
-   Data structures supporting a functional style of programming, yet still
-   endeavor to be Pythonic.
+Utility functions for grscheller.datastructure package.
 """
 
-__version__ = "0.10.11.0"
+from __future__ import annotations
+
+__all__ = ['infiniteEmptyTPs']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .clarray import *
-from .dqueue import *
-from .fclarray import *
-from .fstack import *
-from .ftuple import *
-from .pstack import *
-from .squeue import *
-from .core.fp import *
-from .core.iterlib import *
+from typing import Any, Generator
+
+def infiniteEmptyTPs() -> Generator[tuple[()], Any, Any]:
+    while True:
+        yield ()
+
+def infiniteZeros() -> Generator[int, Any, Any]:
+    while True:
+        yield 0
+
+if __name__ == "__main__":
+    pass
