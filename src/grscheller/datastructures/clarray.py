@@ -31,9 +31,9 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union, Iterator
+from itertools import cycle
 from .core.fp import Some
 from .core.carray import CArray
-from .core.utils import infiniteEmptyTPs
 
 class CLArray():
     """Constant Length Array
@@ -51,19 +51,20 @@ class CLArray():
     with default values or slice off trailing data. If size < 0, pad data on
     left with default value or slice off initial data.
     """
-    def __init__(self, *ds, size: int|None=None, noneSwap: Iterator|None=None):
+    def __init__(self, *ds, size: int|None=None, noneIter: Iterator|None=None):
 
-        self._sizeMB = Some(size)
-        self._swNoneIterMB = Some(noneSwap)
-        self._swap = self._swNoneIterMB.get(infiniteEmptyTPs())
-        swap = self._swap
+        if noneIter is None:
+            self._noneIter = noneIter = cycle((tuple(),))
+        else:
+            self._noneIter = noneIter
 
         ca = CArray()
         for d in ds:
-            if d is not None:
-                ca.pushR(d)
+            if d is None:
+                ca.pushR(next(noneIter))
             else:
-                ca.pushR(next(swap))
+                ca.pushR(d)
+
         ds_size = len(ca)
 
         if size is None:
@@ -78,12 +79,12 @@ class CLArray():
             if size > 0:
                 # pad higher indexes (on "right")
                 for _ in range(size-ds_size):
-                    ca.pushR(next(swap))
+                    ca.pushR(next(noneIter))
                 self._ca, self._sizeMB = ca, Some(size)
             else:
                 # pad lower indexes (on "left")
                 for _ in range(-size - ds_size):
-                    ca.pushL(next(swap))
+                    ca.pushL(next(noneIter))
                 self._ca, self._sizeMB = ca, Some(-size)
         else:
             if size > 0:
@@ -116,9 +117,9 @@ class CLArray():
         repr1 = f'{self.__class__.__name__}('
         repr2 = ', '.join(map(repr, self))
         if repr2 == '':
-            repr3 = f'default={self._swNoneIterMB.get()})'
+            repr3 = f'default={self._noneIter})'
         else:
-            repr3 = f', default={self._swNoneIterMB.get()})'
+            repr3 = f', default={self._noneIter})'
         return repr1 + repr2 + repr3
 
     def __str__(self):
@@ -144,8 +145,7 @@ class CLArray():
         if value is not None:
             self._ca[index] = value
         else:
-            # TODO: need to handle "StopIteration"
-            self._ca[index] = next(self._swap)
+            self._ca[index] = next(self._noneIter)
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored in both compare as equal. Worst
@@ -156,24 +156,21 @@ class CLArray():
             return False
         return self._ca == other._ca
 
-    def copy(self, noneSwap: Any=None) -> CLArray:
+    def copy(self, noneIter: Iterator|None=None) -> CLArray:
         """Return shallow copy of the CLArray in O(n) complexity."""
-        if noneSwap is None:
-            noneSwap = self._swNoneIterMB.get(infiniteEmptyTPs())
-        return CLArray(*self, noneSwap=noneSwap)
+        if noneIter is None:
+            noneIter = self._noneIter
+        return CLArray(*self, noneIter=noneIter)
 
     def reverse(self) -> None:
         """Reverse the elements of the CLArray. Mutates the CLArray."""
         self._ca = self._ca.reverse()
 
-    def map(self, f: Callable[[Any], Any]) -> None:
+    def map(self, f: Callable[[Any], Any], noneIter: Iterator|None=None) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
-        # Is sharing this iterator what I want to do???
-        self._ca = CLArray(*map(f, self), self._swap)._ca
+        if noneIter is None:
+            noneIter = self._noneIter
+        self._ca = CLArray(*map(f, self), self._noneIter)._ca
 
-    def resize(self, size: int):
-        self._sizeMB, self._ca = Some(size), CLArray(
-            *self, size=size, noneSwap=self._swNoneIterMB.get(infiniteEmptyTPs()))._ca
-        
 if __name__ == "__main__":
     pass
