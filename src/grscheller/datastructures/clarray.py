@@ -31,8 +31,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union, Iterator
-from itertools import cycle
-from .core.fp import Some
+from itertools import chain, cycle
 from .core.carray import CArray
 
 class CLArray():
@@ -51,17 +50,27 @@ class CLArray():
     with default values or slice off trailing data. If size < 0, pad data on
     left with default value or slice off initial data.
     """
-    def __init__(self, *ds, size: int|None=None, noneIter: Iterator|None=None):
+    def __init__(self, *ds,
+                 size: int|None=None,
+                 noneIter: Iterator|None=None,
+                 noneSwap: Any|None=tuple()):
 
-        if noneIter is None:
-            self._noneIter = noneIter = cycle((tuple(),))
-        else:
-            self._noneIter = noneIter
+        match (noneIter, noneSwap):
+            case (None, None):
+                raise ValueError("noneIter & noneSwap both cannot be None")
+            case (None, swap):
+                self._none = cycle((swap,))
+            case (none, None):
+                self._none = none  # could throw StopIteration exception
+            case (none, swap):
+                self._none = chain(none, cycle((swap,)))
 
         ca = CArray()
+        none = self._none
+
         for d in ds:
             if d is None:
-                ca.pushR(next(noneIter))
+                ca.pushR(next(none))
             else:
                 ca.pushR(d)
 
@@ -72,31 +81,25 @@ class CLArray():
         else:
             abs_size = abs(size)
 
-        if abs_size == ds_size:
-            # no size inconsistencies
-            self._ca, self._sizeMB = ca, Some(ds_size)
-        elif abs_size > ds_size:
+        if abs_size > ds_size:
             if size > 0:
                 # pad higher indexes (on "right")
                 for _ in range(size-ds_size):
-                    ca.pushR(next(noneIter))
-                self._ca, self._sizeMB = ca, Some(size)
+                    ca.pushR(next(none))
             else:
                 # pad lower indexes (on "left")
                 for _ in range(-size - ds_size):
-                    ca.pushL(next(noneIter))
-                self._ca, self._sizeMB = ca, Some(-size)
+                    ca.pushL(next(none))
         else:
             if size > 0:
                 # ignore extra data at end
                 for _ in range(size - ds_size):
                     ca.popR()
-                self._ca, self._sizeMB = ca, Some(size)
             else:
                 # ignore extra data at beginning
                 for _ in range(ds_size + size):
                     ca.popL()
-                self._ca, self._sizeMB = ca, Some(-size)
+        self._ca = ca
 
     def __iter__(self):
         """Iterate over the current state of the CLArray. Copy is made
@@ -117,9 +120,9 @@ class CLArray():
         repr1 = f'{self.__class__.__name__}('
         repr2 = ', '.join(map(repr, self))
         if repr2 == '':
-            repr3 = f'default={self._noneIter})'
+            repr3 = f'noneIter={self._none})'
         else:
-            repr3 = f', default={self._noneIter})'
+            repr3 = f', noneIter={self._none})'
         return repr1 + repr2 + repr3
 
     def __str__(self):
@@ -136,16 +139,16 @@ class CLArray():
 
     def __len__(self) -> int:
         """Returns the size of the CLArray"""
-        return self._sizeMB.get()
+        return len(self._ca)
 
     def __getitem__(self, index: int) -> Union[Any,Never]:
         return self._ca[index]
 
     def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
-        if value is not None:
-            self._ca[index] = value
+        if value is None:
+            self._ca[index] = next(self._none)
         else:
-            self._ca[index] = next(self._noneIter)
+            self._ca[index] = value
 
     def __eq__(self, other: Any):
         """Returns True if all the data stored in both compare as equal. Worst
@@ -156,21 +159,19 @@ class CLArray():
             return False
         return self._ca == other._ca
 
-    def copy(self, noneIter: Iterator|None=None) -> CLArray:
-        """Return shallow copy of the CLArray in O(n) complexity."""
-        if noneIter is None:
-            noneIter = self._noneIter
-        return CLArray(*self, noneIter=noneIter)
-
     def reverse(self) -> None:
         """Reverse the elements of the CLArray. Mutates the CLArray."""
         self._ca = self._ca.reverse()
 
-    def map(self, f: Callable[[Any], Any], noneIter: Iterator|None=None) -> None:
-        """Mutate the CLArray by appling function over the CLArray contents."""
+    def copy(self, noneIter: Iterator|None=None) -> CLArray:
+        """Return shallow copy of the CLArray in O(n) complexity."""
         if noneIter is None:
-            noneIter = self._noneIter
-        self._ca = CLArray(*map(f, self), self._noneIter)._ca
+            noneIter = self._none
+        return CLArray(*self, noneIter=noneIter)
+
+    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+        """Mutate the CLArray by appling function over the CLArray contents."""
+        self._ca = CLArray(*map(f, self), noneIter=self._none)._ca
 
 if __name__ == "__main__":
     pass
