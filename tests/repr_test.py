@@ -108,37 +108,49 @@ class Test_repr:
 
     def test_fclarray(self):
         cla1 = FCLArray()
-        assert repr(cla1) == 'FCLArray(default=None)'
-        cla2 = eval(repr(cla1))
-        assert cla2 == cla1
-        assert cla2 is not cla1
+        repr_cla1 = repr(cla1)
+        assert repr_cla1.split('<')[0] == 'FCLArray(noneIter='
+        assert repr_cla1.split('>')[1] == ')'
 
-        cla1 = FCLArray('foo', [10, 22], size=-3, default=42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        cla2 = eval(repr(cla1))
-        assert cla2 == cla1
-        assert cla2 is not cla1
+        cla1 = FCLArray('foo', [10, 22], size=-3, noneSwap=42)
+        repr_cla1 = repr(cla1)
+        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_cla1.split('>')[1] == ')'
 
         cla1[2].append(42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        popped = cla1[2].pop()
-        assert popped == 42
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
+        repr_cla1 = repr(cla1)
+        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22, 42], noneIter="
+        assert repr_cla1.split('>')[1] == ')'
+        assert cla1[2].pop() == 42
+        repr_cla1 = repr(cla1)
+        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_cla1.split('>')[1] == ')'
 
-        # beware immutable collections of mutable objects
-        cla1 = FCLArray(42, 'foo', [10, 22], default=42)
+        cla1 = FCLArray(42, 'foo', 'bar', noneSwap=42)
         cla2 = cla1.copy()
-        cla3 = cla1.copy(default=63)
-        cla1[2].append(-1)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, -1], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22, -1], default=42)"
-        popped = cla2[2].pop()
-        assert popped == -1
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        assert repr(cla3) == "FCLArray(42, 'foo', [10, 22], default=63)"
+        cla3 = cla1.copy(noneSwap=63)
+        cla2[1] = None
+        cla3[1] = None
+        repr_cla2 = repr(cla2)
+        repr_cla3 = repr(cla3)
+        assert repr_cla2.split('<')[0] == "FCLArray(42, 42, 'bar', noneIter="
+        assert repr_cla2.split('>')[1] == ')'
+        assert repr_cla3.split('<')[0] == "FCLArray(42, 63, 'bar', noneIter="
+        assert repr_cla3.split('>')[1] == ')'
+        assert repr_cla2.split('>')[0].split('<')[1] != repr_cla3.split('>')[0].split('<')[1]
+
+        cla1 = FCLArray(16, 'foo', 'bar', 100, 101, noneSwap=42)
+        cla2 = cla1.copy(size=-4)
+        cla3 = cla1.copy(size=4)
+        cla2[0] = None
+        cla3[1] = None
+        repr_cla2 = repr(cla2)
+        repr_cla3 = repr(cla3)
+        assert repr_cla2.split('<')[0] == "FCLArray(42, 'bar', 100, 101, noneIter="
+        assert repr_cla2.split('>')[1] == ')'
+        assert repr_cla3.split('<')[0] == "FCLArray(16, 42, 'bar', 100, noneIter="
+        assert repr_cla3.split('>')[1] == ')'
+        assert repr_cla2.split('>')[0].split('<')[1] == repr_cla3.split('>')[0].split('<')[1]
 
     def test_ftuple(self):
         ft1 = FTuple()

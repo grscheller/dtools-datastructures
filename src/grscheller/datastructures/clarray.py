@@ -69,9 +69,7 @@ class CLArray():
         none = self._none
 
         for d in ds:
-            if d is None:
-                ca.pushR(next(none))
-            else:
+            if d is not None:
                 ca.pushR(d)
 
         ds_size = len(ca)
@@ -90,7 +88,7 @@ class CLArray():
                 # pad lower indexes (on "left")
                 for _ in range(-size - ds_size):
                     ca.pushL(next(none))
-        else:
+        elif abs_size < ds_size:
             if size > 0:
                 # ignore extra data at end
                 for _ in range(size - ds_size):
@@ -99,6 +97,7 @@ class CLArray():
                 # ignore extra data at beginning
                 for _ in range(ds_size + size):
                     ca.popL()
+
         self._ca = ca
 
     def __iter__(self):

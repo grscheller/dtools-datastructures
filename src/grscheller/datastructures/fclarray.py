@@ -71,9 +71,7 @@ class FCLArray(FP):
         none = self._none
         
         for d in ds:
-            if d is None:
-                ca.pushR(next(none))
-            else:
+            if d is not None:
                 ca.pushR(d)
 
         ds_size = len(ca)
@@ -86,13 +84,13 @@ class FCLArray(FP):
         if abs_size > ds_size:
             if size > 0:
                 # pad higher indexes (on "right")
-                for _ in range(size-ds_size):
+                for _ in range(size - ds_size):
                     ca.pushR(next(none))
             else:
                 # pad lower indexes (on "left")
                 for _ in range(-size - ds_size):
                     ca.pushL(next(none))
-        else:
+        elif abs_size < ds_size:
             if size > 0:
                 # ignore extra data at end
                 for _ in range(size - ds_size):
@@ -101,6 +99,7 @@ class FCLArray(FP):
                 # ignore extra data at beginning
                 for _ in range(ds_size + size):
                     ca.popL()
+
         self._ca = ca
 
     def __iter__(self):
@@ -121,9 +120,9 @@ class FCLArray(FP):
         repr1 = f'{self.__class__.__name__}('
         repr2 = ', '.join(map(repr, self))
         if repr2 == '':
-            repr3 = f'noneIter={self._none})'
+            repr3 = f'noneIter={repr(self._none)})'
         else:
-            repr3 = f', noneIter={self._none}'
+            repr3 = f', noneIter={repr(self._none)})'
         return repr1 + repr2 + repr3
 
     def __str__(self):
@@ -164,11 +163,12 @@ class FCLArray(FP):
         """Reverse the elements of the CLArray. Mutates the CLArray."""
         self._ca = self._ca.reverse()
 
-    def copy(self, noneIter: Iterator|None=None) -> FCLArray:
+    def copy(self,
+             size: int|None=None,
+             noneIter: Any=None,
+             noneSwap: Any|None=None) -> FCLArray:
         """Return shallow copy of the CLArray in O(n) complexity."""
-        if noneIter is None:
-            noneIter = self._none
-        return FCLArray(*self, noneIter=noneIter)
+        return self.map(lambda x: x, size, noneIter, noneSwap)
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the FCLArray by appling function over the FCLArray contents."""
