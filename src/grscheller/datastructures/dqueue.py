@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.queue - queue based datastructures
+"""Module grscheller.datastructure.dqueue - double sided queue datastructures
 
-Module implementing stateful FIFO data structures with amortized O(1) pushing
-& popping from the queue. Obtaining length (number of elements) of a queue is
-also a O(1) operation. Implemented with a Python List based circular array.
-Does not store None as a value.
+Module implementing stateful double ended data structures with amortized O(1)
+pushing & popping from each end. Obtaining length (number of elements) of
+a queue is also a O(1) operation. Implemented with a Python List based circular
+array. Does not store None as a value.
 """
 
 from __future__ import annotations
@@ -27,10 +27,10 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable
-from .core.queue import Queue
+from typing import Any
+from .core.queue_base import QueueBase
 
-class DQueue(Queue):
+class DQueue(QueueBase):
     """Double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DQueue.
     """

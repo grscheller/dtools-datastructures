@@ -64,12 +64,12 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any
-from .core.stack import Stack
+from .core.stack_base import StackBase
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
 from .core.circular_array import CircularArray
 
-class FStack(Stack, FP_rev):
+class FStack(StackBase, FP_rev):
     &#34;&#34;&#34;Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -167,7 +167,7 @@ which indicates an empty stack.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FStack(Stack, FP_rev):
+<pre><code class="python">class FStack(StackBase, FP_rev):
     &#34;&#34;&#34;Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -236,7 +236,7 @@ which indicates an empty stack.</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.stack.Stack" href="core/stack.html#grscheller.datastructures.core.stack.Stack">Stack</a></li>
+<li><a title="grscheller.datastructures.core.stack_base.StackBase" href="core/stack_base.html#grscheller.datastructures.core.stack_base.StackBase">StackBase</a></li>
 <li><a title="grscheller.datastructures.core.fp.FP_rev" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
 <li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>

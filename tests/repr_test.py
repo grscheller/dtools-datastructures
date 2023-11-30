@@ -18,7 +18,7 @@ from typing import Any
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.circular_array import CircularArray
-from grscheller.datastructures import FStack, PStack
+from grscheller.datastructures import FStack, Stack
 from grscheller.datastructures import SQueue, DQueue
 from grscheller.datastructures import FCLArray, FTuple
 from grscheller.datastructures import FTuple
@@ -184,16 +184,16 @@ class Test_repr:
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
-    def test_PStack(self):
-        ps1 = PStack()
-        assert repr(ps1) == 'PStack()'
+    def test_Stack(self):
+        ps1 = Stack()
+        assert repr(ps1) == 'Stack()'
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
 
         ps1.push(1)
         ps1.push('foo')
-        assert repr(ps1) == "PStack(1, 'foo')"
+        assert repr(ps1) == "Stack(1, 'foo')"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
@@ -205,7 +205,7 @@ class Test_repr:
         ps1.push(5)
         assert ps1.pop() == 5
         ps1.push(42)
-        assert repr(ps1) == "PStack(1, 2, 3, 4, 42)"
+        assert repr(ps1) == "Stack(1, 2, 3, 4, 42)"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1

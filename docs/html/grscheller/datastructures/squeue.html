@@ -61,9 +61,9 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any
-from .core.queue import Queue
+from .core.queue_base import QueueBase
 
-class SQueue(Queue):
+class SQueue(QueueBase):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
@@ -132,7 +132,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SQueue(Queue):
+<pre><code class="python">class SQueue(QueueBase):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
@@ -178,7 +178,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
+<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -268,9 +268,9 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></b></code>:
+<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
 <ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue.Queue.map" href="core/queue.html#grscheller.datastructures.core.queue.Queue.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
 </ul>
 </li>
 </ul>

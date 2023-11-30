@@ -49,18 +49,19 @@ endeavor to be Pythonic.</p>
    endeavor to be Pythonic.
 &#34;&#34;&#34;
 
-__version__ = &#34;0.10.12.2&#34;
+__version__ = &#34;0.10.13.0&#34;
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from .core.circular_array import *
 from .dqueue import *
+from .clarray import *
+from .squeue import *
+from .stack import *
 from .fclarray import *
 from .fstack import *
 from .ftuple import *
-from .pstack import *
-from .squeue import *
 from .core.fp import *
 from .core.iterlib import *</code></pre>
 </details>
@@ -78,7 +79,7 @@ from .core.iterlib import *</code></pre>
 </dd>
 <dt><code class="name"><a title="grscheller.datastructures.dqueue" href="dqueue.html">grscheller.datastructures.dqueue</a></code></dt>
 <dd>
-<div class="desc"><p>Module grscheller.datastructure.queue - queue based datastructures …</p></div>
+<div class="desc"><p>Module grscheller.datastructure.dqueue - double sided queue datastructures …</p></div>
 </dd>
 <dt><code class="name"><a title="grscheller.datastructures.fclarray" href="fclarray.html">grscheller.datastructures.fclarray</a></code></dt>
 <dd>
@@ -92,13 +93,13 @@ from .core.iterlib import *</code></pre>
 <dd>
 <div class="desc"><p>Module grscheller.datastructure.ftuple - functional tuples …</p></div>
 </dd>
-<dt><code class="name"><a title="grscheller.datastructures.pstack" href="pstack.html">grscheller.datastructures.pstack</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.pstack - Stateful LIFO stack: …</p></div>
-</dd>
 <dt><code class="name"><a title="grscheller.datastructures.squeue" href="squeue.html">grscheller.datastructures.squeue</a></code></dt>
 <dd>
 <div class="desc"><p>Module grscheller.datastructure.queue - queue based datastructures …</p></div>
+</dd>
+<dt><code class="name"><a title="grscheller.datastructures.stack" href="stack.html">grscheller.datastructures.stack</a></code></dt>
+<dd>
+<div class="desc"><p>Module grscheller.datastructure.pstack - Stateful LIFO stack: …</p></div>
 </dd>
 </dl>
 </section>
@@ -123,8 +124,8 @@ from .core.iterlib import *</code></pre>
 <li><code><a title="grscheller.datastructures.fclarray" href="fclarray.html">grscheller.datastructures.fclarray</a></code></li>
 <li><code><a title="grscheller.datastructures.fstack" href="fstack.html">grscheller.datastructures.fstack</a></code></li>
 <li><code><a title="grscheller.datastructures.ftuple" href="ftuple.html">grscheller.datastructures.ftuple</a></code></li>
-<li><code><a title="grscheller.datastructures.pstack" href="pstack.html">grscheller.datastructures.pstack</a></code></li>
 <li><code><a title="grscheller.datastructures.squeue" href="squeue.html">grscheller.datastructures.squeue</a></code></li>
+<li><code><a title="grscheller.datastructures.stack" href="stack.html">grscheller.datastructures.stack</a></code></li>
 </ul>
 </li>
 </ul>

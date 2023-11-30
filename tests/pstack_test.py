@@ -12,27 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.pstack import PStack
+from grscheller.datastructures.stack import Stack
 from itertools import chain
 
-class TestPStack:
+class TestStack:
     def test_mutate_returns_none(self):
-        ps = PStack(41)
+        ps = Stack(41)
         ret = ps.push(1,2,3)
         assert ret == None
 
     def test_pushThenPop(self):
-        s1 = PStack()
+        s1 = Stack()
         pushed = 42; s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
     def test_popFromEmptyStack(self):
-        s1 = PStack()
+        s1 = Stack()
         popped = s1.pop()
         assert popped is None
 
-        s2 = PStack(1, 2, 3, 42)
+        s2 = Stack(1, 2, 3, 42)
         while s2:
             assert s2.peak() is not None
             s2.pop()
@@ -44,8 +44,8 @@ class TestPStack:
         assert s2.peak() is None
 
     def test_StackLen(self):
-        s0 = PStack()
-        s1 = PStack(*range(0,2000))
+        s0 = Stack()
+        s1 = Stack(*range(0,2000))
 
         assert len(s0) == 0
         assert len(s1) == 2000
@@ -56,7 +56,7 @@ class TestPStack:
         assert len(s1) == 1998
 
     def test_nolongerTailCons(self):
-        s1 = PStack()
+        s1 = Stack()
         s1.push("fum")
         s1.push("fo")
         s1.push("fi")
@@ -73,7 +73,7 @@ class TestPStack:
         assert s1.pop() == None
 
     def test_stack_iter(self):
-        giantStack = PStack(*[" Fum", " Fo", " Fi", "Fe"])
+        giantStack = Stack(*[" Fum", " Fo", " Fi", "Fe"])
         giantTalk = giantStack.pop()
         assert giantTalk == "Fe"
         for giantWord in giantStack:
@@ -81,12 +81,12 @@ class TestPStack:
         assert len(giantStack) == 3
         assert giantTalk == "Fe Fi Fo Fum"
 
-        es = PStack()
+        es = Stack()
         for _ in es:
             assert False
 
     def test_equality(self):
-        s1 = PStack(*range(3))
+        s1 = Stack(*range(3))
         s2 = s1.copy()
         s2.push(42)
         assert s1 is not s2
@@ -95,7 +95,7 @@ class TestPStack:
         assert s2.peak() == 42
         assert s2.pop() == 42
 
-        s3 = PStack(range(10000))
+        s3 = Stack(range(10000))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
@@ -106,8 +106,8 @@ class TestPStack:
         s3.pop()
         assert s3 == s4
 
-        s5 = PStack(*[1,2,3,4])
-        s6 = PStack(*[1,2,3,42])
+        s5 = Stack(*[1,2,3,4])
+        s6 = Stack(*[1,2,3,42])
         assert s5 != s6
         for aa in range(10):
             s5.push(aa)
@@ -115,9 +115,9 @@ class TestPStack:
         assert s5 != s6
 
         ducks = ['huey', 'dewey']
-        s7 = PStack(ducks)
-        s8 = PStack(ducks)
-        s9 = PStack(['huey', 'dewey', 'louie'])
+        s7 = Stack(ducks)
+        s8 = Stack(ducks)
+        s9 = Stack(['huey', 'dewey', 'louie'])
         assert s7 == s8
         assert s7 != s9
         assert s7.peak() == s8.peak()
@@ -134,7 +134,7 @@ class TestPStack:
         assert s7 == s8
 
     def test_doNotStoreNones(self):
-        s1 = PStack()
+        s1 = Stack()
         s1.push(None)
         s1.push(None)
         s1.push(None)
@@ -145,24 +145,24 @@ class TestPStack:
         assert not s1
 
     def test_reversing(self):
-        s1 = PStack('a', 'b', 'c', 'd')
-        s2 = PStack('d', 'c', 'b', 'a')
+        s1 = Stack('a', 'b', 'c', 'd')
+        s2 = Stack('d', 'c', 'b', 'a')
         assert s1 != s2
-        assert s2 == PStack(*iter(s1))
-        s0 = PStack()
-        assert s0 == PStack(*iter(s0))
-        s2 = PStack(chain(iter(range(1, 100)), iter(range(98, 0, -1))))
-        s3 = PStack(*iter(s2))
+        assert s2 == Stack(*iter(s1))
+        s0 = Stack()
+        assert s0 == Stack(*iter(s0))
+        s2 = Stack(chain(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s3 = Stack(*iter(s2))
         assert s3 == s2
 
     def test_reversed(self):
         lf = [1.0, 2.0, 3.0, 4.0]
         lr = [4.0, 3.0, 2.0, 1.0]
-        s1 = PStack(4.0, 3.0, 2.0, 1.0)
+        s1 = Stack(4.0, 3.0, 2.0, 1.0)
         l_s1 = list(s1)
         l_r_s1 = list(reversed(s1))
         assert lf == l_s1
         assert lr == l_r_s1
-        s2 = PStack(*lf)
+        s2 = Stack(*lf)
         while s2:
             assert s2.pop() == lf.pop()

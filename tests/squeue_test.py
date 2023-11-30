@@ -14,7 +14,7 @@
 
 from grscheller.datastructures.squeue import SQueue
 
-class TestQueue:
+class TestSQueue:
     def test_mutate_returns_none(self):
         s1 = SQueue()
         ret = s1.push(1,2,3)

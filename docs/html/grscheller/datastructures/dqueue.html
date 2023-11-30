@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.dqueue API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.queue - queue based datastructures …" />
+<meta name="description" content="Module grscheller.datastructure.dqueue - double sided queue datastructures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,11 @@
 <h1 class="title">Module <code>grscheller.datastructures.dqueue</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.queue - queue based datastructures</p>
-<p>Module implementing stateful FIFO data structures with amortized O(1) pushing
-&amp; popping from the queue. Obtaining length (number of elements) of a queue is
-also a O(1) operation. Implemented with a Python List based circular array.
-Does not store None as a value.</p>
+<p>Module grscheller.datastructure.dqueue - double sided queue datastructures</p>
+<p>Module implementing stateful double ended data structures with amortized O(1)
+pushing &amp; popping from each end. Obtaining length (number of elements) of
+a queue is also a O(1) operation. Implemented with a Python List based circular
+array. Does not store None as a value.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -45,12 +45,12 @@ Does not store None as a value.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.queue - queue based datastructures
+&#34;&#34;&#34;Module grscheller.datastructure.dqueue - double sided queue datastructures
 
-Module implementing stateful FIFO data structures with amortized O(1) pushing
-&amp; popping from the queue. Obtaining length (number of elements) of a queue is
-also a O(1) operation. Implemented with a Python List based circular array.
-Does not store None as a value.
+Module implementing stateful double ended data structures with amortized O(1)
+pushing &amp; popping from each end. Obtaining length (number of elements) of
+a queue is also a O(1) operation. Implemented with a Python List based circular
+array. Does not store None as a value.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -60,10 +60,10 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable
-from .core.queue import Queue
+from typing import Any
+from .core.queue_base import QueueBase
 
-class DQueue(Queue):
+class DQueue(QueueBase):
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
@@ -145,7 +145,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class DQueue(Queue):
+<pre><code class="python">class DQueue(QueueBase):
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
@@ -204,7 +204,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
+<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -327,9 +327,9 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></b></code>:
+<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
 <ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue.Queue.map" href="core/queue.html#grscheller.datastructures.core.queue.Queue.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
 </ul>
 </li>
 </ul>

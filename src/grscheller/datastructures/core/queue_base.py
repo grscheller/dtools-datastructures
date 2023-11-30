@@ -20,7 +20,7 @@ based circular array for protected data storage.
 
 from __future__ import annotations
 
-__all__ = ['Queue']
+__all__ = ['QueueBase']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -28,12 +28,12 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from .circular_array import CircularArray
 
-class Queue():
+class QueueBase():
     """Abstract base class for the purposes of DRY inheritance of classes
     implementing queue type data structures with a list based circular array.
     Each queue object "has-a" (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each Queue subclass must
-    ensure that None values do not get pushed onto the circular array.
+    circular array used will resize itself as needed. Each QueueBase subclass
+    must ensure that None values do not get pushed onto the circular array.
     """
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
@@ -76,10 +76,10 @@ class Queue():
         return self._ca == other._ca
 
     def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the DQueue's contents. Suppress any None values
+        """Apply function over the queue's contents. Suppress any None values
         returned by f.
         """
-        self._ca = Queue(*map(f, self))._ca
+        self._ca = QueueBase(*map(f, self))._ca
 
 if __name__ == "__main__":
     pass

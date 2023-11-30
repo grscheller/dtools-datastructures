@@ -28,9 +28,9 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any
-from .core.queue import Queue
+from .core.queue_base import QueueBase
 
-class SQueue(Queue):
+class SQueue(QueueBase):
     """Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     """

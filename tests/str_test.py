@@ -15,7 +15,7 @@
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.circular_array import CircularArray
-from grscheller.datastructures import FStack, PStack
+from grscheller.datastructures import FStack, Stack
 from grscheller.datastructures import SQueue, DQueue
 from grscheller.datastructures import FCLArray, FTuple
 from grscheller.datastructures import FTuple
@@ -52,8 +52,8 @@ class Test_str:
         assert str(Left(42)) == 'Left(42)'
         assert str(Right(13)) == 'Right(13)'
 
-    def test_PStack(self):
-        s1 = PStack()
+    def test_Stack(self):
+        s1 = Stack()
         assert str(s1) == '||  ><'
         s1.push(42)
         assert str(s1) == '|| 42 ><'
@@ -63,7 +63,7 @@ class Test_str:
         assert str(s1) == "|| 42 <- 'Buggy the clown' ><"
         assert s1.pop() == 'Buggy the clown'
 
-        foo = PStack(1)
+        foo = Stack(1)
         bar = foo.copy()
         bar.pop()
         foo.push(2,3,4)
