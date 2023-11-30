@@ -50,27 +50,34 @@ class CLArrayBase():
     def __init__(self, *ds,
                  size: int|None=None,
                  noneIter: Iterator|None=None,
-                 noneSwap: Any|None=tuple()):
+                 default: Any|None=tuple()):
 
-        match (noneIter, noneSwap):
+        match (noneIter, default):
             case (None, None):
-                raise ValueError("noneIter & noneSwap both cannot be None")
-            case (None, swap):
-                self._none = cycle((swap,))
+                self._none = cycle((tuple(),))
+                self._default = tuple()
+            case (None, default):
+                self._none = cycle((default,))
+                self._default = default
             case (none, None):
-                self._none = none  # could throw StopIteration exception
-            case (none, swap):
-                self._none = chain(none, cycle((swap,)))
+                # calling code responsible if StopIteration is raised
+                self._none = none
+                self._default = None
+            case (none, default):
+                self._none = chain(none, cycle((default,)))
+                self._default = default
 
         ca = CircularArray()
         none = self._none
 
+        # For initial data, just ignore None values
         for d in ds:
             if d is not None:
                 ca.pushR(d)
 
         ds_size = len(ca)
 
+        # If size is None, size to the initial non-None data.
         if size is None:
             abs_size = size = ds_size
         else:
@@ -78,7 +85,7 @@ class CLArrayBase():
 
         if abs_size > ds_size:
             if size > 0:
-                # pad higher indexes (on "right")
+                # pad higher indexes by iterating in default values
                 for _ in range(size-ds_size):
                     ca.pushR(next(none))
             else:
@@ -86,14 +93,17 @@ class CLArrayBase():
                 for _ in range(-size - ds_size):
                     ca.pushL(next(none))
         elif abs_size < ds_size:
+            # push extra data onto self._none iterator
+            extra = CircularArray()
             if size > 0:
-                # ignore extra data at end
+                # push final data at end
                 for _ in range(size - ds_size):
-                    ca.popR()
+                    extra.pushL(ca.popR())
             else:
-                # ignore extra data at beginning
+                # push inital data at beginning
                 for _ in range(ds_size + size):
-                    ca.popL()
+                    extra.pushR(ca.popL())
+            self._none = chain(iter(extra), none)
 
         self._ca = ca
 
