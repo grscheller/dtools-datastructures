@@ -31,13 +31,13 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Union, Iterator
-from itertools import chain, cycle
+from typing import Any, Callable, Iterator
+from itertools import chain
 from .core.iterlib import merge, exhaust
+from .core.clarray_base import CLArrayBase
 from .core.fp import FP
-from .core.carray import CArray
 
-class FCLArray(FP):
+class FCLArray(CLArrayBase, FP):
     """Functional Constant Length Array
 
     Class implementing a mutable fixed length array data structure whose
@@ -57,111 +57,10 @@ class FCLArray(FP):
                  noneIter: Iterator|None=None,
                  noneSwap: Any|None=tuple()):
 
-        match (noneIter, noneSwap):
-            case (None, None):
-                raise ValueError("noneIter & noneSwap both cannot be None")
-            case (None, swap):
-                self._none = cycle((swap,))
-            case (none, None):
-                self._none = none  # could throw StopIteration exception
-            case (none, swap):
-                self._none = chain(none, cycle((swap,)))
-
-        ca = CArray()
-        none = self._none
-        
-        for d in ds:
-            if d is not None:
-                ca.pushR(d)
-
-        ds_size = len(ca)
-
-        if size is None:
-            abs_size = size = ds_size
-        else:
-            abs_size = abs(size)
-
-        if abs_size > ds_size:
-            if size > 0:
-                # pad higher indexes (on "right")
-                for _ in range(size - ds_size):
-                    ca.pushR(next(none))
-            else:
-                # pad lower indexes (on "left")
-                for _ in range(-size - ds_size):
-                    ca.pushL(next(none))
-        elif abs_size < ds_size:
-            if size > 0:
-                # ignore extra data at end
-                for _ in range(size - ds_size):
-                    ca.popR()
-            else:
-                # ignore extra data at beginning
-                for _ in range(ds_size + size):
-                    ca.popL()
-
-        self._ca = ca
-
-    def __iter__(self):
-        """Iterate over the current state of the FCLArray. Copy is made
-        so original source can safely mutate.
-        """
-        for data in self._ca.copy():
-            yield data
-
-    def __reversed__(self):
-        """Reverse iterate over the current state of the FCLArray. Copy is made
-        so original source can safely mutate.
-        """
-        for data in reversed(self._ca.copy()):
-            yield data
-
-    def __repr__(self):
-        repr1 = f'{self.__class__.__name__}('
-        repr2 = ', '.join(map(repr, self))
-        if repr2 == '':
-            repr3 = f'noneIter={repr(self._none)})'
-        else:
-            repr3 = f', noneIter={repr(self._none)})'
-        return repr1 + repr2 + repr3
+        super().__init__(*ds, size=size, noneIter=noneIter, noneSwap=noneSwap)
 
     def __str__(self):
         return '[|' + ', '.join(map(repr, self)) + '|]'
-
-    def __bool__(self):
-        """Return true only if there exists an array value not equal to the
-        empty tuple (). Empty arrays always return false.
-        """
-        for value in self:
-            if value != ():
-                return True
-        return False
-
-    def __len__(self) -> int:
-        """Returns the size of the FCLArray"""
-        return len(self._ca)
-
-    def __getitem__(self, index: int) -> Union[Any,Never]:
-        return self._ca[index]
-
-    def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
-        if value is None:
-            self._ca[index] = next(self._none)
-        else:
-            self._ca[index] = value
-
-    def __eq__(self, other: Any):
-        """Returns True if all the data stored in both compare as equal. Worst
-        case is O(n) behavior for the true case. The default value play no role
-        in determining equality.
-        """
-        if not isinstance(other, type(self)):
-            return False
-        return self._ca == other._ca
-
-    def reverse(self) -> None:
-        """Reverse the elements of the CLArray. Mutates the CLArray."""
-        self._ca = self._ca.reverse()
 
     def copy(self,
              size: int|None=None,
