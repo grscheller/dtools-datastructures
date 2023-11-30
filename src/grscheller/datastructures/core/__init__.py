@@ -29,12 +29,10 @@ Data modules supporting core infrastructure of grscheller.datastructures.
     - will use itertools over these since they are C language builtins
     - not using PyPI more-itertools to avoid external dependencies
 
-- grscheller.datastructures.core.carray module implementing a circular array
+- grscheller.datastructures.core.circular_array module
+  - implements a circular array
   - used in the implementation of several other data structures
   - None freely stored in this data structure
-  - decided to not make private because
-    - could be of utility on its own
-    - could be of use for users to create their own data structures
 """
 
 __author__ = "Geoffrey R. Scheller"
@@ -43,4 +41,4 @@ __license__ = "Appache License 2.0"
 
 from .fp import *
 from .iterlib import *
-from .carray import *
+from .circular_array import *

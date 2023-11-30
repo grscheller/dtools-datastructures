@@ -77,46 +77,46 @@ class DQueue(Queue):
     def copy(self) -&gt; DQueue:
         &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
+        dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushL(d)
+                self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popR()
+        if len(self._ca) &gt; 0:
+            return self._ca.popR()
         else:
             return None
 
     def popL(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
+        if len(self._ca) &gt; 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakR(self) -&gt; Any:
         &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
+        if len(self._ca) &gt; 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakL(self) -&gt; Any:
         &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
+        if len(self._ca) &gt; 0:
+            return self._ca[0]
         else:
             return None
 
@@ -159,46 +159,46 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     def copy(self) -&gt; DQueue:
         &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
+        dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushL(d)
+                self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popR()
+        if len(self._ca) &gt; 0:
+            return self._ca.popR()
         else:
             return None
 
     def popL(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
+        if len(self._ca) &gt; 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakR(self) -&gt; Any:
         &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
+        if len(self._ca) &gt; 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakL(self) -&gt; Any:
         &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
+        if len(self._ca) &gt; 0:
+            return self._ca[0]
         else:
             return None</code></pre>
 </details>
@@ -220,7 +220,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <pre><code class="python">def copy(self) -&gt; DQueue:
     &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     dqueue = DQueue()
-    dqueue._carray = self._carray.copy()
+    dqueue._ca = self._ca.copy()
     return dqueue</code></pre>
 </details>
 </dd>
@@ -235,8 +235,8 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </summary>
 <pre><code class="python">def peakL(self) -&gt; Any:
     &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[0]
+    if len(self._ca) &gt; 0:
+        return self._ca[0]
     else:
         return None</code></pre>
 </details>
@@ -252,8 +252,8 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </summary>
 <pre><code class="python">def peakR(self) -&gt; Any:
     &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[-1]
+    if len(self._ca) &gt; 0:
+        return self._ca[-1]
     else:
         return None</code></pre>
 </details>
@@ -269,8 +269,8 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </summary>
 <pre><code class="python">def popL(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray.popL()
+    if len(self._ca) &gt; 0:
+        return self._ca.popL()
     else:
         return None</code></pre>
 </details>
@@ -286,8 +286,8 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </summary>
 <pre><code class="python">def popR(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray.popR()
+    if len(self._ca) &gt; 0:
+        return self._ca.popR()
     else:
         return None</code></pre>
 </details>
@@ -305,7 +305,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
-            self._carray.pushL(d)</code></pre>
+            self._ca.pushL(d)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.dqueue.DQueue.pushR"><code class="name flex">
@@ -321,7 +321,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
-            self._carray.pushR(d)</code></pre>
+            self._ca.pushR(d)</code></pre>
 </details>
 </dd>
 </dl>

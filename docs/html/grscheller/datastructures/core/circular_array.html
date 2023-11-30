@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.core.carray API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.core.carray - Double sided queue …" />
+<title>grscheller.datastructures.core.circular_array API documentation</title>
+<meta name="description" content="Module grscheller.datastructure.core.circular_array - Double sided queue …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,13 +19,13 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.core.carray</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.core.circular_array</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.core.carray - Double sided queue</p>
+<p>Module grscheller.datastructure.core.circular_array - Double sided queue</p>
 <p>Module implementing an auto-resizing circular array.</p>
 <p>Mainly used to implement other grscheller.datastructure classes in a has-a
-relationship where functionality is more likely restricted than augmented.</p>
+relationship where its functionality is more likely restricted than augmented.</p>
 <p>This class is not opinionated regarding None as a value. It freely stores and
 returns None values. Use in a boolean context to determine if empty.</p>
 <p>Implemented with a Python List.</p>
@@ -47,12 +47,12 @@ returns None values. Use in a boolean context to determine if empty.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.core.carray - Double sided queue
+&#34;&#34;&#34;Module grscheller.datastructure.core.circular_array - Double sided queue
 
 Module implementing an auto-resizing circular array.
 
 Mainly used to implement other grscheller.datastructure classes in a has-a
-relationship where functionality is more likely restricted than augmented.
+relationship where its functionality is more likely restricted than augmented.
 
 This class is not opinionated regarding None as a value. It freely stores and
 returns None values. Use in a boolean context to determine if empty.
@@ -62,14 +62,14 @@ Implemented with a Python List.
 
 from __future__ import annotations
 
-__all__ = [&#39;CArray&#39;]
+__all__ = [&#39;CircularArray&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable, Never, Self, Union
 
-class CArray:
+class CircularArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
     indexing, prepending &amp; appending values, length determination, and
     indexing for getting &amp; setting values.
@@ -95,7 +95,7 @@ class CArray:
 
     def __iter__(self):
         &#34;&#34;&#34;Generator yielding the cached contents of the current state of
-        the CArray.
+        the CircularArray.
         &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
@@ -109,7 +109,7 @@ class CArray:
 
     def __reversed__(self):
         &#34;&#34;&#34;Generator yielding the cached contents of the current state of
-        the CArray in reversed order.
+        the CircularArray in reversed order.
         &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
@@ -225,11 +225,11 @@ class CArray:
                 self._list, self._capacity, self._front, self._rear = \
                 data,       self._count,    0,           self._capacity - 1
 
-    def copy(self) -&gt; CArray:
-        return CArray(*self)
+    def copy(self) -&gt; CircularArray:
+        return CircularArray(*self)
 
-    def reverse(self) -&gt; CArray:
-        return CArray(reversed(self))
+    def reverse(self) -&gt; CircularArray:
+        return CircularArray(reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
@@ -293,17 +293,17 @@ class CArray:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+    def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
         &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
         circular array.
         &#34;&#34;&#34;
-        return CArray(*map(f, self))
+        return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
         &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
         circular array, don&#39;t return anything.
         &#34;&#34;&#34;
-        ca  = CArray(*map(f, self))
+        ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
@@ -320,8 +320,8 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.core.carray.CArray"><code class="flex name class">
-<span>class <span class="ident">CArray</span></span>
+<dt id="grscheller.datastructures.core.circular_array.CircularArray"><code class="flex name class">
+<span>class <span class="ident">CircularArray</span></span>
 <span>(</span><span>*data)</span>
 </code></dt>
 <dd>
@@ -337,7 +337,7 @@ interface.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class CArray:
+<pre><code class="python">class CircularArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
     indexing, prepending &amp; appending values, length determination, and
     indexing for getting &amp; setting values.
@@ -363,7 +363,7 @@ interface.</p>
 
     def __iter__(self):
         &#34;&#34;&#34;Generator yielding the cached contents of the current state of
-        the CArray.
+        the CircularArray.
         &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
@@ -377,7 +377,7 @@ interface.</p>
 
     def __reversed__(self):
         &#34;&#34;&#34;Generator yielding the cached contents of the current state of
-        the CArray in reversed order.
+        the CircularArray in reversed order.
         &#34;&#34;&#34;
         if self._count &gt; 0:
             cap = self._capacity
@@ -493,11 +493,11 @@ interface.</p>
                 self._list, self._capacity, self._front, self._rear = \
                 data,       self._count,    0,           self._capacity - 1
 
-    def copy(self) -&gt; CArray:
-        return CArray(*self)
+    def copy(self) -&gt; CircularArray:
+        return CircularArray(*self)
 
-    def reverse(self) -&gt; CArray:
-        return CArray(reversed(self))
+    def reverse(self) -&gt; CircularArray:
+        return CircularArray(reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
@@ -561,23 +561,23 @@ interface.</p>
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+    def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
         &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
         circular array.
         &#34;&#34;&#34;
-        return CArray(*map(f, self))
+        return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
         &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
         circular array, don&#39;t return anything.
         &#34;&#34;&#34;
-        ca  = CArray(*map(f, self))
+        ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.core.carray.CArray.capacity"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.capacity"><code class="name flex">
 <span>def <span class="ident">capacity</span></span>(<span>self) ‑> int</span>
 </code></dt>
 <dd>
@@ -591,7 +591,7 @@ interface.</p>
     return self._capacity</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.compact"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.compact"><code class="name flex">
 <span>def <span class="ident">compact</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
@@ -622,8 +622,8 @@ interface.</p>
             data,       self._count,    0,           self._capacity - 1</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.circular_array.CircularArray" href="#grscheller.datastructures.core.circular_array.CircularArray">CircularArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -631,11 +631,11 @@ interface.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self) -&gt; CArray:
-    return CArray(*self)</code></pre>
+<pre><code class="python">def copy(self) -&gt; CircularArray:
+    return CircularArray(*self)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.empty"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.empty"><code class="name flex">
 <span>def <span class="ident">empty</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
@@ -650,7 +650,7 @@ interface.</p>
         [None]*self._capacity, 0, self._capacity-1</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.fractionFilled"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.fractionFilled"><code class="name flex">
 <span>def <span class="ident">fractionFilled</span></span>(<span>self) ‑> float</span>
 </code></dt>
 <dd>
@@ -664,8 +664,8 @@ interface.</p>
     return self._count/self._capacity</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.circular_array.CircularArray" href="#grscheller.datastructures.core.circular_array.CircularArray">CircularArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the circular array's contents and return new
@@ -674,14 +674,14 @@ circular array.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; CArray:
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
     &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
     circular array.
     &#34;&#34;&#34;
-    return CArray(*map(f, self))</code></pre>
+    return CircularArray(*map(f, self))</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.mapSelf"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.mapSelf"><code class="name flex">
 <span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
@@ -695,12 +695,12 @@ circular array, don't return anything.</p></div>
     &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
     circular array, don&#39;t return anything.
     &#34;&#34;&#34;
-    ca  = CArray(*map(f, self))
+    ca  = CircularArray(*map(f, self))
     self._count, self._capacity, self._front, self._rear, self._list = \
         ca._count, ca._capacity, ca._front, ca._rear, ca._list</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.popL"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.popL"><code class="name flex">
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -722,7 +722,7 @@ circular array, don't return anything.</p></div>
         return d</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.popR"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.popR"><code class="name flex">
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
@@ -744,7 +744,7 @@ circular array, don't return anything.</p></div>
         return d</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.pushL"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.pushL"><code class="name flex">
 <span>def <span class="ident">pushL</span></span>(<span>self, d: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -762,7 +762,7 @@ circular array, don't return anything.</p></div>
     self._count += 1</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.pushR"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.pushR"><code class="name flex">
 <span>def <span class="ident">pushR</span></span>(<span>self, d: Any) ‑> None</span>
 </code></dt>
 <dd>
@@ -780,7 +780,7 @@ circular array, don't return anything.</p></div>
     self._count += 1</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.resize"><code class="name flex">
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.resize"><code class="name flex">
 <span>def <span class="ident">resize</span></span>(<span>self, addCapacity=0) ‑> None</span>
 </code></dt>
 <dd>
@@ -799,8 +799,8 @@ circular array, don't return anything.</p></div>
             self._rear = self._capacity - 1</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.core.carray.CArray.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></span>
+<dt id="grscheller.datastructures.core.circular_array.CircularArray.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.core.circular_array.CircularArray" href="#grscheller.datastructures.core.circular_array.CircularArray">CircularArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -808,8 +808,8 @@ circular array, don't return anything.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def reverse(self) -&gt; CArray:
-    return CArray(reversed(self))</code></pre>
+<pre><code class="python">def reverse(self) -&gt; CircularArray:
+    return CircularArray(reversed(self))</code></pre>
 </details>
 </dd>
 </dl>
@@ -831,21 +831,21 @@ circular array, don't return anything.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.core.carray.CArray" href="#grscheller.datastructures.core.carray.CArray">CArray</a></code></h4>
+<h4><code><a title="grscheller.datastructures.core.circular_array.CircularArray" href="#grscheller.datastructures.core.circular_array.CircularArray">CircularArray</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.core.carray.CArray.capacity" href="#grscheller.datastructures.core.carray.CArray.capacity">capacity</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.compact" href="#grscheller.datastructures.core.carray.CArray.compact">compact</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.copy" href="#grscheller.datastructures.core.carray.CArray.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.empty" href="#grscheller.datastructures.core.carray.CArray.empty">empty</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.fractionFilled" href="#grscheller.datastructures.core.carray.CArray.fractionFilled">fractionFilled</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.map" href="#grscheller.datastructures.core.carray.CArray.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.mapSelf" href="#grscheller.datastructures.core.carray.CArray.mapSelf">mapSelf</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.popL" href="#grscheller.datastructures.core.carray.CArray.popL">popL</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.popR" href="#grscheller.datastructures.core.carray.CArray.popR">popR</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.pushL" href="#grscheller.datastructures.core.carray.CArray.pushL">pushL</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.pushR" href="#grscheller.datastructures.core.carray.CArray.pushR">pushR</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.resize" href="#grscheller.datastructures.core.carray.CArray.resize">resize</a></code></li>
-<li><code><a title="grscheller.datastructures.core.carray.CArray.reverse" href="#grscheller.datastructures.core.carray.CArray.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.capacity" href="#grscheller.datastructures.core.circular_array.CircularArray.capacity">capacity</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.compact" href="#grscheller.datastructures.core.circular_array.CircularArray.compact">compact</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.copy" href="#grscheller.datastructures.core.circular_array.CircularArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.empty" href="#grscheller.datastructures.core.circular_array.CircularArray.empty">empty</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.fractionFilled" href="#grscheller.datastructures.core.circular_array.CircularArray.fractionFilled">fractionFilled</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.map" href="#grscheller.datastructures.core.circular_array.CircularArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.mapSelf" href="#grscheller.datastructures.core.circular_array.CircularArray.mapSelf">mapSelf</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.popL" href="#grscheller.datastructures.core.circular_array.CircularArray.popL">popL</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.popR" href="#grscheller.datastructures.core.circular_array.CircularArray.popR">popR</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.pushL" href="#grscheller.datastructures.core.circular_array.CircularArray.pushL">pushL</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.pushR" href="#grscheller.datastructures.core.circular_array.CircularArray.pushR">pushR</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.resize" href="#grscheller.datastructures.core.circular_array.CircularArray.resize">resize</a></code></li>
+<li><code><a title="grscheller.datastructures.core.circular_array.CircularArray.reverse" href="#grscheller.datastructures.core.circular_array.CircularArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

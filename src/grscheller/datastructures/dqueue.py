@@ -44,46 +44,46 @@ class DQueue(Queue):
     def copy(self) -> DQueue:
         """Return shallow copy of the DQueue in O(n) time & space complexity."""
         dqueue = DQueue()
-        dqueue._carray = self._carray.copy()
+        dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -> None:
         """Push data left to right onto rear of the DQueue."""
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -> None:
         """Push data left to right onto front of DQueue."""
         for d in ds:
             if d != None:
-                self._carray.pushL(d)
+                self._ca.pushL(d)
 
     def popR(self) -> Any:
         """Pop data off rear of the DQueue"""
-        if len(self._carray) > 0:
-            return self._carray.popR()
+        if len(self._ca) > 0:
+            return self._ca.popR()
         else:
             return None
 
     def popL(self) -> Any:
         """Pop data off front of the DQueue"""
-        if len(self._carray) > 0:
-            return self._carray.popL()
+        if len(self._ca) > 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakR(self) -> Any:
         """Return right-most element of the DQueue if it exists."""
-        if len(self._carray) > 0:
-            return self._carray[-1]
+        if len(self._ca) > 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakL(self) -> Any:
         """Return left-most element of the DQueue if it exists."""
-        if len(self._carray) > 0:
-            return self._carray[0]
+        if len(self._ca) > 0:
+            return self._ca[0]
         else:
             return None
 

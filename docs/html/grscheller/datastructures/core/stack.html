@@ -72,7 +72,7 @@ __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any
 from .nodes import SL_Node as Node
-from .carray import CArray
+from .circular_array import CircularArray
 
 class Stack():
     &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
@@ -102,7 +102,7 @@ class Stack():
 
     def __reversed__(self):
         &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
-        return reversed(CArray(*self))
+        return reversed(CircularArray(*self))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
@@ -201,7 +201,7 @@ get pushed onto the the stack.</p>
 
     def __reversed__(self):
         &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
-        return reversed(CArray(*self))
+        return reversed(CircularArray(*self))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;

@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import Any
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.carray import CArray
+from grscheller.datastructures.core.circular_array import CircularArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import SQueue, DQueue
 from grscheller.datastructures import FCLArray, FTuple
@@ -25,16 +25,16 @@ from grscheller.datastructures import FTuple
 
 
 class Test_repr:
-    def test_CArray(self):
-        ca1 = CArray()
-        assert repr(ca1) == 'CArray()'
+    def test_CircularArray(self):
+        ca1 = CircularArray()
+        assert repr(ca1) == 'CircularArray()'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
         ca1.pushR(1)
         ca1.pushL('foo')
-        assert repr(ca1) == "CArray('foo', 1)"
+        assert repr(ca1) == "CircularArray('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
@@ -47,7 +47,7 @@ class Test_repr:
         assert ca1.popL() == 1
         ca1.pushL(42)
         ca1.popR()
-        assert repr(ca1) == "CArray(42, 2, 3, 4)"
+        assert repr(ca1) == "CircularArray(42, 2, 3, 4)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1

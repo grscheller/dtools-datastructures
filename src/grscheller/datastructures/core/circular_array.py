@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.core.carray - Double sided queue
+"""Module grscheller.datastructure.core.circular_array - Double sided queue
 
 Module implementing an auto-resizing circular array.
 
 Mainly used to implement other grscheller.datastructure classes in a has-a
-relationship where functionality is more likely restricted than augmented.
+relationship where its functionality is more likely restricted than augmented.
 
 This class is not opinionated regarding None as a value. It freely stores and
 returns None values. Use in a boolean context to determine if empty.
@@ -27,14 +27,14 @@ Implemented with a Python List.
 
 from __future__ import annotations
 
-__all__ = ['CArray']
+__all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Self, Union
 
-class CArray:
+class CircularArray:
     """Class implementing a stateful circular array with amortized O(1)
     indexing, prepending & appending values, length determination, and
     indexing for getting & setting values.
@@ -60,7 +60,7 @@ class CArray:
 
     def __iter__(self):
         """Generator yielding the cached contents of the current state of
-        the CArray.
+        the CircularArray.
         """
         if self._count > 0:
             cap = self._capacity
@@ -74,7 +74,7 @@ class CArray:
 
     def __reversed__(self):
         """Generator yielding the cached contents of the current state of
-        the CArray in reversed order.
+        the CircularArray in reversed order.
         """
         if self._count > 0:
             cap = self._capacity
@@ -190,11 +190,11 @@ class CArray:
                 self._list, self._capacity, self._front, self._rear = \
                 data,       self._count,    0,           self._capacity - 1
 
-    def copy(self) -> CArray:
-        return CArray(*self)
+    def copy(self) -> CircularArray:
+        return CircularArray(*self)
 
-    def reverse(self) -> CArray:
-        return CArray(reversed(self))
+    def reverse(self) -> CircularArray:
+        return CircularArray(reversed(self))
 
     def pushR(self, d: Any) -> None:
         """Push data on rear of circle"""
@@ -258,17 +258,17 @@ class CArray:
             if self._count == 0:
                 self._rear = self._capacity - 1
 
-    def map(self, f: Callable[[Any], Any]) -> CArray:
+    def map(self, f: Callable[[Any], Any]) -> CircularArray:
         """Apply function over the circular array's contents and return new
         circular array.
         """
-        return CArray(*map(f, self))
+        return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Apply function over the circular array's contents mutatng the
         circular array, don't return anything.
         """
-        ca  = CArray(*map(f, self))
+        ca  = CircularArray(*map(f, self))
         self._count, self._capacity, self._front, self._rear, self._list = \
             ca._count, ca._capacity, ca._front, ca._rear, ca._list
 

@@ -33,7 +33,7 @@ from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
-from .core.carray import CArray
+from .core.circular_array import CircularArray
 
 class FStack(Stack, FP_rev):
     """Class implementing an immutable singularly linked stack data
@@ -54,7 +54,7 @@ class FStack(Stack, FP_rev):
 
     def __str__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
+        return '| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> FStack:
         """Return shallow copy of a FStack in O(1) time & space complexity"""

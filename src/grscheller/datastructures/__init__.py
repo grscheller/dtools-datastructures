@@ -18,12 +18,12 @@
    endeavor to be Pythonic.
 """
 
-__version__ = "0.10.12.1"
+__version__ = "0.10.12.2"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .clarray import *
+from .core.circular_array import *
 from .dqueue import *
 from .fclarray import *
 from .fstack import *

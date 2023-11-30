@@ -77,33 +77,33 @@ class SQueue(Queue):
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
-        squeue._carray = self._carray.copy()
+        squeue._ca = self._ca.copy()
         return squeue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
+        if len(self._ca) &gt; 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakLastIn(self) -&gt; Any:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
+        if len(self._ca) &gt; 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
+        if len(self._ca) &gt; 0:
+            return self._ca[0]
         else:
             return None
 
@@ -146,33 +146,33 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
-        squeue._carray = self._carray.copy()
+        squeue._ca = self._ca.copy()
         return squeue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray.popL()
+        if len(self._ca) &gt; 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakLastIn(self) -&gt; Any:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[-1]
+        if len(self._ca) &gt; 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-        if len(self._carray) &gt; 0:
-            return self._carray[0]
+        if len(self._ca) &gt; 0:
+            return self._ca[0]
         else:
             return None</code></pre>
 </details>
@@ -194,7 +194,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <pre><code class="python">def copy(self) -&gt; SQueue:
     &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     squeue = SQueue()
-    squeue._carray = self._carray.copy()
+    squeue._ca = self._ca.copy()
     return squeue</code></pre>
 </details>
 </dd>
@@ -209,8 +209,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def peakLastIn(self) -&gt; Any:
     &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[-1]
+    if len(self._ca) &gt; 0:
+        return self._ca[-1]
     else:
         return None</code></pre>
 </details>
@@ -226,8 +226,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def peakNextOut(self) -&gt; Any:
     &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray[0]
+    if len(self._ca) &gt; 0:
+        return self._ca[0]
     else:
         return None</code></pre>
 </details>
@@ -243,8 +243,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def pop(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-    if len(self._carray) &gt; 0:
-        return self._carray.popL()
+    if len(self._ca) &gt; 0:
+        return self._ca.popL()
     else:
         return None</code></pre>
 </details>
@@ -262,7 +262,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
     for d in ds:
         if d != None:
-            self._carray.pushR(d)</code></pre>
+            self._ca.pushR(d)</code></pre>
 </details>
 </dd>
 </dl>

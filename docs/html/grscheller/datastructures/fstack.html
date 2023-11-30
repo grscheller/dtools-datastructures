@@ -67,7 +67,7 @@ from typing import Any
 from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
-from .core.carray import CArray
+from .core.circular_array import CircularArray
 
 class FStack(Stack, FP_rev):
     &#34;&#34;&#34;Class implementing an immutable singularly linked stack data
@@ -88,7 +88,7 @@ class FStack(Stack, FP_rev):
 
     def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -186,7 +186,7 @@ which indicates an empty stack.</p>
 
     def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;

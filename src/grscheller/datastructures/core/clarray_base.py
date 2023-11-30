@@ -29,7 +29,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Never, Union, Iterator
 from itertools import chain, cycle
-from .carray import CArray
+from .circular_array import CircularArray
 
 class CLArrayBase():
     """Constant Length Array
@@ -62,7 +62,7 @@ class CLArrayBase():
             case (none, swap):
                 self._none = chain(none, cycle((swap,)))
 
-        ca = CArray()
+        ca = CircularArray()
         none = self._none
 
         for d in ds:

@@ -44,33 +44,33 @@ class SQueue(Queue):
     def copy(self) -> SQueue:
         """Return shallow copy of the SQueue in O(n) time & space complexity."""
         squeue = SQueue()
-        squeue._carray = self._carray.copy()
+        squeue._ca = self._ca.copy()
         return squeue
 
     def push(self, *ds: Any) -> None:
         """Push data on rear of the SQueue & no return value."""
         for d in ds:
             if d != None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def pop(self) -> Any:
         """Pop data off front of the SQueue."""
-        if len(self._carray) > 0:
-            return self._carray.popL()
+        if len(self._ca) > 0:
+            return self._ca.popL()
         else:
             return None
 
     def peakLastIn(self) -> Any:
         """Return last element pushed to the SQueue without consuming it"""
-        if len(self._carray) > 0:
-            return self._carray[-1]
+        if len(self._ca) > 0:
+            return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -> Any:
         """Return next element ready to pop from the SQueue."""
-        if len(self._carray) > 0:
-            return self._carray[0]
+        if len(self._ca) > 0:
+            return self._ca[0]
         else:
             return None
 

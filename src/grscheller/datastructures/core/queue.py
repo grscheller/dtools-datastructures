@@ -26,7 +26,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from .carray import CArray
+from .circular_array import CircularArray
 
 class Queue():
     """Abstract base class for the purposes of DRY inheritance of classes
@@ -37,22 +37,22 @@ class Queue():
     """
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
-        self._carray = CArray()
+        self._ca = CircularArray()
         for d in ds:
             if d is not None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def __iter__(self):
         """Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
         """
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)):
             yield cached[pos]
 
     def __reversed__(self):
         """Reverse iterate over the current state of the queue."""
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)-1, -1, -1):
             yield cached[pos]
 
@@ -61,11 +61,11 @@ class Queue():
 
     def __bool__(self):
         """Returns true if queue is not empty."""
-        return len(self._carray) > 0
+        return len(self._ca) > 0
 
     def __len__(self):
         """Returns current number of values in queue."""
-        return len(self._carray)
+        return len(self._ca)
 
     def __eq__(self, other):
         """Returns True if all the data stored in both compare as equal.
@@ -73,13 +73,13 @@ class Queue():
         """
         if not isinstance(other, type(self)):
             return False
-        return self._carray == other._carray
+        return self._ca == other._ca
 
     def map(self, f: Callable[[Any], Any]) -> None:
         """Apply function over the DQueue's contents. Suppress any None values
         returned by f.
         """
-        self._carray = Queue(*map(f, self))._carray
+        self._ca = Queue(*map(f, self))._ca
 
 if __name__ == "__main__":
     pass

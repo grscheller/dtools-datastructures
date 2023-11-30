@@ -14,7 +14,7 @@
 
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.carray import CArray
+from grscheller.datastructures.core.circular_array import CircularArray
 from grscheller.datastructures import FStack, PStack
 from grscheller.datastructures import SQueue, DQueue
 from grscheller.datastructures import FCLArray, FTuple
@@ -130,8 +130,8 @@ class Test_str:
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'
 
-    def testCArray(self):
-        ca = CArray()
+    def testCircularArray(self):
+        ca = CircularArray()
         assert str(ca) == '(||)'
         ca.pushR(1)
         ca.pushL('foo')

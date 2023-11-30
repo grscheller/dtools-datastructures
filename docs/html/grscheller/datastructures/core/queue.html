@@ -57,7 +57,7 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
-from .carray import CArray
+from .circular_array import CircularArray
 
 class Queue():
     &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
@@ -68,22 +68,22 @@ class Queue():
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
-        self._carray = CArray()
+        self._ca = CircularArray()
         for d in ds:
             if d is not None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def __iter__(self):
         &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
         &#34;&#34;&#34;
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)):
             yield cached[pos]
 
     def __reversed__(self):
         &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)-1, -1, -1):
             yield cached[pos]
 
@@ -92,11 +92,11 @@ class Queue():
 
     def __bool__(self):
         &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
-        return len(self._carray) &gt; 0
+        return len(self._ca) &gt; 0
 
     def __len__(self):
         &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
-        return len(self._carray)
+        return len(self._ca)
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
@@ -104,13 +104,13 @@ class Queue():
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
-        return self._carray == other._carray
+        return self._ca == other._ca
 
     def map(self, f: Callable[[Any], Any]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
         returned by f.
         &#34;&#34;&#34;
-        self._carray = Queue(*map(f, self))._carray
+        self._ca = Queue(*map(f, self))._ca
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -149,22 +149,22 @@ ensure that None values do not get pushed onto the circular array.</p>
     &#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
-        self._carray = CArray()
+        self._ca = CircularArray()
         for d in ds:
             if d is not None:
-                self._carray.pushR(d)
+                self._ca.pushR(d)
 
     def __iter__(self):
         &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
         natural FIFO order.
         &#34;&#34;&#34;
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)):
             yield cached[pos]
 
     def __reversed__(self):
         &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
-        cached = self._carray.copy()
+        cached = self._ca.copy()
         for pos in range(len(cached)-1, -1, -1):
             yield cached[pos]
 
@@ -173,11 +173,11 @@ ensure that None values do not get pushed onto the circular array.</p>
 
     def __bool__(self):
         &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
-        return len(self._carray) &gt; 0
+        return len(self._ca) &gt; 0
 
     def __len__(self):
         &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
-        return len(self._carray)
+        return len(self._ca)
 
     def __eq__(self, other):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
@@ -185,13 +185,13 @@ ensure that None values do not get pushed onto the circular array.</p>
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
-        return self._carray == other._carray
+        return self._ca == other._ca
 
     def map(self, f: Callable[[Any], Any]) -&gt; None:
         &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
         returned by f.
         &#34;&#34;&#34;
-        self._carray = Queue(*map(f, self))._carray</code></pre>
+        self._ca = Queue(*map(f, self))._ca</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -214,7 +214,7 @@ returned by f.</p></div>
     &#34;&#34;&#34;Apply function over the DQueue&#39;s contents. Suppress any None values
     returned by f.
     &#34;&#34;&#34;
-    self._carray = Queue(*map(f, self))._carray</code></pre>
+    self._ca = Queue(*map(f, self))._ca</code></pre>
 </details>
 </dd>
 </dl>

@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.core.carray import CArray
+from grscheller.datastructures.core.circular_array import CircularArray
 
-class TestCarray:
+class TestCircularArray:
     def test_mutate_returns_none(self):
-        ca1 = CArray()
+        ca1 = CircularArray()
         ca1.pushL(1); ca1.pushL(2)
         ret = ca1.pushL(3)
         assert ret == None
@@ -32,7 +32,7 @@ class TestCarray:
         assert len(ca1) == len(ca2)
 
     def test_push_then_pop(self):
-        c = CArray()
+        c = CircularArray()
         pushed = 42; c.pushL(pushed)
         popped = c.popL()
         assert pushed == popped
@@ -60,7 +60,7 @@ class TestCarray:
 
     def test_iterators(self):
         data = [*range(100)]
-        c = CArray(*data)
+        c = CircularArray(*data)
         ii = 0
         for item in c:
             assert data[ii] == item
@@ -68,7 +68,7 @@ class TestCarray:
         assert ii == 100
 
         data.append(100)
-        c = CArray(*data)
+        c = CircularArray(*data)
         data.reverse()
         ii = 0
         for item in reversed(c):
@@ -76,24 +76,24 @@ class TestCarray:
             ii += 1
         assert ii == 101
 
-        c0 = CArray()
+        c0 = CircularArray()
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
         data = ()
-        c0 = CArray(*data)
+        c0 = CircularArray(*data)
         for _ in c0:
             assert False
         for _ in reversed(c0):
             assert False
 
     def test_capacity(self):
-        c = CArray()
+        c = CircularArray()
         assert c.capacity() == 2
 
-        c = CArray(1, 2)
+        c = CircularArray(1, 2)
         assert c.fractionFilled() == 2/4
 
         c.pushL(0)
@@ -116,8 +116,8 @@ class TestCarray:
         assert c.fractionFilled() == 6/36
 
     def test_equality(self):
-        c1 = CArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        c2 = CArray(2, 3, 'Forty-Two')
+        c1 = CircularArray(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        c2 = CircularArray(2, 3, 'Forty-Two')
         c2.pushL(1)
         c2.pushR((7, 11, 'foobar'))
         assert c1 == c2
@@ -145,23 +145,23 @@ class TestCarray:
         assert c1 == c2
 
     def test_map(self):
-        c0 = CArray(1,2,3,10)
+        c0 = CircularArray(1,2,3,10)
         c1 = c0.copy()
         c2 = c1.map(lambda x: x*x-1)
-        assert c2 == CArray(0,3,8,99)
+        assert c2 == CircularArray(0,3,8,99)
         assert c1 != c2
         assert c1 == c0
         assert c1 is not c0
         assert len(c1) == len(c2) == 4
 
     def test_mapMutate(self):
-        c1 = CArray(1,2,3,10)
+        c1 = CircularArray(1,2,3,10)
         c1.mapSelf(lambda x: x*x-1)
-        assert c1 == CArray(0,3,8,99)
+        assert c1 == CircularArray(0,3,8,99)
         assert len(c1) == 4
 
     def test_get_set_items(self):
-        c1 = CArray('a', 'b', 'c', 'd')
+        c1 = CircularArray('a', 'b', 'c', 'd')
         c2 = c1.copy()
         assert c1 == c2
         c1[2] = 'cat'

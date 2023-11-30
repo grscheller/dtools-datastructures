@@ -32,7 +32,7 @@ __license__ = "Appache License 2.0"
 from typing import Any, Callable
 from .core.stack import Stack
 from .core.nodes import SL_Node as Node
-from .core.carray import CArray
+from .core.circular_array import CircularArray
 
 class PStack(Stack):
     """Class implementing a Last In, First Out (LIFO) stack data structure. The
@@ -54,7 +54,7 @@ class PStack(Stack):
 
     def __str__(self):
         """Display the data in the stack, left to right starting at bottom"""
-        return '|| ' + ' <- '.join(reversed(CArray(*self).map(repr))) + ' ><'
+        return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> PStack:
         """Return shallow copy of a PStack in O(1) time & space complexity"""
