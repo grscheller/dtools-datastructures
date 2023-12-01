@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Union, Iterator
+from typing import Any, Never, Union, Iterator
 from itertools import chain, cycle
 from .circular_array import CircularArray
 
@@ -50,18 +50,17 @@ class CLArrayBase():
     def __init__(self, *ds,
                  size: int|None=None,
                  noneIter: Iterator|None=None,
-                 default: Any|None=tuple()):
+                 default: Any|None=None):
 
         match (noneIter, default):
             case (None, None):
-                self._none = cycle((tuple(),))
-                self._default = tuple()
+                self._none = cycle(((),))
+                self._default = ()
             case (None, default):
                 self._none = cycle((default,))
                 self._default = default
             case (none, None):
-                # calling code responsible if StopIteration is raised
-                self._none = none
+                self._none = chain(none, cycle(((),)))
                 self._default = None
             case (none, default):
                 self._none = chain(none, cycle((default,)))

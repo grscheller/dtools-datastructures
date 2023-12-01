@@ -107,50 +107,50 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_fclarray(self):
-        cla1 = FCLArray()
-        repr_cla1 = repr(cla1)
-        assert repr_cla1.split('<')[0] == 'FCLArray(noneIter='
-        assert repr_cla1.split('>')[1] == ')'
+        fcla1 = FCLArray()
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == 'FCLArray(noneIter='
+        assert repr_fcla1.split('>')[1] == ')'
 
-        cla1 = FCLArray('foo', [10, 22], size=-3, noneSwap=42)
-        repr_cla1 = repr(cla1)
-        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
-        assert repr_cla1.split('>')[1] == ')'
+        fcla1 = FCLArray('foo', [10, 22], size=-3, default=42)
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
 
-        cla1[2].append(42)
-        repr_cla1 = repr(cla1)
-        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22, 42], noneIter="
-        assert repr_cla1.split('>')[1] == ')'
-        assert cla1[2].pop() == 42
-        repr_cla1 = repr(cla1)
-        assert repr_cla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
-        assert repr_cla1.split('>')[1] == ')'
+        fcla1[2].append(42)
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22, 42], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
+        assert fcla1[2].pop() == 42
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "FCLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
 
-        cla1 = FCLArray(42, 'foo', 'bar', noneSwap=42)
-        cla2 = cla1.copy()
-        cla3 = cla1.copy(noneSwap=63)
-        cla2[1] = None
-        cla3[1] = None
-        repr_cla2 = repr(cla2)
-        repr_cla3 = repr(cla3)
-        assert repr_cla2.split('<')[0] == "FCLArray(42, 42, 'bar', noneIter="
-        assert repr_cla2.split('>')[1] == ')'
-        assert repr_cla3.split('<')[0] == "FCLArray(42, 63, 'bar', noneIter="
-        assert repr_cla3.split('>')[1] == ')'
-        assert repr_cla2.split('>')[0].split('<')[1] != repr_cla3.split('>')[0].split('<')[1]
+        fcla1 = FCLArray(42, 'foo', 'bar', default=42)
+        fcla2 = fcla1.copy()
+        fcla3 = fcla1.copy(noneSwap=63)
+        fcla2[1] = None
+        fcla3[1] = None
+        repr_fcla2 = repr(fcla2)
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla2.split('<')[0] == "FCLArray(42, 42, 'bar', noneIter="
+        assert repr_fcla2.split('>')[1] == ')'
+        assert repr_fcla3.split('<')[0] == "FCLArray(42, 63, 'bar', noneIter="
+        assert repr_fcla3.split('>')[1] == ')'
+        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
 
-        cla1 = FCLArray(16, 'foo', 'bar', 100, 101, noneSwap=42)
-        cla2 = cla1.copy(size=-4)
-        cla3 = cla1.copy(size=4)
-        cla2[0] = None
-        cla3[1] = None
-        repr_cla2 = repr(cla2)
-        repr_cla3 = repr(cla3)
-        assert repr_cla2.split('<')[0] == "FCLArray(42, 'bar', 100, 101, noneIter="
-        assert repr_cla2.split('>')[1] == ')'
-        assert repr_cla3.split('<')[0] == "FCLArray(16, 42, 'bar', 100, noneIter="
-        assert repr_cla3.split('>')[1] == ')'
-        assert repr_cla2.split('>')[0].split('<')[1] == repr_cla3.split('>')[0].split('<')[1]
+        fcla1 = FCLArray(16, 'foo', 'bar', 100, 101, default=42)
+        fcla2 = fcla1.copy(size=-4)
+        fcla3 = fcla1.copy(size=4)
+        fcla2[0] = None
+        fcla3[1] = None
+        repr_fcla2 = repr(fcla2)
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla2.split('<')[0] == "FCLArray(42, 'bar', 100, 101, noneIter="
+        assert repr_fcla2.split('>')[1] == ')'
+        assert repr_fcla3.split('<')[0] == "FCLArray(16, 42, 'bar', 100, noneIter="
+        assert repr_fcla3.split('>')[1] == ')'
+        assert repr_fcla2.split('>')[0].split('<')[1] == repr_fcla3.split('>')[0].split('<')[1]
 
     def test_ftuple(self):
         ft1 = FTuple()
@@ -336,7 +336,7 @@ class Test_repr_mix:
     def test_mix1(self):
         thing1 = Left(SQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
-            FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'))
+            Stack([1, 2, 3, Nothing], 42, Left('foofoo'))
         ))
 
         thing2 = eval(repr(thing1))
@@ -347,5 +347,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=None)))"
+        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), Stack([1, 2, 3, Nothing], 42, Left('foofoo'))))"
         assert repr_thing1 == repr_str

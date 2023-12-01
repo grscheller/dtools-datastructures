@@ -52,13 +52,6 @@ class FCLArray(CLArrayBase, FP):
     empty tuple () is used in lieu of None, but () is not set as the default
     value.
     """
-    def __init__(self, *ds,
-                 size: int|None=None,
-                 noneIter: Iterator|None=None,
-                 noneSwap: Any|None=tuple()):
-
-        super().__init__(*ds, size=size, noneIter=noneIter, noneSwap=noneSwap)
-
     def __str__(self):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
@@ -86,9 +79,9 @@ class FCLArray(CLArrayBase, FP):
             noneIter = self._none
 
         if size is None:
-            return FCLArray(*map(f, self), noneIter=noneIter, noneSwap=noneSwap)
+            return FCLArray(*map(f, self), noneIter=noneIter, default=noneSwap)
         else:
-            return FCLArray(*map(f, self), size=size, noneIter=noneIter, noneSwap=noneSwap)
+            return FCLArray(*map(f, self), size=size, noneIter=noneIter, default=noneSwap)
             
     def flatMap(self, f: Callable[[Any], FCLArray],
                 size: int|None=None,
@@ -110,7 +103,7 @@ class FCLArray(CLArrayBase, FP):
             *chain(
                 *self.map(f)
             ),
-            size=size, noneIter=noneIter, noneSwap=noneSwap
+            size=size, noneIter=noneIter, default=noneSwap
         )
 
     def mergeMap(self, f: Callable[[Any], FCLArray],
@@ -129,7 +122,7 @@ class FCLArray(CLArrayBase, FP):
             *merge(
                 *self.map(f)
             ),
-            size=size, noneIter=noneIter, noneSwap=noneSwap
+            size=size, noneIter=noneIter, default=noneSwap
         )
 
     def exhastMap(self, f: Callable[[Any], FCLArray],
@@ -148,7 +141,7 @@ class FCLArray(CLArrayBase, FP):
             *exhaust(
                 *self.map(f)
             ),
-            size=size, noneIter=noneIter, noneSwap=noneSwap
+            size=size, noneIter=noneIter, default=noneSwap
         )
 
 if __name__ == "__main__":
