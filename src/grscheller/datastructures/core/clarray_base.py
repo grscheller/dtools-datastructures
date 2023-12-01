@@ -34,17 +34,20 @@ from .circular_array import CircularArray
 class CLArrayBase():
     """Constant Length Array
 
-    Base class for fixed length array data structure. None
-    values
-    are not permitted to be stored to these data structure. A default iterator
-    can be defined to swap out None values if stored to the CLArray. If no such
+    Base class for fixed length array data structure. None values are not
+    permitted to be stored to these data structure. A default iterator can be
+    defined to swap out None values if stored to the CLArray. If no such
     iterator is defined, or is exhausted, the data structure defaults back to an
-    infinite iterator which supplies an infinite stream of empty tuples ().
+    infinite iterator which supplies an infinite stream of default values, the
+    "default" default value is the empty tuples ().
 
-    Unless specifically resized, this data structure is guaranteed to remain
-    a fixed length.
+    These data structures are guaranteed to remain a fixed length.
 
-    TODO: Elaborate on constructor values here, or figure out how to get pdoc
+    So that data is not lost when imposing a fixed size upon these
+    datastructures, cleaved data is pushed onto the front of the default
+    iterator.
+
+    TODO: Describe constructor values here, or figure out how to get pdoc
           to generate documentation from a constructor docstring.
     """
     def __init__(self, *ds,
@@ -54,25 +57,26 @@ class CLArrayBase():
 
         match (noneIter, default):
             case (None, None):
-                self._none = cycle(((),))
                 self._default = ()
+                self._none = cycle(((),))
             case (None, default):
+                self._default = default
                 self._none = cycle((default,))
+            case (noneIter, None):
+                self._default = ()
+                self._none = chain(noneIter, cycle(((),)))
+            case (noneIter, default):
                 self._default = default
-            case (none, None):
-                self._none = chain(none, cycle(((),)))
-                self._default = None
-            case (none, default):
-                self._none = chain(none, cycle((default,)))
-                self._default = default
+                self._none = chain(noneIter, cycle((default,)))
 
         ca = CircularArray()
         none = self._none
 
-        # For initial data, just ignore None values
         for d in ds:
             if d is not None:
                 ca.pushR(d)
+            else:
+                ca.pushR(self._default)
 
         ds_size = len(ca)
 
@@ -85,7 +89,7 @@ class CLArrayBase():
         if abs_size > ds_size:
             if size > 0:
                 # pad higher indexes by iterating in default values
-                for _ in range(size-ds_size):
+                for _ in range(size - ds_size):
                     ca.pushR(next(none))
             else:
                 # pad lower indexes (on "left")
@@ -96,8 +100,8 @@ class CLArrayBase():
             extra = CircularArray()
             if size > 0:
                 # push final data at end
-                for _ in range(size - ds_size):
-                    extra.pushL(ca.popR())
+                for _ in range(ds_size - size):
+                    extra.pushR(ca.popR())
             else:
                 # push inital data at beginning
                 for _ in range(ds_size + size):
@@ -135,14 +139,19 @@ class CLArrayBase():
 
     def __bool__(self):
         """Return true only if there exists an array value not equal to the
-        empty tuple (). Empty arrays always return false.
-
-        TODO: Default this to noneSwap value & noneSwap to ()
+        default value which eventually gets used in lieu of None. Empty arrays
+        always return false. The "default" default value is the empty tuple ().
         """
         for value in self:
-            if value != ():
+            if value != self._default:
                 return True
         return False
+
+    def default(self):
+        """Return the default value that eventually gets used in lieu of None.
+        The "default" default value is the empty tuple ().
+        """
+        return self._default
 
     def __len__(self) -> int:
         """Returns the size of the CLArray"""
@@ -167,8 +176,18 @@ class CLArrayBase():
         return self._ca == other._ca
 
     def reverse(self) -> None:
-        """Reverse the elements of the CLArray. Mutates the CLArray."""
+        """Swap the circular array with one with its elements reversed."""
         self._ca = self._ca.reverse()
+
+    def copy(self,
+             size: int|None=None,
+             noneIter: Iterator|None=None,
+             default: Any|None=None) -> type[CLArrayBase]:
+        """Return shallow copy of the FCLArray in O(n) complexity."""
+        return self.map(lambda x: x, size, noneIter, default)
+
+    def map(self, f, size, noneIter, default):
+        raise NotImplementedError
 
 if __name__ == "__main__":
     pass

@@ -194,7 +194,7 @@ class CircularArray:
         return CircularArray(*self)
 
     def reverse(self) -> CircularArray:
-        return CircularArray(reversed(self))
+        return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -> None:
         """Push data on rear of circle"""

@@ -25,6 +25,11 @@ class TestFCLArray:
         assert cl1[4] == 4
         ret = cl1.mapSelf(lambda x: x*x)
         assert ret == None
+        assert cl1[0] == 0
+        assert cl1[1] == 1
+        assert cl1[2] == 16
+        assert cl1[3] == 9
+        assert cl1[4] == 16
         ret = cl1.reverse()
         assert ret == None
         assert cl1[0] == 16
@@ -77,23 +82,6 @@ class TestFCLArray:
         assert not cl2
         assert len(cl1) == 1
         assert len(cl2) == 1
-        cl3 = cl1 + cl2
-        assert cl3[0] == 1
-        assert cl3[1] == 2
-        assert len(cl3) == 2
-        assert cl3
-        assert type(cl3) == FCLArray
-        assert cl3.default() == 1
-        cl4 = cl3.copy()
-        assert cl4.default() == 1
-        assert cl4 == cl3
-        assert cl4 is not cl3
-        cl3_copy = cl3.copy()
-        assert cl3_copy == cl3
-        cl3.reverse()
-        assert cl3 != cl3_copy
-        assert cl3[0] == 2
-        assert cl3[1] == 1
 
         foo = 42
         baz = 'hello world'
@@ -127,23 +115,25 @@ class TestFCLArray:
         assert not cl2
         assert len(cl1) == 1
         assert len(cl2) == 1
-        cl3 = cl1 + cl2
-        assert cl3[0] == 12
-        assert cl3[1] == 30
-        del cl3
 
+        cl0 = FCLArray()
         cl1 = FCLArray(default=())
         cl2 = FCLArray(None, None, None, size=2)
         cl3 = FCLArray(None, None, None, size=2, default=())
-        assert cl1 != cl2
-        assert cl2 == cl3
-        assert cl1 is not cl2
-        assert not cl1
-        assert cl2
-        assert not cl3
+        assert len(cl0) == 0
+        assert cl0.default() == ()
         assert len(cl1) == 0
+        assert cl1.default() == ()
         assert len(cl2) == 2
+        assert cl2.default() == ()
+        assert len(cl3) == 2
+        assert cl3.default() == ()
         assert cl2[0] == cl2[1] == ()
+        assert cl3[0] == cl3[1] == ()
+        assert not cl0
+        assert not cl1
+        assert not cl2
+        assert not cl3
 
         cl1 = FCLArray(1, 2, size=3, default=42)
         cl2 = FCLArray(1, 2, None, default=42)
@@ -312,19 +302,6 @@ class TestFCLArray:
         aa = next(clrevIter)
         assert cl[0] == aa == 1
 
-    def test_add(self):
-        cl1 = FCLArray(1,2,3)
-        cl2 = FCLArray(4,5,6)
-        assert cl1 + cl2 == FCLArray(1,2,3,4,5,6)
-        assert cl2 + cl1 == FCLArray(4,5,6,1,2,3)
-
-        cl1 = FCLArray(1,2,3)
-        cl2 = FCLArray(4,5,6,7,8,9)
-        cl12 = cl1 + cl2
-        cl21 = cl2 + cl1
-        assert cl12 == FCLArray(1,2,3,4,5,6,7,8,9)
-        assert cl21 == FCLArray(4,5,6,7,8,9,1,2,3)
-
     def test_reverse(self):
         cl1 = FCLArray(1, 2, 3, 'foo', 'bar')
         cl2 = FCLArray('bar', 'foo', 3, 2, 1)
@@ -352,18 +329,18 @@ class TestFCLArray:
                 return None
             return n
 
-        cl4 = FCLArray(*range(43), size = 5)
-        cl42 = FCLArray(*range(43), size = -5)
-        cl4_copy = cl4.copy()
-        cl42_copy = cl42.copy()
-        assert cl4 == cl4_copy
-        assert cl4 is not cl4_copy
-        assert cl42 == cl42_copy
-        assert cl42 is not cl42_copy
-        assert cl4[0] == 0
-        assert cl4[4] == cl4[-1] == 4
-        assert cl42[0] == 38
-        assert cl42[4] == cl42[-1] == 42
+        fcl4 = FCLArray(*range(43), size = 5)
+        fcl5 = FCLArray(*range(43), size = -5)
+        fcl4_copy = fcl4.copy()
+        fcl5_copy = fcl5.copy()
+        assert fcl4 == fcl4_copy
+        assert fcl4 is not fcl4_copy
+        assert fcl5 == fcl5_copy
+        assert fcl5 is not fcl5_copy
+        assert fcl4[0] == 0
+        assert fcl4[4] == fcl4[-1] == 4
+        assert fcl5[0] == 38
+        assert fcl5[4] == fcl5[-1] == 42
 
         fcl0 = FCLArray(None, *range(1, 6), None, size=7, default=0)
         assert fcl0 == FCLArray(0, 1, 2, 3, 4, 5, 0)
@@ -396,15 +373,15 @@ class TestFCLArray:
         assert fcl8.map(ge3) != fcl7.map(ge3)
         assert fcl8.default() == fcl7.default() == -1
         assert fcl7.map(ge3) == FCLArray(-1, -1, -1, 3, 4, 5, -1, default = -1)
-        assert repr(fcl8.map(ge3)) == 'FCLArray(4, 4, 4, 3, 4, 5, 4, default=-1)'
 
         fcl0 = FCLArray(5,4,3,2,1)
         assert fcl0.copy(size=3) == FCLArray(5, 4, 3)
         assert fcl0.copy(size=-3) == FCLArray(3, 2, 1)
-        assert repr(fcl0.map(ge3)) == 'FCLArray(5, 4, 3, (), (), default=None)'
-        fcl1 = fcl0.copy(default=0)
-        fcl1.mapSelf(ge3)
-        assert repr(fcl1.map(ge3)) == 'FCLArray(5, 4, 3, 0, 0, default=0)'
+        fcl1 = fcl0.map(ge3)
+        assert (fcl1[0], fcl1[1], fcl1[2], fcl1[3], fcl1[4]) == (5, 4, 3, (), ())
+        fcl2 = fcl0.copy(default=0)
+        fcl2.mapSelf(ge3)
+        assert (fcl2[0], fcl2[1], fcl2[2], fcl2[3], fcl2[4]) == (5, 4, 3, 0, 0)
 
     def test_flatMap(self):
 
@@ -426,8 +403,11 @@ class TestFCLArray:
         fcl4 = fcl0.flatMap(lambda x: FCLArray(*range(x%5), default=7), default=6)
         assert fcl1 == fcl2 == fcl3 == fcl4
         assert fcl1 == FCLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
-        assert fcl0.default() == fcl1.default() == fcl2.default()
-        assert fcl2.default() == fcl3.default() == fcl4.default() == 6
+        assert fcl0.default() == 6
+        assert fcl1.default() == 6
+        assert fcl2.default() == 6
+        assert fcl3.default() == 6
+        assert fcl4.default() == 6
         fcl11 = fcl1.map(ge1)
         fcl12 = fcl2.map(ge1)
         fcl13 = fcl3.map(ge1)

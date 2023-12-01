@@ -128,7 +128,7 @@ class Test_repr:
 
         fcla1 = FCLArray(42, 'foo', 'bar', default=42)
         fcla2 = fcla1.copy()
-        fcla3 = fcla1.copy(noneSwap=63)
+        fcla3 = fcla1.copy(default=63)
         fcla2[1] = None
         fcla3[1] = None
         repr_fcla2 = repr(fcla2)
@@ -139,18 +139,36 @@ class Test_repr:
         assert repr_fcla3.split('>')[1] == ')'
         assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
 
-        fcla1 = FCLArray(16, 'foo', 'bar', 100, 101, default=42)
+        fcla1 = FCLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
         fcla2 = fcla1.copy(size=-4)
         fcla3 = fcla1.copy(size=4)
-        fcla2[0] = None
-        fcla3[1] = None
         repr_fcla2 = repr(fcla2)
         repr_fcla3 = repr(fcla3)
-        assert repr_fcla2.split('<')[0] == "FCLArray(42, 'bar', 100, 101, noneIter="
+        assert repr_fcla2.split('<')[0] == "FCLArray('bar', 100, 101, '102', noneIter="
         assert repr_fcla2.split('>')[1] == ')'
-        assert repr_fcla3.split('<')[0] == "FCLArray(16, 42, 'bar', 100, noneIter="
+        assert repr_fcla3.split('<')[0] == "FCLArray(16, 'foo', 'bar', 100, noneIter="
         assert repr_fcla3.split('>')[1] == ')'
-        assert repr_fcla2.split('>')[0].split('<')[1] == repr_fcla3.split('>')[0].split('<')[1]
+        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
+
+        fcla2[0] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "FCLArray(16, 100, 101, '102', noneIter="
+        fcla2[1] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "FCLArray(16, 'foo', 101, '102', noneIter="
+        fcla2[2] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "FCLArray(16, 'foo', 42, '102', noneIter="
+
+        fcla3[-1] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "FCLArray(16, 'foo', 'bar', '102', noneIter="
+        fcla3[-2] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "FCLArray(16, 'foo', 101, '102', noneIter="
+        fcla3[-3] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "FCLArray(16, 42, 101, '102', noneIter="
 
     def test_ftuple(self):
         ft1 = FTuple()

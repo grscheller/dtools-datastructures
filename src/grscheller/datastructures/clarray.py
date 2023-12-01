@@ -31,6 +31,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Iterator
+from itertools import cycle
 from .core.clarray_base import CLArrayBase
 
 class CLArray(CLArrayBase):
@@ -49,25 +50,39 @@ class CLArray(CLArrayBase):
     with default values or slice off trailing data. If size < 0, pad data on
     left with default value or slice off initial data.
     """
-    def __init__(self, *ds,
-                 size: int|None=None,
-                 noneIter: Iterator|None=None,
-                 noneSwap: Any|None=tuple()):
-
-        super().__init__(*ds, size=size, noneIter=noneIter, noneSwap=noneSwap)
-
     def __str__(self):
         return '[[[' + ', '.join(map(repr, self)) + ']]]'
 
-    def copy(self, noneIter: Iterator|None=None) -> CLArray:
-        """Return shallow copy of the CLArray in O(n) complexity."""
-        if noneIter is None:
-            noneIter = self._none
-        return CLArray(*self, noneIter=noneIter)
-
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the CLArray by appling function over the CLArray contents."""
-        self._ca = CLArray(*map(f, self), noneIter=self._none)._ca
+        self._ca = CLArray(*map(f, self),
+                           noneIter=self._none,
+                           default=self._default)._ca
 
+    def map(self,
+            f: Callable[[Any], Any],
+            size: int|None=None,
+            noneIter: Iterator|None=None,
+            default: Any|None=None) -> CLArray:
+        """Apply function f over the CLArray contents. Return a new CLArray with
+        the mapped contents. Size to the data unless size is given. If noneIter
+        is not given, use default to create the none iterator. If default is not
+        given, use the value from the CLArray being mapped.
+        """
+        match (noneIter, default):
+            case (None, None):
+                default = self._default
+                noneIter = cycle((default,))
+            case (None, default):
+                noneIter = cycle((default,))
+            case (noneIter, None):
+                # Careful: noneIter might be infinite!
+                default = self._default
+
+        if size is None:
+            return CLArray(*map(f, self), noneIter=noneIter, default=default)
+        else:
+            return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)
+            
 if __name__ == "__main__":
     pass
