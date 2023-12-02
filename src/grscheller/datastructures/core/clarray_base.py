@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Never, Union, Iterator
+from typing import Any, Callable,Iterator, Never, Type, Union
 from itertools import chain, cycle
 from .circular_array import CircularArray
 
@@ -186,8 +186,15 @@ class CLArrayBase():
         """Return shallow copy of the FCLArray in O(n) complexity."""
         return self.map(lambda x: x, size, noneIter, default)
 
-    def map(self, f, size, noneIter, default):
-        raise NotImplementedError
+    def mapSelf(self, f: Callable[[Any], Any]) -> None:
+        """Mutate the FCLArray by appling function over the FCLArray contents."""
+        self._ca = type(self)(*map(f, self),
+                            noneIter=self._none,
+                            default=self._default)._ca
 
+    def map(self, f, size, noneIter, default) -> Never:
+        """Needs to be mplemented in base classes"""
+        raise NotImplementedError
+        
 if __name__ == "__main__":
     pass

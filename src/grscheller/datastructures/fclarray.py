@@ -31,7 +31,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Iterable
 from itertools import chain, cycle
 from .core.iterlib import merge, exhaust
 from .core.clarray_base import CLArrayBase
@@ -55,14 +55,8 @@ class FCLArray(CLArrayBase, FP):
     def __str__(self):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
-        """Mutate the FCLArray by appling function over the FCLArray contents."""
-        self._ca = FCLArray(*map(f, self),
-                            noneIter=self._none,
-                            default=self._default)._ca
-        
     def map(self, f: Callable[[Any], Any], size: int|None=None,
-            noneIter: Iterator|None=None, default: Any|None=None) -> FCLArray:
+            noneIter: Iterator|None=None, default: Any|None=None) -> Type[CLArrayBase]:
         """Apply function f over the FCLArray contents. Return a new FCLArray
         with the mapped contents. Size to the data unless size is given. If
         noneIter is not given, use default to create the none iterator. If
@@ -97,13 +91,10 @@ class FCLArray(CLArrayBase, FP):
         over.
         """
         if (noneIter, default) == (None, None):
-            noneIter = self._none
+            default = self._default
 
         return FCLArray(
-            *chain(
-                *self.map(f)
-            ),
-            size=size, noneIter=noneIter, default=default
+            *chain(*self.map(f)), size=size, noneIter=noneIter, default=default
         )
 
     def mergeMap(self, f: Callable[[Any], FCLArray],
@@ -119,13 +110,10 @@ class FCLArray(CLArrayBase, FP):
             noneIter = self._none
 
         return FCLArray(
-            *merge(
-                *self.map(f)
-            ),
-            size=size, noneIter=noneIter, default=default
+            *merge(*self.map(f)), size=size, noneIter=noneIter, default=default
         )
 
-    def exhastMap(self, f: Callable[[Any], FCLArray],
+    def exhastMap(self, f: Callable[[Any], FCLArray|Iterable],
                   size: int|None=None,
                   noneIter: Iterator|None=None,
                   default: Any|None=None) -> FCLArray:
@@ -138,10 +126,7 @@ class FCLArray(CLArrayBase, FP):
             noneIter = self._none
 
         return FCLArray(
-            *exhaust(
-                *self.map(f)
-            ),
-            size=size, noneIter=noneIter, default=default
+            *exhaust(*self.map(f)), size=size, noneIter=noneIter, default=default
         )
 
 if __name__ == "__main__":
