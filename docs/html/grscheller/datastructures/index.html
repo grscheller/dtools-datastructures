@@ -49,21 +49,22 @@ endeavor to be Pythonic.</p>
    endeavor to be Pythonic.
 &#34;&#34;&#34;
 
-__version__ = &#34;0.10.13.0&#34;
+__version__ = &#34;0.10.13.2&#34;
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from .core.circular_array import *
-from .dqueue import *
-from .clarray import *
-from .squeue import *
-from .stack import *
-from .fclarray import *
-from .fstack import *
-from .ftuple import *
-from .core.fp import *
-from .core.iterlib import *</code></pre>
+from .core.fp import Maybe, Some, Nothing
+from .core.fp import Either, Left, Right
+from .core.fp import maybeToEither, eitherToMaybe
+from .core.iterlib import merge, exhaust
+from .clarray import CLArray
+from .dqueue import DQueue
+from .squeue import SQueue
+from .stack import Stack
+from .fclarray import FCLArray
+from .fstack import FStack
+from .ftuple import FTuple</code></pre>
 </details>
 </section>
 <section>

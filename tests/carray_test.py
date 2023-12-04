@@ -17,14 +17,16 @@ from grscheller.datastructures.core.circular_array import CircularArray
 class TestCircularArray:
     def test_mutate_returns_none(self):
         ca1 = CircularArray()
-        ca1.pushL(1); ca1.pushL(2)
+        ca1.pushL(1)
+        ca1.pushL(2)
         ret = ca1.pushL(3)
-        assert ret == None
-        ca1.pushR(1); ca1.pushR(2)
+        assert ret is None
+        ca1.pushR(1)
+        ca1.pushR(2)
         ret = ca1.pushR(3)
-        assert ret == None
+        assert ret is None
         ret = ca1.mapSelf(lambda x: x+1)
-        assert ret == None
+        assert ret is None
         assert ca1.popL() == ca1.popR() == 4
         ca2 = ca1.map(lambda x: x+1)
         assert ca1 is not ca2
@@ -33,25 +35,31 @@ class TestCircularArray:
 
     def test_push_then_pop(self):
         c = CircularArray()
-        pushed = 42; c.pushL(pushed)
+        pushed = 42
+        c.pushL(pushed)
         popped = c.popL()
         assert pushed == popped
         assert len(c) == 0
-        assert c.popL() == None
-        pushed = 0; c.pushL(pushed)
+        assert c.popL() is None
+        pushed = 0
+        c.pushL(pushed)
         popped = c.popR()
         assert pushed == popped == 0
         assert not c
-        pushed = 0; c.pushR(pushed)
+        pushed = 0
+        c.pushR(pushed)
         popped = c.popL()
         assert popped is not None
         assert pushed == popped
         assert len(c) == 0
-        pushed = ''; c.pushR(pushed)
+        pushed = ''
+        c.pushR(pushed)
         popped = c.popR()
         assert pushed == popped
         assert len(c) == 0
-        c.pushR('first'); c.pushR('second'); c.pushR('last')
+        c.pushR('first')
+        c.pushR('second')
+        c.pushR('last')
         assert c.popL() == 'first'
         assert c.popR() == 'last'
         assert c
@@ -134,7 +142,8 @@ class TestCircularArray:
         c2.pushR(tup2)
         assert c1 == c2
 
-        holdA = c1.popL(); c1.resize(42)
+        holdA = c1.popL()
+        c1.resize(42)
         holdB = c1.popL()
         holdC = c1.popR()
         c1.pushL(holdB)
@@ -173,8 +182,6 @@ class TestCircularArray:
             c2[3] = 'dog'       # no such index
         except IndexError:
             assert True
-        except:
-            assert False
         else:
             assert False
         assert c1 != c2

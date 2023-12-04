@@ -18,33 +18,39 @@ class TestDqueue:
     def test_mutate_returns_none(self):
         dq = DQueue()
         ret = dq.pushL(1,2,3)
-        assert ret == None
+        assert ret is None
         ret = dq.pushR(1,2,3)
-        assert ret == None
+        assert ret is None
         ret = dq.map(lambda x: x-1)
-        assert ret == None
+        assert ret is None
         assert dq.popL() == dq.popR() == 2
 
     def test_push_then_pop(self):
         dq = DQueue()
-        pushed = 42; dq.pushL(pushed)
+        pushed = 42
+        dq.pushL(pushed)
         popped = dq.popL()
         assert pushed == popped
         assert len(dq) == 0
-        pushed = 0; dq.pushL(pushed)
+        pushed = 0
+        dq.pushL(pushed)
         popped = dq.popR()
         assert pushed == popped == 0
         assert not dq
-        pushed = 0; dq.pushR(pushed)
+        pushed = 0
+        dq.pushR(pushed)
         popped = dq.popL()
         assert popped is not None
         assert pushed == popped
         assert len(dq) == 0
-        pushed = ''; dq.pushR(pushed)
+        pushed = ''
+        dq.pushR(pushed)
         popped = dq.popR()
         assert pushed == popped
         assert len(dq) == 0
-        dq.pushR('first'); dq.pushR('second'); dq.pushR('last')
+        dq.pushR('first')
+        dq.pushR('second')
+        dq.pushR('last')
         assert dq.popL() == 'first'
         assert dq.popR() == 'last'
         assert dq
@@ -89,8 +95,8 @@ class TestDqueue:
         assert not dq
         assert not dq.popL()
         assert not dq.popR()
-        assert dq.popL() == None
-        assert dq.popR() == None
+        assert dq.popL() is None
+        assert dq.popR() is None
         assert len(dq) == 0
         assert not dq
         dq.pushR(42)
@@ -100,8 +106,8 @@ class TestDqueue:
         assert dq.peakR() == 42
         assert dq.popR() == 42
         assert not dq
-        assert dq.peakL() == None
-        assert dq.peakR() == None
+        assert dq.peakL() is None
+        assert dq.peakR() is None
 
     def test_iterators(self):
         data = [1, 2, 3, 4]

@@ -53,11 +53,12 @@ class CLArray(CLArrayBase):
     def __str__(self):
         return '[[[' + ', '.join(map(repr, self)) + ']]]'
 
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
-        """Mutate the CLArray by appling function over the CLArray contents."""
-        self._ca = CLArray(*map(f, self),
-                           noneIter=self._none,
-                           default=self._default)._ca
+    def copy(self,
+             size: int|None=None,
+             noneIter: Iterator|None=None,
+             default: Any|None=None) -> CLArray:
+        """Return shallow copy of the FCLArray in O(n) complexity."""
+        return self.map(lambda x: x, size, noneIter, default)
 
     def map(self,
             f: Callable[[Any], Any],

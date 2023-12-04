@@ -32,7 +32,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 
 class CircularArray:
     """Class implementing a stateful circular array with amortized O(1)
@@ -108,9 +108,9 @@ class CircularArray:
         elif -cnt <= index < 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            low = -cnt
+            high = cnt - 1
+            msg = f'Out of bounds: index = {index} not between {low} and {high}'
             msg += 'while getting value.'
             msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
@@ -126,9 +126,9 @@ class CircularArray:
         elif -cnt <= index < 0:
             self._list[(self._front + cnt + index) % self._capacity] = value
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            low = -cnt
+            high = cnt - 1
+            msg = f'Out of bounds: index = {index} not between {low} and {high}'
             msg += 'while setting value.'
             msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:

@@ -25,14 +25,14 @@ class TestFCLArray:
         assert cl1[3] == 3
         assert cl1[4] == 4
         ret = cl1.mapSelf(lambda x: x*x)
-        assert ret == None
+        assert ret is None
         assert cl1[0] == 0
         assert cl1[1] == 1
         assert cl1[2] == 16
         assert cl1[3] == 9
         assert cl1[4] == 16
         ret = cl1.reverse()
-        assert ret == None
+        assert ret is None
         assert cl1[0] == 16
         assert cl1[1] == 9
         assert cl1[2] == 16

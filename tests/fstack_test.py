@@ -68,7 +68,7 @@ class Test_FStack:
         assert s3 == s1
         while s1:
             s1 = s1.tail()
-        assert s1.head() == None
+        assert s1.head() is None
         assert s1.tail() == FStack()
 
     def test_stackIter(self):
@@ -111,7 +111,7 @@ class Test_FStack:
         s3 = s3.tail().tail()
         assert s3 == s4
         assert s3 is not None
-        assert s4 != None
+        assert s4 is not None
 
         s5 = FStack(*[1,2,3,4])
         s6 = FStack(*[1,2,3,42])

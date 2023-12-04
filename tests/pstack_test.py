@@ -19,11 +19,12 @@ class TestStack:
     def test_mutate_returns_none(self):
         ps = Stack(41)
         ret = ps.push(1,2,3)
-        assert ret == None
+        assert ret is None
 
     def test_pushThenPop(self):
         s1 = Stack()
-        pushed = 42; s1.push(pushed)
+        pushed = 42
+        s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
@@ -70,7 +71,7 @@ class TestStack:
         assert s3 == s1
         while s1:
             s1.pop()
-        assert s1.pop() == None
+        assert s1.pop() is None
 
     def test_stack_iter(self):
         giantStack = Stack(*[" Fum", " Fo", " Fi", "Fe"])

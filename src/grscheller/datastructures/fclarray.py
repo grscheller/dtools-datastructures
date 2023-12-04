@@ -18,7 +18,7 @@ Module implementing an mutable fixed length data structure with O(1) data
 access. All mutating methods are guaranteed not to change the length of the
 data structure.
 
-None values are not allowed in this data structures. An immutable default value
+None values are not allowed in this data structures. An immutable default value                     
 is set upon instantiating. If no default value is given, the empty tuple () is
 used in lieu of None, but is not set as the default value. Method which return
 new FCLArray values can set a different default value for the new instance.
@@ -55,8 +55,15 @@ class FCLArray(CLArrayBase, FP):
     def __str__(self):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
+    def copy(self,
+             size: int|None=None,
+             noneIter: Iterator|None=None,
+             default: Any|None=None) -> FCLArray:
+        """Return shallow copy of the FCLArray in O(n) complexity."""
+        return self.map(lambda x: x, size, noneIter, default)
+
     def map(self, f: Callable[[Any], Any], size: int|None=None,
-            noneIter: Iterator|None=None, default: Any|None=None) -> Type[CLArrayBase]:
+            noneIter: Iterator|None=None, default: Any|None=None) -> FCLArray:
         """Apply function f over the FCLArray contents. Return a new FCLArray
         with the mapped contents. Size to the data unless size is given. If
         noneIter is not given, use default to create the none iterator. If

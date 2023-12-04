@@ -17,7 +17,7 @@ from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.circular_array import CircularArray
 from grscheller.datastructures import FStack, Stack
 from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import FCLArray, FTuple
+from grscheller.datastructures import FCLArray
 from grscheller.datastructures import FTuple
 
 
@@ -67,7 +67,9 @@ class Test_str:
         bar = foo.copy()
         bar.pop()
         foo.push(2,3,4)
-        bar.push(2); bar.push(3); bar.push(4)
+        bar.push(2)
+        bar.push(3)
+        bar.push(4)
         baz = bar
         assert str(foo) == '|| 1 <- 2 <- 3 <- 4 ><'
         assert str(baz) == '|| 2 <- 3 <- 4 ><'

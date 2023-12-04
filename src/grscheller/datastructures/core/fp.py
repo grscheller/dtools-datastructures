@@ -19,12 +19,10 @@ Class Either: Implements a left biased Either Monad.
 """
 from __future__ import annotations
 
-__all__ = [
-            'FP', 'FP_rev',
+__all__ = [ 'FP', 'FP_rev',
             'Either', 'Left', 'Right',
             'Maybe', 'Some', 'Nothing',
-            'maybeToEither', 'eitherToMaybe'
-          ]
+            'maybeToEither', 'eitherToMaybe' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

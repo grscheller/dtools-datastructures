@@ -27,7 +27,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable,Iterator, Never, Type, Union
+from typing import Any, Callable,Iterator, Never, Union
 from itertools import chain, cycle
 from .circular_array import CircularArray
 
@@ -179,22 +179,11 @@ class CLArrayBase():
         """Swap the circular array with one with its elements reversed."""
         self._ca = self._ca.reverse()
 
-    def copy(self,
-             size: int|None=None,
-             noneIter: Iterator|None=None,
-             default: Any|None=None) -> type[CLArrayBase]:
-        """Return shallow copy of the FCLArray in O(n) complexity."""
-        return self.map(lambda x: x, size, noneIter, default)
-
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Mutate the FCLArray by appling function over the FCLArray contents."""
         self._ca = type(self)(*map(f, self),
                             noneIter=self._none,
                             default=self._default)._ca
 
-    def map(self, f, size, noneIter, default) -> Never:
-        """Needs to be mplemented in base classes"""
-        raise NotImplementedError
-        
 if __name__ == "__main__":
     pass

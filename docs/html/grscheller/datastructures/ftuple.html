@@ -63,7 +63,7 @@ class FTuple(FP):
     &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
-        self._ds = tuple(filter(lambda x: x != None, ds))
+        self._ds = tuple(filter(lambda x: x is not None, ds))
 
     def __iter__(self):
         &#34;&#34;&#34;Iterate over the immutable state of the FTuple&#34;&#34;&#34;
@@ -155,7 +155,7 @@ if __name__ == &#34;__main__&#34;:
     &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
     def __init__(self, *ds):
         &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
-        self._ds = tuple(filter(lambda x: x != None, ds))
+        self._ds = tuple(filter(lambda x: x is not None, ds))
 
     def __iter__(self):
         &#34;&#34;&#34;Iterate over the immutable state of the FTuple&#34;&#34;&#34;

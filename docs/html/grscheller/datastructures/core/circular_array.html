@@ -67,7 +67,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 
 class CircularArray:
     &#34;&#34;&#34;Class implementing a stateful circular array with amortized O(1)
@@ -143,9 +143,9 @@ class CircularArray:
         elif -cnt &lt;= index &lt; 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {l} and {h}&#39;
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
             msg += &#39;while getting value.&#39;
             msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
@@ -161,9 +161,9 @@ class CircularArray:
         elif -cnt &lt;= index &lt; 0:
             self._list[(self._front + cnt + index) % self._capacity] = value
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {l} and {h}&#39;
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
             msg += &#39;while setting value.&#39;
             msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
@@ -229,7 +229,7 @@ class CircularArray:
         return CircularArray(*self)
 
     def reverse(self) -&gt; CircularArray:
-        return CircularArray(reversed(self))
+        return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
@@ -411,9 +411,9 @@ interface.</p>
         elif -cnt &lt;= index &lt; 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {l} and {h}&#39;
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
             msg += &#39;while getting value.&#39;
             msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
@@ -429,9 +429,9 @@ interface.</p>
         elif -cnt &lt;= index &lt; 0:
             self._list[(self._front + cnt + index) % self._capacity] = value
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;Out of bounds: index = {index} not between {l} and {h}&#39;
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
             msg += &#39;while setting value.&#39;
             msg0 = &#39;Trying to get value from an empty data structure.&#39;
             if cnt &gt; 0:
@@ -497,7 +497,7 @@ interface.</p>
         return CircularArray(*self)
 
     def reverse(self) -&gt; CircularArray:
-        return CircularArray(reversed(self))
+        return CircularArray(*reversed(self))
 
     def pushR(self, d: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
@@ -809,7 +809,7 @@ circular array, don't return anything.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; CircularArray:
-    return CircularArray(reversed(self))</code></pre>
+    return CircularArray(*reversed(self))</code></pre>
 </details>
 </dd>
 </dl>

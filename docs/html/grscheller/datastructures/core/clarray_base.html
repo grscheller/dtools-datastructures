@@ -59,40 +59,47 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Never, Union, Iterator
+from typing import Any, Callable,Iterator, Never, Union
 from itertools import chain, cycle
 from .circular_array import CircularArray
 
 class CLArrayBase():
     &#34;&#34;&#34;Constant Length Array
 
-    Base class for fixed length array data structure. None
-    values
-    are not permitted to be stored to these data structure. A default iterator
-    can be defined to swap out None values if stored to the CLArray. If no such
+    Base class for fixed length array data structure. None values are not
+    permitted to be stored to these data structure. A default iterator can be
+    defined to swap out None values if stored to the CLArray. If no such
     iterator is defined, or is exhausted, the data structure defaults back to an
-    infinite iterator which supplies an infinite stream of empty tuples ().
+    infinite iterator which supplies an infinite stream of default values, the
+    &#34;default&#34; default value is the empty tuples ().
 
-    Unless specifically resized, this data structure is guaranteed to remain
-    a fixed length.
+    These data structures are guaranteed to remain a fixed length.
 
-    TODO: Elaborate on constructor values here, or figure out how to get pdoc
+    So that data is not lost when imposing a fixed size upon these
+    datastructures, cleaved data is pushed onto the front of the default
+    iterator.
+
+    TODO: Describe constructor values here, or figure out how to get pdoc
           to generate documentation from a constructor docstring.
     &#34;&#34;&#34;
     def __init__(self, *ds,
                  size: int|None=None,
                  noneIter: Iterator|None=None,
-                 noneSwap: Any|None=tuple()):
+                 default: Any|None=None):
 
-        match (noneIter, noneSwap):
+        match (noneIter, default):
             case (None, None):
-                raise ValueError(&#34;noneIter &amp; noneSwap both cannot be None&#34;)
-            case (None, swap):
-                self._none = cycle((swap,))
-            case (none, None):
-                self._none = none  # could throw StopIteration exception
-            case (none, swap):
-                self._none = chain(none, cycle((swap,)))
+                self._default = ()
+                self._none = cycle(((),))
+            case (None, default):
+                self._default = default
+                self._none = cycle((default,))
+            case (noneIter, None):
+                self._default = ()
+                self._none = chain(noneIter, cycle(((),)))
+            case (noneIter, default):
+                self._default = default
+                self._none = chain(noneIter, cycle((default,)))
 
         ca = CircularArray()
         none = self._none
@@ -100,9 +107,12 @@ class CLArrayBase():
         for d in ds:
             if d is not None:
                 ca.pushR(d)
+            else:
+                ca.pushR(self._default)
 
         ds_size = len(ca)
 
+        # If size is None, size to the initial non-None data.
         if size is None:
             abs_size = size = ds_size
         else:
@@ -110,22 +120,25 @@ class CLArrayBase():
 
         if abs_size &gt; ds_size:
             if size &gt; 0:
-                # pad higher indexes (on &#34;right&#34;)
-                for _ in range(size-ds_size):
+                # pad higher indexes by iterating in default values
+                for _ in range(size - ds_size):
                     ca.pushR(next(none))
             else:
                 # pad lower indexes (on &#34;left&#34;)
                 for _ in range(-size - ds_size):
                     ca.pushL(next(none))
         elif abs_size &lt; ds_size:
+            # push extra data onto self._none iterator
+            extra = CircularArray()
             if size &gt; 0:
-                # ignore extra data at end
-                for _ in range(size - ds_size):
-                    ca.popR()
+                # push final data at end
+                for _ in range(ds_size - size):
+                    extra.pushR(ca.popR())
             else:
-                # ignore extra data at beginning
+                # push inital data at beginning
                 for _ in range(ds_size + size):
-                    ca.popL()
+                    extra.pushR(ca.popL())
+            self._none = chain(iter(extra), none)
 
         self._ca = ca
 
@@ -158,14 +171,19 @@ class CLArrayBase():
 
     def __bool__(self):
         &#34;&#34;&#34;Return true only if there exists an array value not equal to the
-        empty tuple (). Empty arrays always return false.
-
-        TODO: Default this to noneSwap value &amp; noneSwap to ()
+        default value which eventually gets used in lieu of None. Empty arrays
+        always return false. The &#34;default&#34; default value is the empty tuple ().
         &#34;&#34;&#34;
         for value in self:
-            if value != ():
+            if value != self._default:
                 return True
         return False
+
+    def default(self):
+        &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+        The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        return self._default
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
@@ -190,8 +208,14 @@ class CLArrayBase():
         return self._ca == other._ca
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Reverse the elements of the CLArray. Mutates the CLArray.&#34;&#34;&#34;
+        &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
         self._ca = self._ca.reverse()
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the FCLArray by appling function over the FCLArray contents.&#34;&#34;&#34;
+        self._ca = type(self)(*map(f, self),
+                            noneIter=self._none,
+                            default=self._default)._ca
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -208,19 +232,21 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.core.clarray_base.CLArrayBase"><code class="flex name class">
 <span>class <span class="ident">CLArrayBase</span></span>
-<span>(</span><span>*ds, size: int | None = None, noneIter: Iterator | None = None, noneSwap: Any | None = ())</span>
+<span>(</span><span>*ds, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Constant Length Array</p>
-<p>Base class for fixed length array data structure. None
-values
-are not permitted to be stored to these data structure. A default iterator
-can be defined to swap out None values if stored to the CLArray. If no such
+<p>Base class for fixed length array data structure. None values are not
+permitted to be stored to these data structure. A default iterator can be
+defined to swap out None values if stored to the CLArray. If no such
 iterator is defined, or is exhausted, the data structure defaults back to an
-infinite iterator which supplies an infinite stream of empty tuples ().</p>
-<p>Unless specifically resized, this data structure is guaranteed to remain
-a fixed length.</p>
-<p>TODO: Elaborate on constructor values here, or figure out how to get pdoc
+infinite iterator which supplies an infinite stream of default values, the
+"default" default value is the empty tuples ().</p>
+<p>These data structures are guaranteed to remain a fixed length.</p>
+<p>So that data is not lost when imposing a fixed size upon these
+datastructures, cleaved data is pushed onto the front of the default
+iterator.</p>
+<p>TODO: Describe constructor values here, or figure out how to get pdoc
 to generate documentation from a constructor docstring.</p></div>
 <details class="source">
 <summary>
@@ -229,33 +255,40 @@ to generate documentation from a constructor docstring.</p></div>
 <pre><code class="python">class CLArrayBase():
     &#34;&#34;&#34;Constant Length Array
 
-    Base class for fixed length array data structure. None
-    values
-    are not permitted to be stored to these data structure. A default iterator
-    can be defined to swap out None values if stored to the CLArray. If no such
+    Base class for fixed length array data structure. None values are not
+    permitted to be stored to these data structure. A default iterator can be
+    defined to swap out None values if stored to the CLArray. If no such
     iterator is defined, or is exhausted, the data structure defaults back to an
-    infinite iterator which supplies an infinite stream of empty tuples ().
+    infinite iterator which supplies an infinite stream of default values, the
+    &#34;default&#34; default value is the empty tuples ().
 
-    Unless specifically resized, this data structure is guaranteed to remain
-    a fixed length.
+    These data structures are guaranteed to remain a fixed length.
 
-    TODO: Elaborate on constructor values here, or figure out how to get pdoc
+    So that data is not lost when imposing a fixed size upon these
+    datastructures, cleaved data is pushed onto the front of the default
+    iterator.
+
+    TODO: Describe constructor values here, or figure out how to get pdoc
           to generate documentation from a constructor docstring.
     &#34;&#34;&#34;
     def __init__(self, *ds,
                  size: int|None=None,
                  noneIter: Iterator|None=None,
-                 noneSwap: Any|None=tuple()):
+                 default: Any|None=None):
 
-        match (noneIter, noneSwap):
+        match (noneIter, default):
             case (None, None):
-                raise ValueError(&#34;noneIter &amp; noneSwap both cannot be None&#34;)
-            case (None, swap):
-                self._none = cycle((swap,))
-            case (none, None):
-                self._none = none  # could throw StopIteration exception
-            case (none, swap):
-                self._none = chain(none, cycle((swap,)))
+                self._default = ()
+                self._none = cycle(((),))
+            case (None, default):
+                self._default = default
+                self._none = cycle((default,))
+            case (noneIter, None):
+                self._default = ()
+                self._none = chain(noneIter, cycle(((),)))
+            case (noneIter, default):
+                self._default = default
+                self._none = chain(noneIter, cycle((default,)))
 
         ca = CircularArray()
         none = self._none
@@ -263,9 +296,12 @@ to generate documentation from a constructor docstring.</p></div>
         for d in ds:
             if d is not None:
                 ca.pushR(d)
+            else:
+                ca.pushR(self._default)
 
         ds_size = len(ca)
 
+        # If size is None, size to the initial non-None data.
         if size is None:
             abs_size = size = ds_size
         else:
@@ -273,22 +309,25 @@ to generate documentation from a constructor docstring.</p></div>
 
         if abs_size &gt; ds_size:
             if size &gt; 0:
-                # pad higher indexes (on &#34;right&#34;)
-                for _ in range(size-ds_size):
+                # pad higher indexes by iterating in default values
+                for _ in range(size - ds_size):
                     ca.pushR(next(none))
             else:
                 # pad lower indexes (on &#34;left&#34;)
                 for _ in range(-size - ds_size):
                     ca.pushL(next(none))
         elif abs_size &lt; ds_size:
+            # push extra data onto self._none iterator
+            extra = CircularArray()
             if size &gt; 0:
-                # ignore extra data at end
-                for _ in range(size - ds_size):
-                    ca.popR()
+                # push final data at end
+                for _ in range(ds_size - size):
+                    extra.pushR(ca.popR())
             else:
-                # ignore extra data at beginning
+                # push inital data at beginning
                 for _ in range(ds_size + size):
-                    ca.popL()
+                    extra.pushR(ca.popL())
+            self._none = chain(iter(extra), none)
 
         self._ca = ca
 
@@ -321,14 +360,19 @@ to generate documentation from a constructor docstring.</p></div>
 
     def __bool__(self):
         &#34;&#34;&#34;Return true only if there exists an array value not equal to the
-        empty tuple (). Empty arrays always return false.
-
-        TODO: Default this to noneSwap value &amp; noneSwap to ()
+        default value which eventually gets used in lieu of None. Empty arrays
+        always return false. The &#34;default&#34; default value is the empty tuple ().
         &#34;&#34;&#34;
         for value in self:
-            if value != ():
+            if value != self._default:
                 return True
         return False
+
+    def default(self):
+        &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+        The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        return self._default
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
@@ -353,8 +397,14 @@ to generate documentation from a constructor docstring.</p></div>
         return self._ca == other._ca
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Reverse the elements of the CLArray. Mutates the CLArray.&#34;&#34;&#34;
-        self._ca = self._ca.reverse()</code></pre>
+        &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
+        self._ca = self._ca.reverse()
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the FCLArray by appling function over the FCLArray contents.&#34;&#34;&#34;
+        self._ca = type(self)(*map(f, self),
+                            noneIter=self._none,
+                            default=self._default)._ca</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -363,17 +413,50 @@ to generate documentation from a constructor docstring.</p></div>
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="grscheller.datastructures.core.clarray_base.CLArrayBase.default"><code class="name flex">
+<span>def <span class="ident">default</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the default value that eventually gets used in lieu of None.
+The "default" default value is the empty tuple ().</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def default(self):
+    &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+    The &#34;default&#34; default value is the empty tuple ().
+    &#34;&#34;&#34;
+    return self._default</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.clarray_base.CLArrayBase.mapSelf"><code class="name flex">
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mutate the FCLArray by appling function over the FCLArray contents.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Mutate the FCLArray by appling function over the FCLArray contents.&#34;&#34;&#34;
+    self._ca = type(self)(*map(f, self),
+                        noneIter=self._none,
+                        default=self._default)._ca</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.core.clarray_base.CLArrayBase.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reverse the elements of the CLArray. Mutates the CLArray.</p></div>
+<div class="desc"><p>Swap the circular array with one with its elements reversed.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; None:
-    &#34;&#34;&#34;Reverse the elements of the CLArray. Mutates the CLArray.&#34;&#34;&#34;
+    &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
     self._ca = self._ca.reverse()</code></pre>
 </details>
 </dd>
@@ -398,6 +481,8 @@ to generate documentation from a constructor docstring.</p></div>
 <li>
 <h4><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase" href="#grscheller.datastructures.core.clarray_base.CLArrayBase">CLArrayBase</a></code></h4>
 <ul class="">
+<li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.default" href="#grscheller.datastructures.core.clarray_base.CLArrayBase.default">default</a></code></li>
+<li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.mapSelf" href="#grscheller.datastructures.core.clarray_base.CLArrayBase.mapSelf">mapSelf</a></code></li>
 <li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.reverse" href="#grscheller.datastructures.core.clarray_base.CLArrayBase.reverse">reverse</a></code></li>
 </ul>
 </li>

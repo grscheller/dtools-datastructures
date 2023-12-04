@@ -18,35 +18,41 @@ class TestSQueue:
     def test_mutate_returns_none(self):
         s1 = SQueue()
         ret = s1.push(1,2,3)
-        assert ret == None
+        assert ret is None
         ret = s1.push(1,2,3)
-        assert ret == None
+        assert ret is None
         ret = s1.map(lambda x: x-1)
-        assert ret == None
+        assert ret is None
         assert s1.pop() + 1 == s1.pop() == 1
         assert s1.peakLastIn() == 2
         assert s1.peakNextOut() == 2
 
     def test_push_then_pop(self):
         q = SQueue()
-        pushed = 42; q.push(pushed)
+        pushed = 42
+        q.push(pushed)
         popped = q.pop()
         assert pushed == popped
         assert len(q) == 0
-        pushed = 0; q.push(pushed)
+        pushed = 0
+        q.push(pushed)
         popped = q.pop()
         assert pushed == popped == 0
         assert not q
-        pushed = 0; q.push(pushed)
+        pushed = 0
+        q.push(pushed)
         popped = q.pop()
         assert popped is not None
         assert pushed == popped
         assert len(q) == 0
-        pushed = ''; q.push(pushed)
+        pushed = ''
+        q.push(pushed)
         popped = q.pop()
         assert pushed == popped
         assert len(q) == 0
-        q.push('first'); q.push('second'); q.push('last')
+        q.push('first')
+        q.push('second')
+        q.push('last')
         assert q.pop()== 'first'
         assert q.pop()== 'second'
         assert q
@@ -88,7 +94,7 @@ class TestSQueue:
         assert q.pop() == 3
         assert len(q) == 0
         assert not q
-        assert q.pop() == None
+        assert q.pop() is None
         assert len(q) == 0
         assert not q
         q.push(42)
@@ -99,8 +105,8 @@ class TestSQueue:
         assert q
         assert q.pop() == 42
         assert not q
-        assert q.peakNextOut() == None
-        assert q.peakLastIn() == None
+        assert q.peakNextOut() is None
+        assert q.peakLastIn() is None
 
     def test_iterators(self):
         data = [1, 2, 3, 4]
@@ -151,7 +157,8 @@ class TestSQueue:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
         q1 = SQueue(1, 2, 3, 'Forty-Two', tup1)
-        q2 = SQueue(2, 3, 'Forty-Two'); q2.push((7, 11, 'foobar'))
+        q2 = SQueue(2, 3, 'Forty-Two')
+        q2.push((7, 11, 'foobar'))
         popped = q1.pop()
         assert popped == 1
         assert q1 == q2

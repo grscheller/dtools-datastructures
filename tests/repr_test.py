@@ -20,9 +20,8 @@ from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.circular_array import CircularArray
 from grscheller.datastructures import FStack, Stack
 from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import FCLArray, FTuple
+from grscheller.datastructures import FCLArray
 from grscheller.datastructures import FTuple
-
 
 class Test_repr:
     def test_CircularArray(self):

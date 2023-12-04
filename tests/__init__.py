@@ -12,17 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Package grscheller.datastructures.tests - pytest testsuite - for use with pytest
+"""Package grscheller.datastructures.tests - pytest testsuite
 
 To run the testsuite:
 
 1. Make sure the pytest package has been installed into whatever Python
-   environment you are using. If use are using a virtual environment, make sure
-   pytest is installed there. You don't want the wrong version of pytest be
-   found on your shell PATH.
+   environment you are using. If use are using a virtual environment,
+   make sure pytest is installed there. You don't want the wrong version
+   of pytest be found on your shell PATH.                               
 
-2. Check out main branch of https://github.com/grscheller/datastructures
-   where we assume pytest has already been installed.
+2. Check out a branch of https://github.com/grscheller/datastructures.
 
    $ export PYTHONPATH=/path/to/.../datastructures
    $ cd /path/to/.../datastructures
