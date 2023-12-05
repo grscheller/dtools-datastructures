@@ -18,10 +18,10 @@ The data structures in this package:
   structures to safely mutate while iterators leisurely iterate. 
 * Safely share data between multiple data structure instances by making
   shared data immutable and inaccessible to client code.
-* Don't force exception driven code paths upon client code.
-* Don't force Functional Programming (FP) on client code, FP is opt-in.
-* Code to the "happy" path & provide simple FP tools for "exceptional"
-  events.
+* Don't force exception driven code paths upon client code, except for
+  iterators, exceptions are for "exceptional" cases.
+* Don't force functional programming paradigms on client code, but
+  provide functional tools to opt into.
 
 Sometimes the real power of a data structure comes not from what
 it empowers you to do, but from what it prevents you from doing

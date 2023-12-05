@@ -67,10 +67,6 @@ class SQueue(QueueBase):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
@@ -127,7 +123,7 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p>Single sided queue datastructure. Will resize itself as needed.
 None represents the absence of a value and ignored if pushed onto an SQueue.</p>
-<p>Construct a FIFO SQueue data structure.</p></div>
+<p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -136,10 +132,6 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 

@@ -1,18 +1,18 @@
 # grscheller.datastructures.core.carray modules
 
-### carray module
+### circular_array module
 
 Provides a double sided circular array.
 
-* Class **Carray**
+* Class **CircularArray**
   * double sides circular array
   * amortized O(1) pushing/popping either end
   * O(1) length determination
-  * automatically resizes itself as needed
-  * will freely store `None` as a value
   * O(1) indexing for getting & setting array values
     * Raises `IndexError` exceptions
+  * automatically resizes itself as needed
   * implemented with a Python List.
+  * freely store `None` as a value
 
-Mainly used as data storage for other data structures in the
-grscheller.datastructures package. Freely stores None as a value.
+Mainly used for data storage in a "has-a" with other data structures in
+the grscheller.datastructures package.

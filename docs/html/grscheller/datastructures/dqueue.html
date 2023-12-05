@@ -67,10 +67,6 @@ class DQueue(QueueBase):
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
@@ -140,7 +136,7 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p>Double sided queue datastructure. Will resize itself as needed.
 None represents the absence of a value and ignored if pushed onto a DQueue.</p>
-<p>Construct a FIFO/LIFO double sided queue data structure.</p></div>
+<p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -149,10 +145,6 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
     &#34;&#34;&#34;Double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DQueue.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a FIFO/LIFO double sided queue data structure.&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
