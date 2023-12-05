@@ -34,10 +34,6 @@ class SQueue(QueueBase):
     """Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     """
-    def __init__(self, *ds):
-        """Construct a FIFO SQueue data structure."""
-        super().__init__(*ds)
-
     def __str__(self):
         return "<< " + " < ".join(map(str, self)) + " <<"
 
