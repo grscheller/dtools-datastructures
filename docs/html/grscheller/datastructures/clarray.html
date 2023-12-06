@@ -23,13 +23,14 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.clarray - constant length array.</p>
-<p>Module implementing a mutable fixed length
-O(1) array data structure
-with O(1) data access.</p>
-<p>None values are not allowed in this data structures. A default iterator can be
-defined to swap out None values if stored to the CLArray. If no such function or
-iterator is defined, or is exhausted, the data structure defaults back to an
-infinite iterator which supplies an infinite steam of empty tuples ().</p>
+<p>Module implementing an mutable fixed length data structure with O(1) data
+access. All mutating methods are guaranteed not to change the length of the
+data structure.</p>
+<p>None values are not allowed in this data structures. An immutable default value
+<br>
+is set upon instantiating. If no default value is given, the empty tuple () is
+used in lieu of None, but is not set as the default value. Method which return
+new CLArray values can set a different default value for the new instance.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -50,13 +51,14 @@ infinite iterator which supplies an infinite steam of empty tuples ().</p>
 
 &#34;&#34;&#34;Module grscheller.datastructure.clarray - constant length array.
 
-Module implementing a mutable fixed length  O(1) array data structure
-with O(1) data access.
-    
-None values are not allowed in this data structures. A default iterator can be
-defined to swap out None values if stored to the CLArray. If no such function or
-iterator is defined, or is exhausted, the data structure defaults back to an
-infinite iterator which supplies an infinite steam of empty tuples ().
+Module implementing an mutable fixed length data structure with O(1) data
+access. All mutating methods are guaranteed not to change the length of the
+data structure.
+
+None values are not allowed in this data structures. An immutable default value                     
+is set upon instantiating. If no default value is given, the empty tuple () is
+used in lieu of None, but is not set as the default value. Method which return
+new CLArray values can set a different default value for the new instance.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -66,45 +68,178 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Iterator
-from itertools import cycle
-from .core.clarray_base import CLArrayBase
+from typing import Any, Callable, Iterator, Never, Union
+from itertools import chain, cycle
+from .core.circular_array import CircularArray
+from .core.iterlib import merge, exhaust
+from .core.fp import FP
 
-class CLArray(CLArrayBase):
-    &#34;&#34;&#34;Constant Length Array
+class CLArray(FP):
+    &#34;&#34;&#34;Functional Constant Length Array
 
-    Class implementing a mutable fixed length array data structure. None values
-    are not permitted to be stored to this data structure. A default iterator
-    can be defined to swap out None values if stored to the CLArray. If no such
-    iterator is defined, or is exhausted, the data structure defaults back to an
-    infinite iterator which supplies an infinite stream of empty tuples ().
+    Class implementing a mutable fixed length array data structure whose
+    mutaing methods are guaranteed not to change the length of the data
+    structure.
 
-    Unless specifically resized, this data structure is guaranteed to remain
-    a fixed length.
+    If size set to None, size to data provided.
+    If size &gt; 0, pad data on right with default value or slice off trailing data.
+    If size &lt; 0, pad data on left with default value or slice off initial data.
 
-    If size set to None, size to data provided. If size &gt; 0, pad data on right
-    with default values or slice off trailing data. If size &lt; 0, pad data on
-    left with default value or slice off initial data.
+    Does not permits storing None as a value. If a default value is not set, the
+    empty tuple () is used in lieu of None, but () is not set as the default
+    value.
     &#34;&#34;&#34;
+    def __init__(self, *ds,
+                 size: int|None=None,
+                 noneIter: Iterator|None=None,
+                 default: Any|None=None):
+
+        match (noneIter, default):
+            case (None, None):
+                self._default = ()
+                self._none = cycle(((),))
+            case (None, default):
+                self._default = default
+                self._none = cycle((default,))
+            case (noneIter, None):
+                self._default = ()
+                self._none = chain(noneIter, cycle(((),)))
+            case (noneIter, default):
+                self._default = default
+                self._none = chain(noneIter, cycle((default,)))
+
+        ca = CircularArray()
+        none = self._none
+
+        for d in ds:
+            if d is not None:
+                ca.pushR(d)
+            else:
+                ca.pushR(self._default)
+
+        ds_size = len(ca)
+
+        # If size is None, size to the initial non-None data.
+        if size is None:
+            abs_size = size = ds_size
+        else:
+            abs_size = abs(size)
+
+        if abs_size &gt; ds_size:
+            if size &gt; 0:
+                # pad higher indexes by iterating in default values
+                for _ in range(size - ds_size):
+                    ca.pushR(next(none))
+            else:
+                # pad lower indexes (on &#34;left&#34;)
+                for _ in range(-size - ds_size):
+                    ca.pushL(next(none))
+        elif abs_size &lt; ds_size:
+            # push extra data onto self._none iterator
+            extra = CircularArray()
+            if size &gt; 0:
+                # push final data at end
+                for _ in range(ds_size - size):
+                    extra.pushR(ca.popR())
+            else:
+                # push inital data at beginning
+                for _ in range(ds_size + size):
+                    extra.pushR(ca.popL())
+            self._none = chain(iter(extra), none)
+
+        self._ca = ca
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in self._ca.copy():
+            yield data
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in reversed(self._ca.copy()):
+            yield data
+
+    def __repr__(self):
+        # TODO: rethink this one?
+        repr1 = f&#39;{self.__class__.__name__}(&#39;
+        repr2 = &#39;, &#39;.join(map(repr, self))
+        if repr2 == &#39;&#39;:
+            repr3 = f&#39;noneIter={self._none})&#39;
+        else:
+            repr3 = f&#39;, noneIter={self._none})&#39;
+        return repr1 + repr2 + repr3
+
     def __str__(self):
         return &#39;[[[&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;]]]&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Return true only if there exists an array value not equal to the
+        default value which eventually gets used in lieu of None. Empty arrays
+        always return false. The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        for value in self:
+            if value != self._default:
+                return True
+        return False
+
+    def default(self):
+        &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+        The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        return self._default
+
+    def __len__(self) -&gt; int:
+        &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
+        return len(self._ca)
+
+    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
+        return self._ca[index]
+
+    def __setitem__(self, index: int, value: Any) -&gt; Union[None,Never]:
+        if value is None:
+            self._ca[index] = next(self._none)
+        else:
+            self._ca[index] = value
+
+    def __eq__(self, other: Any):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal. Worst
+        case is O(n) behavior for the true case. The default value play no role
+        in determining equality.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+        return self._ca == other._ca
+
+    def reverse(self) -&gt; None:
+        &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
+        self._ca = self._ca.reverse()
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+        self._ca = CLArray(*map(f, self),
+                            noneIter=self._none,
+                            default=self._default)._ca
+
+    def __str__(self):
+        return &#39;[|&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;|]&#39;
 
     def copy(self,
              size: int|None=None,
              noneIter: Iterator|None=None,
              default: Any|None=None) -&gt; CLArray:
-        &#34;&#34;&#34;Return shallow copy of the FCLArray in O(n) complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
         return self.map(lambda x: x, size, noneIter, default)
 
-    def map(self,
-            f: Callable[[Any], Any],
-            size: int|None=None,
-            noneIter: Iterator|None=None,
-            default: Any|None=None) -&gt; CLArray:
-        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with
-        the mapped contents. Size to the data unless size is given. If noneIter
-        is not given, use default to create the none iterator. If default is not
-        given, use the value from the CLArray being mapped.
+    def map(self, f: Callable[[Any], Any], size: int|None=None,
+            noneIter: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+        with the mapped contents. Size to the data unless size is given. If
+        noneIter is not given, use default to create the none iterator. If
+        default is not given, use the value from the CLArray being mapped.
         &#34;&#34;&#34;
         match (noneIter, default):
             case (None, None):
@@ -120,7 +255,59 @@ class CLArray(CLArrayBase):
             return CLArray(*map(f, self), noneIter=noneIter, default=default)
         else:
             return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)
-            
+
+    def flatMap(self, f: Callable[[Any], CLArray],
+                size: int|None=None,
+                noneIter: Iterator|None=None,
+                default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by concatenating the CLArray
+        elements generated by f. If a default value is not given, use the
+        default value of the FLArray being flatMapped if it has been set,
+        otherwise leave it unset.
+
+        Note: Any default values of the FLArrays created by f need not have
+        anything to do with the default value of the FPArray being flat mapped
+        over.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            default = self._default
+
+        return CLArray(
+            *chain(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )
+
+    def mergeMap(self, f: Callable[[Any], CLArray],
+                 size: int|None=None,
+                 noneIter: Iterator|None=None,
+                 default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+        generated by f until the first is exhausted. If a default value is not
+        given, use the default value of the FLArray being flatMapped if it has
+        been set, otherwise leave it unset.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            noneIter = self._none
+
+        return CLArray(
+            *merge(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )
+
+    def exhastMap(self, f: Callable[[Any], CLArray],
+                  size: int|None=None,
+                  noneIter: Iterator|None=None,
+                  default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+        generated by f until all are exhausted. If a default value is not given,
+        use the default value of the FLArray being flatMapped if it has been
+        set, otherwise leave it unset.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            noneIter = self._none
+
+        return CLArray(
+            *exhaust(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )
+
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
 </details>
@@ -139,56 +326,186 @@ if __name__ == &#34;__main__&#34;:
 <span>(</span><span>*ds, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Constant Length Array</p>
-<p>Class implementing a mutable fixed length array data structure. None values
-are not permitted to be stored to this data structure. A default iterator
-can be defined to swap out None values if stored to the CLArray. If no such
-iterator is defined, or is exhausted, the data structure defaults back to an
-infinite iterator which supplies an infinite stream of empty tuples ().</p>
-<p>Unless specifically resized, this data structure is guaranteed to remain
-a fixed length.</p>
-<p>If size set to None, size to data provided. If size &gt; 0, pad data on right
-with default values or slice off trailing data. If size &lt; 0, pad data on
-left with default value or slice off initial data.</p></div>
+<div class="desc"><p>Functional Constant Length Array</p>
+<p>Class implementing a mutable fixed length array data structure whose
+mutaing methods are guaranteed not to change the length of the data
+structure.</p>
+<p>If size set to None, size to data provided.
+If size &gt; 0, pad data on right with default value or slice off trailing data.
+If size &lt; 0, pad data on left with default value or slice off initial data.</p>
+<p>Does not permits storing None as a value. If a default value is not set, the
+empty tuple () is used in lieu of None, but () is not set as the default
+value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class CLArray(CLArrayBase):
-    &#34;&#34;&#34;Constant Length Array
+<pre><code class="python">class CLArray(FP):
+    &#34;&#34;&#34;Functional Constant Length Array
 
-    Class implementing a mutable fixed length array data structure. None values
-    are not permitted to be stored to this data structure. A default iterator
-    can be defined to swap out None values if stored to the CLArray. If no such
-    iterator is defined, or is exhausted, the data structure defaults back to an
-    infinite iterator which supplies an infinite stream of empty tuples ().
+    Class implementing a mutable fixed length array data structure whose
+    mutaing methods are guaranteed not to change the length of the data
+    structure.
 
-    Unless specifically resized, this data structure is guaranteed to remain
-    a fixed length.
+    If size set to None, size to data provided.
+    If size &gt; 0, pad data on right with default value or slice off trailing data.
+    If size &lt; 0, pad data on left with default value or slice off initial data.
 
-    If size set to None, size to data provided. If size &gt; 0, pad data on right
-    with default values or slice off trailing data. If size &lt; 0, pad data on
-    left with default value or slice off initial data.
+    Does not permits storing None as a value. If a default value is not set, the
+    empty tuple () is used in lieu of None, but () is not set as the default
+    value.
     &#34;&#34;&#34;
+    def __init__(self, *ds,
+                 size: int|None=None,
+                 noneIter: Iterator|None=None,
+                 default: Any|None=None):
+
+        match (noneIter, default):
+            case (None, None):
+                self._default = ()
+                self._none = cycle(((),))
+            case (None, default):
+                self._default = default
+                self._none = cycle((default,))
+            case (noneIter, None):
+                self._default = ()
+                self._none = chain(noneIter, cycle(((),)))
+            case (noneIter, default):
+                self._default = default
+                self._none = chain(noneIter, cycle((default,)))
+
+        ca = CircularArray()
+        none = self._none
+
+        for d in ds:
+            if d is not None:
+                ca.pushR(d)
+            else:
+                ca.pushR(self._default)
+
+        ds_size = len(ca)
+
+        # If size is None, size to the initial non-None data.
+        if size is None:
+            abs_size = size = ds_size
+        else:
+            abs_size = abs(size)
+
+        if abs_size &gt; ds_size:
+            if size &gt; 0:
+                # pad higher indexes by iterating in default values
+                for _ in range(size - ds_size):
+                    ca.pushR(next(none))
+            else:
+                # pad lower indexes (on &#34;left&#34;)
+                for _ in range(-size - ds_size):
+                    ca.pushL(next(none))
+        elif abs_size &lt; ds_size:
+            # push extra data onto self._none iterator
+            extra = CircularArray()
+            if size &gt; 0:
+                # push final data at end
+                for _ in range(ds_size - size):
+                    extra.pushR(ca.popR())
+            else:
+                # push inital data at beginning
+                for _ in range(ds_size + size):
+                    extra.pushR(ca.popL())
+            self._none = chain(iter(extra), none)
+
+        self._ca = ca
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in self._ca.copy():
+            yield data
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the CLArray. Copy is made
+        so original source can safely mutate.
+        &#34;&#34;&#34;
+        for data in reversed(self._ca.copy()):
+            yield data
+
+    def __repr__(self):
+        # TODO: rethink this one?
+        repr1 = f&#39;{self.__class__.__name__}(&#39;
+        repr2 = &#39;, &#39;.join(map(repr, self))
+        if repr2 == &#39;&#39;:
+            repr3 = f&#39;noneIter={self._none})&#39;
+        else:
+            repr3 = f&#39;, noneIter={self._none})&#39;
+        return repr1 + repr2 + repr3
+
     def __str__(self):
         return &#39;[[[&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;]]]&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Return true only if there exists an array value not equal to the
+        default value which eventually gets used in lieu of None. Empty arrays
+        always return false. The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        for value in self:
+            if value != self._default:
+                return True
+        return False
+
+    def default(self):
+        &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+        The &#34;default&#34; default value is the empty tuple ().
+        &#34;&#34;&#34;
+        return self._default
+
+    def __len__(self) -&gt; int:
+        &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
+        return len(self._ca)
+
+    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
+        return self._ca[index]
+
+    def __setitem__(self, index: int, value: Any) -&gt; Union[None,Never]:
+        if value is None:
+            self._ca[index] = next(self._none)
+        else:
+            self._ca[index] = value
+
+    def __eq__(self, other: Any):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal. Worst
+        case is O(n) behavior for the true case. The default value play no role
+        in determining equality.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+        return self._ca == other._ca
+
+    def reverse(self) -&gt; None:
+        &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
+        self._ca = self._ca.reverse()
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+        self._ca = CLArray(*map(f, self),
+                            noneIter=self._none,
+                            default=self._default)._ca
+
+    def __str__(self):
+        return &#39;[|&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;|]&#39;
 
     def copy(self,
              size: int|None=None,
              noneIter: Iterator|None=None,
              default: Any|None=None) -&gt; CLArray:
-        &#34;&#34;&#34;Return shallow copy of the FCLArray in O(n) complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
         return self.map(lambda x: x, size, noneIter, default)
 
-    def map(self,
-            f: Callable[[Any], Any],
-            size: int|None=None,
-            noneIter: Iterator|None=None,
-            default: Any|None=None) -&gt; CLArray:
-        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with
-        the mapped contents. Size to the data unless size is given. If noneIter
-        is not given, use default to create the none iterator. If default is not
-        given, use the value from the CLArray being mapped.
+    def map(self, f: Callable[[Any], Any], size: int|None=None,
+            noneIter: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+        with the mapped contents. Size to the data unless size is given. If
+        noneIter is not given, use default to create the none iterator. If
+        default is not given, use the value from the CLArray being mapped.
         &#34;&#34;&#34;
         match (noneIter, default):
             case (None, None):
@@ -203,11 +520,63 @@ left with default value or slice off initial data.</p></div>
         if size is None:
             return CLArray(*map(f, self), noneIter=noneIter, default=default)
         else:
-            return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)</code></pre>
+            return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)
+
+    def flatMap(self, f: Callable[[Any], CLArray],
+                size: int|None=None,
+                noneIter: Iterator|None=None,
+                default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by concatenating the CLArray
+        elements generated by f. If a default value is not given, use the
+        default value of the FLArray being flatMapped if it has been set,
+        otherwise leave it unset.
+
+        Note: Any default values of the FLArrays created by f need not have
+        anything to do with the default value of the FPArray being flat mapped
+        over.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            default = self._default
+
+        return CLArray(
+            *chain(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )
+
+    def mergeMap(self, f: Callable[[Any], CLArray],
+                 size: int|None=None,
+                 noneIter: Iterator|None=None,
+                 default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+        generated by f until the first is exhausted. If a default value is not
+        given, use the default value of the FLArray being flatMapped if it has
+        been set, otherwise leave it unset.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            noneIter = self._none
+
+        return CLArray(
+            *merge(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )
+
+    def exhastMap(self, f: Callable[[Any], CLArray],
+                  size: int|None=None,
+                  noneIter: Iterator|None=None,
+                  default: Any|None=None) -&gt; CLArray:
+        &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+        generated by f until all are exhausted. If a default value is not given,
+        use the default value of the FLArray being flatMapped if it has been
+        set, otherwise leave it unset.
+        &#34;&#34;&#34;
+        if (noneIter, default) == (None, None):
+            noneIter = self._none
+
+        return CLArray(
+            *exhaust(*self.map(f)), size=size, noneIter=noneIter, default=default
+        )</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.clarray_base.CLArrayBase" href="core/clarray_base.html#grscheller.datastructures.core.clarray_base.CLArrayBase">CLArrayBase</a></li>
+<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -215,7 +584,7 @@ left with default value or slice off initial data.</p></div>
 <span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the FCLArray in O(n) complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the CLArray in O(n) complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -224,31 +593,110 @@ left with default value or slice off initial data.</p></div>
          size: int|None=None,
          noneIter: Iterator|None=None,
          default: Any|None=None) -&gt; CLArray:
-    &#34;&#34;&#34;Return shallow copy of the FCLArray in O(n) complexity.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
     return self.map(lambda x: x, size, noneIter, default)</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.default"><code class="name flex">
+<span>def <span class="ident">default</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the default value that eventually gets used in lieu of None.
+The "default" default value is the empty tuple ().</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def default(self):
+    &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None.
+    The &#34;default&#34; default value is the empty tuple ().
+    &#34;&#34;&#34;
+    return self._default</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.exhastMap"><code class="name flex">
+<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
+generated by f until all are exhausted. If a default value is not given,
+use the default value of the FLArray being flatMapped if it has been
+set, otherwise leave it unset.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exhastMap(self, f: Callable[[Any], CLArray],
+              size: int|None=None,
+              noneIter: Iterator|None=None,
+              default: Any|None=None) -&gt; CLArray:
+    &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+    generated by f until all are exhausted. If a default value is not given,
+    use the default value of the FLArray being flatMapped if it has been
+    set, otherwise leave it unset.
+    &#34;&#34;&#34;
+    if (noneIter, default) == (None, None):
+        noneIter = self._none
+
+    return CLArray(
+        *exhaust(*self.map(f)), size=size, noneIter=noneIter, default=default
+    )</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Map f across self and flatten result by concatenating the CLArray
+elements generated by f. If a default value is not given, use the
+default value of the FLArray being flatMapped if it has been set,
+otherwise leave it unset.</p>
+<p>Note: Any default values of the FLArrays created by f need not have
+anything to do with the default value of the FPArray being flat mapped
+over.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flatMap(self, f: Callable[[Any], CLArray],
+            size: int|None=None,
+            noneIter: Iterator|None=None,
+            default: Any|None=None) -&gt; CLArray:
+    &#34;&#34;&#34;Map f across self and flatten result by concatenating the CLArray
+    elements generated by f. If a default value is not given, use the
+    default value of the FLArray being flatMapped if it has been set,
+    otherwise leave it unset.
+
+    Note: Any default values of the FLArrays created by f need not have
+    anything to do with the default value of the FPArray being flat mapped
+    over.
+    &#34;&#34;&#34;
+    if (noneIter, default) == (None, None):
+        default = self._default
+
+    return CLArray(
+        *chain(*self.map(f)), size=size, noneIter=noneIter, default=default
+    )</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray with
-the mapped contents. Size to the data unless size is given. If noneIter
-is not given, use default to create the none iterator. If default is not
-given, use the value from the CLArray being mapped.</p></div>
+<div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray
+with the mapped contents. Size to the data unless size is given. If
+noneIter is not given, use default to create the none iterator. If
+default is not given, use the value from the CLArray being mapped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def map(self,
-        f: Callable[[Any], Any],
-        size: int|None=None,
-        noneIter: Iterator|None=None,
-        default: Any|None=None) -&gt; CLArray:
-    &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with
-    the mapped contents. Size to the data unless size is given. If noneIter
-    is not given, use default to create the none iterator. If default is not
-    given, use the value from the CLArray being mapped.
+<pre><code class="python">def map(self, f: Callable[[Any], Any], size: int|None=None,
+        noneIter: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+    &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray
+    with the mapped contents. Size to the data unless size is given. If
+    noneIter is not given, use default to create the none iterator. If
+    default is not given, use the value from the CLArray being mapped.
     &#34;&#34;&#34;
     match (noneIter, default):
         case (None, None):
@@ -266,17 +714,66 @@ given, use the value from the CLArray being mapped.</p></div>
         return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.clarray.CLArray.mapSelf"><code class="name flex">
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Mutate the CLArray by appling function over the CLArray contents.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Mutate the CLArray by appling function over the CLArray contents.&#34;&#34;&#34;
+    self._ca = CLArray(*map(f, self),
+                        noneIter=self._none,
+                        default=self._default)._ca</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
+generated by f until the first is exhausted. If a default value is not
+given, use the default value of the FLArray being flatMapped if it has
+been set, otherwise leave it unset.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], CLArray],
+             size: int|None=None,
+             noneIter: Iterator|None=None,
+             default: Any|None=None) -&gt; CLArray:
+    &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
+    generated by f until the first is exhausted. If a default value is not
+    given, use the default value of the FLArray being flatMapped if it has
+    been set, otherwise leave it unset.
+    &#34;&#34;&#34;
+    if (noneIter, default) == (None, None):
+        noneIter = self._none
+
+    return CLArray(
+        *merge(*self.map(f)), size=size, noneIter=noneIter, default=default
+    )</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.clarray.CLArray.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Swap the circular array with one with its elements reversed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self) -&gt; None:
+    &#34;&#34;&#34;Swap the circular array with one with its elements reversed.&#34;&#34;&#34;
+    self._ca = self._ca.reverse()</code></pre>
+</details>
+</dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.clarray_base.CLArrayBase" href="core/clarray_base.html#grscheller.datastructures.core.clarray_base.CLArrayBase">CLArrayBase</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.default" href="core/clarray_base.html#grscheller.datastructures.core.clarray_base.CLArrayBase.default">default</a></code></li>
-<li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.mapSelf" href="core/clarray_base.html#grscheller.datastructures.core.clarray_base.CLArrayBase.mapSelf">mapSelf</a></code></li>
-<li><code><a title="grscheller.datastructures.core.clarray_base.CLArrayBase.reverse" href="core/clarray_base.html#grscheller.datastructures.core.clarray_base.CLArrayBase.reverse">reverse</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>
@@ -296,9 +793,15 @@ given, use the value from the CLArray being mapped.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="grscheller.datastructures.clarray.CLArray.copy" href="#grscheller.datastructures.clarray.CLArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.default" href="#grscheller.datastructures.clarray.CLArray.default">default</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.exhastMap" href="#grscheller.datastructures.clarray.CLArray.exhastMap">exhastMap</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.flatMap" href="#grscheller.datastructures.clarray.CLArray.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.clarray.CLArray.map" href="#grscheller.datastructures.clarray.CLArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.mapSelf" href="#grscheller.datastructures.clarray.CLArray.mapSelf">mapSelf</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.mergeMap" href="#grscheller.datastructures.clarray.CLArray.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.clarray.CLArray.reverse" href="#grscheller.datastructures.clarray.CLArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

@@ -18,19 +18,18 @@
    endeavor to be Pythonic.
 """
 
-__version__ = "0.10.13.3"
+__version__ = "0.10.13.4"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .core.fp import Maybe, Some, Nothing
-from .core.fp import Either, Left, Right
-from .core.fp import maybeToEither, eitherToMaybe
-from .core.iterlib import merge, exhaust
 from .clarray import CLArray
 from .dqueue import DQueue
 from .squeue import SQueue
 from .stack import Stack
-from .fclarray import FCLArray
 from .fstack import FStack
 from .ftuple import FTuple
+from .core.fp import Maybe, Some, Nothing
+from .core.fp import Either, Left, Right
+from .core.fp import maybeToEither, eitherToMaybe
+from .core.iterlib import merge, exhaust

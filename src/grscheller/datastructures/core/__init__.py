@@ -42,5 +42,4 @@ __license__ = "Appache License 2.0"
 from .fp import FP, FP_rev
 from .nodes import SL_Node, Tree_Node
 from .circular_array import CircularArray
-from .clarray_base import CLArrayBase
 from .queue_base import QueueBase
