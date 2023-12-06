@@ -1,6 +1,6 @@
-# grscheller.datastructures.core.carray modules
+# grscheller.datastructures.core.circulararray modules
 
-### circular_array module
+### circulararray module
 
 Provides a double sided circular array.
 
