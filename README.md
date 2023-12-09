@@ -75,10 +75,10 @@ special comment strings. See pdoc3 documentation [here][7].
 
 ---
 
-[1]: https://github.com/grscheller/datastructures/blob/main/docs/README.d/datastructures.md
-[2]: https://github.com/grscheller/datastructures/blob/main/docs/README.d/fp.md
-[3]: https://github.com/grscheller/datastructures/blob/main/docs/README.d/iterlib.md
-[4]: https://github.com/grscheller/datastructures/blob/main/docs/README.d/circulararray.md
+[1]: docs/README.d/datastructures.md
+[2]: docs/README.d/fp.md
+[3]: docs/README.d/iterlib.md
+[4]: docs/README.d/circulararray.md
 [5]: https://grscheller.github.io/datastructures/
 [6]: https://docs.python.org/3.13/library/typing.html
 [7]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
