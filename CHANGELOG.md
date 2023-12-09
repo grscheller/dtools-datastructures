@@ -2,14 +2,13 @@
 
 ## Overview
 
-* Single Maintainer PyPI Package
+* Single Maintainer PyPI Package - software is a Beta release 
+* PyPI releases are tagged with a leading "v" on GitHub
 * Rolling Release Model
-  * maintained on GitHub, software is a Beta release 
   * maintainer will not back port bug fixes to previous versions
   * main branch will be the release branch
     * will either be the current PyPI release, or
     * will be the release canidate for the next PyPI release
-    * PyPI releases are tagged with a leading "v" on GitHub
   * devel branch will be the only software development tracking branch
     * will attempt to keep relatively stable, but
     * may not be fully tested
@@ -31,7 +30,25 @@
     * development environment thrashing
     * not to be taken too seriously
 
-## Version - PyPI releases begin with "v"
+## Versions - PyPI releases begin with "v"
+
+### Version 0.10.14.0 - commit date 2023-12-09
+
+* Finished massive renaming & repackaging effort
+  * to help with future growth in future
+  * name choices more self documenting
+  * top level modules
+    * array
+      * CLArray
+    * queue
+      * FIFOQueue (formerly SQueue)
+      * LIFOQueue (LIFO version of above)
+      * DoubleQueue (formerly DQueue)
+    * stack
+      * Stack (formerly PStack)
+      * FStack
+    * tuplelike
+      * FTuple
 
 ### Version 0.10.11.0 - commit date 2023-11-27
 
@@ -58,11 +75,11 @@
 ### Version 0.10.8.0 - commit date 2023-11-18
 
 * Bumping requires-python = ">=3.11" in pyproject.toml
-  * 0.10.7.X will be on the GitHub pypy3 branch
+  * Currently developing & testing on Python 3.11.5
+  * 0.10.7.X will be used on the GitHub pypy3 branch
     * Pypy3 (7.3.13) using Python (3.10.13)
     * tests pass but are 4X slower
     * LSP almost useless due to more primative typing module
-  * Currently developing & testing on Python 3.11.5
 
 ### Version 0.10.7.0 - commit date 2023-11-18
 

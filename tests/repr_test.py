@@ -15,13 +15,12 @@
 from __future__ import annotations
 
 from typing import Any
-from grscheller.datastructures import CLArray
-from grscheller.datastructures import FStack, Stack
-from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import FTuple
+from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.stack import Stack, FStack
+from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
+from grscheller.datastructures.tuplelike import FTuple
 from grscheller.datastructures.core.circular_array import CircularArray
-from grscheller.datastructures.core.fp import Maybe, Nothing, Some
-from grscheller.datastructures.core.fp import Either, Left, Right
+from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
 
 class Test_repr:
     def test_CircularArray(self):
@@ -51,16 +50,16 @@ class Test_repr:
         assert ca2 == ca1
         assert ca2 is not ca1
 
-    def test_DQueue(self):
-        ca1 = DQueue()
-        assert repr(ca1) == 'DQueue()'
+    def test_DoubleQueue(self):
+        ca1 = DoubleQueue()
+        assert repr(ca1) == 'DoubleQueue()'
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
 
         ca1.pushR(1)
         ca1.pushL('foo')
-        assert repr(ca1) == "DQueue('foo', 1)"
+        assert repr(ca1) == "DoubleQueue('foo', 1)"
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
@@ -73,21 +72,21 @@ class Test_repr:
         assert ca1.popL() == 1
         ca1.pushL(42)
         ca1.popR()
-        assert repr(ca1) == "DQueue(42, 2, 3, 4)"
+        assert repr(ca1) == "DoubleQueue(42, 2, 3, 4)"
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
 
-    def test_SQueue(self):
-        sq1 = SQueue()
-        assert repr(sq1) == 'SQueue()'
+    def test_FIFOQueue(self):
+        sq1 = FIFOQueue()
+        assert repr(sq1) == 'FIFOQueue()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "SQueue(1, 'foo')"
+        assert repr(sq1) == "FIFOQueue(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -100,7 +99,32 @@ class Test_repr:
         assert sq1.pop() == 'foo'
         sq1.push(42)
         sq1.pop()
-        assert repr(sq1) == "SQueue(3, 4, 5, 42)"
+        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42)'
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
+
+    def test_LIFOQueue(self):
+        sq1 = LIFOQueue()
+        assert repr(sq1) == 'LIFOQueue()'
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
+
+        sq1.push(1)
+        sq1.push('foo')
+        assert repr(sq1) == "LIFOQueue(1, 'foo')"
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
+
+        assert sq1.pop() == 'foo'
+        sq1.push(2, 3)
+        sq1.push(4)
+        sq1.push(5)
+        assert sq1.pop() == 5
+        sq1.push(42)
+        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -351,9 +375,9 @@ class Test_repr:
 
 class Test_repr_mix:
     def test_mix1(self):
-        thing1 = Left(SQueue(
+        thing1 = Left(FIFOQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
-            Stack([1, 2, 3, Nothing], 42, Left('foofoo'))
+            Stack([1, 2, 3, Nothing], 42, Left(LIFOQueue('foo', 'bar')))
         ))
 
         thing2 = eval(repr(thing1))
@@ -364,5 +388,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), Stack([1, 2, 3, Nothing], 42, Left('foofoo'))))"
+        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), Stack([1, 2, 3, Nothing], 42, Left(LIFOQueue('foo', 'bar')))))"
         assert repr_thing1 == repr_str

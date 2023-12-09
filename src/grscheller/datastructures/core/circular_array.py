@@ -220,7 +220,7 @@ class CircularArray:
             d = self._list[self._rear]
 
             self._count, self._list[self._rear], self._rear = \
-            self._count-1, None, (self._rear - 1) % self._capacity
+                self._count-1, None, (self._rear - 1) % self._capacity
 
             return d
 

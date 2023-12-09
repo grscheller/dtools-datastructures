@@ -18,18 +18,16 @@
    endeavor to be Pythonic.
 """
 
-__version__ = "0.10.13.4"
+__version__ = "0.10.14.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .clarray import CLArray
-from .dqueue import DQueue
-from .squeue import SQueue
-from .stack import Stack
-from .fstack import FStack
-from .ftuple import FTuple
-from .core.fp import Maybe, Some, Nothing
-from .core.fp import Either, Left, Right
+#: Client API. Useful imports for REPL's like ipython
+from .array import CLArray
+from .queue import FIFOQueue, LIFOQueue, DoubleQueue
+from .stack import Stack, FStack
+from .tuplelike import FTuple
+from .core.fp import Maybe, Some, Nothing, Either, Left, Right
 from .core.fp import maybeToEither, eitherToMaybe
 from .core.iterlib import merge, exhaust

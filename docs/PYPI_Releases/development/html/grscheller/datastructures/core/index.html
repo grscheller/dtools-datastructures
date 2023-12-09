@@ -23,36 +23,7 @@
 </header>
 <section id="section-intro">
 <p>Package grscheller.datastructures.core</p>
-<p>Data modules supporting core infrastructure of grscheller.datastructures.</p>
-<ul>
-<li>grscheller.datastructures.core.fp</li>
-<li>
-<p>data structures supporting a functional style of programming in Python</p>
-<ul>
-<li>immutable semantics - map &amp; flatMap always return modified copies</li>
-<li>None is always treated as a non-existance value</li>
-<li>Python None value cannot be stored in any object in this subpackage</li>
-<li>semantically None does not exist</li>
-<li>None is used as an implementration detail</li>
-</ul>
-</li>
-<li>
-<p>grscheller.datastructures.core.iterlib iterator module</p>
-</li>
-<li>
-<p>functions similar to itertools and more-itertools</p>
-<ul>
-<li>will use itertools over these since they are C language builtins</li>
-<li>not using PyPI more-itertools to avoid external dependencies</li>
-</ul>
-</li>
-<li>
-<p>grscheller.datastructures.core.circular_array module</p>
-</li>
-<li>implements a circular array</li>
-<li>used in the implementation of several other data structures</li>
-<li>None freely stored in this data structure</li>
-</ul>
+<p>Modules supporting core infrastructure of grscheller.datastructures.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -73,35 +44,20 @@
 
 &#34;&#34;&#34;Package grscheller.datastructures.core
 
-Data modules supporting core infrastructure of grscheller.datastructures.
-
-- grscheller.datastructures.core.fp
-  - data structures supporting a functional style of programming in Python
-    - immutable semantics - map &amp; flatMap always return modified copies
-    - None is always treated as a non-existance value
-      - Python None value cannot be stored in any object in this subpackage
-      - semantically None does not exist
-      - None is used as an implementration detail
-
-- grscheller.datastructures.core.iterlib iterator module
-  - functions similar to itertools and more-itertools
-    - will use itertools over these since they are C language builtins
-    - not using PyPI more-itertools to avoid external dependencies
-
-- grscheller.datastructures.core.circular_array module
-  - implements a circular array
-  - used in the implementation of several other data structures
-  - None freely stored in this data structure
+Modules supporting core infrastructure of grscheller.datastructures.
 &#34;&#34;&#34;
 
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
+#: Core API not imported from grscheller.datastructures. Useful imports for REPL&#39;s like
+#: ipython. Can be used by client code to help implement new data structures.
 from .fp import FP, FP_rev
 from .nodes import SL_Node, Tree_Node
 from .circular_array import CircularArray
-from .queue_base import QueueBase</code></pre>
+from .queue_base import QueueBase
+from .stack_base import StackBase</code></pre>
 </details>
 </section>
 <section>

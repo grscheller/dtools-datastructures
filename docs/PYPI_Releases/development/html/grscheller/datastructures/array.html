@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.clarray API documentation</title>
+<title>grscheller.datastructures.array API documentation</title>
 <meta name="description" content="Module grscheller.datastructure.clarray - constant length array …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.clarray</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.array</code></h1>
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.clarray - constant length array.</p>
@@ -321,7 +321,7 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.clarray.CLArray"><code class="flex name class">
+<dt id="grscheller.datastructures.array.CLArray"><code class="flex name class">
 <span>class <span class="ident">CLArray</span></span>
 <span>(</span><span>*ds, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None)</span>
 </code></dt>
@@ -580,8 +580,8 @@ value.</p></div>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.clarray.CLArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the CLArray in O(n) complexity.</p></div>
@@ -597,7 +597,7 @@ value.</p></div>
     return self.map(lambda x: x, size, noneIter, default)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.default"><code class="name flex">
+<dt id="grscheller.datastructures.array.CLArray.default"><code class="name flex">
 <span>def <span class="ident">default</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -614,8 +614,8 @@ The "default" default value is the empty tuple ().</p></div>
     return self._default</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.exhastMap"><code class="name flex">
-<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.exhastMap"><code class="name flex">
+<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
@@ -643,8 +643,8 @@ set, otherwise leave it unset.</p></div>
     )</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by concatenating the CLArray
@@ -679,8 +679,8 @@ over.</p></div>
     )</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray
@@ -714,7 +714,7 @@ default is not given, use the value from the CLArray being mapped.</p></div>
         return CLArray(*map(f, self), size=size, noneIter=noneIter, default=default)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.mapSelf"><code class="name flex">
+<dt id="grscheller.datastructures.array.CLArray.mapSelf"><code class="name flex">
 <span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
 </code></dt>
 <dd>
@@ -730,8 +730,8 @@ default is not given, use the value from the CLArray being mapped.</p></div>
                         default=self._default)._ca</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
@@ -759,7 +759,7 @@ been set, otherwise leave it unset.</p></div>
     )</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.clarray.CLArray.reverse"><code class="name flex">
+<dt id="grscheller.datastructures.array.CLArray.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
@@ -792,16 +792,16 @@ been set, otherwise leave it unset.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.clarray.CLArray" href="#grscheller.datastructures.clarray.CLArray">CLArray</a></code></h4>
+<h4><code><a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.clarray.CLArray.copy" href="#grscheller.datastructures.clarray.CLArray.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.default" href="#grscheller.datastructures.clarray.CLArray.default">default</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.exhastMap" href="#grscheller.datastructures.clarray.CLArray.exhastMap">exhastMap</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.flatMap" href="#grscheller.datastructures.clarray.CLArray.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.map" href="#grscheller.datastructures.clarray.CLArray.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.mapSelf" href="#grscheller.datastructures.clarray.CLArray.mapSelf">mapSelf</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.mergeMap" href="#grscheller.datastructures.clarray.CLArray.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.clarray.CLArray.reverse" href="#grscheller.datastructures.clarray.CLArray.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.copy" href="#grscheller.datastructures.array.CLArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.default" href="#grscheller.datastructures.array.CLArray.default">default</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.exhastMap" href="#grscheller.datastructures.array.CLArray.exhastMap">exhastMap</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.flatMap" href="#grscheller.datastructures.array.CLArray.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.map" href="#grscheller.datastructures.array.CLArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.mapSelf" href="#grscheller.datastructures.array.CLArray.mapSelf">mapSelf</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.mergeMap" href="#grscheller.datastructures.array.CLArray.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.reverse" href="#grscheller.datastructures.array.CLArray.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>

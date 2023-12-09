@@ -12,19 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.pstack - Stateful LIFO stack:
+"""Module grscheller.datastructure.stack - Stateful & Functional LIFO stacks:
 
-   Module implementing a LIFO stack using a singularly linked linear tree of
-   nodes. The nodes can be safely shared between different Stack instances and
+   Module implementing a LIFO stacks using singularly linked linear trees of
+   nodes. The nodes can be safely shared between different stack instances and
    are an implementation detail hidden from client code.
-
-   Pushing to, popping from, and getting the length of the Stack are all O(1)
-   operations.
 """
 
 from __future__ import annotations
 
-__all__ = ['Stack']
+__all__ = ['Stack', 'FStack']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -33,18 +30,20 @@ from typing import Any, Callable
 from .core.stack_base import StackBase
 from .core.nodes import SL_Node as Node
 from .core.circular_array import CircularArray
+from .core.fp import FP_rev
 
 class Stack(StackBase):
-    """Class implementing a Last In, First Out (LIFO) stack data structure. The
-    stack contains a singularly linked list of nodes. Class designed to share
+    """Class implementing a mutable Last In, First Out (LIFO) stack data structure
+    pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
     Stacks stacks are stateful objects, values can be pushed on & popped off.
 
-    A stack points to either the top node of a singlely linked list, or to
-    None which indicates an empty stack.
+    A Stack points to either the top node in the list, or to None which indicates
+    an empty stack.
 
-    A stack keeps a count of the number of objects currently on it.
+    A Stack keeps a count of the number of objects currently on it. Pushing to,
+    popping from, getting the length and copying the Stack are all O(1) operations.
 
     None represents the absence of a value and ignored if pushed on a Stack.
     """
@@ -53,19 +52,19 @@ class Stack(StackBase):
         super().__init__(*ds)
 
     def __str__(self):
-        """Display the data in the stack, left to right starting at bottom"""
+        """Display the data in the Stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> Stack:
         """Return shallow copy of a Stack in O(1) time & space complexity"""
-        pstack = Stack()
-        pstack._head, pstack._count = self._head, self._count
-        return pstack
+        stack = Stack()
+        stack._head, stack._count = self._head, self._count
+        return stack
 
     def reverse(self) -> None:
         """Return shallow copy of a Stack in O(1) time & space complexity"""
-        pstack = Stack(reversed(self))
-        self._head, self._count = pstack._head, pstack._count
+        stack = Stack(reversed(self))
+        self._head, self._count = stack._head, stack._count
 
     def push(self, *ds: Any) -> None:
         """Push data that is not NONE onto top of stack,
@@ -99,6 +98,74 @@ class Stack(StackBase):
         """
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
+
+class FStack(StackBase, FP_rev):
+    """Class implementing an immutable Last IN, First Out (LIFO) data structure
+    pointing to a singularly linked list of nodes. This class is designed to share
+    nodes with other FStack instances.
+
+    FStack stacks are immutable objects.
+
+    An FStack points to either the top node in the list, or to None which indicates
+    an empty stack.
+
+    An Fstack keeps a count of the number of objects currently on it. Getting the head,
+    tail, length, copying and creating a new Fstack with cons are all O(1) operations.
+
+    None represents the absence of a value and ignored if pushed on an FStack.
+    """
+    def __init__(self, *ds):
+        super().__init__(*ds)
+
+    def __str__(self):
+        """Display the data in the FStack, left to right starting at bottom"""
+        return '| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
+
+    def copy(self) -> FStack:
+        """Return shallow copy of a FStack in O(1) time & space complexity"""
+        fstack = FStack()
+        fstack._head = self._head
+        fstack._count = self._count
+        return fstack
+
+    def reverse(self) -> FStack:
+        return FStack(reversed(self))
+
+    def head(self, default: Any=None) -> Any:
+        """Returns the data at the top of the stack. Does not consume the data.
+        If stack is empty, head does not exist so in that case return default.
+        """
+        if self._head is None:
+            return default
+        return self._head._data
+
+    def tail(self, default=None) -> FStack:
+        """Return tail of the stack. If Stack is empty, tail does not exist, so
+        return a default of type FStack instead. If default is not given, return
+        an empty FStack.
+        """
+        if self._head:
+            stack = FStack()
+            stack._head = self._head._next
+            stack._count = self._count - 1
+            return stack
+        elif default is None:
+            return FStack()
+        else:
+            return default
+
+    def cons(self, d: Any) -> FStack:
+        """Return a new stack with data as head and self as tail. Constructing
+        a stack using a non-existent value as head results in a non-existent
+        stack. In that case, just return a copy of the stack.
+        """
+        if d is not None:
+            stack = FStack()
+            stack._head = Node(d, self._head)
+            stack._count = self._count + 1
+            return stack
+        else:
+            return self.copy()
 
 if __name__ == "__main__":
     pass

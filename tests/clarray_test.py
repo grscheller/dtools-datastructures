@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from typing import Any
-from grscheller.datastructures.clarray import CLArray
+from grscheller.datastructures.array import CLArray
 
 class TestCLArray:
     def test_mapSelf(self):

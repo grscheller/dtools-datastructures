@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.ftuple - functional tuples
+"""Module grscheller.datastructure.tuplelike - functional tuples
 
 Module implementing an immutable tuple like object with
 a funtional interface. Right now just a minimally viable product.

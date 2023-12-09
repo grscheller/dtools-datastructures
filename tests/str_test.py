@@ -15,11 +15,10 @@
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.circular_array import CircularArray
-from grscheller.datastructures import FStack, Stack
-from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import CLArray
-from grscheller.datastructures import FTuple
-
+from grscheller.datastructures.stack import Stack, FStack
+from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
+from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.tuplelike import FTuple
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -101,16 +100,23 @@ class Test_str:
         assert foo ==baz
         assert foo is not baz
 
-    def test_Queue(self):
-        q1 = SQueue()
+    def test_FIFOQueue(self):
+        q1 = FIFOQueue()
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
-    def test_Dqueue(self):
-        dq1 = DQueue()
-        dq2 = DQueue()
+    def test_LIFOQueue(self):
+        q1 = LIFOQueue()
+        assert str(q1) == '||  ><'
+        q1.push(1, 2, 3, 42)
+        q1.pop()
+        assert str(q1) == '|| 1 > 2 > 3 ><'
+
+    def test_DQueue(self):
+        dq1 = DoubleQueue()
+        dq2 = DoubleQueue()
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)
