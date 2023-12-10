@@ -6,12 +6,12 @@
 * PyPI releases are tagged with a leading "v" on GitHub
 * Rolling Release Model
   * maintainer will not back port bug fixes to previous versions
-  * main branch will be the release branch
-    * will either be the current PyPI release, or
-    * will be the release canidate for the next PyPI release
-  * devel branch will be the only software development tracking branch
+  * main branch will be the development branch
     * will attempt to keep relatively stable, but
     * may not be fully tested
+  * release branch will be the only software development tracking branch
+    * will either be the current PyPI release, or
+    * will be used to prepare the next PyPI release canidate
   * feature branches begin with "feature_" and are places to
     * explore new directions
     * commit potentially very broken code
@@ -25,7 +25,7 @@
     * API additions
     * bugfixes or minor changes
     * documentation updates
-  * forth digit (develoment branches & early PyPI releases only)
+  * forth digit (develoment, feature & early PyPI releases only)
     * commit count
     * development environment thrashing
     * not to be taken too seriously
