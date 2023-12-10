@@ -48,21 +48,26 @@ Class Either: Implements a left biased Either Monad.</p>
 Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
 Class Either: Implements a left biased Either Monad.
 &#34;&#34;&#34;
+
 from __future__ import annotations
 
-__all__ = [ &#39;FP&#39;, &#39;FP_rev&#39;,
+__all__ = [
+            &#39;FP&#39;, &#39;FP_rev&#39;,
             &#39;Either&#39;, &#39;Left&#39;, &#39;Right&#39;,
             &#39;Maybe&#39;, &#39;Some&#39;, &#39;Nothing&#39;,
-            &#39;maybeToEither&#39;, &#39;eitherToMaybe&#39; ]
+            &#39;maybeToEither&#39;, &#39;eitherToMaybe&#39;
+          ]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Type
+from typing import Any, Callable
 from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
+    def __init__(self):
+        pass
 
     # For FIFO type data structures.
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
@@ -144,14 +149,14 @@ class Maybe(FP):
             return False
         return self._value == other._value
 
-    def get(self, alternate: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get contents if they exist, otherwise return an alternate value.
-        Caller is responsible with dealing with a None alternate return value.
+    def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Get contents if they exist, otherwise return None. Caller is
+        responsible with dealing with a None return value.
         &#34;&#34;&#34;
         if self:
             return self._value
         else:
-            return alternate
+            return default
 
 # Maybe convenience functions/objects.
 
@@ -168,6 +173,7 @@ def Some(value=None):
 #: Maybe object representing a missing value,
 #: Nothing is not a singleton. Test via equality not identity.
 Nothing = Some()
+
 
 class Either(FP):
     &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
@@ -573,6 +579,8 @@ Left, which is intended as the "happy path."</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FP():
+    def __init__(self):
+        pass
 
     # For FIFO type data structures.
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
@@ -589,10 +597,10 @@ Left, which is intended as the "happy path."</p></div>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.clarray.CLArray" href="../clarray.html#grscheller.datastructures.clarray.CLArray">CLArray</a></li>
 <li><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></li>
 <li><a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
 <li><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></li>
+<li><a title="grscheller.datastructures.fclarray.FCLArray" href="../fclarray.html#grscheller.datastructures.fclarray.FCLArray">FCLArray</a></li>
 <li><a title="grscheller.datastructures.ftuple.FTuple" href="../ftuple.html#grscheller.datastructures.ftuple.FTuple">FTuple</a></li>
 </ul>
 <h3>Methods</h3>
@@ -812,14 +820,14 @@ Left, which is intended as the "happy path."</p></div>
             return False
         return self._value == other._value
 
-    def get(self, alternate: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get contents if they exist, otherwise return an alternate value.
-        Caller is responsible with dealing with a None alternate return value.
+    def get(self, default: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Get contents if they exist, otherwise return None. Caller is
+        responsible with dealing with a None return value.
         &#34;&#34;&#34;
         if self:
             return self._value
         else:
-            return alternate</code></pre>
+            return default</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -828,23 +836,23 @@ Left, which is intended as the "happy path."</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.core.fp.Maybe.get"><code class="name flex">
-<span>def <span class="ident">get</span></span>(<span>self, alternate: Any = None) ‑> Any</span>
+<span>def <span class="ident">get</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get contents if they exist, otherwise return an alternate value.
-Caller is responsible with dealing with a None alternate return value.</p></div>
+<div class="desc"><p>Get contents if they exist, otherwise return None. Caller is
+responsible with dealing with a None return value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get(self, alternate: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Get contents if they exist, otherwise return an alternate value.
-    Caller is responsible with dealing with a None alternate return value.
+<pre><code class="python">def get(self, default: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Get contents if they exist, otherwise return None. Caller is
+    responsible with dealing with a None return value.
     &#34;&#34;&#34;
     if self:
         return self._value
     else:
-        return alternate</code></pre>
+        return default</code></pre>
 </details>
 </dd>
 </dl>

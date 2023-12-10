@@ -1,8 +1,8 @@
 # PyPI grscheller.datastructures release v0.10.14+
 
 Data structures geared to different algorithmic use cases. Supportive
-of functional and imperative styles of programming while endeavoring
-to be Pythonic.
+of both functional and imperative programming styles while endeavoring
+to remain Pythonic.
 
 ## Overview
 
@@ -22,7 +22,7 @@ The data structures in this package:
   provide functional tools to opt into.
 * Don't force exception driven code paths upon client code. Except for
   Python iterators and syntax errors, exceptions are for "exceptional"
-  cases.
+  events.
 
 Sometimes the real power of a data structure comes not from what
 it empowers you to do, but from what it prevents you from doing
@@ -76,10 +76,10 @@ special comment strings. See pdoc3 documentation [here][7].
 
 ---
 
-[1]: docs/README.d/datastructures.md
-[2]: docs/README.d/fp.md
-[3]: docs/README.d/iterlib.md
-[4]: docs/README.d/circulararray.md
+[1]: README.d/datastructures.md
+[2]: README.d/fp.md
+[3]: README.d/iterlib.md
+[4]: README.d/circulararray.md
 [5]: https://grscheller.github.io/datastructures/
 [6]: https://docs.python.org/3.13/library/typing.html
 [7]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0

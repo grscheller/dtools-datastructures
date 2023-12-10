@@ -64,12 +64,12 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any
-from .core.stack_base import StackBase
+from .core.stack import Stack
 from .core.fp import FP_rev
 from .core.nodes import SL_Node as Node
-from .core.circular_array import CircularArray
+from .core.carray import CArray
 
-class FStack(StackBase, FP_rev):
+class FStack(Stack, FP_rev):
     &#34;&#34;&#34;Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -88,7 +88,7 @@ class FStack(StackBase, FP_rev):
 
     def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -123,14 +123,14 @@ class FStack(StackBase, FP_rev):
         else:
             return default
 
-    def cons(self, d: Any) -&gt; FStack:
+    def cons(self, data: Any) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
         &#34;&#34;&#34;
-        if d is not None:
+        if data is not None:
             stack = FStack()
-            stack._head = Node(d, self._head)
+            stack._head = Node(data, self._head)
             stack._count = self._count + 1
             return stack
         else:
@@ -167,7 +167,7 @@ which indicates an empty stack.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FStack(StackBase, FP_rev):
+<pre><code class="python">class FStack(Stack, FP_rev):
     &#34;&#34;&#34;Class implementing an immutable singularly linked stack data
     structure consisting of a singularly linked list of nodes. This
     class is designed to share nodes with other FStack instances.
@@ -186,7 +186,7 @@ which indicates an empty stack.</p>
 
     def __str__(self):
         &#34;&#34;&#34;Display the data in the stack, left to right starting at bottom&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
+        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
         &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
@@ -221,14 +221,14 @@ which indicates an empty stack.</p>
         else:
             return default
 
-    def cons(self, d: Any) -&gt; FStack:
+    def cons(self, data: Any) -&gt; FStack:
         &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
         a stack using a non-existent value as head results in a non-existent
         stack. In that case, just return a copy of the stack.
         &#34;&#34;&#34;
-        if d is not None:
+        if data is not None:
             stack = FStack()
-            stack._head = Node(d, self._head)
+            stack._head = Node(data, self._head)
             stack._count = self._count + 1
             return stack
         else:
@@ -236,14 +236,14 @@ which indicates an empty stack.</p>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.stack_base.StackBase" href="core/stack_base.html#grscheller.datastructures.core.stack_base.StackBase">StackBase</a></li>
+<li><a title="grscheller.datastructures.core.stack.Stack" href="core/stack.html#grscheller.datastructures.core.stack.Stack">Stack</a></li>
 <li><a title="grscheller.datastructures.core.fp.FP_rev" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
 <li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.fstack.FStack.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, d: Any) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
+<span>def <span class="ident">cons</span></span>(<span>self, data: Any) ‑> <a title="grscheller.datastructures.fstack.FStack" href="#grscheller.datastructures.fstack.FStack">FStack</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a new stack with data as head and self as tail. Constructing
@@ -253,14 +253,14 @@ stack. In that case, just return a copy of the stack.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def cons(self, d: Any) -&gt; FStack:
+<pre><code class="python">def cons(self, data: Any) -&gt; FStack:
     &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
     a stack using a non-existent value as head results in a non-existent
     stack. In that case, just return a copy of the stack.
     &#34;&#34;&#34;
-    if d is not None:
+    if data is not None:
         stack = FStack()
-        stack._head = Node(d, self._head)
+        stack._head = Node(data, self._head)
         stack._count = self._count + 1
         return stack
     else:

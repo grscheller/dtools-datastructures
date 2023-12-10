@@ -61,45 +61,49 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any
-from .core.queue_base import QueueBase
+from .core.queue import Queue
 
-class SQueue(QueueBase):
+class SQueue(Queue):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
+        super().__init__(*ds)
+
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
-        squeue._ca = self._ca.copy()
+        squeue._carray = self._carray.copy()
         return squeue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._ca.pushR(d)
+                self._carray.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca.popL()
+        if len(self._carray) &gt; 0:
+            return self._carray.popL()
         else:
             return None
 
     def peakLastIn(self) -&gt; Any:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca[-1]
+        if len(self._carray) &gt; 0:
+            return self._carray[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca[0]
+        if len(self._carray) &gt; 0:
+            return self._carray[0]
         else:
             return None
 
@@ -123,54 +127,58 @@ if __name__ == &#34;__main__&#34;:
 <dd>
 <div class="desc"><p>Single sided queue datastructure. Will resize itself as needed.
 None represents the absence of a value and ignored if pushed onto an SQueue.</p>
-<p>Construct a queue data structure. Cull None values.</p></div>
+<p>Construct a FIFO SQueue data structure.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SQueue(QueueBase):
+<pre><code class="python">class SQueue(Queue):
     &#34;&#34;&#34;Single sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an SQueue.
     &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a FIFO SQueue data structure.&#34;&#34;&#34;
+        super().__init__(*ds)
+
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def copy(self) -&gt; SQueue:
         &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         squeue = SQueue()
-        squeue._ca = self._ca.copy()
+        squeue._carray = self._carray.copy()
         return squeue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
-                self._ca.pushR(d)
+                self._carray.pushR(d)
 
     def pop(self) -&gt; Any:
         &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca.popL()
+        if len(self._carray) &gt; 0:
+            return self._carray.popL()
         else:
             return None
 
     def peakLastIn(self) -&gt; Any:
         &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca[-1]
+        if len(self._carray) &gt; 0:
+            return self._carray[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
         &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-        if len(self._ca) &gt; 0:
-            return self._ca[0]
+        if len(self._carray) &gt; 0:
+            return self._carray[0]
         else:
             return None</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
+<li><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -186,7 +194,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <pre><code class="python">def copy(self) -&gt; SQueue:
     &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     squeue = SQueue()
-    squeue._ca = self._ca.copy()
+    squeue._carray = self._carray.copy()
     return squeue</code></pre>
 </details>
 </dd>
@@ -201,8 +209,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def peakLastIn(self) -&gt; Any:
     &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
-    if len(self._ca) &gt; 0:
-        return self._ca[-1]
+    if len(self._carray) &gt; 0:
+        return self._carray[-1]
     else:
         return None</code></pre>
 </details>
@@ -218,8 +226,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def peakNextOut(self) -&gt; Any:
     &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
-    if len(self._ca) &gt; 0:
-        return self._ca[0]
+    if len(self._carray) &gt; 0:
+        return self._carray[0]
     else:
         return None</code></pre>
 </details>
@@ -235,8 +243,8 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">def pop(self) -&gt; Any:
     &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
-    if len(self._ca) &gt; 0:
-        return self._ca.popL()
+    if len(self._carray) &gt; 0:
+        return self._carray.popL()
     else:
         return None</code></pre>
 </details>
@@ -254,15 +262,15 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
     &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
     for d in ds:
         if d != None:
-            self._ca.pushR(d)</code></pre>
+            self._carray.pushR(d)</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
+<li><code><b><a title="grscheller.datastructures.core.queue.Queue" href="core/queue.html#grscheller.datastructures.core.queue.Queue">Queue</a></b></code>:
 <ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.queue.Queue.map" href="core/queue.html#grscheller.datastructures.core.queue.Queue.map">map</a></code></li>
 </ul>
 </li>
 </ul>

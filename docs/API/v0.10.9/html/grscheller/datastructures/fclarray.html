@@ -162,8 +162,8 @@ class FCLArray(FP):
         return &#39;[|&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;|]&#39;
 
     def __bool__(self):
-        &#34;&#34;&#34;Return false only is all array
-        values are equal to the default value.
+        &#34;&#34;&#34;Return true only only if there existsan array
+        value ot equal to the default value.
         &#34;&#34;&#34;
         default = self._default
         for value in self:
@@ -175,13 +175,13 @@ class FCLArray(FP):
         &#34;&#34;&#34;Returns the size of the FCLArray&#34;&#34;&#34;
         return self._size
 
-    def __getitem__(self, index: int) -&gt; Union[Any, Never]:
+    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
         size = self._size
         if size == 0:
             msg = &#39;Attempt to index an empty FCLArray&#39;
             raise IndexError(msg)
 
-        if index &lt; -size or index &gt;= size:
+        if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
             msg = f&#39;FCLArray index = {index} not between {l} and {h}&#39;
@@ -190,13 +190,13 @@ class FCLArray(FP):
 
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -&gt; Union[None, Never]:
+    def __setitem__(self, index: int, value: Any) -&gt; Union[None,Never]:
         size = self._size
         if size == 0:
             msg = &#39;Attempt to index an empty FCLArray&#39;
             raise IndexError(msg)
 
-        if index &lt; -size or index &gt;= size:
+        if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
             msg = f&#39;FCLArray index = {index} not between {l} and {h}&#39;
@@ -210,7 +210,7 @@ class FCLArray(FP):
 
     def __eq__(self, other: Any):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal. Worst
-        case is O(n) behavior for the true case. The default value play no ro;e
+        case is O(n) behavior for the true case. The default value play no role
         in determining equality.
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
@@ -374,8 +374,8 @@ the empty tuple () is used. A better choice would be to generate an
         return &#39;[|&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;|]&#39;
 
     def __bool__(self):
-        &#34;&#34;&#34;Return false only is all array
-        values are equal to the default value.
+        &#34;&#34;&#34;Return true only only if there existsan array
+        value ot equal to the default value.
         &#34;&#34;&#34;
         default = self._default
         for value in self:
@@ -387,13 +387,13 @@ the empty tuple () is used. A better choice would be to generate an
         &#34;&#34;&#34;Returns the size of the FCLArray&#34;&#34;&#34;
         return self._size
 
-    def __getitem__(self, index: int) -&gt; Union[Any, Never]:
+    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
         size = self._size
         if size == 0:
             msg = &#39;Attempt to index an empty FCLArray&#39;
             raise IndexError(msg)
 
-        if index &lt; -size or index &gt;= size:
+        if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
             msg = f&#39;FCLArray index = {index} not between {l} and {h}&#39;
@@ -402,13 +402,13 @@ the empty tuple () is used. A better choice would be to generate an
 
         return self._list[index]
 
-    def __setitem__(self, index: int, value: Any) -&gt; Union[None, Never]:
+    def __setitem__(self, index: int, value: Any) -&gt; Union[None,Never]:
         size = self._size
         if size == 0:
             msg = &#39;Attempt to index an empty FCLArray&#39;
             raise IndexError(msg)
 
-        if index &lt; -size or index &gt;= size:
+        if not -size &lt;= index &lt; size:
             l = -size
             h = size - 1
             msg = f&#39;FCLArray index = {index} not between {l} and {h}&#39;
@@ -422,7 +422,7 @@ the empty tuple () is used. A better choice would be to generate an
 
     def __eq__(self, other: Any):
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal. Worst
-        case is O(n) behavior for the true case. The default value play no ro;e
+        case is O(n) behavior for the true case. The default value play no role
         in determining equality.
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
