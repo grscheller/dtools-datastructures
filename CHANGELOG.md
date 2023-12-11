@@ -2,17 +2,16 @@
 
 ## Overview
 
-* Single Maintainer PyPI Package
+* Single Maintainer PyPI Package - software is a Beta release 
+* PyPI releases are tagged with a leading "v" on GitHub
 * Rolling Release Model
-  * maintained on GitHub, software is a Beta release 
   * maintainer will not back port bug fixes to previous versions
-  * main branch will be the release branch
-    * will either be the current PyPI release, or
-    * will be the release canidate for the next PyPI release
-    * PyPI releases are tagged with a leading "v" on GitHub
-  * devel branch will be the only software development tracking branch
+  * main branch will be the development branch
     * will attempt to keep relatively stable, but
     * may not be fully tested
+  * release branch will be the only software development tracking branch
+    * will either be the current PyPI release, or
+    * will be used to prepare the next PyPI release canidate
   * feature branches begin with "feature_" and are places to
     * explore new directions
     * commit potentially very broken code
@@ -26,21 +25,76 @@
     * API additions
     * bugfixes or minor changes
     * documentation updates
-  * forth digit (develoment branches & early PyPI releases only)
+  * forth digit (develoment, feature & early PyPI releases only)
     * commit count
     * development environment thrashing
     * not to be taken too seriously
 
-## Version - PyPI releases begin with "v"
+## Versions - PyPI releases begin with "v"
+
+### Version 0.10.14.2 (RC 0.11.0-1) - 2023-12-11
+
+* First release candidate - unlikely this will be the next PyPI release
+  * will cut next PyPI release with Flit from this branch
+  * removed docs direrctoy before merge (docs/ will be main only)
+  * things to add in main before next release
+    * Make Maybe Nothing a singleton (use __new__)
+    * Derive FTuple from Tuple (use __new__) for performance boost
+    * simplify CLArray to use a Queue instead of CircularArray & iterator
+    * start using __slots__ for performance boost to data structures
+      * efficiency trumps extensibility
+      * prevents client code adding arbitrary attributes & methods
+      * smalled size & quicker method/attribute lookups
+      * big difference when dealing with huge number of data structures
+
+### Version 0.10.14.0 - commit date 2023-12-09
+
+* Finished massive renaming & repackaging effort
+  * to help with future growth in future
+  * name choices more self documenting
+  * top level modules
+    * array
+      * CLArray
+    * queue
+      * FIFOQueue (formerly SQueue)
+      * LIFOQueue (LIFO version of above)
+      * DoubleQueue (formerly DQueue)
+    * stack
+      * Stack (formerly PStack)
+      * FStack
+    * tuplelike
+      * FTuple
+
+### Version 0.10.11.0 - commit date 2023-11-27
+
+* Created new datastructures class CLArray
+  * more imperitive version of FCLArray
+    * has an iterator to swap None values instead of a default value
+      * when iterator is exhausted, will swap in () for None
+    * no flatMap type methods
+    * map method mutates self
+    * can be resized
+    * returns false when CLArray contains no non-() elements
+  * TODO: does not yet handle StopIteration events properly
+* made package more overall "atomic"
+
+### Version 0.10.10.0 - commit date 2023-11-26
+
+* More or less finalized FCLArray API
+  * finished overriding default flatMap, mergeMap & exhaustMap from FP
+  * need mergeMap & exhaustMap versions of unit tests
+  * found this data structure very interesting
+    * hopefully find a use for it
+  * considering a simplier CLArray version
 
 ### Version 0.10.8.0 - commit date 2023-11-18
 
 * Bumping requires-python = ">=3.11" in pyproject.toml
-  * 0.10.7.X will be on the GitHub pypy3 branch
+  * Currently developing & testing on Python 3.11.5
+  * 0.10.7.X will be used on the GitHub pypy3 branch
     * Pypy3 (7.3.13) using Python (3.10.13)
     * tests pass but are 4X slower
     * LSP almost useless due to more primative typing module
-  * Currently developing & testing on Python 3.11.5
 
 ### Version 0.10.7.0 - commit date 2023-11-18
 

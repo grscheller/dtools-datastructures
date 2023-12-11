@@ -14,33 +14,17 @@
 
 """Package grscheller.datastructures.core
 
-Data modules supporting core infrastructure of grscheller.datastructures.
-
-- grscheller.datastructures.core.fp
-  - data structures supporting a functional style of programming in Python
-    - immutable semantics - map & flatMap always return modified copies
-    - None is always treated as a non-existance value
-      - Python None value cannot be stored in any object in this subpackage
-      - semantically None does not exist
-      - None is used as an implementration detail
-
-- grscheller.datastructures.core.iterlib iterator module
-  - functions similar to itertools and more-itertools
-    - will use itertools over these since they are C language builtins
-    - not using PyPI more-itertools to avoid external dependencies
-
-- grscheller.datastructures.core.carray module implementing a circular array
-  - used in the implementation of several other data structures
-  - None freely stored in this data structure
-  - decided to not make private because
-    - could be of utility on its own
-    - could be of use for users to create their own data structures
+Modules supporting core infrastructure of grscheller.datastructures.
 """
 
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .fp import *
-from .iterlib import *
-from .carray import *
+#: Core API not imported from grscheller.datastructures. Useful imports for REPL's like
+#: ipython. Can be used by client code to help implement new data structures.
+from .fp import FP, FP_rev
+from .nodes import SL_Node, Tree_Node
+from .circular_array import CircularArray
+from .queue_base import QueueBase
+from .stack_base import StackBase

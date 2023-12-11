@@ -23,3 +23,20 @@ dynamic = ["version", "description"]
 Source = "https://github.com/grscheller/datastructures"
 Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
 Documentation = "https://grscheller.github.io/datastructures/"
+
+[tool.pylsp-mypy]
+live-mode = true
+strict = false
+report_progress = true
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"

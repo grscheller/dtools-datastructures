@@ -28,16 +28,16 @@ Classes:
 
 from __future__ import annotations
 
-__all__ = ['Stack']
+__all__ = ['StackBase']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any
 from .nodes import SL_Node as Node
-from .carray import CArray
+from .circular_array import CircularArray
 
-class Stack():
+class StackBase():
     """Abstract base class for the purposes of DRY inheritance of classes
     implementing stack type data structures. Each stack is a very simple
     stateful object containing a count of the number of elements on it and
@@ -65,7 +65,7 @@ class Stack():
 
     def __reversed__(self):
         """Reverse iterate over the contents of the stack"""
-        return reversed(CArray(*self))
+        return reversed(CircularArray(*self))
 
     def __repr__(self):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'

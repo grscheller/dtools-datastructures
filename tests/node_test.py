@@ -31,9 +31,9 @@ class Test_SL_Node:
         assert n2._next is not None
         assert n2._data == n3._next._data == 2
         assert n1._data == n2._next._data == n3._next._next._data == 1
-        assert n3._next != None
-        assert n3._next._next != None
-        assert n3._next._next._next == None
+        assert n3._next is not None
+        assert n3._next._next is not None
+        assert n3._next._next._next is None
         assert n3._next._next == n2._next
 
 class Test_Tree_Node:

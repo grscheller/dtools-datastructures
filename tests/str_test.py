@@ -14,12 +14,11 @@
 
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.carray import CArray
-from grscheller.datastructures import FStack, PStack
-from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import FCLArray, FTuple
-from grscheller.datastructures import FTuple
-
+from grscheller.datastructures.core.circular_array import CircularArray
+from grscheller.datastructures.stack import Stack, FStack
+from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
+from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.tuplelike import FTuple
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -52,8 +51,8 @@ class Test_str:
         assert str(Left(42)) == 'Left(42)'
         assert str(Right(13)) == 'Right(13)'
 
-    def test_PStack(self):
-        s1 = PStack()
+    def test_Stack(self):
+        s1 = Stack()
         assert str(s1) == '||  ><'
         s1.push(42)
         assert str(s1) == '|| 42 ><'
@@ -63,11 +62,13 @@ class Test_str:
         assert str(s1) == "|| 42 <- 'Buggy the clown' ><"
         assert s1.pop() == 'Buggy the clown'
 
-        foo = PStack(1)
+        foo = Stack(1)
         bar = foo.copy()
         bar.pop()
         foo.push(2,3,4)
-        bar.push(2); bar.push(3); bar.push(4)
+        bar.push(2)
+        bar.push(3)
+        bar.push(4)
         baz = bar
         assert str(foo) == '|| 1 <- 2 <- 3 <- 4 ><'
         assert str(baz) == '|| 2 <- 3 <- 4 ><'
@@ -99,16 +100,23 @@ class Test_str:
         assert foo ==baz
         assert foo is not baz
 
-    def test_Queue(self):
-        q1 = SQueue()
+    def test_FIFOQueue(self):
+        q1 = FIFOQueue()
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
-    def test_Dqueue(self):
-        dq1 = DQueue()
-        dq2 = DQueue()
+    def test_LIFOQueue(self):
+        q1 = LIFOQueue()
+        assert str(q1) == '||  ><'
+        q1.push(1, 2, 3, 42)
+        q1.pop()
+        assert str(q1) == '|| 1 > 2 > 3 ><'
+
+    def test_DQueue(self):
+        dq1 = DoubleQueue()
+        dq2 = DoubleQueue()
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)
@@ -120,7 +128,7 @@ class Test_str:
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
     def test_fclarray(self):
-        cl = FCLArray(1,2,3,4,5)
+        cl = CLArray(1,2,3,4,5)
         cl[2] = 42
         assert str(cl) == '[|1, 2, 42, 4, 5|]'
 
@@ -130,8 +138,8 @@ class Test_str:
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'
 
-    def testCArray(self):
-        ca = CArray()
+    def testCircularArray(self):
+        ca = CircularArray()
         assert str(ca) == '(||)'
         ca.pushR(1)
         ca.pushL('foo')

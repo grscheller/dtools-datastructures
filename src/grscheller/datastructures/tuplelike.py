@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.ftuple - functional tuples
+"""Module grscheller.datastructure.tuplelike - functional tuples
 
 Module implementing an immutable tuple like object with
 a funtional interface. Right now just a minimally viable product.
@@ -32,7 +32,7 @@ class FTuple(FP):
     """Class implementing tuple-like data structure with FP behaviors."""
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""
-        self._ds = tuple(filter(lambda x: x != None, ds))
+        self._ds = tuple(filter(lambda x: x is not None, ds))
 
     def __iter__(self):
         """Iterate over the immutable state of the FTuple"""
@@ -56,11 +56,10 @@ class FTuple(FP):
         return self._ds != ()
 
     def __len__(self) -> int:
-        """Returns the number of elements in the ftuple"""
+        """Returns the number of elements in the FTuple"""
         return len(self._ds)
 
     def __getitem__(self, index: int) -> Union[Any,Never]:
-        # TODO: Does not like being given a slice ... research how
         msg = ''
         if (cnt := len(self._ds)) == 0:
             msg = 'Indexing an empty FTuple'

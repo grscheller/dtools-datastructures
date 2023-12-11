@@ -15,26 +15,24 @@
 from __future__ import annotations
 
 from typing import Any
-from grscheller.datastructures.core.fp import Maybe, Nothing, Some
-from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.carray import CArray
-from grscheller.datastructures import FStack, PStack
-from grscheller.datastructures import SQueue, DQueue
-from grscheller.datastructures import FCLArray, FTuple
-from grscheller.datastructures import FTuple
-
+from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.stack import Stack, FStack
+from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
+from grscheller.datastructures.tuplelike import FTuple
+from grscheller.datastructures.core.circular_array import CircularArray
+from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
 
 class Test_repr:
-    def test_CArray(self):
-        ca1 = CArray()
-        assert repr(ca1) == 'CArray()'
+    def test_CircularArray(self):
+        ca1 = CircularArray()
+        assert repr(ca1) == 'CircularArray()'
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
         ca1.pushR(1)
         ca1.pushL('foo')
-        assert repr(ca1) == "CArray('foo', 1)"
+        assert repr(ca1) == "CircularArray('foo', 1)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
@@ -47,21 +45,21 @@ class Test_repr:
         assert ca1.popL() == 1
         ca1.pushL(42)
         ca1.popR()
-        assert repr(ca1) == "CArray(42, 2, 3, 4)"
+        assert repr(ca1) == "CircularArray(42, 2, 3, 4)"
         ca2 = eval(repr(ca1))
         assert ca2 == ca1
         assert ca2 is not ca1
 
-    def test_DQueue(self):
-        ca1 = DQueue()
-        assert repr(ca1) == 'DQueue()'
+    def test_DoubleQueue(self):
+        ca1 = DoubleQueue()
+        assert repr(ca1) == 'DoubleQueue()'
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
 
         ca1.pushR(1)
         ca1.pushL('foo')
-        assert repr(ca1) == "DQueue('foo', 1)"
+        assert repr(ca1) == "DoubleQueue('foo', 1)"
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
@@ -74,21 +72,21 @@ class Test_repr:
         assert ca1.popL() == 1
         ca1.pushL(42)
         ca1.popR()
-        assert repr(ca1) == "DQueue(42, 2, 3, 4)"
+        assert repr(ca1) == "DoubleQueue(42, 2, 3, 4)"
         dq2 = eval(repr(ca1))
         assert dq2 == ca1
         assert dq2 is not ca1
 
-    def test_SQueue(self):
-        sq1 = SQueue()
-        assert repr(sq1) == 'SQueue()'
+    def test_FIFOQueue(self):
+        sq1 = FIFOQueue()
+        assert repr(sq1) == 'FIFOQueue()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "SQueue(1, 'foo')"
+        assert repr(sq1) == "FIFOQueue(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -101,42 +99,99 @@ class Test_repr:
         assert sq1.pop() == 'foo'
         sq1.push(42)
         sq1.pop()
-        assert repr(sq1) == "SQueue(3, 4, 5, 42)"
+        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
-    def test_clarray(self):
-        cla1 = FCLArray()
-        assert repr(cla1) == 'FCLArray(default=())'
-        cla2 = eval(repr(cla1))
-        assert cla2 == cla1
-        assert cla2 is not cla1
+    def test_LIFOQueue(self):
+        sq1 = LIFOQueue()
+        assert repr(sq1) == 'LIFOQueue()'
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
 
-        cla1 = FCLArray('foo', [10, 22], size=-3, default=42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        cla2 = eval(repr(cla1))
-        assert cla2 == cla1
-        assert cla2 is not cla1
+        sq1.push(1)
+        sq1.push('foo')
+        assert repr(sq1) == "LIFOQueue(1, 'foo')"
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
 
-        cla1[2].append(42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        popped = cla1[2].pop()
-        assert popped == 42
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=42)"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=42)"
+        assert sq1.pop() == 'foo'
+        sq1.push(2, 3)
+        sq1.push(4)
+        sq1.push(5)
+        assert sq1.pop() == 5
+        sq1.push(42)
+        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42)'
+        sq2 = eval(repr(sq1))
+        assert sq2 == sq1
+        assert sq2 is not sq1
 
-        # beware immutable collections of mutable objects
-        cla1 = FCLArray(42, 'foo', [10, 22])
-        cla2 = cla1.copy()
-        cla1[2].append(42)
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22, 42], default=())"
-        popped = cla2[2].pop()
-        assert popped == 42
-        assert repr(cla1) == "FCLArray(42, 'foo', [10, 22], default=())"
-        assert repr(cla2) == "FCLArray(42, 'foo', [10, 22], default=())"
+    def test_fclarray(self):
+        fcla1 = CLArray()
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == 'CLArray(noneIter='
+        assert repr_fcla1.split('>')[1] == ')'
+
+        fcla1 = CLArray('foo', [10, 22], size=-3, default=42)
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
+
+        fcla1[2].append(42)
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22, 42], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
+        assert fcla1[2].pop() == 42
+        repr_fcla1 = repr(fcla1)
+        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22], noneIter="
+        assert repr_fcla1.split('>')[1] == ')'
+
+        fcla1 = CLArray(42, 'foo', 'bar', default=42)
+        fcla2 = fcla1.copy()
+        fcla3 = fcla1.copy(default=63)
+        fcla2[1] = None
+        fcla3[1] = None
+        repr_fcla2 = repr(fcla2)
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla2.split('<')[0] == "CLArray(42, 42, 'bar', noneIter="
+        assert repr_fcla2.split('>')[1] == ')'
+        assert repr_fcla3.split('<')[0] == "CLArray(42, 63, 'bar', noneIter="
+        assert repr_fcla3.split('>')[1] == ')'
+        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
+
+        fcla1 = CLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
+        fcla2 = fcla1.copy(size=-4)
+        fcla3 = fcla1.copy(size=4)
+        repr_fcla2 = repr(fcla2)
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla2.split('<')[0] == "CLArray('bar', 100, 101, '102', noneIter="
+        assert repr_fcla2.split('>')[1] == ')'
+        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 'bar', 100, noneIter="
+        assert repr_fcla3.split('>')[1] == ')'
+        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
+
+        fcla2[0] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "CLArray(16, 100, 101, '102', noneIter="
+        fcla2[1] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "CLArray(16, 'foo', 101, '102', noneIter="
+        fcla2[2] = None
+        repr_fcla2 = repr(fcla2)
+        assert repr_fcla2.split('<')[0] == "CLArray(16, 'foo', 42, '102', noneIter="
+
+        fcla3[-1] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 'bar', '102', noneIter="
+        fcla3[-2] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 101, '102', noneIter="
+        fcla3[-3] = None
+        repr_fcla3 = repr(fcla3)
+        assert repr_fcla3.split('<')[0] == "CLArray(16, 42, 101, '102', noneIter="
 
     def test_ftuple(self):
         ft1 = FTuple()
@@ -170,16 +225,16 @@ class Test_repr:
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
-    def test_PStack(self):
-        ps1 = PStack()
-        assert repr(ps1) == 'PStack()'
+    def test_Stack(self):
+        ps1 = Stack()
+        assert repr(ps1) == 'Stack()'
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
 
         ps1.push(1)
         ps1.push('foo')
-        assert repr(ps1) == "PStack(1, 'foo')"
+        assert repr(ps1) == "Stack(1, 'foo')"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
@@ -191,7 +246,7 @@ class Test_repr:
         ps1.push(5)
         assert ps1.pop() == 5
         ps1.push(42)
-        assert repr(ps1) == "PStack(1, 2, 3, 4, 42)"
+        assert repr(ps1) == "Stack(1, 2, 3, 4, 42)"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
@@ -320,9 +375,9 @@ class Test_repr:
 
 class Test_repr_mix:
     def test_mix1(self):
-        thing1 = Left(SQueue(
+        thing1 = Left(FIFOQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
-            FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'))
+            Stack([1, 2, 3, Nothing], 42, Left(LIFOQueue('foo', 'bar')))
         ))
 
         thing2 = eval(repr(thing1))
@@ -333,5 +388,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(SQueue(FTuple(42, Some(42), Right('nobody home')), FCLArray([1, 2, 3, Nothing], 42, Left('foofoo'), default=())))"
+        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), Stack([1, 2, 3, Nothing], 42, Left(LIFOQueue('foo', 'bar')))))"
         assert repr_thing1 == repr_str

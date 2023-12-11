@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.core.carray - Double sided queue
+"""Module grscheller.datastructure.core.circular_array - Double sided queue
 
 Module implementing an auto-resizing circular array.
 
 Mainly used to implement other grscheller.datastructure classes in a has-a
-relationship where functionality is more likely restricted than augmented.
+relationship where its functionality is more likely restricted than augmented.
 
 This class is not opinionated regarding None as a value. It freely stores and
 returns None values. Use in a boolean context to determine if empty.
@@ -27,14 +27,14 @@ Implemented with a Python List.
 
 from __future__ import annotations
 
-__all__ = ['CArray']
+__all__ = ['CircularArray']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Self, Union
+from typing import Any, Callable, Never, Union
 
-class CArray:
+class CircularArray:
     """Class implementing a stateful circular array with amortized O(1)
     indexing, prepending & appending values, length determination, and
     indexing for getting & setting values.
@@ -60,7 +60,7 @@ class CArray:
 
     def __iter__(self):
         """Generator yielding the cached contents of the current state of
-        the CArray.
+        the CircularArray.
         """
         if self._count > 0:
             cap = self._capacity
@@ -74,7 +74,7 @@ class CArray:
 
     def __reversed__(self):
         """Generator yielding the cached contents of the current state of
-        the CArray in reversed order.
+        the CircularArray in reversed order.
         """
         if self._count > 0:
             cap = self._capacity
@@ -108,9 +108,9 @@ class CArray:
         elif -cnt <= index < 0:
             return self._list[(self._front + cnt + index) % self._capacity]
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            low = -cnt
+            high = cnt - 1
+            msg = f'Out of bounds: index = {index} not between {low} and {high}'
             msg += 'while getting value.'
             msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
@@ -126,9 +126,9 @@ class CArray:
         elif -cnt <= index < 0:
             self._list[(self._front + cnt + index) % self._capacity] = value
         else:
-            l = -cnt
-            h = cnt - 1
-            msg = f'Out of bounds: index = {index} not between {l} and {h}'
+            low = -cnt
+            high = cnt - 1
+            msg = f'Out of bounds: index = {index} not between {low} and {high}'
             msg += 'while setting value.'
             msg0 = 'Trying to get value from an empty data structure.'
             if cnt > 0:
@@ -146,13 +146,9 @@ class CArray:
         if self._count != other._count:
             return False
 
-        cnt = self._count
-        left = self
-        frontL = self._front
-        capL = self._capacity
-        right = other
-        frontR = other._front
-        capR = other._capacity
+        left, frontL, capL, cnt = self, self._front, self._capacity, self._count
+        right, frontR, capR = other, other._front, other._capacity
+
         nn = 0
         while nn < cnt:
             if left._list[(frontL+nn)%capL] != right._list[(frontR+nn)%capR]:
@@ -160,73 +156,60 @@ class CArray:
             nn += 1
         return True
 
-    def _double(self) -> Self:
-        """Double capacity of circle array"""
+    def _double(self) -> None:
+        """Double capacity of circular array"""
         if self._front > self._rear:
-            frontPart = self._list[self._front:]
-            rearPart = self._list[:self._rear+1]
+            data  = self._list[self._front:]
+            data += self._list[:self._rear+1]
+            data += [None]*(self._capacity)
         else:
-            frontPart = self._list
-            rearPart = []
-        self._list = frontPart + rearPart + [None]*(self._capacity)
-        self._capacity *= 2
-        self._front = 0
-        self._rear = self._count - 1
-        return self
+            data  = self._list
+            data += [None]*(self._capacity)
 
-    def _compact(self) -> Self:
+        self._list, self._capacity,     self._front, self._rear = \
+        data,       2 * self._capacity, 0,           self._count - 1
+
+    def compact(self) -> None:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
-                self._list = [None]*2
-                self._capacity = 2
-                self._front = 0
-                self._rear = 1
+                self._list, self._capacity, self._front, self._rear = \
+                [None]*2,   2,              0,           1
             case 1:
-                self._list = [self._list[self._front], None]
-                self._capacity = 2
-                self._front = 0
-                self._rear = 0
+                data = [self._list[self._front], None]
+
+                self._list, self._capacity, self._front, self._rear = \
+                data,       2,              0,           0
             case _:
                 if self._front > self._rear:
-                    frontPart = self._list[self._front:]
-                    rearPart = self._list[:self._rear+1]
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
                 else:
-                    frontPart = self._list[self._front:self._rear+1]
-                    rearPart = []
-                self._list = frontPart + rearPart
-                self._capacity = self._count
-                self._front = 0
-                self._rear = self._capacity - 1
-        return self
+                    data  = self._list[self._front:self._rear+1]
 
-    def _empty(self) -> Self:
-        """Empty circular array, keep current capacity"""
-        self._list = [None]*self._capacity
-        self._front = 0
-        self._rear = self._capacity - 1
-        return self
+                self._list, self._capacity, self._front, self._rear = \
+                data,       self._count,    0,           self._capacity - 1
 
-    def copy(self) -> CArray:
-        return CArray(*self)
+    def copy(self) -> CircularArray:
+        return CircularArray(*self)
 
-    def reverse(self) -> CArray:
-        return CArray(reversed(self))
+    def reverse(self) -> CircularArray:
+        return CircularArray(*reversed(self))
 
-    def pushR(self, data: Any) -> None:
+    def pushR(self, d: Any) -> None:
         """Push data on rear of circle"""
         if self._count == self._capacity:
             self._double()
         self._rear = (self._rear + 1) % self._capacity
-        self._list[self._rear] = data
+        self._list[self._rear] = d
         self._count += 1
 
-    def pushL(self, data: Any) -> None:
+    def pushL(self, d: Any) -> None:
         """Push data on front of circle"""
         if self._count == self._capacity:
             self._double()
         self._front = (self._front - 1) % self._capacity
-        self._list[self._front] = data
+        self._list[self._front] = d
         self._count += 1
 
     def popR(self) -> Any:
@@ -234,22 +217,29 @@ class CArray:
         if self._count == 0:
             return None
         else:
-            data = self._list[self._rear]
-            self._list[self._rear] = None
-            self._rear = (self._rear - 1) % self._capacity
-            self._count -= 1
-            return data
+            d = self._list[self._rear]
+
+            self._count, self._list[self._rear], self._rear = \
+                self._count-1, None, (self._rear - 1) % self._capacity
+
+            return d
 
     def popL(self) -> Any:
         """Pop data off front of circle array, returns None if empty"""
         if self._count == 0:
             return None
         else:
-            data = self._list[self._front]
-            self._list[self._front] = None
-            self._front = (self._front + 1) % self._capacity
-            self._count -= 1
-            return data
+            d = self._list[self._front]
+
+            self._count, self._list[self._front], self._front = \
+                self._count-1, None, (self._front+1) % self._capacity
+
+            return d
+
+    def empty(self) -> None:
+        """Empty circular array, keep current capacity"""
+        self._list, self._front, self._rear = \
+            [None]*self._capacity, 0, self._capacity-1
 
     def capacity(self) -> int:
         """Returns current capacity of circle array"""
@@ -259,32 +249,28 @@ class CArray:
         """Returns current capacity of circle array"""
         return self._count/self._capacity
 
-    def resize(self, addCapacity = 0) -> Self:
+    def resize(self, addCapacity = 0) -> None:
         """Compact circle array and add extra capacity"""
-        self._compact()
+        self.compact()
         if addCapacity > 0:
             self._list = self._list + [None]*addCapacity
             self._capacity += addCapacity
             if self._count == 0:
                 self._rear = self._capacity - 1
-        return self
 
-    def map(self, f: Callable[[Any], Any]) -> CArray:
+    def map(self, f: Callable[[Any], Any]) -> CircularArray:
         """Apply function over the circular array's contents and return new
         circular array.
         """
-        return CArray(*map(f, self))
+        return CircularArray(*map(f, self))
 
     def mapSelf(self, f: Callable[[Any], Any]) -> None:
         """Apply function over the circular array's contents mutatng the
         circular array, don't return anything.
         """
-        newCArray  = CArray(*map(f, self))
-        self._count = newCArray._count
-        self._capacity = newCArray._capacity
-        self._front = newCArray._front
-        self._rear = newCArray._rear
-        self._list = newCArray._list
+        ca  = CircularArray(*map(f, self))
+        self._count, self._capacity, self._front, self._rear, self._list = \
+            ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
 if __name__ == "__main__":
     pass

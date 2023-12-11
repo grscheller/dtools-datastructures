@@ -1,8 +1,8 @@
-# PyPI grscheller.datastructures release v0.10.9 -> v0.11.0RC
+# PyPI grscheller.datastructures release v0.10.14+
 
 Data structures geared to different algorithmic use cases. Supportive
-of functional and imperative styles of programming while endeavoring
-to be Pythonic.
+of both functional and imperative programming styles while endeavoring
+to remain Pythonic.
 
 ## Overview
 
@@ -18,9 +18,10 @@ The data structures in this package:
   structures to safely mutate while iterators leisurely iterate. 
 * Safely share data between multiple data structure instances by making
   shared data immutable and inaccessible to client code.
-* Don't force exception driven code paths upon client code.
-* Don't force Functional Programming (FP) on client code, FP is opt-in.
-* Code to the "happy" path & provide simple FP tools for "exceptional"
+* Don't force functional programming paradigms on client code, but
+  provide functional tools to opt into.
+* Don't force exception driven code paths upon client code. Except for
+  Python iterators and syntax errors, exceptions are for "exceptional"
   events.
 
 Sometimes the real power of a data structure comes not from what
