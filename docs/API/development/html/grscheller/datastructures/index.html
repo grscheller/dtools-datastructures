@@ -26,22 +26,24 @@
 <p>Data structures geared to different algorithmic use cases. Supportive
 of both functional and imperative programming styles while endeavoring
 to remain Pythonic.</p>
-<p>The data structures in this package:
-- Allow developers to focus on the algorithms the data structures were
-designed to support.
-- Take care of all the "bit fiddling" needed to implement data structure
-behaviors, perform memory management, and deal with edge cases.
-- Mutate data structure instances safely by manipulating encapsulated
-data in protected inner scopes.
-- Iterate over inaccessible copies of internal state allowing the data
-structures to safely mutate while iterators leisurely iterate.
-- Safely share data between multiple data structure instances by making
-shared data immutable and inaccessible to client code.
-- Don't force functional programming paradigms on client code, but
-provide functional tools to opt into.
-- Don't force exception driven code paths upon client code. Except for
+<p>The data structures in this package:</p>
+<ul>
+<li>Allow developers to focus on the algorithms the data structures were
+designed to support.</li>
+<li>Take care of all the "bit fiddling" needed to implement data structure
+behaviors, perform memory management, and deal with edge cases.</li>
+<li>Mutate data structure instances safely by manipulating encapsulated
+data in protected inner scopes.</li>
+<li>Iterate over inaccessible copies of internal state allowing the data
+structures to safely mutate while iterators leisurely iterate. </li>
+<li>Safely share data between multiple data structure instances by making
+shared data immutable and inaccessible to client code.</li>
+<li>Don't force functional programming paradigms on client code, but
+provide functional tools to opt into.</li>
+<li>Don't force exception driven code paths upon client code. Except for
 Python iterators and syntax errors, exceptions are for "exceptional"
-events.</p>
+events.</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -67,6 +69,7 @@ events.</p>
    to remain Pythonic.
 
    The data structures in this package:
+
    - Allow developers to focus on the algorithms the data structures were
      designed to support.
    - Take care of all the &#34;bit fiddling&#34; needed to implement data structure

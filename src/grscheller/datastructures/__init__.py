@@ -19,6 +19,7 @@
    to remain Pythonic.
 
    The data structures in this package:
+
    - Allow developers to focus on the algorithms the data structures were
      designed to support.
    - Take care of all the "bit fiddling" needed to implement data structure
