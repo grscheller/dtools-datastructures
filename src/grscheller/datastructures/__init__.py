@@ -16,14 +16,38 @@
 
    Data structures supporting a functional style of programming, yet still
    endeavor to be Pythonic.
+
+   The data structures in this package:
+   
+   * Allow developers to focus on the algorithms the data structures were
+     designed to support.
+   * Take care of all the "bit fiddling" needed to implement data structure
+     behaviors, perform memory management, and deal with edge cases.
+   * Mutate data structure instances safely by manipulating encapsulated
+     data in protected inner scopes.
+   * Iterate over inaccessible copies of internal state allowing the data
+     structures to safely mutate while iterators leisurely iterate. 
+   * Safely share data between multiple data structure instances by making
+     shared data immutable and inaccessible to client code.
+   * Don't force functional programming paradigms on client code, but
+     provide functional tools to opt into.
+   * Don't force exception driven code paths upon client code. Except for
+     Python iterators and syntax errors, exceptions are for "exceptional"
+     events.
 """
 
-__version__ = "0.10.14.0"
+__version__ = "0.10.14.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-#: Client API. Useful imports for REPL's like ipython
+# Replace these imports with 2 functions
+#
+# 1. One that does bellow imports fo client code to use the data structures that the
+#    package provides.
+# 2. Another to import the missing imports from the core subpackage. This will allow
+#    client code to use the full infrastructure to implement their own data structures.
+#
 from .array import CLArray
 from .queue import FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
