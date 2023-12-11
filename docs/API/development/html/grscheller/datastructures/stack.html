@@ -69,7 +69,7 @@ class Stack(StackBase):
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    Stacks stacks are stateful objects, values can be pushed on &amp; popped off.
+    Stacks are stateful objects, values can be pushed on &amp; popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
     an empty stack.
@@ -139,7 +139,7 @@ class FStack(StackBase, FP_rev):
     FStack stacks are immutable objects.
 
     An FStack points to either the top node in the list, or to None which indicates
-    an empty stack.
+    an empty FStack.
 
     An Fstack keeps a count of the number of objects currently on it. Getting the head,
     tail, length, copying and creating a new Fstack with cons are all O(1) operations.
@@ -164,38 +164,38 @@ class FStack(StackBase, FP_rev):
         return FStack(reversed(self))
 
     def head(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-        If stack is empty, head does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
+        If the FStack is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
     def tail(self, default=None) -&gt; FStack:
-        &#34;&#34;&#34;Return tail of the stack. If Stack is empty, tail does not exist, so
+        &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
         return a default of type FStack instead. If default is not given, return
         an empty FStack.
         &#34;&#34;&#34;
         if self._head:
-            stack = FStack()
-            stack._head = self._head._next
-            stack._count = self._count - 1
-            return stack
+            fstack = FStack()
+            fstack._head = self._head._next
+            fstack._count = self._count - 1
+            return fstack
         elif default is None:
             return FStack()
         else:
             return default
 
     def cons(self, d: Any) -&gt; FStack:
-        &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
-        a stack using a non-existent value as head results in a non-existent
-        stack. In that case, just return a copy of the stack.
+        &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
+        an FStack using a non-existent value as head results in a non-existent
+        FStack. In that case, just return a copy of the FStack.
         &#34;&#34;&#34;
         if d is not None:
-            stack = FStack()
-            stack._head = Node(d, self._head)
-            stack._count = self._count + 1
-            return stack
+            fstack = FStack()
+            fstack._head = Node(d, self._head)
+            fstack._count = self._count + 1
+            return fstack
         else:
             return self.copy()
 
@@ -222,7 +222,7 @@ pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other FStack instances.</p>
 <p>FStack stacks are immutable objects.</p>
 <p>An FStack points to either the top node in the list, or to None which indicates
-an empty stack.</p>
+an empty FStack.</p>
 <p>An Fstack keeps a count of the number of objects currently on it. Getting the head,
 tail, length, copying and creating a new Fstack with cons are all O(1) operations.</p>
 <p>None represents the absence of a value and ignored if pushed on an FStack.</p>
@@ -239,7 +239,7 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
     FStack stacks are immutable objects.
 
     An FStack points to either the top node in the list, or to None which indicates
-    an empty stack.
+    an empty FStack.
 
     An Fstack keeps a count of the number of objects currently on it. Getting the head,
     tail, length, copying and creating a new Fstack with cons are all O(1) operations.
@@ -264,38 +264,38 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
         return FStack(reversed(self))
 
     def head(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-        If stack is empty, head does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
+        If the FStack is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
     def tail(self, default=None) -&gt; FStack:
-        &#34;&#34;&#34;Return tail of the stack. If Stack is empty, tail does not exist, so
+        &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
         return a default of type FStack instead. If default is not given, return
         an empty FStack.
         &#34;&#34;&#34;
         if self._head:
-            stack = FStack()
-            stack._head = self._head._next
-            stack._count = self._count - 1
-            return stack
+            fstack = FStack()
+            fstack._head = self._head._next
+            fstack._count = self._count - 1
+            return fstack
         elif default is None:
             return FStack()
         else:
             return default
 
     def cons(self, d: Any) -&gt; FStack:
-        &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
-        a stack using a non-existent value as head results in a non-existent
-        stack. In that case, just return a copy of the stack.
+        &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
+        an FStack using a non-existent value as head results in a non-existent
+        FStack. In that case, just return a copy of the FStack.
         &#34;&#34;&#34;
         if d is not None:
-            stack = FStack()
-            stack._head = Node(d, self._head)
-            stack._count = self._count + 1
-            return stack
+            fstack = FStack()
+            fstack._head = Node(d, self._head)
+            fstack._count = self._count + 1
+            return fstack
         else:
             return self.copy()</code></pre>
 </details>
@@ -311,23 +311,23 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
 <span>def <span class="ident">cons</span></span>(<span>self, d: Any) ‑> <a title="grscheller.datastructures.stack.FStack" href="#grscheller.datastructures.stack.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a new stack with data as head and self as tail. Constructing
-a stack using a non-existent value as head results in a non-existent
-stack. In that case, just return a copy of the stack.</p></div>
+<div class="desc"><p>Return a new FStack with data as head and self as tail. Constructing
+an FStack using a non-existent value as head results in a non-existent
+FStack. In that case, just return a copy of the FStack.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cons(self, d: Any) -&gt; FStack:
-    &#34;&#34;&#34;Return a new stack with data as head and self as tail. Constructing
-    a stack using a non-existent value as head results in a non-existent
-    stack. In that case, just return a copy of the stack.
+    &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
+    an FStack using a non-existent value as head results in a non-existent
+    FStack. In that case, just return a copy of the FStack.
     &#34;&#34;&#34;
     if d is not None:
-        stack = FStack()
-        stack._head = Node(d, self._head)
-        stack._count = self._count + 1
-        return stack
+        fstack = FStack()
+        fstack._head = Node(d, self._head)
+        fstack._count = self._count + 1
+        return fstack
     else:
         return self.copy()</code></pre>
 </details>
@@ -353,15 +353,15 @@ stack. In that case, just return a copy of the stack.</p></div>
 <span>def <span class="ident">head</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the stack. Does not consume the data.
-If stack is empty, head does not exist so in that case return default.</p></div>
+<div class="desc"><p>Returns the data at the top of the FStack. Does not consume the data.
+If the FStack is empty, head does not exist so in that case return default.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def head(self, default: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-    If stack is empty, head does not exist so in that case return default.
+    &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
+    If the FStack is empty, head does not exist so in that case return default.
     &#34;&#34;&#34;
     if self._head is None:
         return default
@@ -385,7 +385,7 @@ If stack is empty, head does not exist so in that case return default.</p></div>
 <span>def <span class="ident">tail</span></span>(<span>self, default=None) ‑> <a title="grscheller.datastructures.stack.FStack" href="#grscheller.datastructures.stack.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return tail of the stack. If Stack is empty, tail does not exist, so
+<div class="desc"><p>Return tail of the FStack. If FStack is empty, tail does not exist, so
 return a default of type FStack instead. If default is not given, return
 an empty FStack.</p></div>
 <details class="source">
@@ -393,15 +393,15 @@ an empty FStack.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def tail(self, default=None) -&gt; FStack:
-    &#34;&#34;&#34;Return tail of the stack. If Stack is empty, tail does not exist, so
+    &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
     return a default of type FStack instead. If default is not given, return
     an empty FStack.
     &#34;&#34;&#34;
     if self._head:
-        stack = FStack()
-        stack._head = self._head._next
-        stack._count = self._count - 1
-        return stack
+        fstack = FStack()
+        fstack._head = self._head._next
+        fstack._count = self._count - 1
+        return fstack
     elif default is None:
         return FStack()
     else:
@@ -418,7 +418,7 @@ an empty FStack.</p></div>
 <div class="desc"><p>Class implementing a mutable Last In, First Out (LIFO) stack data structure
 pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other Stack instances.</p>
-<p>Stacks stacks are stateful objects, values can be pushed on &amp; popped off.</p>
+<p>Stacks are stateful objects, values can be pushed on &amp; popped off.</p>
 <p>A Stack points to either the top node in the list, or to None which indicates
 an empty stack.</p>
 <p>A Stack keeps a count of the number of objects currently on it. Pushing to,
@@ -434,7 +434,7 @@ popping from, getting the length and copying the Stack are all O(1) operations.<
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    Stacks stacks are stateful objects, values can be pushed on &amp; popped off.
+    Stacks are stateful objects, values can be pushed on &amp; popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
     an empty stack.

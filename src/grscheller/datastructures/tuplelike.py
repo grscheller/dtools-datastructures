@@ -56,11 +56,10 @@ class FTuple(FP):
         return self._ds != ()
 
     def __len__(self) -> int:
-        """Returns the number of elements in the ftuple"""
+        """Returns the number of elements in the FTuple"""
         return len(self._ds)
 
     def __getitem__(self, index: int) -> Union[Any,Never]:
-        # TODO: Does not like being given a slice ... research how
         msg = ''
         if (cnt := len(self._ds)) == 0:
             msg = 'Indexing an empty FTuple'

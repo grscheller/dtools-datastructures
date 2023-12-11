@@ -65,36 +65,36 @@ from .core.queue_base import QueueBase
 
 class FIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an SQueue.
+    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def copy(self) -&gt; FIFOQueue:
-        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         fifoqueue = FIFOQueue()
         fifoqueue._ca = self._ca.copy()
         return fifoqueue
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data on rear of the FIFOQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pop(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the FIFOQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakLastIn(self) -&gt; Any:
-        &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
-        &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -102,16 +102,16 @@ class FIFOQueue(QueueBase):
 
 class LIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an SQueue.
+    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;|| &#34; + &#34; &gt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
     def copy(self) -&gt; LIFOQueue:
-        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        squeue = LIFOQueue()
-        squeue._ca = self._ca.copy()
-        return squeue
+        &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        lifoqueue = LIFOQueue()
+        lifoqueue._ca = self._ca.copy()
+        return lifoqueue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the LIFOQueue &amp; no return value.&#34;&#34;&#34;
@@ -132,46 +132,46 @@ class LIFOQueue(QueueBase):
 
 class DoubleQueue(QueueBase):
     &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DQueue.
+    None represents the absence of a value and ignored if pushed onto a DoubleQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
     def copy(self) -&gt; DoubleQueue:
-        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the DoubleQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto rear of the DoubleQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto front of DoubleQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
         return self._ca.popR()
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakR(self) -&gt; Any:
-        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return right-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakL(self) -&gt; Any:
-        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return left-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -196,7 +196,7 @@ if __name__ == &#34;__main__&#34;:
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful double sided queue datastructure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto a DQueue.</p>
+None represents the absence of a value and ignored if pushed onto a DoubleQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
@@ -204,46 +204,46 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </summary>
 <pre><code class="python">class DoubleQueue(QueueBase):
     &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DQueue.
+    None represents the absence of a value and ignored if pushed onto a DoubleQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
     def copy(self) -&gt; DoubleQueue:
-        &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the DoubleQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         dqueue = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto rear of the DoubleQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto front of DoubleQueue.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
         return self._ca.popR()
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakR(self) -&gt; Any:
-        &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return right-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakL(self) -&gt; Any:
-        &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return left-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -259,13 +259,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.DoubleQueue" href="#grscheller.datastructures.queue.DoubleQueue">DoubleQueue</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the DQueue in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the DoubleQueue in O(n) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; DoubleQueue:
-    &#34;&#34;&#34;Return shallow copy of the DQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the DoubleQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     dqueue = DoubleQueue()
     dqueue._ca = self._ca.copy()
     return dqueue</code></pre>
@@ -275,13 +275,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return left-most element of the DQueue if it exists.</p></div>
+<div class="desc"><p>Return left-most element of the DoubleQueue if it exists.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peakL(self) -&gt; Any:
-    &#34;&#34;&#34;Return left-most element of the DQueue if it exists.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return left-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
     if self._ca:
         return self._ca[0]
     else:
@@ -292,13 +292,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return right-most element of the DQueue if it exists.</p></div>
+<div class="desc"><p>Return right-most element of the DoubleQueue if it exists.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peakR(self) -&gt; Any:
-    &#34;&#34;&#34;Return right-most element of the DQueue if it exists.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return right-most element of the DoubleQueue if it exists.&#34;&#34;&#34;
     if self._ca:
         return self._ca[-1]
     else:
@@ -309,13 +309,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the DQueue</p></div>
+<div class="desc"><p>Pop data off front of the DoubleQueue</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popL(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off front of the DQueue&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
     return self._ca.popL()</code></pre>
 </details>
 </dd>
@@ -323,13 +323,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of the DQueue</p></div>
+<div class="desc"><p>Pop data off rear of the DoubleQueue</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popR(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off rear of the DQueue&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
     return self._ca.popR()</code></pre>
 </details>
 </dd>
@@ -337,13 +337,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto front of DQueue.</p></div>
+<div class="desc"><p>Push data left to right onto front of DoubleQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushL(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto front of DQueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data left to right onto front of DoubleQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._ca.pushL(d)</code></pre>
@@ -353,13 +353,13 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 <span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto rear of the DQueue.</p></div>
+<div class="desc"><p>Push data left to right onto rear of the DoubleQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pushR(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data left to right onto rear of the DQueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data left to right onto rear of the DoubleQueue.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._ca.pushR(d)</code></pre>
@@ -381,7 +381,7 @@ None represents the absence of a value and ignored if pushed onto a DQueue.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful single sided FIFO data structure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto an SQueue.</p>
+None represents the absence of a value and ignored if pushed onto an FIFOQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
@@ -389,36 +389,36 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">class FIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an SQueue.
+    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
     def copy(self) -&gt; FIFOQueue:
-        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
         fifoqueue = FIFOQueue()
         fifoqueue._ca = self._ca.copy()
         return fifoqueue
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data on rear of the FIFOQueue &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pop(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the FIFOQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakLastIn(self) -&gt; Any:
-        &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -&gt; Any:
-        &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -434,13 +434,13 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.FIFOQueue" href="#grscheller.datastructures.queue.FIFOQueue">FIFOQueue</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the SQueue in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; FIFOQueue:
-    &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
     fifoqueue = FIFOQueue()
     fifoqueue._ca = self._ca.copy()
     return fifoqueue</code></pre>
@@ -450,13 +450,13 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return last element pushed to the SQueue without consuming it</p></div>
+<div class="desc"><p>Return last element pushed to the FIFOQueue without consuming it</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peakLastIn(self) -&gt; Any:
-    &#34;&#34;&#34;Return last element pushed to the SQueue without consuming it&#34;&#34;&#34;
+    &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
     if self._ca:
         return self._ca[-1]
     else:
@@ -467,13 +467,13 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return next element ready to pop from the SQueue.</p></div>
+<div class="desc"><p>Return next element ready to pop from the FIFOQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peakNextOut(self) -&gt; Any:
-    &#34;&#34;&#34;Return next element ready to pop from the SQueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
     if self._ca:
         return self._ca[0]
     else:
@@ -484,13 +484,13 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the SQueue.</p></div>
+<div class="desc"><p>Pop data off front of the FIFOQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pop(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off front of the SQueue.&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off front of the FIFOQueue.&#34;&#34;&#34;
     return self._ca.popL()</code></pre>
 </details>
 </dd>
@@ -498,13 +498,13 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data on rear of the SQueue &amp; no return value.</p></div>
+<div class="desc"><p>Push data on rear of the FIFOQueue &amp; no return value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def push(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data on rear of the SQueue &amp; no return value.&#34;&#34;&#34;
+    &#34;&#34;&#34;Push data on rear of the FIFOQueue &amp; no return value.&#34;&#34;&#34;
     for d in ds:
         if d != None:
             self._ca.pushR(d)</code></pre>
@@ -526,7 +526,7 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful single sided LIFO data structure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto an SQueue.</p>
+None represents the absence of a value and ignored if pushed onto an FIFOQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
@@ -534,16 +534,16 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 </summary>
 <pre><code class="python">class LIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an SQueue.
+    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     def __str__(self):
         return &#34;|| &#34; + &#34; &gt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
     def copy(self) -&gt; LIFOQueue:
-        &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        squeue = LIFOQueue()
-        squeue._ca = self._ca.copy()
-        return squeue
+        &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        lifoqueue = LIFOQueue()
+        lifoqueue._ca = self._ca.copy()
+        return lifoqueue
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the LIFOQueue &amp; no return value.&#34;&#34;&#34;
@@ -572,16 +572,16 @@ None represents the absence of a value and ignored if pushed onto an SQueue.</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.LIFOQueue" href="#grscheller.datastructures.queue.LIFOQueue">LIFOQueue</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the SQueue in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; LIFOQueue:
-    &#34;&#34;&#34;Return shallow copy of the SQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
-    squeue = LIFOQueue()
-    squeue._ca = self._ca.copy()
-    return squeue</code></pre>
+    &#34;&#34;&#34;Return shallow copy of the FIFOQueue in O(n) time &amp; space complexity.&#34;&#34;&#34;
+    lifoqueue = LIFOQueue()
+    lifoqueue._ca = self._ca.copy()
+    return lifoqueue</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.queue.LIFOQueue.peak"><code class="name flex">

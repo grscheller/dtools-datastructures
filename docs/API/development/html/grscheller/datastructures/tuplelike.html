@@ -87,11 +87,10 @@ class FTuple(FP):
         return self._ds != ()
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the number of elements in the ftuple&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
         return len(self._ds)
 
     def __getitem__(self, index: int) -&gt; Union[Any,Never]:
-        # TODO: Does not like being given a slice ... research how
         msg = &#39;&#39;
         if (cnt := len(self._ds)) == 0:
             msg = &#39;Indexing an empty FTuple&#39;
@@ -179,11 +178,10 @@ if __name__ == &#34;__main__&#34;:
         return self._ds != ()
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the number of elements in the ftuple&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
         return len(self._ds)
 
     def __getitem__(self, index: int) -&gt; Union[Any,Never]:
-        # TODO: Does not like being given a slice ... research how
         msg = &#39;&#39;
         if (cnt := len(self._ds)) == 0:
             msg = &#39;Indexing an empty FTuple&#39;
