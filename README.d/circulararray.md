@@ -12,7 +12,7 @@ Provides a double sided circular array.
     * Raises `IndexError` exceptions
   * automatically resizes itself as needed
   * implemented with a Python List.
-  * freely store `None` as a value
+  * freely stores `None` as a value
 
-Mainly used for data storage in a "has-a" with other data structures in
-the grscheller.datastructures package.
+Mainly used for data storage with other data structures in the 
+grscheller.datastructures package in a "has-a" relationship.
