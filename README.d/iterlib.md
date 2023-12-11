@@ -74,7 +74,7 @@ to the syntax used for "list comprehensions."
 __Note:__ Using a generator for a class's __iter__ method will not only
 provide both of the above iterator protocol methods, but the iterators
 created by `for ... in` syntax and the `map` builtin are inaccessible to
-the rest of the code. This package defensively uses cache copies of data
+the rest of the code. This package defensively uses cached copies of data
 in such generators so that the original objects can safely mutate while
 the iterators created can leisurely yield the container's past state.
 
