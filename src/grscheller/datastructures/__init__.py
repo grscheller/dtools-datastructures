@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Package grscheller.datastructures
+"""Package grscheller.datastructures - RC 0.11.0-1
 
    Data structures geared to different algorithmic use cases. Supportive
    of both functional and imperative programming styles while endeavoring

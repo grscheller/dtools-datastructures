@@ -32,6 +32,21 @@
 
 ## Versions - PyPI releases begin with "v"
 
+### Version 0.10.14.2 (RC 0.11.0-1) - 2023-12-11
+
+* First release candidate - unlikely this will be the next PyPI release
+  * will cut next PyPI release with Flit from this branch
+  * removed docs direrctoy before merge (docs/ will be main only)
+  * things to add in main before next release
+    * Make Maybe Nothing a singleton (use __new__)
+    * Derive FTuple from Tuple (use __new__) for performance boost
+    * simplify CLArray to use a Queue instead of CircularArray & iterator
+    * start using __slots__ for performance boost to data structures
+      * efficiency trumps extensibility
+      * prevents client code adding arbitrary attributes & methods
+      * smalled size & quicker method/attribute lookups
+      * big difference when dealing with huge number of data structures
+
 ### Version 0.10.14.0 - commit date 2023-12-09
 
 * Finished massive renaming & repackaging effort
