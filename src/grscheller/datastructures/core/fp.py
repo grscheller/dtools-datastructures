@@ -14,8 +14,11 @@
 
 """Module grscheller.datastructures.core.functional
 
-Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
-Class Either: Implements a left biased Either Monad.
+   - class Maybe: Implements the Maybe Monad, also called Option or Optional Monad
+   - class Either: Implements a left biased Either Monad.
+   - class FP: default functional methods for classes which don't implement them
+   - class FP: default functional methods for classes which don't implement them
+   - class FP_rev: similar to FP but for classes with asymetric build/decon
 """
 from __future__ import annotations
 
@@ -32,8 +35,10 @@ from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
+    """Default functional implentations for FIFO data structures"""
+    def __reversed__(self):
+        raise NotImplementedError
 
-    # For FIFO type data structures.
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
         return type(self)(*map(f, self))
 
@@ -47,10 +52,10 @@ class FP():
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
 class FP_rev(FP):
+    """Default functional implentations for LIFO data structures"""
     def __reversed__(self):
         raise NotImplementedError
 
-    # FP modified for FILO type data structures.
     def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
         # return type(self)(*map(f, reversed(self)))
         return type(self)(*map(f, reversed(self)))
@@ -70,11 +75,11 @@ class Maybe(FP):
     - Implements the Option Monad
     - Maybe(value) constructs "Some(value)"
     - Both Maybe() or Maybe(None) constructs a "Nothing"
-    - immutable semantics - map & flatMap return modified copies
+    - Immutable semantics - map & flatMap return modified copies
     - None is always treated as a non-existance value
-      - cannot be stored in an object of type Maybe
-      - semantically None does not exist
-      - None only has any real existance as an implementration detail
+    - None cannot be stored in an object of type Maybe
+    - Semantically None represent non-existance
+    - None only has any real existance as an implementration detail
     """
     __slots__ = ['value']
 
@@ -140,9 +145,13 @@ def Some(value=None) -> Maybe:
 Nothing: Maybe = Maybe()
 
 class Either(FP):
-    """Class that either contains a Left value or Right value, but not both. If
-    right not given, set it to the empty str. This version is biased to the
-    Left, which is intended as the "happy path."
+    """Class that either contains a Left value or Right value, but not both.
+
+    - Implements a left biased Either Monad
+    - Maybe(value, altValue) constructs "Left(value)" if value is not None
+    - Maybe(value, altValue) constructs "Right(altValue)" if value is None
+    - If altValue not given, set it to the empty str.
+    - Immutable semantics - map & flatMap return modified copies
     """
     __slots__ = ['_isLeft', '_value']
 
