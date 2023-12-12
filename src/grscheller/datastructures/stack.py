@@ -47,10 +47,6 @@ class Stack(StackBase):
 
     None represents the absence of a value and ignored if pushed on a Stack.
     """
-    def __init__(self, *ds):
-        """Construct a stateful LIFO Stack"""
-        super().__init__(*ds)
-
     def __str__(self):
         """Display the data in the Stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'

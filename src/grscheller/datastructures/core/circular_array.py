@@ -46,6 +46,9 @@ class CircularArray:
 
     Freely stores None as a value.
     """
+
+    __slots__ = ['_count', '_capacity', '_front', '_rear', '_list']
+
     def __init__(self, *data):
         """Construct a double sided queue"""
         size = len(data)

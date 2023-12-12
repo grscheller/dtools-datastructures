@@ -48,7 +48,6 @@ based circular array for protected data storage.</p>
 Abstract base class for stateful queue type data structures. Using a Python List
 based circular array for protected data storage.
 &#34;&#34;&#34;
-
 from __future__ import annotations
 
 __all__ = [&#39;QueueBase&#39;]
@@ -66,6 +65,8 @@ class QueueBase():
     circular array used will resize itself as needed. Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     &#34;&#34;&#34;
+    __slots__ = [&#39;_ca&#39;]
+
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
         self._ca = CircularArray()
@@ -147,6 +148,8 @@ must ensure that None values do not get pushed onto the circular array.</p>
     circular array used will resize itself as needed. Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     &#34;&#34;&#34;
+    __slots__ = [&#39;_ca&#39;]
+
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
         self._ca = CircularArray()

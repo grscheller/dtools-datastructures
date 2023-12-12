@@ -17,7 +17,6 @@
 Abstract base class for stateful queue type data structures. Using a Python List
 based circular array for protected data storage.
 """
-
 from __future__ import annotations
 
 __all__ = ['QueueBase']
@@ -35,6 +34,8 @@ class QueueBase():
     circular array used will resize itself as needed. Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     """
+    __slots__ = ['_ca']
+
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
         self._ca = CircularArray()

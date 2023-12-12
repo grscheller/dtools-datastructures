@@ -79,10 +79,6 @@ class Stack(StackBase):
 
     None represents the absence of a value and ignored if pushed on a Stack.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a stateful LIFO Stack&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
@@ -424,7 +420,7 @@ an empty stack.</p>
 <p>A Stack keeps a count of the number of objects currently on it. Pushing to,
 popping from, getting the length and copying the Stack are all O(1) operations.</p>
 <p>None represents the absence of a value and ignored if pushed on a Stack.</p>
-<p>Construct a stateful LIFO Stack</p></div>
+<p>Construct a LIFO Stack</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -444,10 +440,6 @@ popping from, getting the length and copying the Stack are all O(1) operations.<
 
     None represents the absence of a value and ignored if pushed on a Stack.
     &#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Construct a stateful LIFO Stack&#34;&#34;&#34;
-        super().__init__(*ds)
-
     def __str__(self):
         &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;

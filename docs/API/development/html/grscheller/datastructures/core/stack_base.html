@@ -83,6 +83,8 @@ class StackBase():
     pointing to the same node. Each stack class ensures None values do not
     get pushed onto the the stack.
     &#34;&#34;&#34;
+    __slots__ = [&#39;_head&#39;, &#39;_count&#39;]
+
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
         self._head = None
@@ -182,6 +184,8 @@ get pushed onto the the stack.</p>
     pointing to the same node. Each stack class ensures None values do not
     get pushed onto the the stack.
     &#34;&#34;&#34;
+    __slots__ = [&#39;_head&#39;, &#39;_count&#39;]
+
     def __init__(self, *ds):
         &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
         self._head = None
