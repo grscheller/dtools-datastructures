@@ -76,12 +76,6 @@ class Maybe(FP):
       - semantically None does not exist
       - None only has any real existance as an implementration detail
     """
-    __pdoc__ = {}
-    __pdoc__['__iter__'] = True
-    __pdoc__['__bool__'] = True
-    __pdoc__['__len__'] = True
-    __pdoc__['__eq__'] = True
-
     __slots__ = ['value']
 
     def __init__(self, value: Any=None):
@@ -142,7 +136,7 @@ def Some(value=None) -> Maybe:
     """
     return Maybe(value)
 
-#: Returns a "Nothing" (not a singleton!), test via equality, not identity.
+#: Nothing is not a singleton! Test via equality, or in a boolean context.
 Nothing: Maybe = Maybe()
 
 class Either(FP):
@@ -150,12 +144,6 @@ class Either(FP):
     right not given, set it to the empty str. This version is biased to the
     Left, which is intended as the "happy path."
     """
-    __pdoc__ = {}
-    __pdoc__['__iter__'] = True
-    __pdoc__['__bool__'] = True
-    __pdoc__['__len__'] = True
-    __pdoc__['__eq__'] = True
-
     __slots__ = ['_isLeft', '_value']
 
     def __init__(self, left: Any=None, right: Any=None):
