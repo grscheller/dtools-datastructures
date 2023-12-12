@@ -30,13 +30,13 @@ Class Either: Implements a left biased Either Monad.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python"># Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -99,7 +99,7 @@ class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs &#34;Some(value)&#34; 
+    - Maybe(value) constructs &#34;Some(value)&#34;
     - Both Maybe() or Maybe(None) constructs a &#34;Nothing&#34;
     - immutable semantics - map &amp; flatMap return modified copies
     - None is always treated as a non-existance value
@@ -107,6 +107,14 @@ class Maybe(FP):
       - semantically None does not exist
       - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
+    __pdoc__ = {}
+    __pdoc__[&#39;__iter__&#39;] = True
+    __pdoc__[&#39;__bool__&#39;] = True
+    __pdoc__[&#39;__len__&#39;] = True
+    __pdoc__[&#39;__eq__&#39;] = True
+
+    __slots__ = [&#39;value&#39;]
+
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -126,10 +134,10 @@ class Maybe(FP):
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;A Maybe either contains something or not.
+        &#34;&#34;&#34;A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a &#34;Some&#34;
+        Returns 0 if a &#34;Nothing&#34;
         &#34;&#34;&#34;
         if self:
             return 1
@@ -153,27 +161,34 @@ class Maybe(FP):
         else:
             return alternate
 
-# Maybe convenience functions/objects.
+# Maybe convenience functions/vars
 
 def maybeToEither(m: Maybe, right: Any=None) -&gt; Either:
     &#34;&#34;&#34;Convert a Maybe to an Either&#34;&#34;&#34;
     return Either(m.get(), right)
 
-def Some(value=None):
+def Some(value=None) -&gt; Maybe:
     &#34;&#34;&#34;Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     &#34;&#34;&#34;
     return Maybe(value)
 
-#: Maybe object representing a missing value,
-#: Nothing is not a singleton. Test via equality not identity.
-Nothing = Some()
+#: Returns a &#34;Nothing&#34; (not a singleton!), test via equality, not identity.
+Nothing: Maybe = Maybe()
 
 class Either(FP):
     &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
     right not given, set it to the empty str. This version is biased to the
     Left, which is intended as the &#34;happy path.&#34;
     &#34;&#34;&#34;
+    __pdoc__ = {}
+    __pdoc__[&#39;__iter__&#39;] = True
+    __pdoc__[&#39;__bool__&#39;] = True
+    __pdoc__[&#39;__len__&#39;] = True
+    __pdoc__[&#39;__eq__&#39;] = True
+
+    __slots__ = [&#39;_isLeft&#39;, &#39;_value&#39;]
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = &#39;&#39;
@@ -242,7 +257,7 @@ class Either(FP):
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        &#34;&#34;&#34;mergeMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -277,10 +292,9 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt id="grscheller.datastructures.core.fp.Nothing"><code class="name">var <span class="ident">Nothing</span></code></dt>
+<dt id="grscheller.datastructures.core.fp.Nothing"><code class="name">var <span class="ident">Nothing</span> : <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></dt>
 <dd>
-<div class="desc"><p>Maybe object representing a missing value,
-Nothing is not a singleton. Test via equality not identity.</p></div>
+<div class="desc"><p>Returns a "Nothing" (not a singleton!), test via equality, not identity.</p></div>
 </dd>
 </dl>
 </section>
@@ -316,7 +330,7 @@ Nothing is not a singleton. Test via equality not identity.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Some"><code class="name flex">
-<span>def <span class="ident">Some</span></span>(<span>value=None)</span>
+<span>def <span class="ident">Some</span></span>(<span>value=None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function for creating a Maybe from a value. If value is None or missing,
@@ -325,7 +339,7 @@ returns a Nothing.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def Some(value=None):
+<pre><code class="python">def Some(value=None) -&gt; Maybe:
     &#34;&#34;&#34;Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     &#34;&#34;&#34;
@@ -382,6 +396,14 @@ Left, which is intended as the "happy path."</p></div>
     right not given, set it to the empty str. This version is biased to the
     Left, which is intended as the &#34;happy path.&#34;
     &#34;&#34;&#34;
+    __pdoc__ = {}
+    __pdoc__[&#39;__iter__&#39;] = True
+    __pdoc__[&#39;__bool__&#39;] = True
+    __pdoc__[&#39;__len__&#39;] = True
+    __pdoc__[&#39;__eq__&#39;] = True
+
+    __slots__ = [&#39;_isLeft&#39;, &#39;_value&#39;]
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = &#39;&#39;
@@ -450,7 +472,7 @@ Left, which is intended as the "happy path."</p></div>
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        &#34;&#34;&#34;mergeMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -542,13 +564,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>flatMap with a Right default. Merge right into Right via +</p></div>
+<div class="desc"><p>mergeMap with a Right default. Merge right into Right via +</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-    &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+    &#34;&#34;&#34;mergeMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
     if self:
         if right is None:
             return f(self._value)
@@ -751,7 +773,7 @@ Left, which is intended as the "happy path."</p></div>
 <div class="desc"><p>Class representing a potentially missing value.</p>
 <ul>
 <li>Implements the Option Monad</li>
-<li>Maybe(value) constructs "Some(value)" </li>
+<li>Maybe(value) constructs "Some(value)"</li>
 <li>Both Maybe() or Maybe(None) constructs a "Nothing"</li>
 <li>immutable semantics - map &amp; flatMap return modified copies</li>
 <li>None is always treated as a non-existance value</li>
@@ -767,7 +789,7 @@ Left, which is intended as the "happy path."</p></div>
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs &#34;Some(value)&#34; 
+    - Maybe(value) constructs &#34;Some(value)&#34;
     - Both Maybe() or Maybe(None) constructs a &#34;Nothing&#34;
     - immutable semantics - map &amp; flatMap return modified copies
     - None is always treated as a non-existance value
@@ -775,6 +797,14 @@ Left, which is intended as the "happy path."</p></div>
       - semantically None does not exist
       - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
+    __pdoc__ = {}
+    __pdoc__[&#39;__iter__&#39;] = True
+    __pdoc__[&#39;__bool__&#39;] = True
+    __pdoc__[&#39;__len__&#39;] = True
+    __pdoc__[&#39;__eq__&#39;] = True
+
+    __slots__ = [&#39;value&#39;]
+
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -794,10 +824,10 @@ Left, which is intended as the "happy path."</p></div>
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;A Maybe either contains something or not.
+        &#34;&#34;&#34;A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a &#34;Some&#34;
+        Returns 0 if a &#34;Nothing&#34;
         &#34;&#34;&#34;
         if self:
             return 1
@@ -825,6 +855,13 @@ Left, which is intended as the "happy path."</p></div>
 <ul class="hlist">
 <li><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="grscheller.datastructures.core.fp.Maybe.value"><code class="name">var <span class="ident">value</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.core.fp.Maybe.get"><code class="name flex">
@@ -911,6 +948,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <h4><code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></h4>
 <ul class="">
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.get" href="#grscheller.datastructures.core.fp.Maybe.get">get</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.Maybe.value" href="#grscheller.datastructures.core.fp.Maybe.value">value</a></code></li>
 </ul>
 </li>
 </ul>

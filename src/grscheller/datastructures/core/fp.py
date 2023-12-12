@@ -1,11 +1,11 @@
 # Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,7 +68,7 @@ class Maybe(FP):
     """Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs "Some(value)" 
+    - Maybe(value) constructs "Some(value)"
     - Both Maybe() or Maybe(None) constructs a "Nothing"
     - immutable semantics - map & flatMap return modified copies
     - None is always treated as a non-existance value
@@ -76,6 +76,14 @@ class Maybe(FP):
       - semantically None does not exist
       - None only has any real existance as an implementration detail
     """
+    __pdoc__ = {}
+    __pdoc__['__iter__'] = True
+    __pdoc__['__bool__'] = True
+    __pdoc__['__len__'] = True
+    __pdoc__['__eq__'] = True
+
+    __slots__ = ['value']
+
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -95,10 +103,10 @@ class Maybe(FP):
         return self._value is not None
 
     def __len__(self) -> int:
-        """A Maybe either contains something or not.
+        """A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a "Some"
+        Returns 0 if a "Nothing"
         """
         if self:
             return 1
@@ -122,27 +130,34 @@ class Maybe(FP):
         else:
             return alternate
 
-# Maybe convenience functions/objects.
+# Maybe convenience functions/vars
 
 def maybeToEither(m: Maybe, right: Any=None) -> Either:
     """Convert a Maybe to an Either"""
     return Either(m.get(), right)
 
-def Some(value=None):
+def Some(value=None) -> Maybe:
     """Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     """
     return Maybe(value)
 
-#: Maybe object representing a missing value,
-#: Nothing is not a singleton. Test via equality not identity.
-Nothing = Some()
+#: Returns a "Nothing" (not a singleton!), test via equality, not identity.
+Nothing: Maybe = Maybe()
 
 class Either(FP):
     """Class that either contains a Left value or Right value, but not both. If
     right not given, set it to the empty str. This version is biased to the
     Left, which is intended as the "happy path."
     """
+    __pdoc__ = {}
+    __pdoc__['__iter__'] = True
+    __pdoc__['__bool__'] = True
+    __pdoc__['__len__'] = True
+    __pdoc__['__eq__'] = True
+
+    __slots__ = ['_isLeft', '_value']
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = ''
@@ -211,7 +226,7 @@ class Either(FP):
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default. Merge right into Right via +"""
+        """mergeMap with a Right default. Merge right into Right via +"""
         if self:
             if right is None:
                 return f(self._value)
