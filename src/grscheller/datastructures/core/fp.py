@@ -14,11 +14,10 @@
 
 """Module grscheller.datastructures.core.functional
 
-   - class Maybe: Implements the Maybe Monad, also called Option or Optional Monad
+   - class Maybe: Implements the Maybe Monad, also called the Optional Monad
    - class Either: Implements a left biased Either Monad.
-   - class FP: default functional methods for classes which don't implement them
-   - class FP: default functional methods for classes which don't implement them
-   - class FP_rev: similar to FP but for classes with asymetric build/decon
+   - class FP: default functional implementations for fifo data structure methods
+   - class FP_rev: default functional implementations for lifo data structure methods
 """
 from __future__ import annotations
 
@@ -36,37 +35,38 @@ from .iterlib import exhaust, merge
 
 class FP():
     """Default functional implentations for FIFO data structures"""
-    def __reversed__(self):
-        raise NotImplementedError
-
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
+        """Apply f over the elemrnts of the data structure"""
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure merging until one exhausted"""
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
 class FP_rev(FP):
     """Default functional implentations for LIFO data structures"""
-    def __reversed__(self):
-        raise NotImplementedError
-
     def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
-        # return type(self)(*map(f, reversed(self)))
+        """Apply f over the elemrnts of the data structure"""
         return type(self)(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], type[FP]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 class Maybe(FP):
@@ -242,11 +242,11 @@ def eitherToMaybe(e: Either) -> Maybe:
     return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -> Either:
-    """Function returns Left Either if left != None, otherwise Right Either."""
+    """Function returns Left Either if left != None, otherwise Right Either"""
     return Either(left, right)
 
 def Right(right: Any) -> Either:
-    """Function to construct a Right Either."""
+    """Function to construct a Right Either"""
     return Either(None, right)
 
 if __name__ == "__main__":
