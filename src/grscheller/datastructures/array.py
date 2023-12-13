@@ -210,7 +210,6 @@ class CLArray(FP):
                 default = self._default
                 backstore = cycle((default,))
             case (None, default):
-                default = self._default
                 backstore = cycle((default,))
             case (backstore, None):
                 default = self._default
