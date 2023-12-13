@@ -51,7 +51,7 @@ class FP():
         """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
-class FP_rev(FP):
+class FP_rev():
     """Default functional implentations for LIFO data structures"""
     def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
         """Apply f over the elemrnts of the data structure"""
@@ -150,7 +150,7 @@ class Either(FP):
     - Implements a left biased Either Monad
     - Maybe(value, altValue) constructs "Left(value)" if value is not None
     - Maybe(value, altValue) constructs "Right(altValue)" if value is None
-    - If altValue not given, set it to the empty str.
+    - If altValue not given, set it to the empty string
     - Immutable semantics - map & flatMap return modified copies
     """
     __slots__ = ['_isLeft', '_value']
@@ -193,24 +193,25 @@ class Either(FP):
         return False
 
     def get(self, default: Any=None) -> Any:
-        """get value if a Left, otherwise return default value."""
+        """Get value if a Left, otherwise return default value"""
         if self:
             return self._value
         return default
 
     def map(self, f: Callable[[Any], Any], right=None) -> Either:
+        """Map over a Left(value)"""
         if self:
             return Either(f(self._value), right)
         return self
 
     def mapRight(self, g: Callable[[Any], Any]) -> Either:
-        """Map over if a Right."""
+        """Map over a Right(value)"""
         if self:
             return self
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default. Replace Right with right"""
+        """flatMap with right as default. Replace Right(value) with Right(right)"""
         if self:
             if right is None:
                 return f(self._value)
@@ -223,7 +224,7 @@ class Either(FP):
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """mergeMap with a Right default. Merge right into Right via +"""
+        """flatMap with right as default, replace Right(value) with Right(value + right)"""
         if self:
             if right is None:
                 return f(self._value)
