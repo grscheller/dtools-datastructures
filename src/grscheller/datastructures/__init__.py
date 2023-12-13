@@ -37,7 +37,7 @@
      events.
 """
 
-__version__ = "0.10.14.4"
+__version__ = "0.10.15.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
