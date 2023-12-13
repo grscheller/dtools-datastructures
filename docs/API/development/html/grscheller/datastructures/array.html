@@ -68,7 +68,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Iterator, Never, Union
+from typing import Any, Callable, Iterable, Iterator, Never, Union
 from itertools import chain, cycle
 from .core.circular_array import CircularArray
 from .core.iterlib import merge, exhaust
@@ -109,46 +109,42 @@ class CLArray(FP):
                 self._backstore = chain(backstore, cycle((default,)))
 
         data = CircularArray()
-        backlog = self._backstore
+        backstore = self._backstore
 
-        ds_size = 0
+        # Cull out None values
         for d in initialData:
             if d is not None:
                 data.pushR(d)
 
-        ds_size = len(data)
+        data_size = len(data)
 
         # If size is None, size to max of initial non-None data or 1.
         if size is None:
-            abs_size = size = ds_size
-            if size:
-                abs_size = size = 1
+            abs_size = size = data_size
         else:
-            if size:
-                abs_size = size = 1
             abs_size = abs(size)
 
-        if abs_size &gt; ds_size:
+        if abs_size &gt; data_size:
             if size &gt; 0:
                 # pad CLArray on &#34;right&#34; (higher indexes)
-                for _ in range(size - ds_size):
-                    data.pushR(next(backlog))
+                for _ in range(size - data_size):
+                    data.pushR(next(backstore))
             else:
                 # pad CLArray 0n &#34;left&#34; (lower indexes)
-                for _ in range(-size - ds_size):
-                    data.pushL(next(backlog))
-        elif abs_size &lt; ds_size:
+                for _ in range(-size - data_size):
+                    data.pushL(next(backstore))
+        elif abs_size &lt; data_size:
             # Push extra data onto self._backlog iterator, keep original order.
             extra = CircularArray()
             if size &gt; 0:
                 # push final data to end
-                for _ in range(ds_size - size):
+                for _ in range(data_size - size):
                     extra.pushL(data.popR())
             else:
                 # push inital data at beginning
-                for _ in range(ds_size + size):
+                for _ in range(data_size + size):
                     extra.pushR(data.popL())
-            self._backstore = chain(extra, backlog)
+            self._backstore = chain(extra, backstore)
 
         self._data = data
 
@@ -171,9 +167,9 @@ class CLArray(FP):
         repr1 = f&#39;{self.__class__.__name__}(&#39;
         repr2 = &#39;, &#39;.join(map(repr, self))
         if repr2 == &#39;&#39;:
-            repr3 = f&#39;size={len(self), }&#39;
+            repr3 = f&#39;size={len(self)}, &#39;
         else:
-            repr3 = f&#39;, size={len(self), }&#39;
+            repr3 = f&#39;, size={len(self)}, &#39;
         repr4 = f&#39;default={repr(self._default)})&#39;
         return repr1 + repr2 + repr3 + repr4
 
@@ -192,6 +188,10 @@ class CLArray(FP):
     def default(self) -&gt; Any:
         &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None&#34;&#34;&#34;
         return self._default
+
+    def backstore(self) -&gt; Iterator:
+        &#34;&#34;&#34;Return the backstore iterator&#34;&#34;&#34;
+        return self._backstore
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
@@ -230,13 +230,13 @@ class CLArray(FP):
 
     def copy(self,
              size: int|None=None,
-             noneIter: Iterator|None=None,
+             backstore: Iterable|None=None,
              default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
-        return self.map(lambda x: x, size, noneIter, default)
+        return self.map(lambda x: x, size, backstore, default)
 
     def map(self, f: Callable[[Any], Any], size: int|None=None,
-            backstore: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+            backstore: Iterale|None=None, default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with the
         mapped contents. Size to the data unless size is given. If backstore is not
         given, use default to create one. If default is not given, use the value from
@@ -247,9 +247,9 @@ class CLArray(FP):
                 default = self._default
                 backstore = cycle((default,))
             case (None, default):
+                default = self._default
                 backstore = cycle((default,))
             case (backstore, None):
-                # Careful: noneIter might be infinite!
                 default = self._default
 
         if size is None:
@@ -277,34 +277,34 @@ class CLArray(FP):
 
     def mergeMap(self, f: Callable[[Any], CLArray],
                  size: int|None=None,
-                 noneIter: Iterator|None=None,
+                 backstore: Iterale|None=None,
                  default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until the first is exhausted. If a default value is not given,
         use the default value of the FLArray being flatMapped if it has been set,
         otherwise leave it unset.
         &#34;&#34;&#34;
-        if (noneIter, default) == (None, None):
-            noneIter = self._backstore
+        if (backstore, default) == (None, None):
+            backstore = self._backstore
 
         return CLArray(
-            *merge(*self.map(f)), size=size, backstore=noneIter, default=default
+            *merge(*self.map(f)), size=size, backstore=backstore, default=default
         )
 
     def exhastMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
-                  noneIter: Iterator|None=None,
+                  backstore: Iterable|None=None,
                   default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until all are exhausted. If a default value is not given,
         use the default value of the FLArray being flatMapped if it has been set,
         otherwise leave it unset.
         &#34;&#34;&#34;
-        if (noneIter, default) == (None, None):
-            noneIter = self._backstore
+        if (backstore, default) == (None, None):
+            backstore = self._backstore
 
         return CLArray(
-            *exhaust(*self.map(f)), size=size, backstore=noneIter, default=default
+            *exhaust(*self.map(f)), size=size, backstore=backstore, default=default
         )
 
 if __name__ == &#34;__main__&#34;:
@@ -376,46 +376,42 @@ empty tuple () is used in lieu of None.</p></div>
                 self._backstore = chain(backstore, cycle((default,)))
 
         data = CircularArray()
-        backlog = self._backstore
+        backstore = self._backstore
 
-        ds_size = 0
+        # Cull out None values
         for d in initialData:
             if d is not None:
                 data.pushR(d)
 
-        ds_size = len(data)
+        data_size = len(data)
 
         # If size is None, size to max of initial non-None data or 1.
         if size is None:
-            abs_size = size = ds_size
-            if size:
-                abs_size = size = 1
+            abs_size = size = data_size
         else:
-            if size:
-                abs_size = size = 1
             abs_size = abs(size)
 
-        if abs_size &gt; ds_size:
+        if abs_size &gt; data_size:
             if size &gt; 0:
                 # pad CLArray on &#34;right&#34; (higher indexes)
-                for _ in range(size - ds_size):
-                    data.pushR(next(backlog))
+                for _ in range(size - data_size):
+                    data.pushR(next(backstore))
             else:
                 # pad CLArray 0n &#34;left&#34; (lower indexes)
-                for _ in range(-size - ds_size):
-                    data.pushL(next(backlog))
-        elif abs_size &lt; ds_size:
+                for _ in range(-size - data_size):
+                    data.pushL(next(backstore))
+        elif abs_size &lt; data_size:
             # Push extra data onto self._backlog iterator, keep original order.
             extra = CircularArray()
             if size &gt; 0:
                 # push final data to end
-                for _ in range(ds_size - size):
+                for _ in range(data_size - size):
                     extra.pushL(data.popR())
             else:
                 # push inital data at beginning
-                for _ in range(ds_size + size):
+                for _ in range(data_size + size):
                     extra.pushR(data.popL())
-            self._backstore = chain(extra, backlog)
+            self._backstore = chain(extra, backstore)
 
         self._data = data
 
@@ -438,9 +434,9 @@ empty tuple () is used in lieu of None.</p></div>
         repr1 = f&#39;{self.__class__.__name__}(&#39;
         repr2 = &#39;, &#39;.join(map(repr, self))
         if repr2 == &#39;&#39;:
-            repr3 = f&#39;size={len(self), }&#39;
+            repr3 = f&#39;size={len(self)}, &#39;
         else:
-            repr3 = f&#39;, size={len(self), }&#39;
+            repr3 = f&#39;, size={len(self)}, &#39;
         repr4 = f&#39;default={repr(self._default)})&#39;
         return repr1 + repr2 + repr3 + repr4
 
@@ -459,6 +455,10 @@ empty tuple () is used in lieu of None.</p></div>
     def default(self) -&gt; Any:
         &#34;&#34;&#34;Return the default value that eventually gets used in lieu of None&#34;&#34;&#34;
         return self._default
+
+    def backstore(self) -&gt; Iterator:
+        &#34;&#34;&#34;Return the backstore iterator&#34;&#34;&#34;
+        return self._backstore
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Returns the size of the CLArray&#34;&#34;&#34;
@@ -497,13 +497,13 @@ empty tuple () is used in lieu of None.</p></div>
 
     def copy(self,
              size: int|None=None,
-             noneIter: Iterator|None=None,
+             backstore: Iterable|None=None,
              default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
-        return self.map(lambda x: x, size, noneIter, default)
+        return self.map(lambda x: x, size, backstore, default)
 
     def map(self, f: Callable[[Any], Any], size: int|None=None,
-            backstore: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+            backstore: Iterale|None=None, default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with the
         mapped contents. Size to the data unless size is given. If backstore is not
         given, use default to create one. If default is not given, use the value from
@@ -514,9 +514,9 @@ empty tuple () is used in lieu of None.</p></div>
                 default = self._default
                 backstore = cycle((default,))
             case (None, default):
+                default = self._default
                 backstore = cycle((default,))
             case (backstore, None):
-                # Careful: noneIter might be infinite!
                 default = self._default
 
         if size is None:
@@ -544,34 +544,34 @@ empty tuple () is used in lieu of None.</p></div>
 
     def mergeMap(self, f: Callable[[Any], CLArray],
                  size: int|None=None,
-                 noneIter: Iterator|None=None,
+                 backstore: Iterale|None=None,
                  default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until the first is exhausted. If a default value is not given,
         use the default value of the FLArray being flatMapped if it has been set,
         otherwise leave it unset.
         &#34;&#34;&#34;
-        if (noneIter, default) == (None, None):
-            noneIter = self._backstore
+        if (backstore, default) == (None, None):
+            backstore = self._backstore
 
         return CLArray(
-            *merge(*self.map(f)), size=size, backstore=noneIter, default=default
+            *merge(*self.map(f)), size=size, backstore=backstore, default=default
         )
 
     def exhastMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
-                  noneIter: Iterator|None=None,
+                  backstore: Iterable|None=None,
                   default: Any|None=None) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until all are exhausted. If a default value is not given,
         use the default value of the FLArray being flatMapped if it has been set,
         otherwise leave it unset.
         &#34;&#34;&#34;
-        if (noneIter, default) == (None, None):
-            noneIter = self._backstore
+        if (backstore, default) == (None, None):
+            backstore = self._backstore
 
         return CLArray(
-            *exhaust(*self.map(f)), size=size, backstore=noneIter, default=default
+            *exhaust(*self.map(f)), size=size, backstore=backstore, default=default
         )</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -580,8 +580,22 @@ empty tuple () is used in lieu of None.</p></div>
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="grscheller.datastructures.array.CLArray.backstore"><code class="name flex">
+<span>def <span class="ident">backstore</span></span>(<span>self) ‑> Iterator</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the backstore iterator</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def backstore(self) -&gt; Iterator:
+    &#34;&#34;&#34;Return the backstore iterator&#34;&#34;&#34;
+    return self._backstore</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.array.CLArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, backstore: Iterable | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the CLArray in O(n) complexity.</p></div>
@@ -591,10 +605,10 @@ empty tuple () is used in lieu of None.</p></div>
 </summary>
 <pre><code class="python">def copy(self,
          size: int|None=None,
-         noneIter: Iterator|None=None,
+         backstore: Iterable|None=None,
          default: Any|None=None) -&gt; CLArray:
     &#34;&#34;&#34;Return shallow copy of the CLArray in O(n) complexity.&#34;&#34;&#34;
-    return self.map(lambda x: x, size, noneIter, default)</code></pre>
+    return self.map(lambda x: x, size, backstore, default)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.array.CLArray.default"><code class="name flex">
@@ -612,7 +626,7 @@ empty tuple () is used in lieu of None.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.array.CLArray.exhastMap"><code class="name flex">
-<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, backstore: Iterable | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
@@ -625,18 +639,18 @@ otherwise leave it unset.</p></div>
 </summary>
 <pre><code class="python">def exhastMap(self, f: Callable[[Any], CLArray],
               size: int|None=None,
-              noneIter: Iterator|None=None,
+              backstore: Iterable|None=None,
               default: Any|None=None) -&gt; CLArray:
     &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
     generated by f until all are exhausted. If a default value is not given,
     use the default value of the FLArray being flatMapped if it has been set,
     otherwise leave it unset.
     &#34;&#34;&#34;
-    if (noneIter, default) == (None, None):
-        noneIter = self._backstore
+    if (backstore, default) == (None, None):
+        backstore = self._backstore
 
     return CLArray(
-        *exhaust(*self.map(f)), size=size, backstore=noneIter, default=default
+        *exhaust(*self.map(f)), size=size, backstore=backstore, default=default
     )</code></pre>
 </details>
 </dd>
@@ -673,7 +687,7 @@ with the default value of the FPArray being flat mapped over.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.array.CLArray.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int | None = None, backstore: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], size: int | None = None, backstore: Iterale | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function f over the CLArray contents. Return a new CLArray with the
@@ -685,7 +699,7 @@ the CLArray being mapped.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any], size: int|None=None,
-        backstore: Iterator|None=None, default: Any|None=None) -&gt; CLArray:
+        backstore: Iterale|None=None, default: Any|None=None) -&gt; CLArray:
     &#34;&#34;&#34;Apply function f over the CLArray contents. Return a new CLArray with the
     mapped contents. Size to the data unless size is given. If backstore is not
     given, use default to create one. If default is not given, use the value from
@@ -696,9 +710,9 @@ the CLArray being mapped.</p></div>
             default = self._default
             backstore = cycle((default,))
         case (None, default):
+            default = self._default
             backstore = cycle((default,))
         case (backstore, None):
-            # Careful: noneIter might be infinite!
             default = self._default
 
     if size is None:
@@ -724,7 +738,7 @@ the CLArray being mapped.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.array.CLArray.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, noneIter: Iterator | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, backstore: Iterale | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
@@ -737,18 +751,18 @@ otherwise leave it unset.</p></div>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], CLArray],
              size: int|None=None,
-             noneIter: Iterator|None=None,
+             backstore: Iterale|None=None,
              default: Any|None=None) -&gt; CLArray:
     &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
     generated by f until the first is exhausted. If a default value is not given,
     use the default value of the FLArray being flatMapped if it has been set,
     otherwise leave it unset.
     &#34;&#34;&#34;
-    if (noneIter, default) == (None, None):
-        noneIter = self._backstore
+    if (backstore, default) == (None, None):
+        backstore = self._backstore
 
     return CLArray(
-        *merge(*self.map(f)), size=size, backstore=noneIter, default=default
+        *merge(*self.map(f)), size=size, backstore=backstore, default=default
     )</code></pre>
 </details>
 </dd>
@@ -795,6 +809,7 @@ otherwise leave it unset.</p></div>
 <li>
 <h4><code><a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></code></h4>
 <ul class="two-column">
+<li><code><a title="grscheller.datastructures.array.CLArray.backstore" href="#grscheller.datastructures.array.CLArray.backstore">backstore</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.copy" href="#grscheller.datastructures.array.CLArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.default" href="#grscheller.datastructures.array.CLArray.default">default</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.exhastMap" href="#grscheller.datastructures.array.CLArray.exhastMap">exhastMap</a></code></li>

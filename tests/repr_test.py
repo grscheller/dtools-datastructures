@@ -129,69 +129,47 @@ class Test_repr:
         assert sq2 == sq1
         assert sq2 is not sq1
 
-    def test_fclarray(self):
-        fcla1 = CLArray()
-        repr_fcla1 = repr(fcla1)
-        assert repr_fcla1.split('<')[0] == 'CLArray(noneIter='
-        assert repr_fcla1.split('>')[1] == ')'
+    def test_clarray(self):
+        cla1 = CLArray()
+        repr_cla1 = repr(cla1)
+        assert repr_cla1 == 'CLArray(size=0, default=())'
 
-        fcla1 = CLArray('foo', [10, 22], size=-3, default=42)
-        repr_fcla1 = repr(fcla1)
-        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22], noneIter="
-        assert repr_fcla1.split('>')[1] == ')'
+        cla1 = CLArray('foo', [10, 22], size=-3, default=42)
+        repr_cla1 = repr(cla1)
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
 
-        fcla1[2].append(42)
-        repr_fcla1 = repr(fcla1)
-        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22, 42], noneIter="
-        assert repr_fcla1.split('>')[1] == ')'
-        assert fcla1[2].pop() == 42
-        repr_fcla1 = repr(fcla1)
-        assert repr_fcla1.split('<')[0] == "CLArray(42, 'foo', [10, 22], noneIter="
-        assert repr_fcla1.split('>')[1] == ')'
+        cla1[2].append(42)
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], size=3, default=42)"
+        assert cla1[2].pop() == 42
+        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
 
-        fcla1 = CLArray(42, 'foo', 'bar', default=42)
-        fcla2 = fcla1.copy()
-        fcla3 = fcla1.copy(default=63)
-        fcla2[1] = None
-        fcla3[1] = None
-        repr_fcla2 = repr(fcla2)
-        repr_fcla3 = repr(fcla3)
-        assert repr_fcla2.split('<')[0] == "CLArray(42, 42, 'bar', noneIter="
-        assert repr_fcla2.split('>')[1] == ')'
-        assert repr_fcla3.split('<')[0] == "CLArray(42, 63, 'bar', noneIter="
-        assert repr_fcla3.split('>')[1] == ')'
-        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
+        cla1 = CLArray(42, 'foo', 'bar', default=42)
+        cla2 = cla1.copy()
+        cla3 = cla1.copy(default=63)
+        cla2[1] = None
+        cla3[1] = None
+        assert repr(cla2) == "CLArray(42, 42, 'bar', size=3, default=42)"
+        assert repr(cla3) == "CLArray(42, 63, 'bar', size=3, default=63)"
 
-        fcla1 = CLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
-        fcla2 = fcla1.copy(size=-4)
-        fcla3 = fcla1.copy(size=4)
-        repr_fcla2 = repr(fcla2)
-        repr_fcla3 = repr(fcla3)
-        assert repr_fcla2.split('<')[0] == "CLArray('bar', 100, 101, '102', noneIter="
-        assert repr_fcla2.split('>')[1] == ')'
-        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 'bar', 100, noneIter="
-        assert repr_fcla3.split('>')[1] == ')'
-        assert repr_fcla2.split('>')[0].split('<')[1] != repr_fcla3.split('>')[0].split('<')[1]
+        cla1 = CLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
+        cla2 = cla1.copy(size=-4)
+        cla3 = cla1.copy(size=4)
+        assert repr(cla2) == "CLArray('bar', 100, 101, '102', size=4, default=42)"
+        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 100, size=4, default=42)"
 
-        fcla2[0] = None
-        repr_fcla2 = repr(fcla2)
-        assert repr_fcla2.split('<')[0] == "CLArray(16, 100, 101, '102', noneIter="
-        fcla2[1] = None
-        repr_fcla2 = repr(fcla2)
-        assert repr_fcla2.split('<')[0] == "CLArray(16, 'foo', 101, '102', noneIter="
-        fcla2[2] = None
-        repr_fcla2 = repr(fcla2)
-        assert repr_fcla2.split('<')[0] == "CLArray(16, 'foo', 42, '102', noneIter="
+        cla2[0] = None
+        assert repr(cla2) == "CLArray(42, 100, 101, '102', size=4, default=42)"
+        cla2[1] = None
+        assert repr(cla2) == "CLArray(42, 42, 101, '102', size=4, default=42)"
+        cla2[2] = None
+        assert repr(cla2) == "CLArray(42, 42, 42, '102', size=4, default=42)"
 
-        fcla3[-1] = None
-        repr_fcla3 = repr(fcla3)
-        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 'bar', '102', noneIter="
-        fcla3[-2] = None
-        repr_fcla3 = repr(fcla3)
-        assert repr_fcla3.split('<')[0] == "CLArray(16, 'foo', 101, '102', noneIter="
-        fcla3[-3] = None
-        repr_fcla3 = repr(fcla3)
-        assert repr_fcla3.split('<')[0] == "CLArray(16, 42, 101, '102', noneIter="
+        cla3[-1] = None
+        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 42, size=4, default=42)"
+        cla3[-2] = None
+        assert repr(cla3) == "CLArray(16, 'foo', 42, 42, size=4, default=42)"
+        cla3[-3] = None
+        assert repr(cla3) == "CLArray(16, 42, 42, 42, size=4, default=42)"
 
     def test_ftuple(self):
         ft1 = FTuple()
