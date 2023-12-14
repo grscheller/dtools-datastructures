@@ -158,18 +158,18 @@ class Test_repr:
         assert repr(cla3) == "CLArray(16, 'foo', 'bar', 100, size=4, default=42)"
 
         cla2[0] = None
-        assert repr(cla2) == "CLArray(42, 100, 101, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray(16, 100, 101, '102', size=4, default=42)"
         cla2[1] = None
-        assert repr(cla2) == "CLArray(42, 42, 101, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray(16, 'foo', 101, '102', size=4, default=42)"
         cla2[2] = None
-        assert repr(cla2) == "CLArray(42, 42, 42, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray(16, 'foo', 42, '102', size=4, default=42)"
 
         cla3[-1] = None
-        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 42, size=4, default=42)"
+        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 101, size=4, default=42)"
         cla3[-2] = None
-        assert repr(cla3) == "CLArray(16, 'foo', 42, 42, size=4, default=42)"
+        assert repr(cla3) == "CLArray(16, 'foo', '102', 101, size=4, default=42)"
         cla3[-3] = None
-        assert repr(cla3) == "CLArray(16, 42, 42, 42, size=4, default=42)"
+        assert repr(cla3) == "CLArray(16, 42, '102', 101, size=4, default=42)"
 
     def test_ftuple(self):
         ft1 = FTuple()
