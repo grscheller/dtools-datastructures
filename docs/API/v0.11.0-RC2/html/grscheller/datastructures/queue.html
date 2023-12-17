@@ -60,8 +60,61 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any
-from .core.queue_base import QueueBase
+from typing import Any, Callable
+from .circular_array import CircularArray
+
+class QueueBase():
+    &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
+    implementing queue type data structures with a list based circular array.
+    Each queue object &#34;has-a&#34; (contains) a circular array to store its data. The
+    circular array used will resize itself as needed. Each QueueBase subclass
+    must ensure that None values do not get pushed onto the circular array.
+    &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a queue data structure. Cull None values.&#34;&#34;&#34;
+        self._ca = CircularArray()
+        for d in ds:
+            if d is not None:
+                self._ca.pushR(d)
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterator yielding data currently stored in queue. Data yielded in
+        natural FIFO order.
+        &#34;&#34;&#34;
+        cached = self._ca.copy()
+        for pos in range(len(cached)):
+            yield cached[pos]
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the current state of the queue.&#34;&#34;&#34;
+        cached = self._ca.copy()
+        for pos in range(len(cached)-1, -1, -1):
+            yield cached[pos]
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if queue is not empty.&#34;&#34;&#34;
+        return len(self._ca) &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in queue.&#34;&#34;&#34;
+        return len(self._ca)
+
+    def __eq__(self, other):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+        return self._ca == other._ca
+
+    def map(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the queue&#39;s contents. Suppress any None values
+        returned by f.
+        &#34;&#34;&#34;
+        self._ca = QueueBase(*map(f, self))._ca
 
 class FIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
@@ -177,6 +230,12 @@ class DoubleQueue(QueueBase):
         else:
             return None
 
+    def __getitem__(self, index: int) -&gt; Any:
+        return self._ca[index]
+
+    def __setitem__(self, index: int, value):
+        self._ca[index] = value
+
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
 </details>
@@ -247,11 +306,17 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
         if self._ca:
             return self._ca[0]
         else:
-            return None</code></pre>
+            return None
+
+    def __getitem__(self, index: int) -&gt; Any:
+        return self._ca[index]
+
+    def __setitem__(self, index: int, value):
+        self._ca[index] = value</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
+<li>grscheller.datastructures.queue.QueueBase</li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -366,14 +431,6 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 <dt id="grscheller.datastructures.queue.FIFOQueue"><code class="flex name class">
 <span>class <span class="ident">FIFOQueue</span></span>
@@ -426,7 +483,7 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
+<li>grscheller.datastructures.queue.QueueBase</li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -511,14 +568,6 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 <dt id="grscheller.datastructures.queue.LIFOQueue"><code class="flex name class">
 <span>class <span class="ident">LIFOQueue</span></span>
@@ -564,7 +613,7 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></li>
+<li>grscheller.datastructures.queue.QueueBase</li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -632,14 +681,6 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.queue_base.QueueBase" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase">QueueBase</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.queue_base.QueueBase.map" href="core/queue_base.html#grscheller.datastructures.core.queue_base.QueueBase.map">map</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>

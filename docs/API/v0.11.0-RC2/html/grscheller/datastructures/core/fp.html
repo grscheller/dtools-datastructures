@@ -23,20 +23,24 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructures.core.functional</p>
-<p>Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
-Class Either: Implements a left biased Either Monad.</p>
+<ul>
+<li>class Maybe: Implements the Maybe Monad, also called the Optional Monad</li>
+<li>class Either: Implements a left biased Either Monad.</li>
+<li>class FP: default functional implementations for fifo data structure methods</li>
+<li>class FP_rev: default functional implementations for lifo data structure methods</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python"># Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,8 +49,10 @@ Class Either: Implements a left biased Either Monad.</p>
 
 &#34;&#34;&#34;Module grscheller.datastructures.core.functional
 
-Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
-Class Either: Implements a left biased Either Monad.
+   - class Maybe: Implements the Maybe Monad, also called the Optional Monad
+   - class Either: Implements a left biased Either Monad.
+   - class FP: default functional implementations for fifo data structure methods
+   - class FP_rev: default functional implementations for lifo data structure methods
 &#34;&#34;&#34;
 from __future__ import annotations
 
@@ -63,49 +69,52 @@ from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
-
-    # For FIFO type data structures.
+    &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until one exhausted&#34;&#34;&#34;
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
-class FP_rev(FP):
-    def __reversed__(self):
-        raise NotImplementedError
-
-    # FP modified for FILO type data structures.
+class FP_rev():
+    &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-        # return type(self)(*map(f, reversed(self)))
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
         return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs &#34;Some(value)&#34; 
+    - Maybe(value) constructs &#34;Some(value)&#34;
     - Both Maybe() or Maybe(None) constructs a &#34;Nothing&#34;
-    - immutable semantics - map &amp; flatMap return modified copies
+    - Immutable semantics - map &amp; flatMap return modified copies
     - None is always treated as a non-existance value
-      - cannot be stored in an object of type Maybe
-      - semantically None does not exist
-      - None only has any real existance as an implementration detail
+    - None cannot be stored in an object of type Maybe
+    - Semantically None represent non-existance
+    - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
     def __init__(self, value: Any=None):
         self._value = value
@@ -126,10 +135,10 @@ class Maybe(FP):
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;A Maybe either contains something or not.
+        &#34;&#34;&#34;A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a &#34;Some&#34;
+        Returns 0 if a &#34;Nothing&#34;
         &#34;&#34;&#34;
         if self:
             return 1
@@ -153,26 +162,29 @@ class Maybe(FP):
         else:
             return alternate
 
-# Maybe convenience functions/objects.
+# Maybe convenience functions/vars
 
 def maybeToEither(m: Maybe, right: Any=None) -&gt; Either:
     &#34;&#34;&#34;Convert a Maybe to an Either&#34;&#34;&#34;
     return Either(m.get(), right)
 
-def Some(value=None):
+def Some(value=None) -&gt; Maybe:
     &#34;&#34;&#34;Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     &#34;&#34;&#34;
     return Maybe(value)
 
-#: Maybe object representing a missing value,
-#: Nothing is not a singleton. Test via equality not identity.
-Nothing = Some()
+#: Nothing is not a singleton! Test via equality, or in a boolean context.
+Nothing: Maybe = Maybe()
 
 class Either(FP):
-    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
-    right not given, set it to the empty str. This version is biased to the
-    Left, which is intended as the &#34;happy path.&#34;
+    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both.
+
+    - Implements a left biased Either Monad
+    - Maybe(value, altValue) constructs &#34;Left(value)&#34; if value is not None
+    - Maybe(value, altValue) constructs &#34;Right(altValue)&#34; if value is None
+    - If altValue not given, set it to the empty string
+    - Immutable semantics - map &amp; flatMap return modified copies
     &#34;&#34;&#34;
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
@@ -212,24 +224,25 @@ class Either(FP):
         return False
 
     def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
         if self:
             return self._value
         return default
 
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
+        &#34;&#34;&#34;Map over a Left(value)&#34;&#34;&#34;
         if self:
             return Either(f(self._value), right)
         return self
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
-        &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
+        &#34;&#34;&#34;Map over a Right(value)&#34;&#34;&#34;
         if self:
             return self
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with right as default. Replace Right(value) with Right(right)&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -242,7 +255,7 @@ class Either(FP):
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with right as default, replace Right(value) with Right(value + right)&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -261,11 +274,11 @@ def eitherToMaybe(e: Either) -&gt; Maybe:
     return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either&#34;&#34;&#34;
     return Either(left, right)
 
 def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a Right Either.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a Right Either&#34;&#34;&#34;
     return Either(None, right)
 
 if __name__ == &#34;__main__&#34;:
@@ -277,10 +290,9 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt id="grscheller.datastructures.core.fp.Nothing"><code class="name">var <span class="ident">Nothing</span></code></dt>
+<dt id="grscheller.datastructures.core.fp.Nothing"><code class="name">var <span class="ident">Nothing</span> : <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></dt>
 <dd>
-<div class="desc"><p>Maybe object representing a missing value,
-Nothing is not a singleton. Test via equality not identity.</p></div>
+<div class="desc"><p>Nothing is not a singleton! Test via equality, or in a boolean context.</p></div>
 </dd>
 </dl>
 </section>
@@ -291,13 +303,13 @@ Nothing is not a singleton. Test via equality not identity.</p></div>
 <span>def <span class="ident">Left</span></span>(<span>left: Any, right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function returns Left Either if left != None, otherwise Right Either.</p></div>
+<div class="desc"><p>Function returns Left Either if left != None, otherwise Right Either</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function returns Left Either if left != None, otherwise Right Either&#34;&#34;&#34;
     return Either(left, right)</code></pre>
 </details>
 </dd>
@@ -305,18 +317,18 @@ Nothing is not a singleton. Test via equality not identity.</p></div>
 <span>def <span class="ident">Right</span></span>(<span>right: Any) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to construct a Right Either.</p></div>
+<div class="desc"><p>Function to construct a Right Either</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a Right Either.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a Right Either&#34;&#34;&#34;
     return Either(None, right)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Some"><code class="name flex">
-<span>def <span class="ident">Some</span></span>(<span>value=None)</span>
+<span>def <span class="ident">Some</span></span>(<span>value=None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function for creating a Maybe from a value. If value is None or missing,
@@ -325,7 +337,7 @@ returns a Nothing.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def Some(value=None):
+<pre><code class="python">def Some(value=None) -&gt; Maybe:
     &#34;&#34;&#34;Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     &#34;&#34;&#34;
@@ -370,17 +382,26 @@ returns a Nothing.</p></div>
 <span>(</span><span>left: Any = None, right: Any = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class that either contains a Left value or Right value, but not both. If
-right not given, set it to the empty str. This version is biased to the
-Left, which is intended as the "happy path."</p></div>
+<div class="desc"><p>Class that either contains a Left value or Right value, but not both.</p>
+<ul>
+<li>Implements a left biased Either Monad</li>
+<li>Maybe(value, altValue) constructs "Left(value)" if value is not None</li>
+<li>Maybe(value, altValue) constructs "Right(altValue)" if value is None</li>
+<li>If altValue not given, set it to the empty string</li>
+<li>Immutable semantics - map &amp; flatMap return modified copies</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Either(FP):
-    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both. If
-    right not given, set it to the empty str. This version is biased to the
-    Left, which is intended as the &#34;happy path.&#34;
+    &#34;&#34;&#34;Class that either contains a Left value or Right value, but not both.
+
+    - Implements a left biased Either Monad
+    - Maybe(value, altValue) constructs &#34;Left(value)&#34; if value is not None
+    - Maybe(value, altValue) constructs &#34;Right(altValue)&#34; if value is None
+    - If altValue not given, set it to the empty string
+    - Immutable semantics - map &amp; flatMap return modified copies
     &#34;&#34;&#34;
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
@@ -420,24 +441,25 @@ Left, which is intended as the "happy path."</p></div>
         return False
 
     def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
         if self:
             return self._value
         return default
 
     def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
+        &#34;&#34;&#34;Map over a Left(value)&#34;&#34;&#34;
         if self:
             return Either(f(self._value), right)
         return self
 
     def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
-        &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
+        &#34;&#34;&#34;Map over a Right(value)&#34;&#34;&#34;
         if self:
             return self
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with right as default. Replace Right(value) with Right(right)&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -450,7 +472,7 @@ Left, which is intended as the "happy path."</p></div>
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+        &#34;&#34;&#34;flatMap with right as default, replace Right(value) with Right(value + right)&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -472,13 +494,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>flatMap with a Right default. Replace Right with right</p></div>
+<div class="desc"><p>flatMap with right as default. Replace Right(value) with Right(right)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-    &#34;&#34;&#34;flatMap with a Right default. Replace Right with right&#34;&#34;&#34;
+    &#34;&#34;&#34;flatMap with right as default. Replace Right(value) with Right(right)&#34;&#34;&#34;
     if self:
         if right is None:
             return f(self._value)
@@ -495,13 +517,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">get</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>get value if a Left, otherwise return default value.</p></div>
+<div class="desc"><p>Get value if a Left, otherwise return default value</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, default: Any=None) -&gt; Any:
-    &#34;&#34;&#34;get value if a Left, otherwise return default value.&#34;&#34;&#34;
+    &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
     if self:
         return self._value
     return default</code></pre>
@@ -511,12 +533,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], right=None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Map over a Left(value)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any], right=None) -&gt; Either:
+    &#34;&#34;&#34;Map over a Left(value)&#34;&#34;&#34;
     if self:
         return Either(f(self._value), right)
     return self</code></pre>
@@ -526,13 +549,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">mapRight</span></span>(<span>self, g: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Map over if a Right.</p></div>
+<div class="desc"><p>Map over a Right(value)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
-    &#34;&#34;&#34;Map over if a Right.&#34;&#34;&#34;
+    &#34;&#34;&#34;Map over a Right(value)&#34;&#34;&#34;
     if self:
         return self
     return Right(g(self._value))</code></pre>
@@ -542,13 +565,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right=None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>flatMap with a Right default. Merge right into Right via +</p></div>
+<div class="desc"><p>flatMap with right as default, replace Right(value) with Right(value + right)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], Either], right=None) -&gt; Either:
-    &#34;&#34;&#34;flatMap with a Right default. Merge right into Right via +&#34;&#34;&#34;
+    &#34;&#34;&#34;flatMap with right as default, replace Right(value) with Right(value + right)&#34;&#34;&#34;
     if self:
         if right is None:
             return f(self._value)
@@ -562,36 +585,46 @@ Left, which is intended as the "happy path."</p></div>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 <dt id="grscheller.datastructures.core.fp.FP"><code class="flex name class">
 <span>class <span class="ident">FP</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Default functional implentations for FIFO data structures</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FP():
-
-    # For FIFO type data structures.
+    &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until one exhausted&#34;&#34;&#34;
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
         return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="grscheller.datastructures.array.CLArray" href="../array.html#grscheller.datastructures.array.CLArray">CLArray</a></li>
 <li><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></li>
-<li><a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
 <li><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></li>
 <li><a title="grscheller.datastructures.tuplelike.FTuple" href="../tuplelike.html#grscheller.datastructures.tuplelike.FTuple">FTuple</a></li>
 </ul>
@@ -601,12 +634,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure merging until all exhausted</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
     return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -614,12 +648,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
     return type(self)(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -627,12 +662,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Apply f over the elemrnts of the data structure</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
+    &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
     return type(self)(*map(f, self))</code></pre>
 </details>
 </dd>
@@ -640,12 +676,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure merging until one exhausted</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure merging until one exhausted&#34;&#34;&#34;
     return type(self)(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -655,33 +692,29 @@ Left, which is intended as the "happy path."</p></div>
 <span>class <span class="ident">FP_rev</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Default functional implentations for LIFO data structures</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FP_rev(FP):
-    def __reversed__(self):
-        raise NotImplementedError
-
-    # FP modified for FILO type data structures.
+<pre><code class="python">class FP_rev():
+    &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-        # return type(self)(*map(f, reversed(self)))
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
         return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
         return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></li>
-</ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="grscheller.datastructures.stack.FStack" href="../stack.html#grscheller.datastructures.stack.FStack">FStack</a></li>
@@ -692,12 +725,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure merging until all exhausted</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
     return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -705,12 +739,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
     return type(self)(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -718,13 +753,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Apply f over the elemrnts of the data structure</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-    # return type(self)(*map(f, reversed(self)))
+    &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
     return type(self)(*map(f, reversed(self)))</code></pre>
 </details>
 </dd>
@@ -732,12 +767,13 @@ Left, which is intended as the "happy path."</p></div>
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
+    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
     return type(self)(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -751,12 +787,12 @@ Left, which is intended as the "happy path."</p></div>
 <div class="desc"><p>Class representing a potentially missing value.</p>
 <ul>
 <li>Implements the Option Monad</li>
-<li>Maybe(value) constructs "Some(value)" </li>
+<li>Maybe(value) constructs "Some(value)"</li>
 <li>Both Maybe() or Maybe(None) constructs a "Nothing"</li>
-<li>immutable semantics - map &amp; flatMap return modified copies</li>
+<li>Immutable semantics - map &amp; flatMap return modified copies</li>
 <li>None is always treated as a non-existance value</li>
-<li>cannot be stored in an object of type Maybe</li>
-<li>semantically None does not exist</li>
+<li>None cannot be stored in an object of type Maybe</li>
+<li>Semantically None represent non-existance</li>
 <li>None only has any real existance as an implementration detail</li>
 </ul></div>
 <details class="source">
@@ -767,13 +803,13 @@ Left, which is intended as the "happy path."</p></div>
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs &#34;Some(value)&#34; 
+    - Maybe(value) constructs &#34;Some(value)&#34;
     - Both Maybe() or Maybe(None) constructs a &#34;Nothing&#34;
-    - immutable semantics - map &amp; flatMap return modified copies
+    - Immutable semantics - map &amp; flatMap return modified copies
     - None is always treated as a non-existance value
-      - cannot be stored in an object of type Maybe
-      - semantically None does not exist
-      - None only has any real existance as an implementration detail
+    - None cannot be stored in an object of type Maybe
+    - Semantically None represent non-existance
+    - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
     def __init__(self, value: Any=None):
         self._value = value
@@ -794,10 +830,10 @@ Left, which is intended as the "happy path."</p></div>
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;A Maybe either contains something or not.
+        &#34;&#34;&#34;A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a &#34;Some&#34;
+        Returns 0 if a &#34;Nothing&#34;
         &#34;&#34;&#34;
         if self:
             return 1
@@ -848,6 +884,17 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>

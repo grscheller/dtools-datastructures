@@ -59,10 +59,78 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
-from .core.stack_base import StackBase
 from .core.nodes import SL_Node as Node
-from .core.circular_array import CircularArray
+from .circular_array import CircularArray
 from .core.fp import FP_rev
+
+class StackBase():
+    &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
+    implementing stack type data structures. Each stack is a very simple
+    stateful object containing a count of the number of elements on it and
+    a reference to an immutable node of a linear tree of singularly linked
+    nodes. Different stack objects can safely share the same data by each
+    pointing to the same node. Each stack class ensures None values do not
+    get pushed onto the the stack.
+    &#34;&#34;&#34;
+    def __init__(self, *ds):
+        &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
+        self._head = None
+        self._count = 0
+        for d in ds:
+            if d is not None:
+                node = Node(d, self._head)
+                self._head = node
+                self._count += 1
+
+    def __iter__(self):
+        &#34;&#34;&#34;Iterator yielding data stored on the stack, starting at the head&#34;&#34;&#34;
+        node = self._head
+        while node:
+            yield node._data
+            node = node._next
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
+        return reversed(CircularArray(*self))
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
+        return self._count &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values on the stack&#34;&#34;&#34;
+        return self._count
+
+    def __eq__(self, other: Any):
+        &#34;&#34;&#34;Returns True if all the data stored on the two stacks are the same
+        and the two stacks are of the same subclass. Worst case is O(n) behavior
+        which happens when all the corresponding data elements on the two stacks
+        are equal, in whatever sense they equality is defined, and none of the
+        nodes are shared.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        left = self._head
+        right = other._head
+        nn = self._count
+        while nn &gt; 0:
+            if left is right:
+                return True
+            if left is None or right is None:
+                return True
+            if left._data != right._data:
+                return False
+            left = left._next
+            right = right._next
+            nn -= 1
+        return True
 
 class Stack(StackBase):
     &#34;&#34;&#34;Class implementing a mutable Last In, First Out (LIFO) stack data structure
@@ -297,7 +365,7 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.stack_base.StackBase" href="core/stack_base.html#grscheller.datastructures.core.stack_base.StackBase">StackBase</a></li>
+<li>grscheller.datastructures.stack.StackBase</li>
 <li><a title="grscheller.datastructures.core.fp.FP_rev" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
 </ul>
 <h3>Methods</h3>
@@ -500,7 +568,7 @@ popping from, getting the length and copying the Stack are all O(1) operations.<
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.core.stack_base.StackBase" href="core/stack_base.html#grscheller.datastructures.core.stack_base.StackBase">StackBase</a></li>
+<li>grscheller.datastructures.stack.StackBase</li>
 </ul>
 <h3>Methods</h3>
 <dl>

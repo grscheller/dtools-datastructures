@@ -56,7 +56,7 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Never, Union
+from typing import Any, Union
 from .core.fp import FP
 
 class FTuple(FP):
@@ -90,7 +90,7 @@ class FTuple(FP):
         &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
         return len(self._ds)
 
-    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
+    def __getitem__(self, index: int) -&gt; Any:
         msg = &#39;&#39;
         if (cnt := len(self._ds)) == 0:
             msg = &#39;Indexing an empty FTuple&#39;
@@ -181,7 +181,7 @@ if __name__ == &#34;__main__&#34;:
         &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
         return len(self._ds)
 
-    def __getitem__(self, index: int) -&gt; Union[Any,Never]:
+    def __getitem__(self, index: int) -&gt; Any:
         msg = &#39;&#39;
         if (cnt := len(self._ds)) == 0:
             msg = &#39;Indexing an empty FTuple&#39;
