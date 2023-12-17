@@ -50,6 +50,7 @@ __license__ = "Appache License 2.0"
 #    client code to use the full infrastructure to implement their own data structures.
 #
 from .array import CLArray
+from .circular_array import CircularArray
 from .queue import FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
 from .tuplelike import FTuple

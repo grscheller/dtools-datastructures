@@ -14,7 +14,7 @@
 
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.circular_array import CircularArray
+from grscheller.datastructures.circular_array import CircularArray
 from grscheller.datastructures.stack import Stack, FStack
 from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
 from grscheller.datastructures.array import CLArray

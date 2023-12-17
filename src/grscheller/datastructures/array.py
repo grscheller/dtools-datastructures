@@ -33,8 +33,8 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Iterable, Iterator, Union
 from itertools import chain, cycle, repeat
+from .circular_array import CircularArray
 from .queue import DoubleQueue
-from .core.circular_array import CircularArray
 from .core.iterlib import merge, exhaust
 from .core.fp import FP, Some
 
