@@ -32,7 +32,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Never, Union
+from typing import Any, Callable, Union
 
 class CircularArray:
     """Class implementing a stateful circular array with amortized O(1)
@@ -103,7 +103,7 @@ class CircularArray:
         """Returns current number of values in the circlular array"""
         return self._count
 
-    def __getitem__(self, index: int) -> Union[Any, Never]:
+    def __getitem__(self, index: int) -> Any:
         """Get value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:
@@ -121,7 +121,7 @@ class CircularArray:
             else:
                 raise IndexError(msg0)
 
-    def __setitem__(self, index: int, value: Any) -> Union[None, Never]:
+    def __setitem__(self, index: int, value: Any) -> Any:
         """Set value at a valid index, otherwise raise IndexError"""
         cnt = self._count
         if 0 <= index < cnt:

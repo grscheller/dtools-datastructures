@@ -131,11 +131,9 @@ class Test_repr:
 
     def test_clarray(self):
         cla1 = CLArray()
-        repr_cla1 = repr(cla1)
-        assert repr_cla1 == 'CLArray(size=0, default=())'
+        assert repr(cla1) == 'CLArray(size=0, default=())'
 
         cla1 = CLArray('foo', [10, 22], size=-3, default=42)
-        repr_cla1 = repr(cla1)
         assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
 
         cla1[2].append(42)
@@ -158,11 +156,11 @@ class Test_repr:
         assert repr(cla3) == "CLArray(16, 'foo', 'bar', 100, size=4, default=42)"
 
         cla2[0] = None
-        assert repr(cla2) == "CLArray(16, 100, 101, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray('foo', 100, 101, '102', size=4, default=42)"
         cla2[1] = None
-        assert repr(cla2) == "CLArray(16, 'foo', 101, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray('foo', 16, 101, '102', size=4, default=42)"
         cla2[2] = None
-        assert repr(cla2) == "CLArray(16, 'foo', 42, '102', size=4, default=42)"
+        assert repr(cla2) == "CLArray('foo', 16, 42, '102', size=4, default=42)"
 
         cla3[-1] = None
         assert repr(cla3) == "CLArray(16, 'foo', 'bar', 101, size=4, default=42)"

@@ -144,5 +144,11 @@ class DoubleQueue(QueueBase):
         else:
             return None
 
+    def __getitem__(self, index: int) -> Any:
+        return self._ca[index]
+
+    def __setitem__(self, index: int, value):
+        self._ca[index] = value
+
 if __name__ == "__main__":
     pass

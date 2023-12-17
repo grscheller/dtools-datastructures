@@ -31,12 +31,12 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Iterable, Iterator, Never, Union
+from typing import Any, Callable, Iterable, Iterator, Union
 from itertools import chain, cycle, repeat
 from .queue import DoubleQueue
 from .core.circular_array import CircularArray
 from .core.iterlib import merge, exhaust
-from .core.fp import FP
+from .core.fp import FP, Some
 
 class CLArray(FP):
     """Functional Constant Length Array
@@ -53,14 +53,14 @@ class CLArray(FP):
     Does not permits storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     """
-    __slots__ = ['_ca', '_backQueue' '_default']
+    __slots__ = ['_arrayQueue', '_backQueue', '_default']
 
     def __init__(self, *data, size: int|None=None, default: Any|None=None):
 
-        ca = CircularArray()
         if default is None:
             default = ()
 
+        arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
 
@@ -73,24 +73,25 @@ class CLArray(FP):
             if data_size < abs_size:
                 # pad CLArray on right with default value
                 while backQueue:
-                    ca.pushR(backQueue.popL())
-                ca.pushR(*(repeat(default, abs_size - data_size)))
+                    arrayQueue.pushR(backQueue.popL())
+                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
-                    ca.pushR(backQueue.popL())
+                    arrayQueue.pushR(backQueue.popL())
         else:
             if data_size < abs_size:
                 # pad CLArray on left with default value
                 while backQueue:
-                    ca.pushL(backQueue.popR())
-                ca.pushL(*(repeat(default, abs_size - data_size)))
+                    arrayQueue.pushL(backQueue.popR())
+                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
-                    ca.pushL(backQueue.popR())
+                    arrayQueue.pushL(backQueue.popR())
+                backQueue = DoubleQueue(*reversed(backQueue))
 
-        self._ca = ca
+        self._arrayQueue = arrayQueue
         self._backQueue = backQueue
         self._default = default
 
@@ -98,14 +99,14 @@ class CLArray(FP):
         """Iterate over the current state of the CLArray. Copy is made
         so original source can safely mutate.
         """
-        for data in self._ca.copy():
+        for data in self._arrayQueue.copy():
             yield data
 
     def __reversed__(self):
         """Reverse iterate over the current state of the CLArray. Copy is made
         so original source can safely mutate.
         """
-        for data in reversed(self._ca.copy()):
+        for data in reversed(self._arrayQueue.copy()):
             yield data
 
     def __repr__(self):
@@ -120,7 +121,7 @@ class CLArray(FP):
         return repr1 + repr2 + repr3 + repr4
 
     def __str__(self):
-        return '[[[' + ', '.join(map(repr, self)) + ']]]'
+        return '[|' + ', '.join(map(repr, self)) + '|]'
 
     def __bool__(self):
         """Return true only if there exists an array value not equal to the
@@ -132,80 +133,70 @@ class CLArray(FP):
         return False
 
     def default(self) -> Any:
-        """Return the default value that eventually gets used in lieu of None"""
+        """Return a reference to the default value that gets used in lieu of None"""
         return self._default
 
-    def backstore(self) -> Iterator:
-        """Return the backstore iterator"""
-        return self._backstore
+    def backQueue(self) -> DoubleQueue:
+        """Return a copy of the backQueue"""
+        return self._backQueue.copy()
 
     def __len__(self) -> int:
         """Returns the size of the CLArray"""
-        return len(self._ca)
+        return len(self._arrayQueue)
 
-    def __getitem__(self, index: int) -> Union[Any,Never]:
-        return self._ca[index]
+    def __getitem__(self, index: int) -> Any:
+        return self._arrayQueue[index]
 
-    def __setitem__(self, index: int, value: Any) -> Union[None,Never]:
+    def __setitem__(self, index: int, value: Any) -> Any:
         if value is None:
-            self._data[index] = next(self._backstore)
+            self._arrayQueue[index] = Some(self._backQueue.popL()).get(self._default)
         else:
-            self._data[index] = value
+            self._arrayQueue[index] = value
 
     def __eq__(self, other: Any):
-        """Returns True if all the data stored in both compare as equal. Worst
-        case is O(n) behavior for the true case. The default value play no role
-        in determining equality.
+        """Returns True if all the data stored in both compare as equal. Worst case is
+        O(n) behavior for the true case. The default value and the backQueue plays no
+        role in determining equality.
         """
         if not isinstance(other, type(self)):
             return False
-        return self._ca == other._ca
+        return self._arrayQueue == other._arrayQueue
 
-    def reverse(self) -> None:
-        """Swap the circular array with one with its elements reversed."""
-        self._ca = self._ca.reverse()
-
-    def mapSelf(self, f: Callable[[Any], Any]) -> None:
-        """Mutate the CLArray by appling function over the CLArray contents."""
-        self._ca = CLArray(*map(f, self),
-                            backData=self._backstore,
-                            default=self._default)._data
-
-    def __str__(self):
-        return '[|' + ', '.join(map(repr, self)) + '|]'
-
-    def copy(self,
-             size: int|None=None,
-             backstore: Iterable|None=None,
-             default: Any|None=None) -> CLArray:
+    def copy(self, size: int|None=None, default: Any|None=None) -> CLArray:
         """Return shallow copy of the CLArray in O(n) complexity."""
-        return self.map(lambda x: x, size, backstore, default)
+        return self.map(lambda x: x, size, default)
 
-    def map(self, f: Callable[[Any], Any], size: int|None=None,
-            backstore: Iterale|None=None, default: Any|None=None) -> CLArray:
+    def map(self, f: Callable[[Any], Any],
+            size: int|None=None,
+            default: Any|None=None) -> CLArray:
         """Apply function f over the CLArray contents. Return a new CLArray with the
-        mapped contents. Size to the data unless size is given. If backstore is not
-        given, use default to create one. If default is not given, use the value from
-        the CLArray being mapped.
+        mapped contents. Size to the data unless size is given. If default is not given,
+        use the value from the CLArray being mapped.
+
+        Recommendation: default should be of the same type that f produces
         """
-        match (backstore, default):
-            case (None, None):
-                default = self._default
-                backstore = cycle((default,))
-            case (None, default):
-                backstore = cycle((default,))
-            case (backstore, None):
-                default = self._default
+        if default is None:
+            default = self._default
+
+        def F(ff: Callable([Any], Any)) -> Callable([Any], Any):
+            def FF(x: Any) -> Any:
+                value = ff(x)
+                if value is None:
+                    return default
+                else:
+                    return value
+            return FF
 
         if size is None:
-            return CLArray(*map(f, self), backData=backstore, default=default)
+            return CLArray(*map(F(f), self), default=default)
         else:
-            return CLArray(*map(f, self), size=size, backData=backstore, default=default)
+            return CLArray(*map(F(f), self), size=size, default=default)
 
-    def flatMap(self, f: Callable[[Any], CLArray],
+    def flatMap(self,
+                f: Callable[[Any], CLArray],
                 size: int|None=None,
-                backstore: Iterator|None=None,
-                default: Any|None=None) -> CLArray:
+                default: Any|None=None,
+                mapDefault: bool=False) -> CLArray:
         """Map f across self and flatten result by concatenating the CLArray elements
         generated by f. If a default value is not given, use the default value of the
         FLArray being flatMapped.
@@ -213,36 +204,46 @@ class CLArray(FP):
         Any default values of the FLArrays created by f need not have anything to do
         with the default value of the FPArray being flatmapped over.
         """
-        if (default, backstore) == (None, None):
-            default = self._default
+        if default is None:
+            default = self.default()
+        if mapDefault:
+            default = f(default).default()
 
-        return CLArray(*chain(*self.map(f)), size, backstore, default)
+        return CLArray(*chain(*self.map(f)), size=size, default=default)
 
     def mergeMap(self, f: Callable[[Any], CLArray],
                  size: int|None=None,
-                 backstore: Iterale|None=None,
-                 default: Any|None=None) -> CLArray:
+                 default: Any|None=None,
+                 mapDefault: bool=False) -> CLArray:
         """Map f across self and flatten result by merging the CLArray elements
         generated by f until the first is exhausted. If a default value is not given,
         use the default value of the FLArray being flatmapped.
         """
-        if (default, backstore) == (None, None):
+        if default is None:
             default = self._default
+        if mapDefault:
+            default = f(default).default()
 
-        return CLArray(*merge(*self.map(f)), size, backstore, default)
+        return CLArray(*merge(*self.map(f)), size=size, default=default)
 
     def exhastMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
-                  backstore: Iterable|None=None,
-                  default: Any|None=None) -> CLArray:
+                  default: Any|None=None,
+                  mapDefault: bool=False) -> CLArray:
         """Map f across self and flatten result by merging the CLArray elements
         generated by f until all are exhausted. If a default value is not given,
         use the default value of the FLArray being flatmapped.
         """
-        if (default, backstore) == (None, None):
+        if default is None:
             default = self._default
+        if mapDefault:
+            default = f(default).default()
 
-        return CLArray(*exhaust(*self.map(f)), size, backstore, default)
+        return CLArray(*exhaust(*self.map(f)), size=size, default=default)
+
+    def reverse(self) -> None:
+        """Swap the arrayQueue with one with its elements reversed."""
+        self._arrayQueue = DoubleQueue(*reversed(self))
 
 if __name__ == "__main__":
     pass

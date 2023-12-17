@@ -25,7 +25,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Never, Union
+from typing import Any, Union
 from .core.fp import FP
 
 class FTuple(FP):
@@ -59,7 +59,7 @@ class FTuple(FP):
         """Returns the number of elements in the FTuple"""
         return len(self._ds)
 
-    def __getitem__(self, index: int) -> Union[Any,Never]:
+    def __getitem__(self, index: int) -> Any:
         msg = ''
         if (cnt := len(self._ds)) == 0:
             msg = 'Indexing an empty FTuple'
