@@ -25,6 +25,3 @@ __license__ = "Appache License 2.0"
 #: ipython. Can be used by client code to help implement new data structures.
 from .fp import FP, FP_rev
 from .nodes import SL_Node, Tree_Node
-from .circular_array import CircularArray
-from .queue_base import QueueBase
-from .stack_base import StackBase

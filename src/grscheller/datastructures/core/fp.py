@@ -1,11 +1,11 @@
 # Copyright 2023 Geoffrey R. Scheller
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,10 @@
 
 """Module grscheller.datastructures.core.functional
 
-Class Maybe: Implements the Maybe Monad, also called Option or Optional Monad.
-Class Either: Implements a left biased Either Monad.
+   - class Maybe: Implements the Maybe Monad, also called the Optional Monad
+   - class Either: Implements a left biased Either Monad.
+   - class FP: default functional implementations for fifo data structure methods
+   - class FP_rev: default functional implementations for lifo data structure methods
 """
 from __future__ import annotations
 
@@ -32,49 +34,52 @@ from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
-
-    # For FIFO type data structures.
+    """Default functional implentations for FIFO data structures"""
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
+        """Apply f over the elemrnts of the data structure"""
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure merging until one exhausted"""
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
+        """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(iter, map(f, self))))
 
-class FP_rev(FP):
-    def __reversed__(self):
-        raise NotImplementedError
-
-    # FP modified for FILO type data structures.
+class FP_rev():
+    """Default functional implentations for LIFO data structures"""
     def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
-        # return type(self)(*map(f, reversed(self)))
+        """Apply f over the elemrnts of the data structure"""
         return type(self)(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure sequentially"""
         return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], type[FP]]) -> type[FP_rev]:
+        """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 class Maybe(FP):
     """Class representing a potentially missing value.
 
     - Implements the Option Monad
-    - Maybe(value) constructs "Some(value)" 
+    - Maybe(value) constructs "Some(value)"
     - Both Maybe() or Maybe(None) constructs a "Nothing"
-    - immutable semantics - map & flatMap return modified copies
+    - Immutable semantics - map & flatMap return modified copies
     - None is always treated as a non-existance value
-      - cannot be stored in an object of type Maybe
-      - semantically None does not exist
-      - None only has any real existance as an implementration detail
+    - None cannot be stored in an object of type Maybe
+    - Semantically None represent non-existance
+    - None only has any real existance as an implementration detail
     """
     def __init__(self, value: Any=None):
         self._value = value
@@ -95,10 +100,10 @@ class Maybe(FP):
         return self._value is not None
 
     def __len__(self) -> int:
-        """A Maybe either contains something or not.
+        """A Maybe either contains something or nothing.
 
-        Return 1 if a Some
-        Return 0 if a Nothing
+        Returns 1 if a "Some"
+        Returns 0 if a "Nothing"
         """
         if self:
             return 1
@@ -122,26 +127,29 @@ class Maybe(FP):
         else:
             return alternate
 
-# Maybe convenience functions/objects.
+# Maybe convenience functions/vars
 
 def maybeToEither(m: Maybe, right: Any=None) -> Either:
     """Convert a Maybe to an Either"""
     return Either(m.get(), right)
 
-def Some(value=None):
+def Some(value=None) -> Maybe:
     """Function for creating a Maybe from a value. If value is None or missing,
     returns a Nothing.
     """
     return Maybe(value)
 
-#: Maybe object representing a missing value,
-#: Nothing is not a singleton. Test via equality not identity.
-Nothing = Some()
+#: Nothing is not a singleton! Test via equality, or in a boolean context.
+Nothing: Maybe = Maybe()
 
 class Either(FP):
-    """Class that either contains a Left value or Right value, but not both. If
-    right not given, set it to the empty str. This version is biased to the
-    Left, which is intended as the "happy path."
+    """Class that either contains a Left value or Right value, but not both.
+
+    - Implements a left biased Either Monad
+    - Maybe(value, altValue) constructs "Left(value)" if value is not None
+    - Maybe(value, altValue) constructs "Right(altValue)" if value is None
+    - If altValue not given, set it to the empty string
+    - Immutable semantics - map & flatMap return modified copies
     """
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
@@ -181,24 +189,25 @@ class Either(FP):
         return False
 
     def get(self, default: Any=None) -> Any:
-        """get value if a Left, otherwise return default value."""
+        """Get value if a Left, otherwise return default value"""
         if self:
             return self._value
         return default
 
     def map(self, f: Callable[[Any], Any], right=None) -> Either:
+        """Map over a Left(value)"""
         if self:
             return Either(f(self._value), right)
         return self
 
     def mapRight(self, g: Callable[[Any], Any]) -> Either:
-        """Map over if a Right."""
+        """Map over a Right(value)"""
         if self:
             return self
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default. Replace Right with right"""
+        """flatMap with right as default. Replace Right(value) with Right(right)"""
         if self:
             if right is None:
                 return f(self._value)
@@ -211,7 +220,7 @@ class Either(FP):
                 return self.mapRight(lambda _: right)
 
     def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with a Right default. Merge right into Right via +"""
+        """flatMap with right as default, replace Right(value) with Right(value + right)"""
         if self:
             if right is None:
                 return f(self._value)
@@ -230,11 +239,11 @@ def eitherToMaybe(e: Either) -> Maybe:
     return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -> Either:
-    """Function returns Left Either if left != None, otherwise Right Either."""
+    """Function returns Left Either if left != None, otherwise Right Either"""
     return Either(left, right)
 
 def Right(right: Any) -> Either:
-    """Function to construct a Right Either."""
+    """Function to construct a Right Either"""
     return Either(None, right)
 
 if __name__ == "__main__":

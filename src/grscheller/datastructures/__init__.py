@@ -12,7 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+<<<<<<< HEAD
 """Package grscheller.datastructures - RC 0.11.0-1
+=======
+"""Package grscheller.datastructures - development branch (main)
+>>>>>>> main
 
    Data structures geared to different algorithmic use cases. Supportive
    of both functional and imperative programming styles while endeavoring
@@ -37,7 +41,7 @@
      events.
 """
 
-__version__ = "0.10.14.2"
+__version__ = "0.10.17.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -50,6 +54,7 @@ __license__ = "Appache License 2.0"
 #    client code to use the full infrastructure to implement their own data structures.
 #
 from .array import CLArray
+from .circular_array import CircularArray
 from .queue import FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
 from .tuplelike import FTuple

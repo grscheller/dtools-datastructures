@@ -32,7 +32,23 @@
 
 ## Versions - PyPI releases begin with "v"
 
-### Version 0.10.14.2 (RC 0.11.0-1) - 2023-12-11
+### Version 0.10.17.0 (0.11.0-RC2) - 2023-12-17
+* Second release candidate - probably will become next PyPI release
+  * main now development branch, release will be release branch
+  * decided to drop it back to Alpha
+    * making datastrucutes a Beta release was premature
+    * classifier "Development Status :: 3 - Alpha"
+  * will cut next PyPI release with Flit from release branch
+  * will need to regenerate docs on release & move to main
+  * things to add in main before next release
+    * will not make Maybe Nothing a singleton
+    * last touched CLArray refactor
+    * improve CLArray test coverage
+  * things for future PYPI releases
+    * inherit FTuple from Tuple (use __new__) for performance boost
+    * hold off using __slots__ until I understand them better
+
+### Version 0.10.14.2 (0.11.0-RC1) - 2023-12-11
 
 * First release candidate - unlikely this will be the next PyPI release
   * will cut next PyPI release with Flit from this branch

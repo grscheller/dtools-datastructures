@@ -17,7 +17,6 @@
 Heap based nodes for for tree type data structures. Data structures should make
 nodes inaccessible to client code.
 """
-
 from __future__ import annotations
 
 __all__ = ['SL_Node', 'Tree_Node']
