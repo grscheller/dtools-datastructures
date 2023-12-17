@@ -53,8 +53,6 @@ class CLArray(FP):
     Does not permits storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     """
-    __slots__ = ['_arrayQueue', '_backQueue', '_default']
-
     def __init__(self, *data, size: int|None=None, default: Any|None=None):
 
         if default is None:

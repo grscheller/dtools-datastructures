@@ -81,8 +81,6 @@ class Maybe(FP):
     - Semantically None represent non-existance
     - None only has any real existance as an implementration detail
     """
-    __slots__ = ['value']
-
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -153,8 +151,6 @@ class Either(FP):
     - If altValue not given, set it to the empty string
     - Immutable semantics - map & flatMap return modified copies
     """
-    __slots__ = ['_isLeft', '_value']
-
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = ''
