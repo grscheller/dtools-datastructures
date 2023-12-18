@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.array API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.clarray - constant length array …" />
+<meta name="description" content="Module grscheller.datastructure.array …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,15 +22,8 @@
 <h1 class="title">Module <code>grscheller.datastructures.array</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.clarray - constant length array.</p>
-<p>Module implementing an mutable fixed length data structure with O(1) data
-access. All mutating methods are guaranteed not to change the length of the
-data structure.</p>
-<p>None values are not allowed in this data structures. An immutable default value
-<br>
-is set upon instantiating. If no default value is given, the empty tuple () is
-used in lieu of None, but is not set as the default value. Method which return
-new CLArray values can set a different default value for the new instance.</p>
+<p>Module grscheller.datastructure.array</p>
+<p>Module implementing array-like data structures.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -49,16 +42,9 @@ new CLArray values can set a different default value for the new instance.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.clarray - constant length array.
+&#34;&#34;&#34;Module grscheller.datastructure.array
 
-Module implementing an mutable fixed length data structure with O(1) data
-access. All mutating methods are guaranteed not to change the length of the
-data structure.
-
-None values are not allowed in this data structures. An immutable default value                     
-is set upon instantiating. If no default value is given, the empty tuple () is
-used in lieu of None, but is not set as the default value. Method which return
-new CLArray values can set a different default value for the new instance.
+Module implementing array-like data structures.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -68,42 +54,41 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Iterable, Iterator, Union
-from itertools import chain, cycle, repeat
-from .circular_array import CircularArray
+from typing import Any, Callable, Iterable
+from itertools import chain, repeat
 from .queue import DoubleQueue
 from .core.iterlib import merge, exhaust
 from .core.fp import FP, Some
 
 class CLArray(FP):
-    &#34;&#34;&#34;Functional Constant Length Array
+    &#34;&#34;&#34;Constant Length Array
 
-    Class implementing a mutable fixed length array data structure whose
-    mutaing methods are guaranteed not to change the length of the data
-    structure.
+    Class implementing a mutable fixed length array data structure whose mutaing
+    methods are guaranteed not to change the length of the data structure. O(1)
+    data access. All mutating methods are guaranteed not to change the length of
+    the data structure. None values are not allowed in this data structures.
+    A mutable default value is set upon initialization. This default value is
+    used in lieu of storing None as a value. The &#34;default&#34; default value is the
+    empty tuple.
 
     - if size set to None, size to all the non-None data provided
     - if size &gt; 0, pad data on right with default value or slice off trailing data
     - if size &lt; 0, pad data on left with default value or slice off initial data
     - keep any sliced off data on the backQueue, attempt to preserve original order
-    - push extra non-None data from backlog 
+    - push extra non-None data from backlog to end of backQueue
 
     Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     &#34;&#34;&#34;
     def __init__(self, *data,
                  size: int|None=None,
-                 default: Any|None=None,
-                 backlog: Iterable|None=None):
-
-        if default is None:
-            default = ()
-        if backlog is None:
-            backlog = ()
+                 default: Any=(),
+                 backlog: Iterable=()):
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
+        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -131,7 +116,6 @@ class CLArray(FP):
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
                 backQueue = DoubleQueue(*reversed(backQueue))
-        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
@@ -302,19 +286,23 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.array.CLArray"><code class="flex name class">
 <span>class <span class="ident">CLArray</span></span>
-<span>(</span><span>*data, size: int | None = None, default: Any | None = None, backlog: Iterable | None = None)</span>
+<span>(</span><span>*data, size: int | None = None, default: Any = (), backlog: Iterable = ())</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Functional Constant Length Array</p>
-<p>Class implementing a mutable fixed length array data structure whose
-mutaing methods are guaranteed not to change the length of the data
-structure.</p>
+<div class="desc"><p>Constant Length Array</p>
+<p>Class implementing a mutable fixed length array data structure whose mutaing
+methods are guaranteed not to change the length of the data structure. O(1)
+data access. All mutating methods are guaranteed not to change the length of
+the data structure. None values are not allowed in this data structures.
+A mutable default value is set upon initialization. This default value is
+used in lieu of storing None as a value. The "default" default value is the
+empty tuple.</p>
 <ul>
 <li>if size set to None, size to all the non-None data provided</li>
 <li>if size &gt; 0, pad data on right with default value or slice off trailing data</li>
 <li>if size &lt; 0, pad data on left with default value or slice off initial data</li>
 <li>keep any sliced off data on the backQueue, attempt to preserve original order</li>
-<li>push extra non-None data from backlog </li>
+<li>push extra non-None data from backlog to end of backQueue</li>
 </ul>
 <p>Does not permit storing None as a value. If a default value is not set, the
 empty tuple () is used in lieu of None.</p></div>
@@ -323,34 +311,34 @@ empty tuple () is used in lieu of None.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class CLArray(FP):
-    &#34;&#34;&#34;Functional Constant Length Array
+    &#34;&#34;&#34;Constant Length Array
 
-    Class implementing a mutable fixed length array data structure whose
-    mutaing methods are guaranteed not to change the length of the data
-    structure.
+    Class implementing a mutable fixed length array data structure whose mutaing
+    methods are guaranteed not to change the length of the data structure. O(1)
+    data access. All mutating methods are guaranteed not to change the length of
+    the data structure. None values are not allowed in this data structures.
+    A mutable default value is set upon initialization. This default value is
+    used in lieu of storing None as a value. The &#34;default&#34; default value is the
+    empty tuple.
 
     - if size set to None, size to all the non-None data provided
     - if size &gt; 0, pad data on right with default value or slice off trailing data
     - if size &lt; 0, pad data on left with default value or slice off initial data
     - keep any sliced off data on the backQueue, attempt to preserve original order
-    - push extra non-None data from backlog 
+    - push extra non-None data from backlog to end of backQueue
 
     Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     &#34;&#34;&#34;
     def __init__(self, *data,
                  size: int|None=None,
-                 default: Any|None=None,
-                 backlog: Iterable|None=None):
-
-        if default is None:
-            default = ()
-        if backlog is None:
-            backlog = ()
+                 default: Any=(),
+                 backlog: Iterable=()):
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
+        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -378,7 +366,6 @@ empty tuple () is used in lieu of None.</p></div>
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
                 backQueue = DoubleQueue(*reversed(backQueue))
-        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue

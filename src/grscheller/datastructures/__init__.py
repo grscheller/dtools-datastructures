@@ -36,22 +36,13 @@
      Python iterators and syntax errors, exceptions are for "exceptional"
      events.
 """
-
-__version__ = "0.10.17.3"
+__version__ = "0.10.17.4"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-# Replace these imports with 2 functions
-#
-# 1. One that does bellow imports fo client code to use the data structures that the
-#    package provides.
-# 2. Another to import the missing imports from the core subpackage. This will allow
-#    client code to use the full infrastructure to implement their own data structures.
-#
 from .array import CLArray
-from .circular_array import CircularArray
-from .queue import FIFOQueue, LIFOQueue, DoubleQueue
+from .queue import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
 from .tup import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right

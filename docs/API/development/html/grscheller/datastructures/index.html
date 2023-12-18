@@ -86,22 +86,13 @@ events.</li>
      Python iterators and syntax errors, exceptions are for &#34;exceptional&#34;
      events.
 &#34;&#34;&#34;
-
-__version__ = &#34;0.10.17.2&#34;
+__version__ = &#34;0.10.17.4&#34;
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-# Replace these imports with 2 functions
-#
-# 1. One that does bellow imports fo client code to use the data structures that the
-#    package provides.
-# 2. Another to import the missing imports from the core subpackage. This will allow
-#    client code to use the full infrastructure to implement their own data structures.
-#
 from .array import CLArray
-from .circular_array import CircularArray
-from .queue import FIFOQueue, LIFOQueue, DoubleQueue
+from .queue import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
 from .tup import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right
@@ -114,11 +105,7 @@ from .core.iterlib import merge, exhaust</code></pre>
 <dl>
 <dt><code class="name"><a title="grscheller.datastructures.array" href="array.html">grscheller.datastructures.array</a></code></dt>
 <dd>
-<div class="desc"><p>Module grscheller.datastructure.clarray - constant length array …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.circular_array" href="circular_array.html">grscheller.datastructures.circular_array</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.circular_array - Double sided queue …</p></div>
+<div class="desc"><p>Module grscheller.datastructure.array …</p></div>
 </dd>
 <dt><code class="name"><a title="grscheller.datastructures.core" href="core/index.html">grscheller.datastructures.core</a></code></dt>
 <dd>
@@ -154,7 +141,6 @@ from .core.iterlib import merge, exhaust</code></pre>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
 <li><code><a title="grscheller.datastructures.array" href="array.html">grscheller.datastructures.array</a></code></li>
-<li><code><a title="grscheller.datastructures.circular_array" href="circular_array.html">grscheller.datastructures.circular_array</a></code></li>
 <li><code><a title="grscheller.datastructures.core" href="core/index.html">grscheller.datastructures.core</a></code></li>
 <li><code><a title="grscheller.datastructures.queue" href="queue.html">grscheller.datastructures.queue</a></code></li>
 <li><code><a title="grscheller.datastructures.stack" href="stack.html">grscheller.datastructures.stack</a></code></li>

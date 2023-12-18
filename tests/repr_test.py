@@ -17,9 +17,8 @@ from __future__ import annotations
 from typing import Any
 from grscheller.datastructures.array import CLArray
 from grscheller.datastructures.stack import Stack, FStack
-from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
+from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tup import FTuple
-from grscheller.datastructures.circular_array import CircularArray
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
 
 class Test_repr:

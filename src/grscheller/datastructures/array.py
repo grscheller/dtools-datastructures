@@ -12,16 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.clarray - constant length array.
+"""Module grscheller.datastructure.array
 
-Module implementing an mutable fixed length data structure with O(1) data
-access. All mutating methods are guaranteed not to change the length of the
-data structure.
-
-None values are not allowed in this data structures. An immutable default value                     
-is set upon instantiating. If no default value is given, the empty tuple () is
-used in lieu of None, but is not set as the default value. Method which return
-new CLArray values can set a different default value for the new instance.
+Module implementing array-like data structures.
 """
 
 from __future__ import annotations
@@ -31,19 +24,22 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Iterable, Iterator, Union
-from itertools import chain, cycle, repeat
-from .circular_array import CircularArray
+from typing import Any, Callable, Iterable
+from itertools import chain, repeat
 from .queue import DoubleQueue
 from .core.iterlib import merge, exhaust
 from .core.fp import FP, Some
 
 class CLArray(FP):
-    """Functional Constant Length Array
+    """Constant Length Array
 
-    Class implementing a mutable fixed length array data structure whose
-    mutaing methods are guaranteed not to change the length of the data
-    structure.
+    Class implementing a mutable fixed length array data structure whose mutaing
+    methods are guaranteed not to change the length of the data structure. O(1)
+    data access. All mutating methods are guaranteed not to change the length of
+    the data structure. None values are not allowed in this data structures.
+    A mutable default value is set upon initialization. This default value is
+    used in lieu of storing None as a value. The "default" default value is the
+    empty tuple.
 
     - if size set to None, size to all the non-None data provided
     - if size > 0, pad data on right with default value or slice off trailing data
@@ -56,13 +52,8 @@ class CLArray(FP):
     """
     def __init__(self, *data,
                  size: int|None=None,
-                 default: Any|None=None,
-                 backlog: Iterable|None=None):
-
-        if default is None:
-            default = ()
-        if backlog is None:
-            backlog = ()
+                 default: Any=(),
+                 backlog: Iterable=()):
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)

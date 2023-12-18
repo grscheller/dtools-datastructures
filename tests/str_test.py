@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
+from grscheller.datastructures.stack import FStack, Stack
+from grscheller.datastructures.tup import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.circular_array import CircularArray
-from grscheller.datastructures.stack import Stack, FStack
-from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
-from grscheller.datastructures.array import CLArray
-from grscheller.datastructures.tup import FTuple
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
