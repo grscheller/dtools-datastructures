@@ -71,12 +71,13 @@ least one return statement is replaced by a yield statement. Python also
 has syntax to produce generators from "generator comprehensions" similar
 to the syntax used for "list comprehensions."
 
-__Note:__ Using a generator for a class's __iter__ method will not only
-provide both of the above iterator protocol methods, but the iterators
-created by `for ... in` syntax and the `map` builtin are inaccessible to
-the rest of the code. This package defensively uses cached copies of data
-in such generators so that the original objects can safely mutate while
-the iterators created can leisurely yield the container's past state.
+__Note:__ Using either a generator or generator comprehension for
+a class's `__iter__` method will not only provide both of the above
+iterator protocol methods, but the iterators created by `for ... in`
+syntax and the `map` builtin are inaccessible to the rest of the code.
+The datastructures package defensively uses cached copies of data in
+such generators so that the original objects can safely mutate while the
+iterators created can leisurely yield the container's past state.
 
 #### Iterable vs being an Iterator 
 
@@ -94,6 +95,7 @@ from an object which has a `__next__(self)` method.
 It is best practice to make all your classes with `__next__(self)`
 methods follow interator protocol. Standard library modules and many
 PyPI packages make the assumptions that "iterators" follow interator
-protocol.
+protocol. The PyPI grscheller.datastructure package makes this
+assumption too.
 
 [1]: https://docs.python.org/3/library/stdtypes.html#iterator-types

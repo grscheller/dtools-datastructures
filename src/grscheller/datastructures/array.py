@@ -45,18 +45,24 @@ class CLArray(FP):
     mutaing methods are guaranteed not to change the length of the data
     structure.
 
-    - if size set to None, size to all the data provided (even the Nones)
+    - if size set to None, size to all the non-None data provided
     - if size > 0, pad data on right with default value or slice off trailing data
     - if size < 0, pad data on left with default value or slice off initial data
-    - put any non-None sliced off data on the backlog
+    - keep any sliced off data on the backQueue, attempt to preserve original order
+    - push extra non-None data from backlog 
 
-    Does not permits storing None as a value. If a default value is not set, the
+    Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     """
-    def __init__(self, *data, size: int|None=None, default: Any|None=None):
+    def __init__(self, *data,
+                 size: int|None=None,
+                 default: Any|None=None,
+                 backlog: Iterable|None=None):
 
         if default is None:
             default = ()
+        if backlog is None:
+            backlog = ()
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
@@ -88,6 +94,7 @@ class CLArray(FP):
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
                 backQueue = DoubleQueue(*reversed(backQueue))
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue

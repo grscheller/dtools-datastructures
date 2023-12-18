@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.tuplelike import FTuple
+from grscheller.datastructures.tup import FTuple
 
 class TestFTuple:
     def test_method_returns_copy(self):

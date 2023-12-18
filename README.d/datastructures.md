@@ -7,7 +7,7 @@ Overview of package's top level modules and data structures.
 * [queue](#queue-module)
 * [stack](#stack-module)
 * [array](#array-module)
-* [tuplelike](#tuplelike-module)
+* [tup](#tup-module)
 
 ## Top level data structures
 
@@ -95,8 +95,11 @@ Provides a constant length mutable array of elements of different types.
 
 * O(1) data access
 * immutable length
+* size can be provided, otherwise sized to initial non-None data
 * default value used in lieu of storing None as a value
-* an optional backing queue can be provided
+* backing queue provided when more data is provided than CLArray size
+* default value added if not enough initial data provided
+* optional backlog iterable can append more data to backing Queue
 
 Provides a constant length mutable array of elements of different types.
 
@@ -107,7 +110,7 @@ A "backing queue" can be configured to swap values into and out of the
 array. When non-empty, the backing queue is used in lieu of the default
 value for None.
 
-### tuplelike module
+### tup module
 
 Provides immutable tuple-like classes with functional interfaces.
 
@@ -118,3 +121,6 @@ Provides immutable tuple-like classes with a functional interfaces.
 * immutable
 * O(1) data access
 * does not store None values
+
+Planning to refactor for PyPI v0.11.1 or v0.12.0 release, depending on
+the extend of API change.

@@ -18,7 +18,7 @@ from grscheller.datastructures.circular_array import CircularArray
 from grscheller.datastructures.stack import Stack, FStack
 from grscheller.datastructures.queue import FIFOQueue, LIFOQueue, DoubleQueue
 from grscheller.datastructures.array import CLArray
-from grscheller.datastructures.tuplelike import FTuple
+from grscheller.datastructures.tup import FTuple
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y

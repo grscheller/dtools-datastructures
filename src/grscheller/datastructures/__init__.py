@@ -37,7 +37,7 @@
      events.
 """
 
-__version__ = "0.10.17.0"
+__version__ = "0.10.17.2"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
@@ -53,7 +53,7 @@ from .array import CLArray
 from .circular_array import CircularArray
 from .queue import FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
-from .tuplelike import FTuple
+from .tup import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right
 from .core.fp import maybeToEither, eitherToMaybe
 from .core.iterlib import merge, exhaust
