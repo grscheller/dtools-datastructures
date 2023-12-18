@@ -517,10 +517,26 @@ class TestCLArray:
             return CLArray(2, x, 3*x, size=4, default=7*x)
 
         cl0 = CLArray(1, 2, size=3, default=-1)
-        cl1 = cl0.flatMap(bar, size=14)
-        assert repr(cl1) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, size=14, default=-1)'
+        cl01 = cl0.flatMap(bar, size=15)
+        assert repr(cl01) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, -1, size=15, default=-1)'
 
-#       cl0 = CLArray(1, 2, size=3, default=-1, backlog=(8, 9, 10))
-#       cl1 = cl0.flatMap(bar, size=16)
-#       assert repr(cl1) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, 8, 9, 10, -1, size=16, default=-1)'
+        cl02 = cl0.flatMap(bar)
+        assert repr(cl02) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, size=12, default=-1)'
 
+        cl03 = cl0.flatMap(bar)
+        assert eval(repr(cl03)) == CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, default=-1)
+
+        cl1 = CLArray(1, 2, size=4, default=-2, backlog=(9,10,11))
+        cl11 = cl1.flatMap(bar, size=12)
+        assert repr(cl11) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, 9, 27, 63, size=12, default=-2)'
+
+        # Python always evaluates/assigns left to right
+        cl11[0] = cl11[1] = cl11[2] = cl11[3] = None
+        cl11[4] = cl11[5] = cl11[6] = cl11[7] = None
+        cl11[8] = cl11[9] = cl11[10] = cl11[11] = None
+        assert repr(cl11) == 'CLArray(2, 10, 30, 70, 2, 11, 33, 77, 2, -2, -6, -14, size=12, default=-2)'
+
+        cl11[0] = cl11[1] = cl11[2] = cl11[3] = None
+        cl11[4] = cl11[5] = cl11[6] = cl11[7] = None
+        cl11[8] = cl11[9] = cl11[10] = cl11[11] = None
+        assert repr(cl11) == 'CLArray(2, -2, -6, -14, -2, -2, -2, -2, -2, -2, -2, -2, size=12, default=-2)'
