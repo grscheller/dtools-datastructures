@@ -49,7 +49,7 @@ class CLArray(FP):
     - if size > 0, pad data on right with default value or slice off trailing data
     - if size < 0, pad data on left with default value or slice off initial data
     - keep any sliced off data on the backQueue, attempt to preserve original order
-    - push extra non-None data from backlog 
+    - push extra non-None data from backlog to end of backQueue
 
     Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
@@ -67,6 +67,7 @@ class CLArray(FP):
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
+        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -94,7 +95,6 @@ class CLArray(FP):
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
                 backQueue = DoubleQueue(*reversed(backQueue))
-        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue

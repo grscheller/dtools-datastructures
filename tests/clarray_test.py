@@ -380,135 +380,147 @@ class TestCLArray:
             return None
 
         # Keep defaults all the same
-        fcl0 = CLArray(*range(10), default=6)
-        fcl1 = fcl0.flatMap(lambda x: CLArray(*range(x%5)))
-        fcl2 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=6))
-        fcl3 = fcl0.flatMap(lambda x: CLArray(*range(x%5)), default=6)
-        fcl4 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=7), default=6)
-        assert fcl1 == fcl2 == fcl3 == fcl4
-        assert fcl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
-        assert fcl0.default() == 6
-        assert fcl1.default() == 6
-        assert fcl2.default() == 6
-        assert fcl3.default() == 6
-        assert fcl4.default() == 6
-        fcl11 = fcl1.map(ge1)
-        fcl12 = fcl2.map(ge1)
-        fcl13 = fcl3.map(ge1)
-        fcl14 = fcl4.map(ge1)
-        assert fcl11 == fcl12 == fcl13 == fcl14
-        assert fcl11 == CLArray(6,6,1,6,1,2,6,1,2,3,6,6,1,6,1,2,6,1,2,3)
-        assert fcl11.default() == fcl12.default() == fcl13.default()
-        assert fcl13.default() == fcl14.default() == 6
-        fcl11 = fcl1.map(lt2or42)
-        fcl12 = fcl2.map(lt2or42)
-        fcl13 = fcl3.map(lt2or42)
-        fcl14 = fcl4.map(lt2or42)
-        assert fcl11 == fcl12 == fcl13 == fcl14
-        assert fcl11 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
-        assert fcl11.default() == 6
-        assert fcl12.default() == 6
-        assert fcl13.default() == 6
-        assert fcl14.default() == 6
+        cl0 = CLArray(*range(10), default=6)
+        cl1 = cl0.flatMap(lambda x: CLArray(*range(x%5)))
+        cl2 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=6))
+        cl3 = cl0.flatMap(lambda x: CLArray(*range(x%5)), default=6)
+        cl4 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=7), default=6)
+        assert cl1 == cl2 == cl3 == cl4
+        assert cl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        assert cl0.default() == 6
+        assert cl1.default() == 6
+        assert cl2.default() == 6
+        assert cl3.default() == 6
+        assert cl4.default() == 6
+        cl11 = cl1.map(ge1)
+        cl12 = cl2.map(ge1)
+        cl13 = cl3.map(ge1)
+        cl14 = cl4.map(ge1)
+        assert cl11 == cl12 == cl13 == cl14
+        assert cl11 == CLArray(6,6,1,6,1,2,6,1,2,3,6,6,1,6,1,2,6,1,2,3)
+        assert cl11.default() == cl12.default() == cl13.default()
+        assert cl13.default() == cl14.default() == 6
+        cl11 = cl1.map(lt2or42)
+        cl12 = cl2.map(lt2or42)
+        cl13 = cl3.map(lt2or42)
+        cl14 = cl4.map(lt2or42)
+        assert cl11 == cl12 == cl13 == cl14
+        assert cl11 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert cl11.default() == 6
+        assert cl12.default() == 6
+        assert cl13.default() == 6
+        assert cl14.default() == 6
 
         # Vary up the defaults
-        fcl0 = CLArray(*range(10), default=6)
-        assert fcl0.default() == 6
-        fcl1 = fcl0.flatMap(lambda x: CLArray(*range(x%5)))
-        fcl2 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=7))
-        fcl3 = fcl0.flatMap(lambda x: CLArray(*range(x%5)), default=8)
-        fcl4 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=-1), default=9)
-        assert fcl1.default() == 6
-        assert fcl2.default() == 6
-        assert fcl3.default() == 8
-        assert fcl4.default() == 9
-        assert fcl1 == fcl2 == fcl3 == fcl4
-        assert fcl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
-        fcl11 = fcl1.map(lt2or42)
-        fcl12 = fcl2.map(lt2or42)
-        fcl13 = fcl3.map(lt2or42)
-        fcl14 = fcl4.map(lt2or42)
-        assert fcl11 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
-        assert fcl12 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
-        assert fcl13 == CLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
-        assert fcl14 == CLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
-        assert fcl11.default() == 6
-        assert fcl12.default() == 6
-        assert fcl13.default() == 8
-        assert fcl14.default() == 9
+        cl0 = CLArray(*range(10), default=6)
+        assert cl0.default() == 6
+        cl1 = cl0.flatMap(lambda x: CLArray(*range(x%5)))
+        cl2 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=7))
+        cl3 = cl0.flatMap(lambda x: CLArray(*range(x%5)), default=8)
+        cl4 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=-1), default=9)
+        assert cl1.default() == 6
+        assert cl2.default() == 6
+        assert cl3.default() == 8
+        assert cl4.default() == 9
+        assert cl1 == cl2 == cl3 == cl4
+        assert cl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        cl11 = cl1.map(lt2or42)
+        cl12 = cl2.map(lt2or42)
+        cl13 = cl3.map(lt2or42)
+        cl14 = cl4.map(lt2or42)
+        assert cl11 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert cl12 == CLArray(0,0,1,0,1,6,0,1,6,6,0,0,1,0,1,6,0,1,6,6)
+        assert cl13 == CLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
+        assert cl14 == CLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
+        assert cl11.default() == 6
+        assert cl12.default() == 6
+        assert cl13.default() == 8
+        assert cl14.default() == 9
 
         # Vary up the defaults, no default set on initial CLArray
-        fcl0 = CLArray(*range(10))
-        assert fcl0.default() == ()
-        fcl1 = fcl0.flatMap(lambda x: CLArray(*range(x%5)))
-        fcl2 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=7))
-        fcl3 = fcl0.flatMap(lambda x: CLArray(*range(x%5)), default=8)
-        fcl4 = fcl0.flatMap(lambda x: CLArray(*range(x%5), default=-1), default=9)
-        assert fcl1 == fcl2 == fcl3 == fcl4
-        assert fcl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
-        assert fcl1.default() == ()
-        assert fcl2.default() == ()
-        assert fcl3.default() == 8
-        assert fcl4.default() == 9
-        fcl11 = fcl1.map(lt2or42)
-        fcl12 = fcl2.map(lt2or42)
-        fcl13 = fcl3.map(lt2or42)
-        fcl14 = fcl4.map(lt2or42)
-        assert fcl11 == CLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
-        assert fcl12 == CLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
-        assert fcl13 == CLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
-        assert fcl14 == CLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
-        assert fcl11.default() == ()
-        assert fcl12.default() == ()
-        assert fcl13.default() == 8
-        assert fcl14.default() == 9
+        cl0 = CLArray(*range(10))
+        assert cl0.default() == ()
+        cl1 = cl0.flatMap(lambda x: CLArray(*range(x%5)))
+        cl2 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=7))
+        cl3 = cl0.flatMap(lambda x: CLArray(*range(x%5)), default=8)
+        cl4 = cl0.flatMap(lambda x: CLArray(*range(x%5), default=-1), default=9)
+        assert cl1 == cl2 == cl3 == cl4
+        assert cl1 == CLArray(0,0,1,0,1,2,0,1,2,3,0,0,1,0,1,2,0,1,2,3)
+        assert cl1.default() == ()
+        assert cl2.default() == ()
+        assert cl3.default() == 8
+        assert cl4.default() == 9
+        cl11 = cl1.map(lt2or42)
+        cl12 = cl2.map(lt2or42)
+        cl13 = cl3.map(lt2or42)
+        cl14 = cl4.map(lt2or42)
+        assert cl11 == CLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+        assert cl12 == CLArray(0,0,1,0,1,(),0,1,(),(),0,0,1,0,1,(),0,1,(),())
+        assert cl13 == CLArray(0,0,1,0,1,8,0,1,8,8,0,0,1,0,1,8,0,1,8,8)
+        assert cl14 == CLArray(0,0,1,0,1,9,0,1,9,9,0,0,1,0,1,9,0,1,9,9)
+        assert cl11.default() == ()
+        assert cl12.default() == ()
+        assert cl13.default() == 8
+        assert cl14.default() == 9
 
         # Let f change default, set default set on initial CLArray
-        fcl0 = CLArray(*range(3), default=6)
-        assert fcl0.default() == 6
-        fcl1 = fcl0.flatMap(lambda x: CLArray(*range(x)))
-        fcl2 = fcl0.flatMap(lambda x: CLArray(*range(x), default=x*x))
-        fcl3 = fcl0.flatMap(lambda x: CLArray(*range(x)), default=8)
-        fcl4 = fcl0.flatMap(lambda x: CLArray(*range(x), default=-1), default=9)
-        fcl5 = fcl0.flatMap(lambda x: CLArray(*range(x), default=fcl0.default()))
-        fcl6 = fcl0.flatMap(lambda x: CLArray(*range(x), default=8), default=8)
-        assert fcl1 == CLArray(0, 0, 1)
-        assert fcl2 == CLArray(0, 0, 1)
-        assert fcl3 == CLArray(0, 0, 1)
-        assert fcl4 == CLArray(0, 0, 1)
+        cl0 = CLArray(*range(3), default=6)
+        assert cl0.default() == 6
+        cl1 = cl0.flatMap(lambda x: CLArray(*range(x)))
+        cl2 = cl0.flatMap(lambda x: CLArray(*range(x), default=x*x))
+        cl3 = cl0.flatMap(lambda x: CLArray(*range(x)), default=8)
+        cl4 = cl0.flatMap(lambda x: CLArray(*range(x), default=-1), default=9)
+        fcl5 = cl0.flatMap(lambda x: CLArray(*range(x), default=cl0.default()))
+        fcl6 = cl0.flatMap(lambda x: CLArray(*range(x), default=8), default=8)
+        assert cl1 == CLArray(0, 0, 1)
+        assert cl2 == CLArray(0, 0, 1)
+        assert cl3 == CLArray(0, 0, 1)
+        assert cl4 == CLArray(0, 0, 1)
         assert fcl5 == CLArray(0, 0, 1)
         assert fcl6 == CLArray(0, 0, 1)
-        assert fcl1.default() == 6
-        assert fcl2.default() == 6
-        assert fcl3.default() == 8
-        assert fcl4.default() == 9
+        assert cl1.default() == 6
+        assert cl2.default() == 6
+        assert cl3.default() == 8
+        assert cl4.default() == 9
         assert fcl5.default() == 6
         assert fcl6.default() == 8
 
         # Let f change default, no default set on initial CLArray
-        fcl0 = CLArray(*range(5), default=-1)
-        assert fcl0.default() == -1
-        fcl1 = fcl0.flatMap(lambda x: CLArray(*range(x+1), default=x+1))
-        fcl2 = fcl0.flatMap(lambda x: CLArray(*range(x), default=x*x))
-        fcl3 = fcl0.flatMap(lambda x: CLArray(*range(x)), default=8)
-        fcl4 = fcl0.flatMap(lambda x: CLArray(*range(x), default=-1), default=9)
-        assert fcl1 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)
-        assert fcl2 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
-        assert fcl3 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
-        assert fcl4 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
-        assert fcl1.default() == -1
-        assert fcl2.default() == -1
-        assert fcl3.default() == 8
-        assert fcl4.default() == 9
-        fcl11 = fcl1.map(lt2or42)
-        fcl12 = fcl2.map(lt2or42)
-        fcl13 = fcl3.map(lt2or42)
-        fcl14 = fcl4.map(lt2or42)
-        assert fcl11 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1, 0, 1, -1, -1, -1)
-        assert fcl12 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1)
-        assert fcl13 == CLArray(0, 0, 1, 0, 1, 8, 0, 1, 8, 8)
-        assert fcl14 == CLArray(0, 0, 1, 0, 1, 9, 0, 1, 9, 9)
-        assert fcl11.default() == -1
-        assert fcl12.default() == -1
-        assert fcl13.default() == 8
-        assert fcl14.default() == 9
+        cl0 = CLArray(*range(5), default=-1)
+        assert cl0.default() == -1
+        cl1 = cl0.flatMap(lambda x: CLArray(*range(x+1), default=x+1))
+        cl2 = cl0.flatMap(lambda x: CLArray(*range(x), default=x*x))
+        cl3 = cl0.flatMap(lambda x: CLArray(*range(x)), default=8)
+        cl4 = cl0.flatMap(lambda x: CLArray(*range(x), default=-1), default=9)
+        assert cl1 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)
+        assert cl2 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
+        assert cl3 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
+        assert cl4 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
+        assert cl1.default() == -1
+        assert cl2.default() == -1
+        assert cl3.default() == 8
+        assert cl4.default() == 9
+        cl11 = cl1.map(lt2or42)
+        cl12 = cl2.map(lt2or42)
+        cl13 = cl3.map(lt2or42)
+        cl14 = cl4.map(lt2or42)
+        assert cl11 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1, 0, 1, -1, -1, -1)
+        assert cl12 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1)
+        assert cl13 == CLArray(0, 0, 1, 0, 1, 8, 0, 1, 8, 8)
+        assert cl14 == CLArray(0, 0, 1, 0, 1, 9, 0, 1, 9, 9)
+        assert cl11.default() == -1
+        assert cl12.default() == -1
+        assert cl13.default() == 8
+        assert cl14.default() == 9
+
+        def bar(x):
+            return CLArray(2, x, 3*x, size=4, default=7*x)
+
+        cl0 = CLArray(1, 2, size=3, default=-1)
+        cl1 = cl0.flatMap(bar, size=14)
+        assert repr(cl1) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, size=14, default=-1)'
+
+#       cl0 = CLArray(1, 2, size=3, default=-1, backlog=(8, 9, 10))
+#       cl1 = cl0.flatMap(bar, size=16)
+#       assert repr(cl1) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, 8, 9, 10, -1, size=16, default=-1)'
+
