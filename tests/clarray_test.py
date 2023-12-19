@@ -297,7 +297,6 @@ class TestCLArray:
         assert cl4 == cl2
 
     def test_copy_map(self):
-
         def ge3(n: int) -> int|None:
             if n < 3:
                 return None
@@ -362,9 +361,45 @@ class TestCLArray:
         cl2 = cl0.map(ge3, default=42)
         assert (cl2[0], cl2[1], cl2[2], cl2[3], cl2[4]) == (5, 4, 3, 42, 42)
 
-    # tests not complete due to flatMap changes
-    def test_flatMap(self):
+    def test_backQueue(self):
+        cla1 = CLArray(42, 'foo', 'bar', default=42)
+        cla2 = cla1.copy()
+        cla3 = cla1.copy(default=63)
+        cla2[1] = None
+        cla3[1] = None
+        assert repr(cla2) == "CLArray(42, 42, 'bar', size=3, default=42)"
+        assert repr(cla3) == "CLArray(42, 63, 'bar', size=3, default=63)"
 
+        cla1 = CLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
+        cla2 = cla1.copy(size=-4)
+        cla3 = cla1.copy(size=4)
+        assert repr(cla2) == "CLArray('bar', 100, 101, '102', size=4, default=42)"
+        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 100, size=4, default=42)"
+
+        cla2[2] = None
+        cla2[1] = None
+        cla2[0] = None
+        assert repr(cla2) == "CLArray(42, 16, 'foo', '102', size=4, default=42)"
+
+        cla3[-1] = None
+        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 101, size=4, default=42)"
+        cla3[-2] = None
+        assert repr(cla3) == "CLArray(16, 'foo', '102', 101, size=4, default=42)"
+        cla3[-3] = None
+        assert repr(cla3) == "CLArray(16, 42, '102', 101, size=4, default=42)"
+
+        cla4 = CLArray(*range(1, 8), size=5, backlog=(42,), default=0)
+        cla5 = CLArray(*range(1, 8), size=-5, default=0, backlog=(42,))
+        assert repr(cla4) == "CLArray(1, 2, 3, 4, 5, size=5, default=0)"
+        assert repr(cla5) == "CLArray(3, 4, 5, 6, 7, size=5, default=0)"
+    
+        cla4[0] = cla4[1] = cla4[2] = cla4[3] = None
+        cla5[1] = cla5[0] = cla5[2] = cla4[3] = None
+
+        assert repr(cla4) == "CLArray(6, 7, 42, 0, 5, size=5, default=0)"
+        assert repr(cla5) == "CLArray(1, 2, 42, 0, 7, size=5, default=0)"
+    
+    def test_flatMap(self):
         def ge1(n: Any) -> int|None:
             if n == ():
                 return None
@@ -517,14 +552,14 @@ class TestCLArray:
             return CLArray(2, x, 3*x, size=4, default=7*x)
 
         cl0 = CLArray(1, 2, size=3, default=-1)
-        cl01 = cl0.flatMap(bar, size=15)
-        assert repr(cl01) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, -1, size=15, default=-1)'
+        cl01 = cl0.flatMap(bar)
+        assert repr(cl01) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, size=12, default=-1)'
 
-        cl02 = cl0.flatMap(bar)
-        assert repr(cl02) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, size=12, default=-1)'
+        cl02 = cl0.flatMap(bar, size=15)
+        assert repr(cl02) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, -1, size=15, default=-1)'
 
         cl03 = cl0.flatMap(bar)
-        assert eval(repr(cl03)) == CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, default=-1)
+        assert eval(repr(cl03)) == CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7)
 
         cl1 = CLArray(1, 2, size=4, default=-2, backlog=(9,10,11))
         cl11 = cl1.flatMap(bar, size=12)
@@ -534,9 +569,4 @@ class TestCLArray:
         cl11[0] = cl11[1] = cl11[2] = cl11[3] = None
         cl11[4] = cl11[5] = cl11[6] = cl11[7] = None
         cl11[8] = cl11[9] = cl11[10] = cl11[11] = None
-        assert repr(cl11) == 'CLArray(2, 10, 30, 70, 2, 11, 33, 77, 2, -2, -6, -14, size=12, default=-2)'
-
-        cl11[0] = cl11[1] = cl11[2] = cl11[3] = None
-        cl11[4] = cl11[5] = cl11[6] = cl11[7] = None
-        cl11[8] = cl11[9] = cl11[10] = cl11[11] = None
-        assert repr(cl11) == 'CLArray(2, -2, -6, -14, -2, -2, -2, -2, -2, -2, -2, -2, size=12, default=-2)'
+        assert repr(cl11) == 'CLArray(2, 10, 30, 70, -2, -2, -2, -2, -2, -2, -2, -2, size=12, default=-2)'

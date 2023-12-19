@@ -140,34 +140,6 @@ class Test_repr:
         assert cla1[2].pop() == 42
         assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
 
-        cla1 = CLArray(42, 'foo', 'bar', default=42)
-        cla2 = cla1.copy()
-        cla3 = cla1.copy(default=63)
-        cla2[1] = None
-        cla3[1] = None
-        assert repr(cla2) == "CLArray(42, 42, 'bar', size=3, default=42)"
-        assert repr(cla3) == "CLArray(42, 63, 'bar', size=3, default=63)"
-
-        cla1 = CLArray(16, 'foo', 'bar', 100, 101, '102', default=42)
-        cla2 = cla1.copy(size=-4)
-        cla3 = cla1.copy(size=4)
-        assert repr(cla2) == "CLArray('bar', 100, 101, '102', size=4, default=42)"
-        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 100, size=4, default=42)"
-
-        cla2[0] = None
-        assert repr(cla2) == "CLArray('foo', 100, 101, '102', size=4, default=42)"
-        cla2[1] = None
-        assert repr(cla2) == "CLArray('foo', 16, 101, '102', size=4, default=42)"
-        cla2[2] = None
-        assert repr(cla2) == "CLArray('foo', 16, 42, '102', size=4, default=42)"
-
-        cla3[-1] = None
-        assert repr(cla3) == "CLArray(16, 'foo', 'bar', 101, size=4, default=42)"
-        cla3[-2] = None
-        assert repr(cla3) == "CLArray(16, 'foo', '102', 101, size=4, default=42)"
-        cla3[-3] = None
-        assert repr(cla3) == "CLArray(16, 42, '102', 101, size=4, default=42)"
-
     def test_ftuple(self):
         ft1 = FTuple()
         assert repr(ft1) == 'FTuple()'

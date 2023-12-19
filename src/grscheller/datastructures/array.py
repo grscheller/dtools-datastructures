@@ -58,7 +58,6 @@ class CLArray(FP):
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
-        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -67,25 +66,39 @@ class CLArray(FP):
 
         if size >= 0:
             if data_size < abs_size:
-                # pad CLArray on right with default value
+                # Pad CLArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
-                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushR(backQueue.popL())
+                    else:
+                        arrayQueue.pushR(default)
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
                     arrayQueue.pushR(backQueue.popL())
+                backQueue.pushR(*backlog)
         else:
             if data_size < abs_size:
-                # pad CLArray on left with default value
+                # Pad CLArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
-                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushL(backQueue.popL())
+                    else:
+                        arrayQueue.pushL(default)
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
-                backQueue = DoubleQueue(*reversed(backQueue))
+                backQueue.reverse()
+                backQueue.pushR(*backlog)
+
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
