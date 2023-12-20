@@ -88,7 +88,6 @@ class CLArray(FP):
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
-        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -97,25 +96,37 @@ class CLArray(FP):
 
         if size &gt;= 0:
             if data_size &lt; abs_size:
-                # pad CLArray on right with default value
+                # Pad CLArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
-                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushR(backQueue.popL())
+                    else:
+                        arrayQueue.pushR(default)
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
                     arrayQueue.pushR(backQueue.popL())
         else:
             if data_size &lt; abs_size:
-                # pad CLArray on left with default value
+                # Pad CLArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
-                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushL(backQueue.popL())
+                    else:
+                        arrayQueue.pushL(default)
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
-                backQueue = DoubleQueue(*reversed(backQueue))
+                backQueue.reverse()
+
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
@@ -228,7 +239,7 @@ class CLArray(FP):
         FLArray being flatMapped.
 
         Any default values of the FLArrays created by f need not have anything to do
-        with the default value of the FPArray being flatmapped over.
+        with the default value of the FPArray being flatmapped.
         &#34;&#34;&#34;
         if default is None:
             default = self.default()
@@ -338,7 +349,6 @@ empty tuple () is used in lieu of None.</p></div>
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
         data_size = len(backQueue)
-        backQueue.pushR(*backlog)
 
         if size is None:
             abs_size = size = data_size
@@ -347,25 +357,37 @@ empty tuple () is used in lieu of None.</p></div>
 
         if size &gt;= 0:
             if data_size &lt; abs_size:
-                # pad CLArray on right with default value
+                # Pad CLArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
-                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushR(backQueue.popL())
+                    else:
+                        arrayQueue.pushR(default)
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
                     arrayQueue.pushR(backQueue.popL())
         else:
             if data_size &lt; abs_size:
-                # pad CLArray on left with default value
+                # Pad CLArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
-                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushL(backQueue.popL())
+                    else:
+                        arrayQueue.pushL(default)
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
-                backQueue = DoubleQueue(*reversed(backQueue))
+                backQueue.reverse()
+
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
@@ -478,7 +500,7 @@ empty tuple () is used in lieu of None.</p></div>
         FLArray being flatMapped.
 
         Any default values of the FLArrays created by f need not have anything to do
-        with the default value of the FPArray being flatmapped over.
+        with the default value of the FPArray being flatmapped.
         &#34;&#34;&#34;
         if default is None:
             default = self.default()
@@ -604,7 +626,7 @@ use the default value of the FLArray being flatmapped.</p></div>
 generated by f. If a default value is not given, use the default value of the
 FLArray being flatMapped.</p>
 <p>Any default values of the FLArrays created by f need not have anything to do
-with the default value of the FPArray being flatmapped over.</p></div>
+with the default value of the FPArray being flatmapped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -619,7 +641,7 @@ with the default value of the FPArray being flatmapped over.</p></div>
     FLArray being flatMapped.
 
     Any default values of the FLArrays created by f need not have anything to do
-    with the default value of the FPArray being flatmapped over.
+    with the default value of the FPArray being flatmapped.
     &#34;&#34;&#34;
     if default is None:
         default = self.default()

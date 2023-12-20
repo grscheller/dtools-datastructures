@@ -36,7 +36,7 @@
      Python iterators and syntax errors, exceptions are for "exceptional"
      events.
 """
-__version__ = "0.10.17.4"
+__version__ = "0.10.18.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

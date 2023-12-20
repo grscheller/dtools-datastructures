@@ -349,6 +349,10 @@ class QueueBase():
         &#34;&#34;&#34;
         self._ca = QueueBase(*map(f, self))._ca
 
+    def reverse(self):
+        &#34;&#34;&#34;Reverse the elements in the Queue&#34;&#34;&#34;
+        self._ca = self._ca.reverse()
+
 class FIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.

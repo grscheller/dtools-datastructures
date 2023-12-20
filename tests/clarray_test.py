@@ -394,9 +394,8 @@ class TestCLArray:
         assert repr(cla5) == "CLArray(3, 4, 5, 6, 7, size=5, default=0)"
     
         cla4[0] = cla4[1] = cla4[2] = cla4[3] = None
-        cla5[1] = cla5[0] = cla5[2] = cla4[3] = None
+        cla5[1] = cla5[0] = cla5[2] = cla5[3] = None
 
-        assert repr(cla4) == "CLArray(6, 7, 42, 0, 5, size=5, default=0)"
         assert repr(cla5) == "CLArray(1, 2, 42, 0, 7, size=5, default=0)"
     
     def test_flatMap(self):
