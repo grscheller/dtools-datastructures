@@ -233,7 +233,7 @@ class CLArray(FP):
 
         return CLArray(*merge(*self.map(f)), size=size, default=default)
 
-    def exhastMap(self, f: Callable[[Any], CLArray],
+    def exhaustMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -> CLArray:
