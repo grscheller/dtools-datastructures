@@ -263,7 +263,7 @@ class CLArray(FP):
 
         return CLArray(*merge(*self.map(f)), size=size, default=default)
 
-    def exhastMap(self, f: Callable[[Any], CLArray],
+    def exhaustMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -&gt; CLArray:
@@ -524,7 +524,7 @@ empty tuple () is used in lieu of None.</p></div>
 
         return CLArray(*merge(*self.map(f)), size=size, default=default)
 
-    def exhastMap(self, f: Callable[[Any], CLArray],
+    def exhaustMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -&gt; CLArray:
@@ -591,8 +591,8 @@ empty tuple () is used in lieu of None.</p></div>
     return self._default</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.array.CLArray.exhastMap"><code class="name flex">
-<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, default: Any | None = None, mapDefault: bool = False) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.exhaustMap"><code class="name flex">
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, default: Any | None = None, mapDefault: bool = False) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
@@ -602,7 +602,7 @@ use the default value of the FLArray being flat-mapped.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhastMap(self, f: Callable[[Any], CLArray],
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], CLArray],
               size: int|None=None,
               default: Any|None=None,
               mapDefault: bool=False) -&gt; CLArray:
@@ -732,14 +732,6 @@ use the default value of the FLArray being flat-mapped.</p></div>
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>
@@ -763,7 +755,7 @@ use the default value of the FLArray being flat-mapped.</p></div>
 <li><code><a title="grscheller.datastructures.array.CLArray.backQueue" href="#grscheller.datastructures.array.CLArray.backQueue">backQueue</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.copy" href="#grscheller.datastructures.array.CLArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.default" href="#grscheller.datastructures.array.CLArray.default">default</a></code></li>
-<li><code><a title="grscheller.datastructures.array.CLArray.exhastMap" href="#grscheller.datastructures.array.CLArray.exhastMap">exhastMap</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.exhaustMap" href="#grscheller.datastructures.array.CLArray.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.flatMap" href="#grscheller.datastructures.array.CLArray.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.map" href="#grscheller.datastructures.array.CLArray.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.mergeMap" href="#grscheller.datastructures.array.CLArray.mergeMap">mergeMap</a></code></li>
