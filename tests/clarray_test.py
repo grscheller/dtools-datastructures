@@ -530,10 +530,10 @@ class TestCLArray:
         cl2 = cl0.flatMap(lambda x: CLArray(*range(x-1, x+1), None, 42, default=x*x))
         cl3 = cl0.flatMap(lambda x: CLArray(*range(x+1, x+3)), default=8)
         cl4 = cl0.flatMap(lambda x: CLArray(*range(x-2, x+1), default=-1), size=-8, default=9)
-        assert cl1 == CLArray(1,2, 2,3,3, 4,4,5, 5,6)
+        assert cl1 == CLArray(1,2,2,3,3,4,4,5,5,6)
         assert cl2 == CLArray(0,1,42,1,2,42,2,3,42,3,4,42,4,5,42)
-        assert cl3 == CLArray(2,3, 3,4,4, 5,5,6, 6,7)
-        assert cl4 == CLArray(2,3, 2,3,4, 3,4,5)
+        assert cl3 == CLArray(2,3,3,4,4,5,5,6,6,7)
+        assert cl4 == CLArray(2,3,2,3,4,3,4,5)
         assert cl1.default() == -1
         assert cl2.default() == -1
         assert cl3.default() == 8
@@ -587,7 +587,7 @@ class TestCLArray:
         assert cl1 == CLArray(1,2,3,4,5,2,3,4,5,6)
         assert cl2 == CLArray(0,1,2,3,4,1,2,3,4,5)
         assert cl3 == CLArray(2,3,4,5,6,3,4,5,6,7)
-        assert cl4 == CLArray(2,3,4,1,2,3,4,5    )
+        assert cl4 == CLArray(2,3,4,1,2,3,4,5)
         assert cl1.default() == -1
         assert cl2.default() == -1
         assert cl3.default() == 8
@@ -627,57 +627,60 @@ class TestCLArray:
         assert repr(cl11) == 'CLArray(30, 7, 14, 63, 70, -2, -2, -2, -2, -2, -2, size=11, default=-2)'
 
     def test_exhaustMap(self):
-        def lt2(n: Any) -> int|None:
-            if n < 2:
+        def le3(n: Any) -> int|None:
+            if n <= 3:
                 return n
             return None
 
         cl0 = CLArray(*range(1, 6), default=-1)
         assert cl0.default() == -1
         cl1 = cl0.exhaustMap(lambda x: CLArray(*range(x, x+2), default=x+1))
-        cl2 = cl0.exhaustMap(lambda x: CLArray(*range(x-1, x+1), default=x*x))
+        cl2 = cl0.exhaustMap(lambda x: CLArray(*range(x-1, x+1), 42, default=x*x))
         cl3 = cl0.exhaustMap(lambda x: CLArray(*range(x+1, x+3)), default=8)
-        cl4 = cl0.exhaustMap(lambda x: CLArray(*range(x-2, x+1), default=-1), default=9)
-        assert cl1 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 0, 1, 2, 3, 4)
-        assert cl2 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
-        assert cl3 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
-        assert cl4 == CLArray(0, 0, 1, 0, 1, 2, 0, 1, 2, 3)
+        cl4 = cl0.exhaustMap(lambda x: CLArray(*range(x), default=-1), default=10)
+        cl5 = cl0.exhaustMap(lambda x: CLArray(*range(x), default=-1), size=8, default=11)
+        cl6 = cl0.exhaustMap(lambda x: CLArray(*range(x), default=-1), size=-8, default=12)
+        assert cl1 == CLArray(1,2,3,4,5,2,3,4,5,6)
+        assert cl2 == CLArray(0,1,2,3,4,1,2,3,4,5,42,42,42,42,42)
+        assert cl3 == CLArray(2,3,4,5,6,3,4,5,6,7)
+        assert cl4 == CLArray(0,0,0,0,0,1,1,1,1,2,2,2,3,3,4)
+        assert cl5 == CLArray(0,0,0,0,0,1,1,1)
+        assert cl6 == CLArray(1,1,2,2,2,3,3,4)
         assert cl1.default() == -1
         assert cl2.default() == -1
         assert cl3.default() == 8
-        assert cl4.default() == 9
-        cl11 = cl1.map(lt2)
-        cl12 = cl2.map(lt2)
-        cl13 = cl3.map(lt2)
-        cl14 = cl4.map(lt2)
-        assert cl11 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1, 0, 1, -1, -1, -1)
-        assert cl12 == CLArray(0, 0, 1, 0, 1, -1, 0, 1, -1, -1)
-        assert cl13 == CLArray(0, 0, 1, 0, 1, 8, 0, 1, 8, 8)
-        assert cl14 == CLArray(0, 0, 1, 0, 1, 9, 0, 1, 9, 9)
+        assert cl4.default() == 10
+        assert cl5.default() == 11
+        assert cl6.default() == 12
+        cl11 = cl1.map(le3)
+        cl12 = cl2.map(le3)
+        cl13 = cl3.map(le3)
+        cl14 = cl4.map(le3)
+        cl15 = cl5.map(le3)
+        cl16 = cl6.map(le3)
+        assert cl11 == CLArray(1,2,3,-1,-1,2,3,-1,-1,-1)
+        assert cl12 == CLArray(0,1,2,3,-1,1,2,3,-1,-1,-1,-1,-1,-1,-1)
+        assert cl13 == CLArray(2,3,8,8,8,3,8,8,8,8)
+        assert cl14 == CLArray(0,0,0,0,0,1,1,1,1,2,2,2,3,3,10)
+        assert cl15 == CLArray(0,0,0,0,0,1,1,1)
+        assert cl16 == CLArray(1,1,2,2,2,3,3,12)
         assert cl11.default() == -1
         assert cl12.default() == -1
         assert cl13.default() == 8
-        assert cl14.default() == 9
+        assert cl14.default() == 10
+        assert cl15.default() == 11
+        assert cl16.default() == 12
 
         def bar(x):
-            return CLArray(2, x, 3*x, size=4, default=7*x)
+            return CLArray(*range(1, x+1), default = 2*x)
 
-        cl0 = CLArray(1, 2, size=3, default=-1)
-        cl01 = cl0.exhaustMap(bar)
-        assert repr(cl01) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, size=12, default=-1)'
-
-        cl02 = cl0.exhaustMap(bar, size=15)
-        assert repr(cl02) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7, -1, -1, -1, size=15, default=-1)'
-
-        cl03 = cl0.exhaustMap(bar)
-        assert eval(repr(cl03)) == CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, -1, -3, -7)
-
-        cl1 = CLArray(1, 2, size=4, default=-2, backlog=(9,10,11))
-        cl11 = cl1.exhaustMap(bar, size=12)
-        assert repr(cl11) == 'CLArray(2, 1, 3, 7, 2, 2, 6, 14, 2, 9, 27, 63, size=12, default=-2)'
+        cl0 = CLArray(1, 2, 3, default=21)
+        cl00 = cl0.exhaustMap(bar, size=8, mapDefault=True)
+        assert repr(cl00) == 'CLArray(1, 1, 1, 2, 2, 3, 42, 42, size=8, default=42)'
+        assert eval(repr(cl00)) == CLArray(1, 1, 1, 2, 2, 3, 42, 42)
 
         # Python always evaluates/assigns left to right
-        cl11[0] = cl11[1] = cl11[2] = cl11[3] = None
-        cl11[4] = cl11[5] = cl11[6] = cl11[7] = None
-        cl11[8] = cl11[9] = cl11[10] = cl11[11] = None
-        assert repr(cl11) == 'CLArray(2, 10, 30, 70, -2, -2, -2, -2, -2, -2, -2, -2, size=12, default=-2)'
+        cl00[0] = None
+        cl00[4] = None
+        assert cl00 == CLArray(1, 1, 2, 42, 3, 42, 42, size=-8, default=42)
+        assert repr(cl00) == 'CLArray(42, 1, 1, 2, 42, 3, 42, 42, size=8, default=42)'
