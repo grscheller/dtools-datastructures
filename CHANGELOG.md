@@ -32,7 +32,16 @@
 
 ## Versions - PyPI releases begin with "v"
 
-### Version 0.10.17.0 (0.11.0-RC2) - 2023-12-17
+### Version v0.11.0 - PyPI Release date 2023-12-20
+
+* A lot of work done on class CLArray
+  * probably will change its name before the next PyPI Release
+    * perhaps to "ProcessArray" or "PArray"
+* Keeping this release an Alpha version
+  * mostly for freedom to rename and restructure the package 
+
+### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
+
 * Second release candidate - probably will become next PyPI release
   * main now development branch, release will be release branch
   * decided to drop it back to Alpha
@@ -102,6 +111,8 @@
   * found this data structure very interesting
     * hopefully find a use for it
   * considering a simplier CLArray version
+
+### Version v0.10.9 - PyPI release date 2023-11-21
 
 ### Version 0.10.8.0 - commit date 2023-11-18
 

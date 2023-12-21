@@ -12,11 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-<<<<<<< HEAD
-"""Package grscheller.datastructures - RC 0.11.0-1
-=======
-"""Package grscheller.datastructures - development branch (main)
->>>>>>> main
+"""Package grscheller.datastructures
 
    Data structures geared to different algorithmic use cases. Supportive
    of both functional and imperative programming styles while endeavoring
@@ -40,24 +36,15 @@
      Python iterators and syntax errors, exceptions are for "exceptional"
      events.
 """
-
-__version__ = "0.10.17.0"
+__version__ = "0.11.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-# Replace these imports with 2 functions
-#
-# 1. One that does bellow imports fo client code to use the data structures that the
-#    package provides.
-# 2. Another to import the missing imports from the core subpackage. This will allow
-#    client code to use the full infrastructure to implement their own data structures.
-#
 from .array import CLArray
-from .circular_array import CircularArray
-from .queue import FIFOQueue, LIFOQueue, DoubleQueue
+from .queue import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
 from .stack import Stack, FStack
-from .tuplelike import FTuple
+from .tup import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right
 from .core.fp import maybeToEither, eitherToMaybe
 from .core.iterlib import merge, exhaust

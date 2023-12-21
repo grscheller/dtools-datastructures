@@ -27,8 +27,8 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
+from .queue import CircularArray
 from .core.nodes import SL_Node as Node
-from .circular_array import CircularArray
 from .core.fp import FP_rev
 
 class StackBase():

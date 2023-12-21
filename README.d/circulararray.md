@@ -1,4 +1,4 @@
-# grscheller.datastructures.core.circulararray modules
+# grscheller.datastructures.circulararray modules
 
 ### circulararray module
 
