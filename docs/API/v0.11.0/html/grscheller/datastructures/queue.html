@@ -55,13 +55,246 @@ will resize themselves as needed. Does not store None as a value.
 
 from __future__ import annotations
 
-__all__ = [&#39;FIFOQueue&#39;, &#39;LIFOQueue&#39;, &#39;DoubleQueue&#39;]
+__all__ = [&#39;CircularArray&#39;, &#39;DoubleQueue&#39;, &#39;FIFOQueue&#39;, &#39;LIFOQueue&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
-from .circular_array import CircularArray
+
+class CircularArray:
+    &#34;&#34;&#34;Implements an auto-resizing, indexable, double sided queue data
+    structure. O(1) indexing and O(1) pushes and pops either end. Mainly used to
+    implement other grscheller.datastructure classes in a has-a relationship
+    where its functionality is more likely restricted than augmented. This class
+    is not opinionated regarding None as a value. It freely stores and returns
+    None values. Can be use in a boolean context to determine if empty.
+    &#34;&#34;&#34;
+    def __init__(self, *data):
+        &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
+        size = len(data)
+        capacity = size + 2
+        self._count = size
+        self._capacity = capacity
+        self._front = 0
+        self._rear = (size - 1) % capacity
+        self._list = list(data)
+        self._list.append(None)
+        self._list.append(None)
+
+    def __iter__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CircularArray.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            rear = self._rear
+            pos = self._front
+            currList = self._list.copy()
+            while pos != rear:
+                yield currList[pos]
+                pos = (pos + 1) % cap
+            yield currList[pos]
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CircularArray in reversed order.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if circular array is not empty&#34;&#34;&#34;
+        return self._count &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in the circlular array&#34;&#34;&#34;
+        return self._count
+
+    def __getitem__(self, index: int) -&gt; Any:
+        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        cnt = self._count
+        if 0 &lt;= index &lt; cnt:
+            return self._list[(self._front + index) % self._capacity]
+        elif -cnt &lt;= index &lt; 0:
+            return self._list[(self._front + cnt + index) % self._capacity]
+        else:
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg += &#39;while getting value.&#39;
+            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            if cnt &gt; 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
+
+    def __setitem__(self, index: int, value: Any) -&gt; Any:
+        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        cnt = self._count
+        if 0 &lt;= index &lt; cnt:
+            self._list[(self._front + index) % self._capacity] = value
+        elif -cnt &lt;= index &lt; 0:
+            self._list[(self._front + cnt + index) % self._capacity] = value
+        else:
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg += &#39;while setting value.&#39;
+            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            if cnt &gt; 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
+
+    def __eq__(self, other):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        left, frontL, capL, cnt = self, self._front, self._capacity, self._count
+        right, frontR, capR = other, other._front, other._capacity
+
+        nn = 0
+        while nn &lt; cnt:
+            if left._list[(frontL+nn)%capL] != right._list[(frontR+nn)%capR]:
+                return False
+            nn += 1
+        return True
+
+    def _double(self) -&gt; None:
+        &#34;&#34;&#34;Double capacity of circular array&#34;&#34;&#34;
+        if self._front &gt; self._rear:
+            data  = self._list[self._front:]
+            data += self._list[:self._rear+1]
+            data += [None]*(self._capacity)
+        else:
+            data  = self._list
+            data += [None]*(self._capacity)
+
+        self._list, self._capacity,     self._front, self._rear = \
+        data,       2 * self._capacity, 0,           self._count - 1
+
+    def compact(self) -&gt; None:
+        &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+        match self._count:
+            case 0:
+                self._list, self._capacity, self._front, self._rear = \
+                [None]*2,   2,              0,           1
+            case 1:
+                data = [self._list[self._front], None]
+
+                self._list, self._capacity, self._front, self._rear = \
+                data,       2,              0,           0
+            case _:
+                if self._front &gt; self._rear:
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
+                else:
+                    data  = self._list[self._front:self._rear+1]
+
+                self._list, self._capacity, self._front, self._rear = \
+                data,       self._count,    0,           self._capacity - 1
+
+    def copy(self) -&gt; CircularArray:
+        return CircularArray(*self)
+
+    def reverse(self) -&gt; CircularArray:
+        return CircularArray(*reversed(self))
+
+    def pushR(self, d: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+        if self._count == self._capacity:
+            self._double()
+        self._rear = (self._rear + 1) % self._capacity
+        self._list[self._rear] = d
+        self._count += 1
+
+    def pushL(self, d: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+        if self._count == self._capacity:
+            self._double()
+        self._front = (self._front - 1) % self._capacity
+        self._list[self._front] = d
+        self._count += 1
+
+    def popR(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+        if self._count == 0:
+            return None
+        else:
+            d = self._list[self._rear]
+
+            self._count, self._list[self._rear], self._rear = \
+                self._count-1, None, (self._rear - 1) % self._capacity
+
+            return d
+
+    def popL(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+        if self._count == 0:
+            return None
+        else:
+            d = self._list[self._front]
+
+            self._count, self._list[self._front], self._front = \
+                self._count-1, None, (self._front+1) % self._capacity
+
+            return d
+
+    def empty(self) -&gt; None:
+        &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+        self._list, self._front, self._rear = \
+            [None]*self._capacity, 0, self._capacity-1
+
+    def capacity(self) -&gt; int:
+        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        return self._capacity
+
+    def fractionFilled(self) -&gt; float:
+        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        return self._count/self._capacity
+
+    def resize(self, addCapacity = 0) -&gt; None:
+        &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+        self.compact()
+        if addCapacity &gt; 0:
+            self._list = self._list + [None]*addCapacity
+            self._capacity += addCapacity
+            if self._count == 0:
+                self._rear = self._capacity - 1
+
+    def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+        circular array.
+        &#34;&#34;&#34;
+        return CircularArray(*map(f, self))
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+        circular array, don&#39;t return anything.
+        &#34;&#34;&#34;
+        ca  = CircularArray(*map(f, self))
+        self._count, self._capacity, self._front, self._rear, self._list = \
+            ca._count, ca._capacity, ca._front, ca._rear, ca._list
 
 class QueueBase():
     &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
@@ -115,6 +348,10 @@ class QueueBase():
         returned by f.
         &#34;&#34;&#34;
         self._ca = QueueBase(*map(f, self))._ca
+
+    def reverse(self):
+        &#34;&#34;&#34;Reverse the elements in the Queue&#34;&#34;&#34;
+        self._ca = self._ca.reverse()
 
 class FIFOQueue(QueueBase):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
@@ -249,6 +486,495 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="grscheller.datastructures.queue.CircularArray"><code class="flex name class">
+<span>class <span class="ident">CircularArray</span></span>
+<span>(</span><span>*data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Implements an auto-resizing, indexable, double sided queue data
+structure. O(1) indexing and O(1) pushes and pops either end. Mainly used to
+implement other grscheller.datastructure classes in a has-a relationship
+where its functionality is more likely restricted than augmented. This class
+is not opinionated regarding None as a value. It freely stores and returns
+None values. Can be use in a boolean context to determine if empty.</p>
+<p>Construct a double sided queue</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CircularArray:
+    &#34;&#34;&#34;Implements an auto-resizing, indexable, double sided queue data
+    structure. O(1) indexing and O(1) pushes and pops either end. Mainly used to
+    implement other grscheller.datastructure classes in a has-a relationship
+    where its functionality is more likely restricted than augmented. This class
+    is not opinionated regarding None as a value. It freely stores and returns
+    None values. Can be use in a boolean context to determine if empty.
+    &#34;&#34;&#34;
+    def __init__(self, *data):
+        &#34;&#34;&#34;Construct a double sided queue&#34;&#34;&#34;
+        size = len(data)
+        capacity = size + 2
+        self._count = size
+        self._capacity = capacity
+        self._front = 0
+        self._rear = (size - 1) % capacity
+        self._list = list(data)
+        self._list.append(None)
+        self._list.append(None)
+
+    def __iter__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CircularArray.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            rear = self._rear
+            pos = self._front
+            currList = self._list.copy()
+            while pos != rear:
+                yield currList[pos]
+                pos = (pos + 1) % cap
+            yield currList[pos]
+
+    def __reversed__(self):
+        &#34;&#34;&#34;Generator yielding the cached contents of the current state of
+        the CircularArray in reversed order.
+        &#34;&#34;&#34;
+        if self._count &gt; 0:
+            cap = self._capacity
+            front = self._front
+            pos = self._rear
+            currList = self._list.copy()
+            while pos != front:
+                yield currList[pos]
+                pos = (pos - 1) % cap
+            yield currList[pos]
+
+    def __repr__(self):
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __str__(self):
+        return &#34;(|&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;|)&#34;
+
+    def __bool__(self):
+        &#34;&#34;&#34;Returns true if circular array is not empty&#34;&#34;&#34;
+        return self._count &gt; 0
+
+    def __len__(self):
+        &#34;&#34;&#34;Returns current number of values in the circlular array&#34;&#34;&#34;
+        return self._count
+
+    def __getitem__(self, index: int) -&gt; Any:
+        &#34;&#34;&#34;Get value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        cnt = self._count
+        if 0 &lt;= index &lt; cnt:
+            return self._list[(self._front + index) % self._capacity]
+        elif -cnt &lt;= index &lt; 0:
+            return self._list[(self._front + cnt + index) % self._capacity]
+        else:
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg += &#39;while getting value.&#39;
+            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            if cnt &gt; 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
+
+    def __setitem__(self, index: int, value: Any) -&gt; Any:
+        &#34;&#34;&#34;Set value at a valid index, otherwise raise IndexError&#34;&#34;&#34;
+        cnt = self._count
+        if 0 &lt;= index &lt; cnt:
+            self._list[(self._front + index) % self._capacity] = value
+        elif -cnt &lt;= index &lt; 0:
+            self._list[(self._front + cnt + index) % self._capacity] = value
+        else:
+            low = -cnt
+            high = cnt - 1
+            msg = f&#39;Out of bounds: index = {index} not between {low} and {high}&#39;
+            msg += &#39;while setting value.&#39;
+            msg0 = &#39;Trying to get value from an empty data structure.&#39;
+            if cnt &gt; 0:
+                raise IndexError(msg)
+            else:
+                raise IndexError(msg0)
+
+    def __eq__(self, other):
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
+        Worst case is O(n) behavior for the true case.
+        &#34;&#34;&#34;
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._count != other._count:
+            return False
+
+        left, frontL, capL, cnt = self, self._front, self._capacity, self._count
+        right, frontR, capR = other, other._front, other._capacity
+
+        nn = 0
+        while nn &lt; cnt:
+            if left._list[(frontL+nn)%capL] != right._list[(frontR+nn)%capR]:
+                return False
+            nn += 1
+        return True
+
+    def _double(self) -&gt; None:
+        &#34;&#34;&#34;Double capacity of circular array&#34;&#34;&#34;
+        if self._front &gt; self._rear:
+            data  = self._list[self._front:]
+            data += self._list[:self._rear+1]
+            data += [None]*(self._capacity)
+        else:
+            data  = self._list
+            data += [None]*(self._capacity)
+
+        self._list, self._capacity,     self._front, self._rear = \
+        data,       2 * self._capacity, 0,           self._count - 1
+
+    def compact(self) -&gt; None:
+        &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+        match self._count:
+            case 0:
+                self._list, self._capacity, self._front, self._rear = \
+                [None]*2,   2,              0,           1
+            case 1:
+                data = [self._list[self._front], None]
+
+                self._list, self._capacity, self._front, self._rear = \
+                data,       2,              0,           0
+            case _:
+                if self._front &gt; self._rear:
+                    data  = self._list[self._front:]
+                    data += self._list[:self._rear+1]
+                else:
+                    data  = self._list[self._front:self._rear+1]
+
+                self._list, self._capacity, self._front, self._rear = \
+                data,       self._count,    0,           self._capacity - 1
+
+    def copy(self) -&gt; CircularArray:
+        return CircularArray(*self)
+
+    def reverse(self) -&gt; CircularArray:
+        return CircularArray(*reversed(self))
+
+    def pushR(self, d: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+        if self._count == self._capacity:
+            self._double()
+        self._rear = (self._rear + 1) % self._capacity
+        self._list[self._rear] = d
+        self._count += 1
+
+    def pushL(self, d: Any) -&gt; None:
+        &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+        if self._count == self._capacity:
+            self._double()
+        self._front = (self._front - 1) % self._capacity
+        self._list[self._front] = d
+        self._count += 1
+
+    def popR(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+        if self._count == 0:
+            return None
+        else:
+            d = self._list[self._rear]
+
+            self._count, self._list[self._rear], self._rear = \
+                self._count-1, None, (self._rear - 1) % self._capacity
+
+            return d
+
+    def popL(self) -&gt; Any:
+        &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+        if self._count == 0:
+            return None
+        else:
+            d = self._list[self._front]
+
+            self._count, self._list[self._front], self._front = \
+                self._count-1, None, (self._front+1) % self._capacity
+
+            return d
+
+    def empty(self) -&gt; None:
+        &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+        self._list, self._front, self._rear = \
+            [None]*self._capacity, 0, self._capacity-1
+
+    def capacity(self) -&gt; int:
+        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        return self._capacity
+
+    def fractionFilled(self) -&gt; float:
+        &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+        return self._count/self._capacity
+
+    def resize(self, addCapacity = 0) -&gt; None:
+        &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+        self.compact()
+        if addCapacity &gt; 0:
+            self._list = self._list + [None]*addCapacity
+            self._capacity += addCapacity
+            if self._count == 0:
+                self._rear = self._capacity - 1
+
+    def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+        circular array.
+        &#34;&#34;&#34;
+        return CircularArray(*map(f, self))
+
+    def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+        &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+        circular array, don&#39;t return anything.
+        &#34;&#34;&#34;
+        ca  = CircularArray(*map(f, self))
+        self._count, self._capacity, self._front, self._rear, self._list = \
+            ca._count, ca._capacity, ca._front, ca._rear, ca._list</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="grscheller.datastructures.queue.CircularArray.capacity"><code class="name flex">
+<span>def <span class="ident">capacity</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns current capacity of circle array</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def capacity(self) -&gt; int:
+    &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+    return self._capacity</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.compact"><code class="name flex">
+<span>def <span class="ident">compact</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compact the datastructure as much as possible</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compact(self) -&gt; None:
+    &#34;&#34;&#34;Compact the datastructure as much as possible&#34;&#34;&#34;
+    match self._count:
+        case 0:
+            self._list, self._capacity, self._front, self._rear = \
+            [None]*2,   2,              0,           1
+        case 1:
+            data = [self._list[self._front], None]
+
+            self._list, self._capacity, self._front, self._rear = \
+            data,       2,              0,           0
+        case _:
+            if self._front &gt; self._rear:
+                data  = self._list[self._front:]
+                data += self._list[:self._rear+1]
+            else:
+                data  = self._list[self._front:self._rear+1]
+
+            self._list, self._capacity, self._front, self._rear = \
+            data,       self._count,    0,           self._capacity - 1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.CircularArray" href="#grscheller.datastructures.queue.CircularArray">CircularArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; CircularArray:
+    return CircularArray(*self)</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.empty"><code class="name flex">
+<span>def <span class="ident">empty</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Empty circular array, keep current capacity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def empty(self) -&gt; None:
+    &#34;&#34;&#34;Empty circular array, keep current capacity&#34;&#34;&#34;
+    self._list, self._front, self._rear = \
+        [None]*self._capacity, 0, self._capacity-1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.fractionFilled"><code class="name flex">
+<span>def <span class="ident">fractionFilled</span></span>(<span>self) ‑> float</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns current capacity of circle array</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fractionFilled(self) -&gt; float:
+    &#34;&#34;&#34;Returns current capacity of circle array&#34;&#34;&#34;
+    return self._count/self._capacity</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.queue.CircularArray" href="#grscheller.datastructures.queue.CircularArray">CircularArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the circular array's contents and return new
+circular array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; CircularArray:
+    &#34;&#34;&#34;Apply function over the circular array&#39;s contents and return new
+    circular array.
+    &#34;&#34;&#34;
+    return CircularArray(*map(f, self))</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.mapSelf"><code class="name flex">
+<span>def <span class="ident">mapSelf</span></span>(<span>self, f: Callable[[Any], Any]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the circular array's contents mutatng the
+circular array, don't return anything.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mapSelf(self, f: Callable[[Any], Any]) -&gt; None:
+    &#34;&#34;&#34;Apply function over the circular array&#39;s contents mutatng the
+    circular array, don&#39;t return anything.
+    &#34;&#34;&#34;
+    ca  = CircularArray(*map(f, self))
+    self._count, self._capacity, self._front, self._rear, self._list = \
+        ca._count, ca._capacity, ca._front, ca._rear, ca._list</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.popL"><code class="name flex">
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pop data off front of circle array, returns None if empty</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def popL(self) -&gt; Any:
+    &#34;&#34;&#34;Pop data off front of circle array, returns None if empty&#34;&#34;&#34;
+    if self._count == 0:
+        return None
+    else:
+        d = self._list[self._front]
+
+        self._count, self._list[self._front], self._front = \
+            self._count-1, None, (self._front+1) % self._capacity
+
+        return d</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.popR"><code class="name flex">
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pop data off rear of circle array, returns None if empty</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def popR(self) -&gt; Any:
+    &#34;&#34;&#34;Pop data off rear of circle array, returns None if empty&#34;&#34;&#34;
+    if self._count == 0:
+        return None
+    else:
+        d = self._list[self._rear]
+
+        self._count, self._list[self._rear], self._rear = \
+            self._count-1, None, (self._rear - 1) % self._capacity
+
+        return d</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.pushL"><code class="name flex">
+<span>def <span class="ident">pushL</span></span>(<span>self, d: Any) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Push data on front of circle</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pushL(self, d: Any) -&gt; None:
+    &#34;&#34;&#34;Push data on front of circle&#34;&#34;&#34;
+    if self._count == self._capacity:
+        self._double()
+    self._front = (self._front - 1) % self._capacity
+    self._list[self._front] = d
+    self._count += 1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.pushR"><code class="name flex">
+<span>def <span class="ident">pushR</span></span>(<span>self, d: Any) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Push data on rear of circle</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pushR(self, d: Any) -&gt; None:
+    &#34;&#34;&#34;Push data on rear of circle&#34;&#34;&#34;
+    if self._count == self._capacity:
+        self._double()
+    self._rear = (self._rear + 1) % self._capacity
+    self._list[self._rear] = d
+    self._count += 1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.resize"><code class="name flex">
+<span>def <span class="ident">resize</span></span>(<span>self, addCapacity=0) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compact circle array and add extra capacity</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resize(self, addCapacity = 0) -&gt; None:
+    &#34;&#34;&#34;Compact circle array and add extra capacity&#34;&#34;&#34;
+    self.compact()
+    if addCapacity &gt; 0:
+        self._list = self._list + [None]*addCapacity
+        self._capacity += addCapacity
+        if self._count == 0:
+            self._rear = self._capacity - 1</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.queue.CircularArray.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queue.CircularArray" href="#grscheller.datastructures.queue.CircularArray">CircularArray</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reverse(self) -&gt; CircularArray:
+    return CircularArray(*reversed(self))</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
 <dt id="grscheller.datastructures.queue.DoubleQueue"><code class="flex name class">
 <span>class <span class="ident">DoubleQueue</span></span>
 <span>(</span><span>*ds)</span>
@@ -698,6 +1424,24 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
+<li>
+<h4><code><a title="grscheller.datastructures.queue.CircularArray" href="#grscheller.datastructures.queue.CircularArray">CircularArray</a></code></h4>
+<ul class="two-column">
+<li><code><a title="grscheller.datastructures.queue.CircularArray.capacity" href="#grscheller.datastructures.queue.CircularArray.capacity">capacity</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.compact" href="#grscheller.datastructures.queue.CircularArray.compact">compact</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.copy" href="#grscheller.datastructures.queue.CircularArray.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.empty" href="#grscheller.datastructures.queue.CircularArray.empty">empty</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.fractionFilled" href="#grscheller.datastructures.queue.CircularArray.fractionFilled">fractionFilled</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.map" href="#grscheller.datastructures.queue.CircularArray.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.mapSelf" href="#grscheller.datastructures.queue.CircularArray.mapSelf">mapSelf</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.popL" href="#grscheller.datastructures.queue.CircularArray.popL">popL</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.popR" href="#grscheller.datastructures.queue.CircularArray.popR">popR</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.pushL" href="#grscheller.datastructures.queue.CircularArray.pushL">pushL</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.pushR" href="#grscheller.datastructures.queue.CircularArray.pushR">pushR</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.resize" href="#grscheller.datastructures.queue.CircularArray.resize">resize</a></code></li>
+<li><code><a title="grscheller.datastructures.queue.CircularArray.reverse" href="#grscheller.datastructures.queue.CircularArray.reverse">reverse</a></code></li>
+</ul>
+</li>
 <li>
 <h4><code><a title="grscheller.datastructures.queue.DoubleQueue" href="#grscheller.datastructures.queue.DoubleQueue">DoubleQueue</a></code></h4>
 <ul class="two-column">

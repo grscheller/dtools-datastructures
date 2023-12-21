@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.array API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.clarray - constant length array …" />
+<meta name="description" content="Module grscheller.datastructure.array …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,15 +22,8 @@
 <h1 class="title">Module <code>grscheller.datastructures.array</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.clarray - constant length array.</p>
-<p>Module implementing an mutable fixed length data structure with O(1) data
-access. All mutating methods are guaranteed not to change the length of the
-data structure.</p>
-<p>None values are not allowed in this data structures. An immutable default value
-<br>
-is set upon instantiating. If no default value is given, the empty tuple () is
-used in lieu of None, but is not set as the default value. Method which return
-new CLArray values can set a different default value for the new instance.</p>
+<p>Module grscheller.datastructure.array</p>
+<p>Module implementing array-like data structures.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -49,16 +42,9 @@ new CLArray values can set a different default value for the new instance.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.clarray - constant length array.
+&#34;&#34;&#34;Module grscheller.datastructure.array
 
-Module implementing an mutable fixed length data structure with O(1) data
-access. All mutating methods are guaranteed not to change the length of the
-data structure.
-
-None values are not allowed in this data structures. An immutable default value                     
-is set upon instantiating. If no default value is given, the empty tuple () is
-used in lieu of None, but is not set as the default value. Method which return
-new CLArray values can set a different default value for the new instance.
+Module implementing array-like data structures.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -68,32 +54,36 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Callable, Iterable, Iterator, Union
-from itertools import chain, cycle, repeat
-from .circular_array import CircularArray
+from typing import Any, Callable, Iterable
+from itertools import chain, repeat
 from .queue import DoubleQueue
 from .core.iterlib import merge, exhaust
 from .core.fp import FP, Some
 
 class CLArray(FP):
-    &#34;&#34;&#34;Functional Constant Length Array
+    &#34;&#34;&#34;Constant Length Array
 
-    Class implementing a mutable fixed length array data structure whose
-    mutaing methods are guaranteed not to change the length of the data
-    structure.
+    Class implementing a mutable fixed length array data structure whose mutaing
+    methods are guaranteed not to change the length of the data structure. O(1)
+    data access. All mutating methods are guaranteed not to change the length of
+    the data structure. None values are not allowed in this data structures.
+    A mutable default value is set upon initialization. This default value is
+    used in lieu of storing None as a value. The &#34;default&#34; default value is the
+    empty tuple.
 
-    - if size set to None, size to all the data provided (even the Nones)
+    - if size set to None, size to all the non-None data provided
     - if size &gt; 0, pad data on right with default value or slice off trailing data
     - if size &lt; 0, pad data on left with default value or slice off initial data
-    - put any non-None sliced off data on the backlog
+    - keep any sliced off data on the backQueue, attempt to preserve original order
+    - push extra non-None data from backlog to end of backQueue
 
-    Does not permits storing None as a value. If a default value is not set, the
+    Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     &#34;&#34;&#34;
-    def __init__(self, *data, size: int|None=None, default: Any|None=None):
-
-        if default is None:
-            default = ()
+    def __init__(self, *data,
+                 size: int|None=None,
+                 default: Any=(),
+                 backlog: Iterable=()):
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
@@ -106,25 +96,37 @@ class CLArray(FP):
 
         if size &gt;= 0:
             if data_size &lt; abs_size:
-                # pad CLArray on right with default value
+                # Pad CLArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
-                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushR(backQueue.popL())
+                    else:
+                        arrayQueue.pushR(default)
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
                     arrayQueue.pushR(backQueue.popL())
         else:
             if data_size &lt; abs_size:
-                # pad CLArray on left with default value
+                # Pad CLArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
-                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushL(backQueue.popL())
+                    else:
+                        arrayQueue.pushL(default)
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
-                backQueue = DoubleQueue(*reversed(backQueue))
+                backQueue.reverse()
+
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
@@ -237,7 +239,7 @@ class CLArray(FP):
         FLArray being flatMapped.
 
         Any default values of the FLArrays created by f need not have anything to do
-        with the default value of the FPArray being flatmapped over.
+        with the default value of the FPArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self.default()
@@ -252,7 +254,7 @@ class CLArray(FP):
                  mapDefault: bool=False) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until the first is exhausted. If a default value is not given,
-        use the default value of the FLArray being flatmapped.
+        use the default value of the FLArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self._default
@@ -261,13 +263,13 @@ class CLArray(FP):
 
         return CLArray(*merge(*self.map(f)), size=size, default=default)
 
-    def exhastMap(self, f: Callable[[Any], CLArray],
+    def exhaustMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until all are exhausted. If a default value is not given,
-        use the default value of the FLArray being flatmapped.
+        use the default value of the FLArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self._default
@@ -277,7 +279,7 @@ class CLArray(FP):
         return CLArray(*exhaust(*self.map(f)), size=size, default=default)
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Swap the arrayQueue with one with its elements reversed.&#34;&#34;&#34;
+        &#34;&#34;&#34;Reverse the elements of the CLArray&#34;&#34;&#34;
         self._arrayQueue = DoubleQueue(*reversed(self))
 
 if __name__ == &#34;__main__&#34;:
@@ -295,44 +297,54 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.array.CLArray"><code class="flex name class">
 <span>class <span class="ident">CLArray</span></span>
-<span>(</span><span>*data, size: int | None = None, default: Any | None = None)</span>
+<span>(</span><span>*data, size: int | None = None, default: Any = (), backlog: Iterable = ())</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Functional Constant Length Array</p>
-<p>Class implementing a mutable fixed length array data structure whose
-mutaing methods are guaranteed not to change the length of the data
-structure.</p>
+<div class="desc"><p>Constant Length Array</p>
+<p>Class implementing a mutable fixed length array data structure whose mutaing
+methods are guaranteed not to change the length of the data structure. O(1)
+data access. All mutating methods are guaranteed not to change the length of
+the data structure. None values are not allowed in this data structures.
+A mutable default value is set upon initialization. This default value is
+used in lieu of storing None as a value. The "default" default value is the
+empty tuple.</p>
 <ul>
-<li>if size set to None, size to all the data provided (even the Nones)</li>
+<li>if size set to None, size to all the non-None data provided</li>
 <li>if size &gt; 0, pad data on right with default value or slice off trailing data</li>
 <li>if size &lt; 0, pad data on left with default value or slice off initial data</li>
-<li>put any non-None sliced off data on the backlog</li>
+<li>keep any sliced off data on the backQueue, attempt to preserve original order</li>
+<li>push extra non-None data from backlog to end of backQueue</li>
 </ul>
-<p>Does not permits storing None as a value. If a default value is not set, the
+<p>Does not permit storing None as a value. If a default value is not set, the
 empty tuple () is used in lieu of None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class CLArray(FP):
-    &#34;&#34;&#34;Functional Constant Length Array
+    &#34;&#34;&#34;Constant Length Array
 
-    Class implementing a mutable fixed length array data structure whose
-    mutaing methods are guaranteed not to change the length of the data
-    structure.
+    Class implementing a mutable fixed length array data structure whose mutaing
+    methods are guaranteed not to change the length of the data structure. O(1)
+    data access. All mutating methods are guaranteed not to change the length of
+    the data structure. None values are not allowed in this data structures.
+    A mutable default value is set upon initialization. This default value is
+    used in lieu of storing None as a value. The &#34;default&#34; default value is the
+    empty tuple.
 
-    - if size set to None, size to all the data provided (even the Nones)
+    - if size set to None, size to all the non-None data provided
     - if size &gt; 0, pad data on right with default value or slice off trailing data
     - if size &lt; 0, pad data on left with default value or slice off initial data
-    - put any non-None sliced off data on the backlog
+    - keep any sliced off data on the backQueue, attempt to preserve original order
+    - push extra non-None data from backlog to end of backQueue
 
-    Does not permits storing None as a value. If a default value is not set, the
+    Does not permit storing None as a value. If a default value is not set, the
     empty tuple () is used in lieu of None.
     &#34;&#34;&#34;
-    def __init__(self, *data, size: int|None=None, default: Any|None=None):
-
-        if default is None:
-            default = ()
+    def __init__(self, *data,
+                 size: int|None=None,
+                 default: Any=(),
+                 backlog: Iterable=()):
 
         arrayQueue = DoubleQueue()
         backQueue = DoubleQueue(*data)
@@ -345,25 +357,37 @@ empty tuple () is used in lieu of None.</p></div>
 
         if size &gt;= 0:
             if data_size &lt; abs_size:
-                # pad CLArray on right with default value
+                # Pad CLArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
-                arrayQueue.pushR(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushR(backQueue.popL())
+                    else:
+                        arrayQueue.pushR(default)
             else:
                 # slice initial data on right
                 for _ in range(abs_size):
                     arrayQueue.pushR(backQueue.popL())
         else:
             if data_size &lt; abs_size:
-                # pad CLArray on left with default value
+                # Pad CLArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
-                arrayQueue.pushL(*(repeat(default, abs_size - data_size)))
+                backQueue.pushR(*backlog)
+                for ii in range(abs_size - data_size):
+                    if backQueue:
+                        arrayQueue.pushL(backQueue.popL())
+                    else:
+                        arrayQueue.pushL(default)
             else:
                 # slice initial data on left
                 for _ in range(abs_size):
                     arrayQueue.pushL(backQueue.popR())
-                backQueue = DoubleQueue(*reversed(backQueue))
+                backQueue.reverse()
+
+        backQueue.pushR(*backlog)
 
         self._arrayQueue = arrayQueue
         self._backQueue = backQueue
@@ -476,7 +500,7 @@ empty tuple () is used in lieu of None.</p></div>
         FLArray being flatMapped.
 
         Any default values of the FLArrays created by f need not have anything to do
-        with the default value of the FPArray being flatmapped over.
+        with the default value of the FPArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self.default()
@@ -491,7 +515,7 @@ empty tuple () is used in lieu of None.</p></div>
                  mapDefault: bool=False) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until the first is exhausted. If a default value is not given,
-        use the default value of the FLArray being flatmapped.
+        use the default value of the FLArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self._default
@@ -500,13 +524,13 @@ empty tuple () is used in lieu of None.</p></div>
 
         return CLArray(*merge(*self.map(f)), size=size, default=default)
 
-    def exhastMap(self, f: Callable[[Any], CLArray],
+    def exhaustMap(self, f: Callable[[Any], CLArray],
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -&gt; CLArray:
         &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
         generated by f until all are exhausted. If a default value is not given,
-        use the default value of the FLArray being flatmapped.
+        use the default value of the FLArray being flat-mapped.
         &#34;&#34;&#34;
         if default is None:
             default = self._default
@@ -516,7 +540,7 @@ empty tuple () is used in lieu of None.</p></div>
         return CLArray(*exhaust(*self.map(f)), size=size, default=default)
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Swap the arrayQueue with one with its elements reversed.&#34;&#34;&#34;
+        &#34;&#34;&#34;Reverse the elements of the CLArray&#34;&#34;&#34;
         self._arrayQueue = DoubleQueue(*reversed(self))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -567,24 +591,24 @@ empty tuple () is used in lieu of None.</p></div>
     return self._default</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.array.CLArray.exhastMap"><code class="name flex">
-<span>def <span class="ident">exhastMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, default: Any | None = None, mapDefault: bool = False) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
+<dt id="grscheller.datastructures.array.CLArray.exhaustMap"><code class="name flex">
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a>], size: int | None = None, default: Any | None = None, mapDefault: bool = False) ‑> <a title="grscheller.datastructures.array.CLArray" href="#grscheller.datastructures.array.CLArray">CLArray</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
 generated by f until all are exhausted. If a default value is not given,
-use the default value of the FLArray being flatmapped.</p></div>
+use the default value of the FLArray being flat-mapped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def exhastMap(self, f: Callable[[Any], CLArray],
+<pre><code class="python">def exhaustMap(self, f: Callable[[Any], CLArray],
               size: int|None=None,
               default: Any|None=None,
               mapDefault: bool=False) -&gt; CLArray:
     &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
     generated by f until all are exhausted. If a default value is not given,
-    use the default value of the FLArray being flatmapped.
+    use the default value of the FLArray being flat-mapped.
     &#34;&#34;&#34;
     if default is None:
         default = self._default
@@ -602,7 +626,7 @@ use the default value of the FLArray being flatmapped.</p></div>
 generated by f. If a default value is not given, use the default value of the
 FLArray being flatMapped.</p>
 <p>Any default values of the FLArrays created by f need not have anything to do
-with the default value of the FPArray being flatmapped over.</p></div>
+with the default value of the FPArray being flat-mapped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -617,7 +641,7 @@ with the default value of the FPArray being flatmapped over.</p></div>
     FLArray being flatMapped.
 
     Any default values of the FLArrays created by f need not have anything to do
-    with the default value of the FPArray being flatmapped over.
+    with the default value of the FPArray being flat-mapped.
     &#34;&#34;&#34;
     if default is None:
         default = self.default()
@@ -672,7 +696,7 @@ use the value from the CLArray being mapped.</p>
 <dd>
 <div class="desc"><p>Map f across self and flatten result by merging the CLArray elements
 generated by f until the first is exhausted. If a default value is not given,
-use the default value of the FLArray being flatmapped.</p></div>
+use the default value of the FLArray being flat-mapped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -683,7 +707,7 @@ use the default value of the FLArray being flatmapped.</p></div>
              mapDefault: bool=False) -&gt; CLArray:
     &#34;&#34;&#34;Map f across self and flatten result by merging the CLArray elements
     generated by f until the first is exhausted. If a default value is not given,
-    use the default value of the FLArray being flatmapped.
+    use the default value of the FLArray being flat-mapped.
     &#34;&#34;&#34;
     if default is None:
         default = self._default
@@ -697,25 +721,17 @@ use the default value of the FLArray being flatmapped.</p></div>
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Swap the arrayQueue with one with its elements reversed.</p></div>
+<div class="desc"><p>Reverse the elements of the CLArray</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; None:
-    &#34;&#34;&#34;Swap the arrayQueue with one with its elements reversed.&#34;&#34;&#34;
+    &#34;&#34;&#34;Reverse the elements of the CLArray&#34;&#34;&#34;
     self._arrayQueue = DoubleQueue(*reversed(self))</code></pre>
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>
@@ -739,7 +755,7 @@ use the default value of the FLArray being flatmapped.</p></div>
 <li><code><a title="grscheller.datastructures.array.CLArray.backQueue" href="#grscheller.datastructures.array.CLArray.backQueue">backQueue</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.copy" href="#grscheller.datastructures.array.CLArray.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.default" href="#grscheller.datastructures.array.CLArray.default">default</a></code></li>
-<li><code><a title="grscheller.datastructures.array.CLArray.exhastMap" href="#grscheller.datastructures.array.CLArray.exhastMap">exhastMap</a></code></li>
+<li><code><a title="grscheller.datastructures.array.CLArray.exhaustMap" href="#grscheller.datastructures.array.CLArray.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.flatMap" href="#grscheller.datastructures.array.CLArray.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.map" href="#grscheller.datastructures.array.CLArray.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.array.CLArray.mergeMap" href="#grscheller.datastructures.array.CLArray.mergeMap">mergeMap</a></code></li>

@@ -36,6 +36,8 @@
 * A lot of work done on class CLArray
   * probably will change its name before the next PyPI Release
     * perhaps to "ProcessArray" or "PArray"
+* Keeping this release an Alpha version
+  * mostly due for freedom to rename and restructure the package 
 
 ### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
 * Second release candidate - probably will become next PyPI release
