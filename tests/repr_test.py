@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from typing import Any
-from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.array import PArray
 from grscheller.datastructures.stack import Stack, FStack
 from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tup import FTuple
@@ -129,16 +129,16 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_clarray(self):
-        cla1 = CLArray()
-        assert repr(cla1) == 'CLArray(size=0, default=())'
+        cla1 = PArray()
+        assert repr(cla1) == 'PArray(size=0, default=())'
 
-        cla1 = CLArray('foo', [10, 22], size=-3, default=42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
+        cla1 = PArray('foo', [10, 22], size=-3, default=42)
+        assert repr(cla1) == "PArray(42, 'foo', [10, 22], size=3, default=42)"
 
         cla1[2].append(42)
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22, 42], size=3, default=42)"
+        assert repr(cla1) == "PArray(42, 'foo', [10, 22, 42], size=3, default=42)"
         assert cla1[2].pop() == 42
-        assert repr(cla1) == "CLArray(42, 'foo', [10, 22], size=3, default=42)"
+        assert repr(cla1) == "PArray(42, 'foo', [10, 22], size=3, default=42)"
 
     def test_ftuple(self):
         ft1 = FTuple()

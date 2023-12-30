@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.array import CLArray
+from grscheller.datastructures.array import PArray
 from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.stack import FStack, Stack
 from grscheller.datastructures.tup import FTuple
@@ -127,7 +127,7 @@ class Test_str:
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
     def test_fclarray(self):
-        cl = CLArray(1,2,3,4,5)
+        cl = PArray(1,2,3,4,5)
         cl[2] = 42
         assert str(cl) == '[|1, 2, 42, 4, 5|]'
 

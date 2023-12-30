@@ -9,7 +9,7 @@
   * main branch will be the development branch
     * will attempt to keep relatively stable, but
     * may not be fully tested
-  * release branch will be the only software development tracking branch
+  * release branch will be used to cut PyPI releases
     * will either be the current PyPI release, or
     * will be used to prepare the next PyPI release canidate
   * feature branches begin with "feature_" and are places to
@@ -19,16 +19,16 @@
 * Semantic versioning for PyPI releases:
   * first digit signifies a major event, epoch, or paradigm shift
   * second digit means
-    * breaking API changes
-    * major changes
+    * PyPI breaking API changes
+    * PyPI major changes
   * third digit either means
-    * API additions
-    * bugfixes or minor changes
-    * documentation updates
+    * PyPI API additions
+    * PyPI bugfixes or minor changes
+    * PyPI documentation updates
+    * development breaking API changes
   * forth digit (develoment, feature & early PyPI releases only)
-    * commit count
+    * development git commit count
     * development environment thrashing
-    * not to be taken too seriously
 
 ## Versions - PyPI releases begin with "v"
 
