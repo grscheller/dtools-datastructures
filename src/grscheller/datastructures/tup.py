@@ -30,6 +30,8 @@ from .core.fp import FP
 
 class FTuple(FP):
     """Class implementing tuple-like data structure with FP behaviors."""
+    __slots__ = '_ds',
+
     def __init__(self, *ds):
         """Wrap a tuple and filter out None values"""
         self._ds = tuple(filter(lambda x: x is not None, ds))

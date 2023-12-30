@@ -32,6 +32,8 @@ class SL_Node():
     either has a reference to the next SL_Node or None to indicate the
     bottom of the linked list of nodes.
     """
+    __slots__ = '_data', '_next'
+
     def __init__(self, data: Any, next: SL_Node|None):
         """Construct an element of a linked list"""
         self._data = data
@@ -45,6 +47,8 @@ class Tree_Node():
     """Class implementing nodes that can be linked together to form
     a tree-like data structure. This type of node always contain data.
     """
+    __slots__ = '_data', '_left', '_right'
+
     def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
         """Construct an element of a doubly linked list"""
         self._data = data

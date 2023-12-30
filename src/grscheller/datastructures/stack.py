@@ -40,6 +40,8 @@ class StackBase():
     pointing to the same node. Each stack class ensures None values do not
     get pushed onto the the stack.
     """
+    __slots__ = '_head', '_count'
+
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
         self._head = None
@@ -115,6 +117,8 @@ class Stack(StackBase):
 
     None represents the absence of a value and ignored if pushed on a Stack.
     """
+    __slots__ = ()
+
     def __str__(self):
         """Display the data in the Stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
@@ -178,8 +182,7 @@ class FStack(StackBase, FP_rev):
 
     None represents the absence of a value and ignored if pushed on an FStack.
     """
-    def __init__(self, *ds):
-        super().__init__(*ds)
+    __slots__ = ()
 
     def __str__(self):
         """Display the data in the FStack, left to right starting at bottom"""

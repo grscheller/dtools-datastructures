@@ -270,6 +270,7 @@ class QueueBase():
     circular array used will resize itself as needed. Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     """
+    __slots__ = '_ca',
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
         self._ca = CircularArray()
@@ -324,6 +325,8 @@ class FIFOQueue(QueueBase):
     """Stateful single sided FIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return "<< " + " < ".join(map(str, self)) + " <<"
 
@@ -361,6 +364,8 @@ class LIFOQueue(QueueBase):
     """Stateful single sided LIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return "|| " + " > ".join(map(str, self)) + " ><"
 
@@ -391,6 +396,8 @@ class DoubleQueue(QueueBase):
     """Stateful double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DoubleQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return ">< " + " | ".join(map(str, self)) + " ><"
 
