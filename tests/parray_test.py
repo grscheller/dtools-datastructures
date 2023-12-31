@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from typing import Any
-from grscheller.datastructures.array import PArray
+from grscheller.datastructures.arrays import PArray
 
 class TestPArray:
     def test_map1(self):

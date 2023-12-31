@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.queue import DoubleQueue
+from grscheller.datastructures.queues import DoubleQueue
 
 class TestDqueue:
     def test_mutate_returns_none(self):

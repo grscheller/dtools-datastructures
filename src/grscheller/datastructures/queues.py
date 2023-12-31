@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.queue - queue based datastructures
+"""Module grscheller.datastructure.queues - queue based datastructures
 
 Module implementing stateful queue data structures with amortized O(1) pushing and
 popping from the queue. Obtaining length (number of elements) of a queue is an O(1)

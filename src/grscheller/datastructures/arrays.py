@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.array
+"""Module grscheller.datastructure.arrays
 
 Module implementing array-like data structures.
 """
@@ -26,7 +26,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Iterable
 from itertools import chain, repeat
-from .queue import DoubleQueue
+from .queues import DoubleQueue
 from .core.iterlib import merge, exhaust
 from .core.fp import FP, Some
 

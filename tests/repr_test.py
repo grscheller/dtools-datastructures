@@ -15,10 +15,10 @@
 from __future__ import annotations
 
 from typing import Any
-from grscheller.datastructures.array import PArray
-from grscheller.datastructures.stack import Stack, FStack
-from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.ftuple import FTuple
+from grscheller.datastructures.arrays import PArray
+from grscheller.datastructures.stacks import Stack, FStack
+from grscheller.datastructures.queues import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
+from grscheller.datastructures.tuples import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
 
 class Test_repr:

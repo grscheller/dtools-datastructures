@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.stack - Stateful & Functional LIFO stacks:
+"""Module grscheller.datastructure.stacks - Stateful & Functional LIFO stacks:
 
    Module implementing a LIFO stacks using singularly linked linear trees of
    nodes. The nodes can be safely shared between different stack instances and
@@ -27,7 +27,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from .queue import CircularArray
+from .queues import CircularArray
 from .core.nodes import SL_Node as Node
 from .core.fp import FP_rev
 

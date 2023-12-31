@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.stack import Stack
+from grscheller.datastructures.stacks import Stack
 from itertools import chain
 
 class TestStack:

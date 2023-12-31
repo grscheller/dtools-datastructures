@@ -25,5 +25,5 @@ To run the testsuite:
 
    $ export PYTHONPATH=/path/to/.../datastructures
    $ cd /path/to/.../datastructures
-   $ pytest --pyargs tests
+   $ pytest tests/
 """                                              
