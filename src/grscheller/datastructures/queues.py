@@ -37,6 +37,8 @@ class CircularArray:
     is not opinionated regarding None as a value. It freely stores and returns
     None values. Can be use in a boolean context to determine if empty.
     """
+    __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
+
     def __init__(self, *data):
         """Construct a double sided queue"""
         size = len(data)
@@ -266,6 +268,7 @@ class QueueBase():
     must ensure that None values do not get pushed onto the circular array.
     """
     __slots__ = '_ca',
+
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
         self._ca = CircularArray()
