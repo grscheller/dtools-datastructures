@@ -70,6 +70,8 @@ from .iterlib import exhaust, merge
 
 class FP():
     &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
+    __slots__ = ()
+
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, self))
@@ -88,6 +90,8 @@ class FP():
 
 class FP_rev():
     &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
+    __slots__ = ()
+
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, reversed(self)))
@@ -116,6 +120,8 @@ class Maybe(FP):
     - Semantically None represent non-existance
     - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
+    __slots__ = &#39;_value&#39;,
+
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -186,6 +192,8 @@ class Either(FP):
     - If altValue not given, set it to the empty string
     - Immutable semantics - map &amp; flatMap return modified copies
     &#34;&#34;&#34;
+    __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = &#39;&#39;
@@ -403,6 +411,8 @@ returns a Nothing.</p></div>
     - If altValue not given, set it to the empty string
     - Immutable semantics - map &amp; flatMap return modified copies
     &#34;&#34;&#34;
+    __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = &#39;&#39;
@@ -605,6 +615,8 @@ returns a Nothing.</p></div>
 </summary>
 <pre><code class="python">class FP():
     &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
+    __slots__ = ()
+
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, self))
@@ -623,10 +635,10 @@ returns a Nothing.</p></div>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.array.CLArray" href="../array.html#grscheller.datastructures.array.CLArray">CLArray</a></li>
+<li><a title="grscheller.datastructures.arrays.PArray" href="../arrays.html#grscheller.datastructures.arrays.PArray">PArray</a></li>
 <li><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></li>
 <li><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></li>
-<li><a title="grscheller.datastructures.tup.FTuple" href="../tup.html#grscheller.datastructures.tup.FTuple">FTuple</a></li>
+<li><a title="grscheller.datastructures.tuples.FTuple" href="../tuples.html#grscheller.datastructures.tuples.FTuple">FTuple</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -699,6 +711,8 @@ returns a Nothing.</p></div>
 </summary>
 <pre><code class="python">class FP_rev():
     &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
+    __slots__ = ()
+
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
         return type(self)(*map(f, reversed(self)))
@@ -717,7 +731,7 @@ returns a Nothing.</p></div>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="grscheller.datastructures.stack.FStack" href="../stack.html#grscheller.datastructures.stack.FStack">FStack</a></li>
+<li><a title="grscheller.datastructures.stacks.FStack" href="../stacks.html#grscheller.datastructures.stacks.FStack">FStack</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -811,6 +825,8 @@ returns a Nothing.</p></div>
     - Semantically None represent non-existance
     - None only has any real existance as an implementration detail
     &#34;&#34;&#34;
+    __slots__ = &#39;_value&#39;,
+
     def __init__(self, value: Any=None):
         self._value = value
 

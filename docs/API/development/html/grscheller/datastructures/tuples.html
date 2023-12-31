@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures.tup API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.tuplelike - functional tuples …" />
+<title>grscheller.datastructures.tuples API documentation</title>
+<meta name="description" content="Module grscheller.datastructure.tuples - tuple-like data structures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,12 +19,11 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.tup</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.tuples</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.tuplelike - functional tuples</p>
-<p>Module implementing an immutable tuple like object with
-a funtional interface. Right now just a minimally viable product.</p>
+<p>Module grscheller.datastructure.tuples - tuple-like data structures</p>
+<p>Module implementing an immutable tuple like object with a funtional interface.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -43,10 +42,9 @@ a funtional interface. Right now just a minimally viable product.</p>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.tuplelike - functional tuples
+&#34;&#34;&#34;Module grscheller.datastructure.tuples - tuple-like data structures
 
-Module implementing an immutable tuple like object with
-a funtional interface. Right now just a minimally viable product.
+Module implementing an immutable tuple like object with a funtional interface.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -56,24 +54,16 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
-from typing import Any, Union
+from typing import Any
 from .core.fp import FP
 
-class FTuple(FP):
-    &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
-        self._ds = tuple(filter(lambda x: x is not None, ds))
+class FTuple(tuple, FP):
+    &#34;&#34;&#34;Class extending tuple with FP behaviors.&#34;&#34;&#34;
+    __slots__ = ()
 
-    def __iter__(self):
-        &#34;&#34;&#34;Iterate over the immutable state of the FTuple&#34;&#34;&#34;
-        for d in self._ds:
-            yield d
-
-    def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the immutable state of the FTuple&#34;&#34;&#34;
-        for d in reversed(self._ds):
-            yield d
+    def __new__(cls, *ds):
+        &#34;&#34;&#34;Construct the tuple with the None values filtered out&#34;&#34;&#34;
+        return super().__new__(cls, (filter(lambda d: d is not None, ds)))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
@@ -82,49 +72,28 @@ class FTuple(FP):
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
-    def __bool__(self):
-        &#34;&#34;&#34;Returns true if not empty&#34;&#34;&#34;
-        return self._ds != ()
-
-    def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
-        return len(self._ds)
-
-    def __getitem__(self, index: int) -&gt; Any:
-        msg = &#39;&#39;
-        if (cnt := len(self._ds)) == 0:
-            msg = &#39;Indexing an empty FTuple&#39;
-        elif not -cnt &lt;= index &lt; cnt:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;FTuple index = {index} not between {l} and {h}&#39;
-            msg += &#39; while getting value&#39;
-        
-        if msg:
-            raise IndexError(msg)
-
-        return self._ds[index]
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        return self._ds == other._ds
-
-    def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
-        ftuple = FTuple()
-        ftuple._ds = self._ds + other._ds
-        return ftuple
+    def __getitem__(self, sl: slice) -&gt; Any:
+        try:
+            item = super().__getitem__(sl)
+        except IndexError:
+            item = None
+        return item
 
     def copy(self) -&gt; FTuple:
         &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
-        ftuple = FTuple()
-        ftuple._ds = self._ds
-        return ftuple
+        return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
         &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
+
+    def __add__(self, other: FTuple) -&gt; FTuple:
+        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
+        return FTuple(*super().__add__(other))
+
+    def __mul__(self, num: int) -&gt; FTuple:
+        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times&#34;&#34;&#34;
+        return FTuple(*super().__mul__(num))
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -139,32 +108,23 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.tup.FTuple"><code class="flex name class">
+<dt id="grscheller.datastructures.tuples.FTuple"><code class="flex name class">
 <span>class <span class="ident">FTuple</span></span>
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class implementing tuple-like data structure with FP behaviors.</p>
-<p>Wrap a tuple and filter out None values</p></div>
+<div class="desc"><p>Class extending tuple with FP behaviors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FTuple(FP):
-    &#34;&#34;&#34;Class implementing tuple-like data structure with FP behaviors.&#34;&#34;&#34;
-    def __init__(self, *ds):
-        &#34;&#34;&#34;Wrap a tuple and filter out None values&#34;&#34;&#34;
-        self._ds = tuple(filter(lambda x: x is not None, ds))
+<pre><code class="python">class FTuple(tuple, FP):
+    &#34;&#34;&#34;Class extending tuple with FP behaviors.&#34;&#34;&#34;
+    __slots__ = ()
 
-    def __iter__(self):
-        &#34;&#34;&#34;Iterate over the immutable state of the FTuple&#34;&#34;&#34;
-        for d in self._ds:
-            yield d
-
-    def __reversed__(self):
-        &#34;&#34;&#34;Reverse iterate over the immutable state of the FTuple&#34;&#34;&#34;
-        for d in reversed(self._ds):
-            yield d
+    def __new__(cls, *ds):
+        &#34;&#34;&#34;Construct the tuple with the None values filtered out&#34;&#34;&#34;
+        return super().__new__(cls, (filter(lambda d: d is not None, ds)))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
@@ -173,58 +133,38 @@ if __name__ == &#34;__main__&#34;:
         &#34;&#34;&#34;Display data in the FTuple&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
-    def __bool__(self):
-        &#34;&#34;&#34;Returns true if not empty&#34;&#34;&#34;
-        return self._ds != ()
-
-    def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Returns the number of elements in the FTuple&#34;&#34;&#34;
-        return len(self._ds)
-
-    def __getitem__(self, index: int) -&gt; Any:
-        msg = &#39;&#39;
-        if (cnt := len(self._ds)) == 0:
-            msg = &#39;Indexing an empty FTuple&#39;
-        elif not -cnt &lt;= index &lt; cnt:
-            l = -cnt
-            h = cnt - 1
-            msg = f&#39;FTuple index = {index} not between {l} and {h}&#39;
-            msg += &#39; while getting value&#39;
-        
-        if msg:
-            raise IndexError(msg)
-
-        return self._ds[index]
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        return self._ds == other._ds
-
-    def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
-        ftuple = FTuple()
-        ftuple._ds = self._ds + other._ds
-        return ftuple
+    def __getitem__(self, sl: slice) -&gt; Any:
+        try:
+            item = super().__getitem__(sl)
+        except IndexError:
+            item = None
+        return item
 
     def copy(self) -&gt; FTuple:
         &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
-        ftuple = FTuple()
-        ftuple._ds = self._ds
-        return ftuple
+        return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
         &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
-        return(FTuple(*reversed(self)))</code></pre>
+        return(FTuple(*reversed(self)))
+
+    def __add__(self, other: FTuple) -&gt; FTuple:
+        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
+        return FTuple(*super().__add__(other))
+
+    def __mul__(self, num: int) -&gt; FTuple:
+        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times&#34;&#34;&#34;
+        return FTuple(*super().__mul__(num))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li>builtins.tuple</li>
 <li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.tup.FTuple.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tup.FTuple" href="#grscheller.datastructures.tup.FTuple">FTuple</a></span>
+<dt id="grscheller.datastructures.tuples.FTuple.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity</p></div>
@@ -234,13 +174,11 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">def copy(self) -&gt; FTuple:
     &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
-    ftuple = FTuple()
-    ftuple._ds = self._ds
-    return ftuple</code></pre>
+    return FTuple(*self)</code></pre>
 </details>
 </dd>
-<dt id="grscheller.datastructures.tup.FTuple.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tup.FTuple" href="#grscheller.datastructures.tup.FTuple">FTuple</a></span>
+<dt id="grscheller.datastructures.tuples.FTuple.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a reversed FTuple, new instance.</p></div>
@@ -283,10 +221,10 @@ if __name__ == &#34;__main__&#34;:
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.tup.FTuple" href="#grscheller.datastructures.tup.FTuple">FTuple</a></code></h4>
+<h4><code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code></h4>
 <ul class="">
-<li><code><a title="grscheller.datastructures.tup.FTuple.copy" href="#grscheller.datastructures.tup.FTuple.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.tup.FTuple.reverse" href="#grscheller.datastructures.tup.FTuple.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.reverse" href="#grscheller.datastructures.tuples.FTuple.reverse">reverse</a></code></li>
 </ul>
 </li>
 </ul>
