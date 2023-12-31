@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.tup import FTuple
+from grscheller.datastructures.ftuple import FTuple
 
 class TestFTuple:
     def test_method_returns_copy(self):
@@ -49,30 +49,8 @@ class TestFTuple:
         assert not ft1_rev
         assert len(ft1_rev) == 0
 
-        foo = 42
-        baz = 'hello world'
-
-        try:
-            foo = ft1[0]
-        except IndexError as err:
-            print(err)
-            assert True
-        else:
-            assert False
-        finally:
-            assert True
-            assert foo == 42
-
-        try:
-            baz = ft2[42]
-        except IndexError as err:
-            print(err)
-            assert True
-        else:
-            assert False
-        finally:
-            assert True
-            assert baz == 'hello world'
+        assert ft1[0] is None
+        assert ft2[42] is None
 
     def test_reverse(self):
         ft1 = FTuple(1, 2, 3, 'foo', 'bar')

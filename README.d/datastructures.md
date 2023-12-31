@@ -16,7 +16,7 @@ Overview of package's top level modules and data structures.
 * [Double Ended Queue](#class-doublequeue): stateful DoubleQueue class
 * [Stack](#class-stack): stateful (LIFO) Stack class
 * [Functional Stack](#class-fstack): immutable (LIFO) FStack class
-* [Constant length array](#class-clarray): functional/stateful CLArray class
+* [processing array](#class-parray): functional/stateful CLArray class
 * [ftuple module](#class-ftuple): functional FTuple class
 
 ### queue module
@@ -91,14 +91,13 @@ Similar to Stack objects but immutable with a functional interface.
 
 Provides a constant length mutable array of elements of different types.
 
-#### class CLArray
+#### class PArray
 
 * O(1) data access
-* immutable length
 * size can be provided, otherwise sized to initial non-None data
 * default value used in lieu of storing None as a value
-* backing queue provided when more data is provided than CLArray size
-* default value added if not enough initial data provided
+* backing queue provided when more data is provided than PArray size
+* default value used if not enough initial data provided
 * optional backlog iterable can append more data to backing Queue
 
 Provides a constant length mutable array of elements of different types.

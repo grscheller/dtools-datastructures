@@ -164,22 +164,17 @@ class CircularArray:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
-                self._list, self._capacity, self._front, self._rear = \
-                [None]*2,   2,              0,           1
+                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
             case 1:
                 data = [self._list[self._front], None]
-
-                self._list, self._capacity, self._front, self._rear = \
-                data,       2,              0,           0
+                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
             case _:
                 if self._front > self._rear:
                     data  = self._list[self._front:]
                     data += self._list[:self._rear+1]
                 else:
                     data  = self._list[self._front:self._rear+1]
-
-                self._list, self._capacity, self._front, self._rear = \
-                data,       self._count,    0,           self._capacity - 1
+                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def copy(self) -> CircularArray:
         return CircularArray(*self)

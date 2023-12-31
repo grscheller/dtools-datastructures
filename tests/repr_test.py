@@ -18,7 +18,7 @@ from typing import Any
 from grscheller.datastructures.array import PArray
 from grscheller.datastructures.stack import Stack, FStack
 from grscheller.datastructures.queue import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.tup import FTuple
+from grscheller.datastructures.ftuple import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
 
 class Test_repr:
