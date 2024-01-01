@@ -28,12 +28,20 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Type
+from functools import reduce
 from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
     """Default functional implentations for FIFO data structures"""
     __slots__ = ()
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """FoldLeft with optional inital value"""
+        if initial is None:
+            return reduce(f, self)
+        else:
+            return reduce(f, self, initial)
 
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
         """Apply f over the elemrnts of the data structure"""

@@ -62,12 +62,20 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable, Type
+from functools import reduce
 from itertools import chain
 from .iterlib import exhaust, merge
 
 class FP():
     &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
     __slots__ = ()
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+        if initial is None:
+            return reduce(f, self)
+        else:
+            return reduce(f, self, initial)
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
@@ -577,6 +585,7 @@ returns a Nothing.</p></div>
 <li><code><b><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
 <ul class="hlist">
 <li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -593,6 +602,13 @@ returns a Nothing.</p></div>
 <pre><code class="python">class FP():
     &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
     __slots__ = ()
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+        if initial is None:
+            return reduce(f, self)
+        else:
+            return reduce(f, self, initial)
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
@@ -674,6 +690,23 @@ returns a Nothing.</p></div>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
     &#34;&#34;&#34;Monadicly bind f to the data structure merging until one exhausted&#34;&#34;&#34;
     return type(self)(*merge(*map(iter, map(f, self))))</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.fp.FP.reduce"><code class="name flex">
+<span>def <span class="ident">reduce</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>FoldLeft with optional inital value</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+    if initial is None:
+        return reduce(f, self)
+    else:
+        return reduce(f, self, initial)</code></pre>
 </details>
 </dd>
 </dl>
@@ -793,6 +826,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -844,6 +878,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 <li>
