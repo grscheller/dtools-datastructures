@@ -29,11 +29,12 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Type
 from functools import reduce
-from itertools import chain
+from itertools import accumulate, chain
+import operator
 from .iterlib import exhaust, merge
 
 class FP():
-    """Default functional implentations for FIFO data structures"""
+    """Default functional implentations for data structures"""
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
@@ -42,6 +43,17 @@ class FP():
             return reduce(f, self)
         else:
             return reduce(f, self, initial)
+
+    def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -> type[FP]:
+        """Accummulate partial fold results in same type data structure"""
+        if f is None:
+            f = operator.add
+        if initial is None:
+            return type(self)(*accumulate(self, f))
+        else:
+            return type(self)(*accumulate(chain((initial,), self), f))
+
+    # Default implentations for FIFO data structures - see stacks module LIFO examples
 
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
         """Apply f over the elemrnts of the data structure"""

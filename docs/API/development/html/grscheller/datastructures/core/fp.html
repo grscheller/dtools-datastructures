@@ -63,11 +63,12 @@ __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable, Type
 from functools import reduce
-from itertools import chain
+from itertools import accumulate, chain
+import operator
 from .iterlib import exhaust, merge
 
 class FP():
-    &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
+    &#34;&#34;&#34;Default functional implentations for data structures&#34;&#34;&#34;
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
@@ -76,6 +77,17 @@ class FP():
             return reduce(f, self)
         else:
             return reduce(f, self, initial)
+
+    def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -&gt; type[FP]:
+        &#34;&#34;&#34;Accummulate partial fold results in same type data structure&#34;&#34;&#34;
+        if f is None:
+            f = operator.add
+        if initial is None:
+            return type(self)(*accumulate(self, f))
+        else:
+            return type(self)(*accumulate(chain((initial,), self), f))
+
+    # Default implentations for FIFO data structures - see stacks module LIFO examples
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
@@ -584,6 +596,7 @@ returns a Nothing.</p></div>
 <ul class="hlist">
 <li><code><b><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
 <ul class="hlist">
+<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
@@ -594,13 +607,13 @@ returns a Nothing.</p></div>
 <span>class <span class="ident">FP</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Default functional implentations for FIFO data structures</p></div>
+<div class="desc"><p>Default functional implentations for data structures</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FP():
-    &#34;&#34;&#34;Default functional implentations for FIFO data structures&#34;&#34;&#34;
+    &#34;&#34;&#34;Default functional implentations for data structures&#34;&#34;&#34;
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
@@ -609,6 +622,17 @@ returns a Nothing.</p></div>
             return reduce(f, self)
         else:
             return reduce(f, self, initial)
+
+    def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -&gt; type[FP]:
+        &#34;&#34;&#34;Accummulate partial fold results in same type data structure&#34;&#34;&#34;
+        if f is None:
+            f = operator.add
+        if initial is None:
+            return type(self)(*accumulate(self, f))
+        else:
+            return type(self)(*accumulate(chain((initial,), self), f))
+
+    # Default implentations for FIFO data structures - see stacks module LIFO examples
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
         &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
@@ -631,11 +655,33 @@ returns a Nothing.</p></div>
 <li><a title="grscheller.datastructures.arrays.PArray" href="../arrays.html#grscheller.datastructures.arrays.PArray">PArray</a></li>
 <li><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></li>
 <li><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></li>
+<li><a title="grscheller.datastructures.queues.DoubleQueue" href="../queues.html#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></li>
+<li><a title="grscheller.datastructures.queues.FIFOQueue" href="../queues.html#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></li>
+<li><a title="grscheller.datastructures.queues.LIFOQueue" href="../queues.html#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></li>
 <li><a title="grscheller.datastructures.stacks.FStack" href="../stacks.html#grscheller.datastructures.stacks.FStack">FStack</a></li>
 <li><a title="grscheller.datastructures.tuples.FTuple" href="../tuples.html#grscheller.datastructures.tuples.FTuple">FTuple</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="grscheller.datastructures.core.fp.FP.accummulate"><code class="name flex">
+<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[Any], [Any]] = None, initial=None) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Accummulate partial fold results in same type data structure</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -&gt; type[FP]:
+    &#34;&#34;&#34;Accummulate partial fold results in same type data structure&#34;&#34;&#34;
+    if f is None:
+        f = operator.add
+    if initial is None:
+        return type(self)(*accumulate(self, f))
+    else:
+        return type(self)(*accumulate(chain((initial,), self), f))</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.core.fp.FP.exhaustMap"><code class="name flex">
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
@@ -822,6 +868,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <ul class="hlist">
 <li><code><b><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
 <ul class="hlist">
+<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
@@ -873,7 +920,8 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>

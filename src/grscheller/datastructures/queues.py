@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
+from .core.fp import FP
 
 class CircularArray:
     """Implements an auto-resizing, indexable, double sided queue data
@@ -319,7 +320,7 @@ class QueueBase():
         """Reverse the elements in the Queue"""
         self._ca = self._ca.reverse()
 
-class FIFOQueue(QueueBase):
+class FIFOQueue(QueueBase, FP):
     """Stateful single sided FIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
@@ -358,7 +359,7 @@ class FIFOQueue(QueueBase):
         else:
             return None
 
-class LIFOQueue(QueueBase):
+class LIFOQueue(QueueBase, FP):
     """Stateful single sided LIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
@@ -390,7 +391,7 @@ class LIFOQueue(QueueBase):
         else:
             return None
 
-class DoubleQueue(QueueBase):
+class DoubleQueue(QueueBase, FP):
     """Stateful double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DoubleQueue.
     """
