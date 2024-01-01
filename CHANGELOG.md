@@ -25,14 +25,22 @@
     * PyPI API additions
     * PyPI bugfixes or minor changes
     * PyPI documentation updates
-    * development breaking API changes
-  * forth digit (develoment, feature & early PyPI releases only)
+    * first development branch breaking API changes
+  * forth digit develoment, feature branches & early PyPI releases)
     * development git commit count
     * development environment thrashing
+    * not to be taken too seriously
 
 ## Versions - PyPI releases begin with "v"
 
+### version 0.11.3.4 - Finally decided to make next PyPI release Beta
+
+* Package structure mature and not subject to change beyond additions
+* Will endeavor to keep top level & core module names the same
+* API changes will be deprecated before removed
+
 ### Version v0.11.0 - PyPI Release date 2023-12-20
+
 * A lot of work done on class CLArray
   * probably will change its name before the next PyPI Release
     * perhaps to "ProcessArray" or "PArray"
@@ -40,6 +48,7 @@
   * mostly due for freedom to rename and restructure the package 
 
 ### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
+
 * Second release candidate - probably will become next PyPI release
   * main now development branch, release will be release branch
   * decided to drop it back to Alpha
@@ -51,7 +60,7 @@
     * will not make Maybe Nothing a singleton
     * last touched CLArray refactor
     * improve CLArray test coverage
-  * things for future PYPI releases
+  * Things for future PYPI releases
     * inherit FTuple from Tuple (use __new__) for performance boost
     * hold off using __slots__ until I understand them better
 
@@ -61,8 +70,8 @@
   * will cut next PyPI release with Flit from main branch
   * removed docs direrctory before merge (docs/ will be main only)
   * things to add in main before next release
-    * Make Maybe Nothing a singleton (use __new__)
-    * Derive FTuple from Tuple (use __new__) for performance boost
+    * make Maybe Nothing a singleton (use __new__)
+    * derive FTuple from Tuple (use __new__) for performance boost
     * simplify CLArray to use a Queue instead of CircularArray & iterator
     * start using __slots__ for performance boost to data structures
       * efficiency trumps extensibility
