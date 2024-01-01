@@ -27,7 +27,6 @@
 <li>class Maybe: Implements the Maybe Monad, also called the Optional Monad</li>
 <li>class Either: Implements a left biased Either Monad.</li>
 <li>class FP: default functional implementations for fifo data structure methods</li>
-<li>class FP_rev: default functional implementations for lifo data structure methods</li>
 </ul>
 <details class="source">
 <summary>
@@ -52,14 +51,12 @@
    - class Maybe: Implements the Maybe Monad, also called the Optional Monad
    - class Either: Implements a left biased Either Monad.
    - class FP: default functional implementations for fifo data structure methods
-   - class FP_rev: default functional implementations for lifo data structure methods
 &#34;&#34;&#34;
 from __future__ import annotations
 
-__all__ = [ &#39;FP&#39;, &#39;FP_rev&#39;,
+__all__ = [ &#39;FP&#39;, &#39;maybeToEither&#39;, &#39;eitherToMaybe&#39;,
             &#39;Either&#39;, &#39;Left&#39;, &#39;Right&#39;,
-            &#39;Maybe&#39;, &#39;Some&#39;, &#39;Nothing&#39;,
-            &#39;maybeToEither&#39;, &#39;eitherToMaybe&#39; ]
+            &#39;Maybe&#39;, &#39;Some&#39;, &#39;Nothing&#39; ]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
@@ -87,27 +84,7 @@ class FP():
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
         &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
         return type(self)(*exhaust(*map(iter, map(f, self))))
-
-class FP_rev():
-    &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
-    __slots__ = ()
-
-    def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
-        return type(self)(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
-        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
-
+    
 class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
@@ -638,6 +615,7 @@ returns a Nothing.</p></div>
 <li><a title="grscheller.datastructures.arrays.PArray" href="../arrays.html#grscheller.datastructures.arrays.PArray">PArray</a></li>
 <li><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></li>
 <li><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></li>
+<li><a title="grscheller.datastructures.stacks.FStack" href="../stacks.html#grscheller.datastructures.stacks.FStack">FStack</a></li>
 <li><a title="grscheller.datastructures.tuples.FTuple" href="../tuples.html#grscheller.datastructures.tuples.FTuple">FTuple</a></li>
 </ul>
 <h3>Methods</h3>
@@ -696,99 +674,6 @@ returns a Nothing.</p></div>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
     &#34;&#34;&#34;Monadicly bind f to the data structure merging until one exhausted&#34;&#34;&#34;
     return type(self)(*merge(*map(iter, map(f, self))))</code></pre>
-</details>
-</dd>
-</dl>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP_rev"><code class="flex name class">
-<span>class <span class="ident">FP_rev</span></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Default functional implentations for LIFO data structures</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class FP_rev():
-    &#34;&#34;&#34;Default functional implentations for LIFO data structures&#34;&#34;&#34;
-    __slots__ = ()
-
-    def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
-        return type(self)(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
-        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
-        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="grscheller.datastructures.stacks.FStack" href="../stacks.html#grscheller.datastructures.stacks.FStack">FStack</a></li>
-</ul>
-<h3>Methods</h3>
-<dl>
-<dt id="grscheller.datastructures.core.fp.FP_rev.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadicly bind f to the data structure merging until all exhausted</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exhaustMap(self, f: Callable[[Any], type[FP]]) -&gt; type[FP_rev]:
-    &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
-    return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP_rev.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def flatMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-    return type(self)(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP_rev.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply f over the elemrnts of the data structure</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; type[FP_rev]:
-    &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
-    return type(self)(*map(f, reversed(self)))</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP_rev.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]]) ‑> type[<a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a>]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -&gt; type[FP_rev]:
-    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
-    return type(self)(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
 </dl>
@@ -959,15 +844,6 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="grscheller.datastructures.core.fp.FP_rev" href="#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></code></h4>
-<ul class="">
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.exhaustMap" href="#grscheller.datastructures.core.fp.FP_rev.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.flatMap" href="#grscheller.datastructures.core.fp.FP_rev.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.map" href="#grscheller.datastructures.core.fp.FP_rev.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.mergeMap" href="#grscheller.datastructures.core.fp.FP_rev.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 <li>

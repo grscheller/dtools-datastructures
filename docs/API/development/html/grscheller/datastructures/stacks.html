@@ -59,9 +59,11 @@ __copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable
+from itertools import chain
+from .core.iterlib import exhaust, merge
 from .queues import CircularArray
 from .core.nodes import SL_Node as Node
-from .core.fp import FP_rev
+from .core.fp import FP
 
 class StackBase():
     &#34;&#34;&#34;Abstract base class for the purposes of DRY inheritance of classes
@@ -138,7 +140,7 @@ class Stack(StackBase):
     &#34;&#34;&#34;Class implementing a mutable Last In, First Out (LIFO) stack data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
-
+&#39;
     Stacks are stateful objects, values can be pushed on &amp; popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
@@ -199,7 +201,7 @@ class Stack(StackBase):
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
 
-class FStack(StackBase, FP_rev):
+class FStack(StackBase, FP):
     &#34;&#34;&#34;Class implementing an immutable Last IN, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
@@ -266,6 +268,22 @@ class FStack(StackBase, FP_rev):
         else:
             return self.copy()
 
+    def map(self, f: Callable[[Any], Any]) -&gt; FStack:
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
+        return FStack(*map(f, reversed(self)))
+
+    def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
+
+    def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
+
+    def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
+
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
 </details>
@@ -298,7 +316,7 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FStack(StackBase, FP_rev):
+<pre><code class="python">class FStack(StackBase, FP):
     &#34;&#34;&#34;Class implementing an immutable Last IN, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
@@ -363,12 +381,28 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
             fstack._count = self._count + 1
             return fstack
         else:
-            return self.copy()</code></pre>
+            return self.copy()
+
+    def map(self, f: Callable[[Any], Any]) -&gt; FStack:
+        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
+        return FStack(*map(f, reversed(self)))
+
+    def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
+
+    def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
+
+    def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>grscheller.datastructures.stacks.StackBase</li>
-<li><a title="grscheller.datastructures.core.fp.FP_rev" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></li>
+<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -433,6 +467,20 @@ If the FStack is empty, head does not exist so in that case return default.</p><
     return self._head._data</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.stacks.FStack.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
+    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+    return FStack(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.stacks.FStack.reverse"><code class="name flex">
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
@@ -476,12 +524,11 @@ an empty FStack.</p></div>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP_rev" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev">FP_rev</a></b></code>:
+<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
 <ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.exhaustMap" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.flatMap" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.map" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP_rev.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP_rev.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.map" href="core/fp.html#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 </ul>
 </li>
 </ul>
@@ -493,13 +540,17 @@ an empty FStack.</p></div>
 <dd>
 <div class="desc"><p>Class implementing a mutable Last In, First Out (LIFO) stack data structure
 pointing to a singularly linked list of nodes. This class is designed to share
-nodes with other Stack instances.</p>
-<p>Stacks are stateful objects, values can be pushed on &amp; popped off.</p>
-<p>A Stack points to either the top node in the list, or to None which indicates
-an empty stack.</p>
-<p>A Stack keeps a count of the number of objects currently on it. Pushing to,
-popping from, getting the length and copying the Stack are all O(1) operations.</p>
-<p>None represents the absence of a value and ignored if pushed on a Stack.</p>
+nodes with other Stack instances.
+'
+Stacks are stateful objects, values can be pushed on &amp; popped off.</p>
+<pre><code>A Stack points to either the top node in the list, or to None which indicates
+an empty stack.
+
+A Stack keeps a count of the number of objects currently on it. Pushing to,
+popping from, getting the length and copying the Stack are all O(1) operations.
+
+None represents the absence of a value and ignored if pushed on a Stack.
+</code></pre>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
 <summary>
@@ -509,7 +560,7 @@ popping from, getting the length and copying the Stack are all O(1) operations.<
     &#34;&#34;&#34;Class implementing a mutable Last In, First Out (LIFO) stack data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
-
+&#39;
     Stacks are stateful objects, values can be pushed on &amp; popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
@@ -703,10 +754,11 @@ return the stack being pushed.</p></div>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="grscheller.datastructures.stacks.FStack.cons" href="#grscheller.datastructures.stacks.FStack.cons">cons</a></code></li>
 <li><code><a title="grscheller.datastructures.stacks.FStack.copy" href="#grscheller.datastructures.stacks.FStack.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.stacks.FStack.head" href="#grscheller.datastructures.stacks.FStack.head">head</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.FStack.mergeMap" href="#grscheller.datastructures.stacks.FStack.mergeMap">mergeMap</a></code></li>
 <li><code><a title="grscheller.datastructures.stacks.FStack.reverse" href="#grscheller.datastructures.stacks.FStack.reverse">reverse</a></code></li>
 <li><code><a title="grscheller.datastructures.stacks.FStack.tail" href="#grscheller.datastructures.stacks.FStack.tail">tail</a></code></li>
 </ul>
