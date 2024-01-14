@@ -1,4 +1,4 @@
-# PyPI grscheller.datastructures - development branch (main)
+# PyPI grscheller.datastructures - release branch (v0.12.0)
 
 Data structures geared to different algorithmic use cases. Supportive
 of both functional and imperative programming styles while endeavoring
