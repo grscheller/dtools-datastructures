@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,15 +36,15 @@
      Python iterators and syntax errors, exceptions are for "exceptional"
      events.
 """
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 __author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
+__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from .array import CLArray
-from .queue import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
-from .stack import Stack, FStack
-from .tup import FTuple
+from .arrays import PArray
+from .queues import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
+from .stacks import Stack, FStack
+from .tuples import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right
 from .core.fp import maybeToEither, eitherToMaybe
 from .core.iterlib import merge, exhaust

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.stack - Stateful & Functional LIFO stacks:
+"""Module grscheller.datastructure.stacks - Stateful & Functional LIFO stacks:
 
    Module implementing a LIFO stacks using singularly linked linear trees of
    nodes. The nodes can be safely shared between different stack instances and
@@ -27,9 +27,11 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
-from .queue import CircularArray
+from itertools import chain
+from .core.iterlib import exhaust, merge
+from .queues import CircularArray
 from .core.nodes import SL_Node as Node
-from .core.fp import FP_rev
+from .core.fp import FP
 
 class StackBase():
     """Abstract base class for the purposes of DRY inheritance of classes
@@ -40,6 +42,8 @@ class StackBase():
     pointing to the same node. Each stack class ensures None values do not
     get pushed onto the the stack.
     """
+    __slots__ = '_head', '_count'
+
     def __init__(self, *ds):
         """Construct a LIFO Stack"""
         self._head = None
@@ -104,7 +108,7 @@ class Stack(StackBase):
     """Class implementing a mutable Last In, First Out (LIFO) stack data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
-
+'
     Stacks are stateful objects, values can be pushed on & popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
@@ -115,6 +119,8 @@ class Stack(StackBase):
 
     None represents the absence of a value and ignored if pushed on a Stack.
     """
+    __slots__ = ()
+
     def __str__(self):
         """Display the data in the Stack, left to right starting at bottom"""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
@@ -163,7 +169,7 @@ class Stack(StackBase):
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
 
-class FStack(StackBase, FP_rev):
+class FStack(StackBase, FP):
     """Class implementing an immutable Last IN, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
@@ -178,8 +184,7 @@ class FStack(StackBase, FP_rev):
 
     None represents the absence of a value and ignored if pushed on an FStack.
     """
-    def __init__(self, *ds):
-        super().__init__(*ds)
+    __slots__ = ()
 
     def __str__(self):
         """Display the data in the FStack, left to right starting at bottom"""
@@ -230,6 +235,22 @@ class FStack(StackBase, FP_rev):
             return fstack
         else:
             return self.copy()
+
+    def map(self, f: Callable[[Any], Any]) -> FStack:
+        """Apply f over the elemrnts of the data structure"""
+        return FStack(*map(f, reversed(self)))
+
+    def flatMap(self, f: Callable[[Any], FStack]) -> FStack:
+        """Monadicly bind f to the data structure sequentially"""
+        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
+
+    def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
+        """Monadicly bind f to the data structure sequentially"""
+        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
+
+    def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
+        """Monadicly bind f to the data structure merging until all exhausted"""
+        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
 
 if __name__ == "__main__":
     pass

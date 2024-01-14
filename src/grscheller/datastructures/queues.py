@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.queue - queue based datastructures
+"""Module grscheller.datastructure.queues - queue based datastructures
 
 Module implementing stateful queue data structures with amortized O(1) pushing and
 popping from the queue. Obtaining length (number of elements) of a queue is an O(1)
@@ -28,6 +28,7 @@ __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
+from .core.fp import FP
 
 class CircularArray:
     """Implements an auto-resizing, indexable, double sided queue data
@@ -37,6 +38,8 @@ class CircularArray:
     is not opinionated regarding None as a value. It freely stores and returns
     None values. Can be use in a boolean context to determine if empty.
     """
+    __slots__ = '_count', '_capacity', '_front', '_rear', '_list'
+
     def __init__(self, *data):
         """Construct a double sided queue"""
         size = len(data)
@@ -164,22 +167,17 @@ class CircularArray:
         """Compact the datastructure as much as possible"""
         match self._count:
             case 0:
-                self._list, self._capacity, self._front, self._rear = \
-                [None]*2,   2,              0,           1
+                self._list, self._capacity, self._front, self._rear = [None]*2, 2, 0, 1
             case 1:
                 data = [self._list[self._front], None]
-
-                self._list, self._capacity, self._front, self._rear = \
-                data,       2,              0,           0
+                self._list, self._capacity, self._front, self._rear = data, 2, 0, 0
             case _:
                 if self._front > self._rear:
                     data  = self._list[self._front:]
                     data += self._list[:self._rear+1]
                 else:
                     data  = self._list[self._front:self._rear+1]
-
-                self._list, self._capacity, self._front, self._rear = \
-                data,       self._count,    0,           self._capacity - 1
+                self._list, self._capacity, self._front, self._rear = data, self._count, 0, self._capacity - 1
 
     def copy(self) -> CircularArray:
         return CircularArray(*self)
@@ -270,6 +268,8 @@ class QueueBase():
     circular array used will resize itself as needed. Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     """
+    __slots__ = '_ca',
+
     def __init__(self, *ds):
         """Construct a queue data structure. Cull None values."""
         self._ca = CircularArray()
@@ -320,10 +320,12 @@ class QueueBase():
         """Reverse the elements in the Queue"""
         self._ca = self._ca.reverse()
 
-class FIFOQueue(QueueBase):
+class FIFOQueue(QueueBase, FP):
     """Stateful single sided FIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return "<< " + " < ".join(map(str, self)) + " <<"
 
@@ -357,10 +359,12 @@ class FIFOQueue(QueueBase):
         else:
             return None
 
-class LIFOQueue(QueueBase):
+class LIFOQueue(QueueBase, FP):
     """Stateful single sided LIFO data structure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return "|| " + " > ".join(map(str, self)) + " ><"
 
@@ -387,10 +391,12 @@ class LIFOQueue(QueueBase):
         else:
             return None
 
-class DoubleQueue(QueueBase):
+class DoubleQueue(QueueBase, FP):
     """Stateful double sided queue datastructure. Will resize itself as needed.
     None represents the absence of a value and ignored if pushed onto a DoubleQueue.
     """
+    __slots__ = ()
+
     def __str__(self):
         return ">< " + " | ".join(map(str, self)) + " ><"
 

@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,24 +17,44 @@
    - class Maybe: Implements the Maybe Monad, also called the Optional Monad
    - class Either: Implements a left biased Either Monad.
    - class FP: default functional implementations for fifo data structure methods
-   - class FP_rev: default functional implementations for lifo data structure methods
 """
 from __future__ import annotations
 
-__all__ = [ 'FP', 'FP_rev',
+__all__ = [ 'FP', 'maybeToEither', 'eitherToMaybe',
             'Either', 'Left', 'Right',
-            'Maybe', 'Some', 'Nothing',
-            'maybeToEither', 'eitherToMaybe' ]
+            'Maybe', 'Some', 'Nothing' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Type
-from itertools import chain
+from functools import reduce
+from itertools import accumulate, chain
+import operator
 from .iterlib import exhaust, merge
 
 class FP():
-    """Default functional implentations for FIFO data structures"""
+    """Default functional implentations for data structures"""
+    __slots__ = ()
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """FoldLeft with optional inital value"""
+        if initial is None:
+            return reduce(f, self)
+        else:
+            return reduce(f, self, initial)
+
+    def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -> type[FP]:
+        """Accummulate partial fold results in same type data structure"""
+        if f is None:
+            f = operator.add
+        if initial is None:
+            return type(self)(*accumulate(self, f))
+        else:
+            return type(self)(*accumulate(chain((initial,), self), f))
+
+    # Default implentations for FIFO data structures - see stacks module LIFO examples
+
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
         """Apply f over the elemrnts of the data structure"""
         return type(self)(*map(f, self))
@@ -50,25 +70,7 @@ class FP():
     def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
         """Monadicly bind f to the data structure merging until all exhausted"""
         return type(self)(*exhaust(*map(iter, map(f, self))))
-
-class FP_rev():
-    """Default functional implentations for LIFO data structures"""
-    def map(self, f: Callable[[Any], Any]) -> type[FP_rev]:
-        """Apply f over the elemrnts of the data structure"""
-        return type(self)(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
-        """Monadicly bind f to the data structure sequentially"""
-        return type(self)(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], type[FP_rev]]) -> type[FP_rev]:
-        """Monadicly bind f to the data structure sequentially"""
-        return type(self)(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], type[FP]]) -> type[FP_rev]:
-        """Monadicly bind f to the data structure merging until all exhausted"""
-        return type(self)(*exhaust(*map(reversed, map(f, reversed(self)))))
-
+    
 class Maybe(FP):
     """Class representing a potentially missing value.
 
@@ -81,6 +83,8 @@ class Maybe(FP):
     - Semantically None represent non-existance
     - None only has any real existance as an implementration detail
     """
+    __slots__ = '_value',
+
     def __init__(self, value: Any=None):
         self._value = value
 
@@ -151,6 +155,8 @@ class Either(FP):
     - If altValue not given, set it to the empty string
     - Immutable semantics - map & flatMap return modified copies
     """
+    __slots__ = '_value', '_isLeft'
+
     def __init__(self, left: Any=None, right: Any=None):
         if right is None:
             right = ''

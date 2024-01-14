@@ -9,7 +9,7 @@
   * main branch will be the development branch
     * will attempt to keep relatively stable, but
     * may not be fully tested
-  * release branch will be the only software development tracking branch
+  * release branch will be used to cut PyPI releases
     * will either be the current PyPI release, or
     * will be used to prepare the next PyPI release canidate
   * feature branches begin with "feature_" and are places to
@@ -19,18 +19,29 @@
 * Semantic versioning for PyPI releases:
   * first digit signifies a major event, epoch, or paradigm shift
   * second digit means
-    * breaking API changes
-    * major changes
+    * PyPI breaking API changes
+    * PyPI major changes
   * third digit either means
-    * API additions
-    * bugfixes or minor changes
-    * documentation updates
-  * forth digit (develoment, feature & early PyPI releases only)
-    * commit count
+    * PyPI API additions
+    * PyPI bugfixes or minor changes
+    * PyPI documentation updates
+    * first development branch breaking API changes
+  * forth digit develoment, feature branches & early PyPI releases)
+    * development git commit count
     * development environment thrashing
     * not to be taken too seriously
 
 ## Versions - PyPI releases begin with "v"
+
+### version v0.12.0 - PyPI Release date 2024-01-14
+
+* Considerable future-proofing for first real Beta release
+
+### version 0.11.3.4 - Finally decided to make next PyPI release Beta
+
+* Package structure mature and not subject to change beyond additions
+* Will endeavor to keep top level & core module names the same
+* API changes will be deprecated before removed
 
 ### Version v0.11.0 - PyPI Release date 2023-12-20
 
@@ -53,7 +64,7 @@
     * will not make Maybe Nothing a singleton
     * last touched CLArray refactor
     * improve CLArray test coverage
-  * things for future PYPI releases
+  * Things for future PYPI releases
     * inherit FTuple from Tuple (use __new__) for performance boost
     * hold off using __slots__ until I understand them better
 
@@ -63,8 +74,8 @@
   * will cut next PyPI release with Flit from this branch
   * removed docs direrctoy before merge (docs/ will be main only)
   * things to add in main before next release
-    * Make Maybe Nothing a singleton (use __new__)
-    * Derive FTuple from Tuple (use __new__) for performance boost
+    * make Maybe Nothing a singleton (use __new__)
+    * derive FTuple from Tuple (use __new__) for performance boost
     * simplify CLArray to use a Queue instead of CircularArray & iterator
     * start using __slots__ for performance boost to data structures
       * efficiency trumps extensibility
