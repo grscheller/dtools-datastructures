@@ -33,6 +33,10 @@
 
 ## Versions - PyPI releases begin with "v"
 
+### version v0.12.0 - PyPI Release date 2024-01-14
+
+* Considerable future-proofing for first real Beta release
+
 ### version 0.11.3.4 - Finally decided to make next PyPI release Beta
 
 * Package structure mature and not subject to change beyond additions
