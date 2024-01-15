@@ -65,3 +65,11 @@ class TestFTuple:
         ft4_rev = ft4.reverse()
         assert ft4 != ft4_rev
         assert ft4[-1] == ft4_rev[0]
+
+        ft5 = FTuple(1, 2, 3)
+        assert ft5.reverse() == FTuple(3, 2, 1)
+        ft6 = ft5.reverse()
+        assert ft5 is not ft6
+        assert ft5 == FTuple(1, 2, 3)
+        assert ft6 == FTuple(3, 2, 1)
+        assert ft5 == ft5.reverse().reverse()

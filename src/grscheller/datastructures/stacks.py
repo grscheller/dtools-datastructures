@@ -198,7 +198,7 @@ class FStack(StackBase, FP):
         return fstack
 
     def reverse(self) -> FStack:
-        return FStack(reversed(self))
+        return FStack(*self)
 
     def head(self, default: Any=None) -> Any:
         """Returns the data at the top of the FStack. Does not consume the data.

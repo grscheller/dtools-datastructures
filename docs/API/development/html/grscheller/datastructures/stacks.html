@@ -230,7 +230,7 @@ class FStack(StackBase, FP):
         return fstack
 
     def reverse(self) -&gt; FStack:
-        return FStack(reversed(self))
+        return FStack(*self)
 
     def head(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
@@ -345,7 +345,7 @@ tail, length, copying and creating a new Fstack with cons are all O(1) operation
         return fstack
 
     def reverse(self) -&gt; FStack:
-        return FStack(reversed(self))
+        return FStack(*self)
 
     def head(self, default: Any=None) -&gt; Any:
         &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
@@ -491,7 +491,7 @@ If the FStack is empty, head does not exist so in that case return default.</p><
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; FStack:
-    return FStack(reversed(self))</code></pre>
+    return FStack(*self)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.stacks.FStack.tail"><code class="name flex">
