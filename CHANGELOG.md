@@ -33,6 +33,11 @@
 
 ## Versions - PyPI releases begin with "v"
 
+### version v0.12.1 - PyPI Release date 2024-01-15
+
+* BUG FIX: FStack reverse() method
+* added more tests
+
 ### version v0.12.0 - PyPI Release date 2024-01-14
 
 * Considerable future-proofing for first real Beta release
