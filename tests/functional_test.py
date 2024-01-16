@@ -151,7 +151,7 @@ class TestEither:
         assert e5 != e7
         assert e7 == e7
 
-    def either_test_right(self):
+    def test_either_right(self):
         def noMoreThan5(x: int) -> int|None:
             if x <= 5:
                 return x
@@ -165,5 +165,62 @@ class TestEither:
         assert s1 == Left(3)
         assert s2 == Left(3)
         assert s4 == Right('more than 5')
+        assert s1.getRight() == None
+        assert s2.getRight() == None
+        assert s3.getRight() == None
+        assert s4.getRight() == 'more than 5'
         assert s1.get('nothing doing') == 3
-        assert s3.get('nothing doing') == 'nothing doing'
+        assert s3.get('nothing doing') == 42
+        assert s4.get('nothing doing') == 'nothing doing'
+        assert s4.getRight() == 'more than 5'
+
+    def test_reduce_maybe(self):
+        mb21 = Some(21)
+        mbNot = Some()
+        val21 = mb21.reduce(lambda x, y: x*y)
+        val42 = mb21.reduce(lambda x, y: x*y, 2)
+        valNot = mbNot.reduce(lambda x, y: y//x)
+        val3 = mbNot.reduce(lambda x, y: y//x, 3)
+        val7 = mb21.reduce(lambda x, y: y//x, 3)
+        assert val21 == 21
+        assert val42 == 42
+        assert valNot == None
+        assert val3 == 3
+        assert val7 == 7
+
+    def test_accummulate_maybe(self):
+        mb21 = Some(21)
+        mbNot = Some()
+        ph21 = mb21.accummulate()
+        ph7 = mb21.accummulate(lambda x, y: y//x, 3)
+        phNot = mbNot.accummulate()
+        ph3 = mbNot.accummulate(lambda x, y: y//x, 3)
+        assert ph21 == Some(21)
+        assert ph7 == Some(7)
+        assert phNot == Nothing
+        assert ph3 == Some(3)
+
+    def test_reduce_either(self):
+        lt42 = Left(42)
+        lt13 = Left(13)
+        rtNotInt = Right('Not an int')
+        val42 = lt42.reduce(lambda x, y: x*y)
+        val21 = lt42.reduce(lambda x, y: y//x, 2)
+        valNotInt = rtNotInt.reduce(lambda x, y: y//x)
+        valAlsoNotInt = rtNotInt.reduce(lambda x, y: y//x, 3)
+        assert val42 == 42
+        assert val21 == 21
+        assert valNotInt == None
+        assert valAlsoNotInt == None
+
+  #  def test_accummulate_either(self):
+  #      mb21 = Some(21)
+  #      mbNot = Some()
+  #      ph21 = mb21.accummulate()
+  #      ph7 = mb21.accummulate(lambda x, y: y//x, 3)
+  #      phNot = mbNot.accummulate()
+  #      ph3 = mbNot.accummulate(lambda x, y: y//x, 3)
+  #      assert ph21 == Some(21)
+  #      assert ph7 == Some(7)
+  #      assert phNot == Nothing
+  #      assert ph3 == Some(3)

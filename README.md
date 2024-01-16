@@ -23,6 +23,7 @@ The data structures in this package:
 * Don't force exception driven code paths upon client code. Except for
   Python iterators and syntax errors, exceptions are for "exceptional"
   events.
+* Purity is important, but not at the expense of practicality.
 
 Sometimes the real power of a data structure comes not from what
 it empowers you to do, but from what it prevents you from doing
@@ -44,7 +45,8 @@ to yourself.
 #### None as "non-existence"
 
 As a design choice, Python `None` is semantically used by this package
-to indicate the absence of a value.
+to indicate the absence of a value. It is used as an implementation
+detail.
 
 How does one store a "non-existent" value in a very real data structure?
 Granted, implemented in CPython as a C language data structure, the
@@ -53,7 +55,8 @@ existence to it. Unless specifically documented otherwise, `None` values
 are not stored to these data structures as data.
 
 `Maybe` & `Either` objects are provided in the functional sub-package as
-better ways to handle "missing" data.
+better ways to handle "missing" data. The emply tuple, `()` is a far
+better sentital value since unlike `None` it is iterable.
 
 #### Methods which mutate objects don't return anything.
 
