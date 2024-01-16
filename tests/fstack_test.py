@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -176,6 +176,22 @@ class Test_FStack:
             assert s2.head() == lf.pop()
             s2 = s2.tail()
         assert len(s2) == 0
+
+    def test_reverse(self):
+        fs1 = FStack(1, 2, 3, 'foo', 'bar')
+        fs2 = FStack('bar', 'foo', 3, 2, 1)
+        assert fs1 == fs2.reverse()
+        assert fs1 == fs1.reverse().reverse()
+        assert fs1.head(42) != fs2.head(42)
+        assert fs1.head() == fs2.reverse().head(42)
+
+        fs3 = FStack(1, 2, 3)
+        assert fs3.reverse() == FStack(3, 2, 1)
+        fs4 = fs3.reverse()
+        assert fs3 is not fs4
+        assert fs3 == FStack(1, 2, 3)
+        assert fs4 == FStack(3, 2, 1)
+        assert fs3 == fs3.reverse().reverse()
 
     def test_map(self):
         s1 = FStack(1,2,3,4,5)

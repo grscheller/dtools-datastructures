@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -167,3 +167,30 @@ class TestStack:
         s2 = Stack(*lf)
         while s2:
             assert s2.pop() == lf.pop()
+
+    def test_reverse(self):
+        st1 = Stack(1, 2, 3, 'foo', 'bar')
+        st2 = Stack('bar', 'foo', 3, 2, 1)
+        assert st1 != st2
+        st2.reverse()
+        assert st1 == st2
+        assert st1.peak() == st2.peak()
+        st2.reverse()
+        assert st1.peak() != st2.peak()
+        assert st1.peak() != None
+        assert st2.peak() != None
+
+        st3 = Stack(1, 2, 3)
+        st3.reverse()
+        assert st3 == Stack(3, 2, 1)
+        st4 = st3
+        assert st3 is st4
+        assert st3 == st4
+        st4 = Stack(3, 2, 1)
+        assert st3 is not st4
+        assert st3 == st4
+        st4.reverse()
+        st4 != st3
+        st3.reverse()
+        st4 == st3
+

@@ -24,11 +24,10 @@ __all__ = [ 'FP', 'maybeToEither', 'eitherToMaybe',
             'Either', 'Left', 'Right',
             'Maybe', 'Some', 'Nothing' ]
 __author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
+__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable, Type
-from functools import reduce
 from itertools import accumulate, chain
 import operator
 from .iterlib import exhaust, merge
@@ -38,11 +37,20 @@ class FP():
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """FoldLeft with optional inital value"""
+        """Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None."""
         if initial is None:
-            return reduce(f, self)
+            if not self:
+                return None
+            vs = iter(self)
         else:
-            return reduce(f, self, initial)
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
 
     def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -> type[FP]:
         """Accummulate partial fold results in same type data structure"""

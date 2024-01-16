@@ -58,11 +58,10 @@ __all__ = [ &#39;FP&#39;, &#39;maybeToEither&#39;, &#39;eitherToMaybe&#39;,
             &#39;Either&#39;, &#39;Left&#39;, &#39;Right&#39;,
             &#39;Maybe&#39;, &#39;Some&#39;, &#39;Nothing&#39; ]
 __author__ = &#34;Geoffrey R. Scheller&#34;
-__copyright__ = &#34;Copyright (c) 2023 Geoffrey R. Scheller&#34;
+__copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Appache License 2.0&#34;
 
 from typing import Any, Callable, Type
-from functools import reduce
 from itertools import accumulate, chain
 import operator
 from .iterlib import exhaust, merge
@@ -72,11 +71,20 @@ class FP():
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+        &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None.&#34;&#34;&#34;
         if initial is None:
-            return reduce(f, self)
+            if not self:
+                return None
+            vs = iter(self)
         else:
-            return reduce(f, self, initial)
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
 
     def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -&gt; type[FP]:
         &#34;&#34;&#34;Accummulate partial fold results in same type data structure&#34;&#34;&#34;
@@ -617,11 +625,20 @@ returns a Nothing.</p></div>
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+        &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None.&#34;&#34;&#34;
         if initial is None:
-            return reduce(f, self)
+            if not self:
+                return None
+            vs = iter(self)
         else:
-            return reduce(f, self, initial)
+            vs = chain((initial,), self)
+
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
 
     def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -&gt; type[FP]:
         &#34;&#34;&#34;Accummulate partial fold results in same type data structure&#34;&#34;&#34;
@@ -742,17 +759,27 @@ returns a Nothing.</p></div>
 <span>def <span class="ident">reduce</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>FoldLeft with optional inital value</p></div>
+<div class="desc"><p>Fold with an optional initial value. If an initial value is not
+given and the datastructure is empty, return None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-    &#34;&#34;&#34;FoldLeft with optional inital value&#34;&#34;&#34;
+    &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+    given and the datastructure is empty, return None.&#34;&#34;&#34;
     if initial is None:
-        return reduce(f, self)
+        if not self:
+            return None
+        vs = iter(self)
     else:
-        return reduce(f, self, initial)</code></pre>
+        vs = chain((initial,), self)
+
+    value = next(vs)
+    for v in vs:
+        value = f(value, v)
+
+    return value</code></pre>
 </details>
 </dd>
 </dl>

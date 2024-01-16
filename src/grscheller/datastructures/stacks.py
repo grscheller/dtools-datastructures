@@ -1,4 +1,4 @@
-# Copyright 2023 Geoffrey R. Scheller
+# Copyright 2023-2024 Geoffrey R. Scheller
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from __future__ import annotations
 
 __all__ = ['Stack', 'FStack']
 __author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
+__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
@@ -108,7 +108,7 @@ class Stack(StackBase):
     """Class implementing a mutable Last In, First Out (LIFO) stack data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
-'
+
     Stacks are stateful objects, values can be pushed on & popped off.
 
     A Stack points to either the top node in the list, or to None which indicates
@@ -133,7 +133,7 @@ class Stack(StackBase):
 
     def reverse(self) -> None:
         """Return shallow copy of a Stack in O(1) time & space complexity"""
-        stack = Stack(reversed(self))
+        stack = Stack(*self)
         self._head, self._count = stack._head, stack._count
 
     def push(self, *ds: Any) -> None:
