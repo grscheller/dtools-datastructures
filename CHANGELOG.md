@@ -65,7 +65,7 @@
   * probably will change its name before the next PyPI Release
     * perhaps to "ProcessArray" or "PArray"
 * Keeping this release an Alpha version
-  * mostly due for freedom to rename and restructure the package
+  * mostly for the freedom to rename and restructure the package
 
 ### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
 
