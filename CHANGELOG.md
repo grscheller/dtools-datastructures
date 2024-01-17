@@ -1,37 +1,6 @@
 # Changelog: grscheller.datastrucures
 
-## Overview
-
-* Single Maintainer PyPI Package - software is a Beta release
-* PyPI releases are tagged with a leading "v" on GitHub
-* Rolling Release Model
-  * maintainer will not back port bug fixes to previous versions
-  * main branch will be the development branch
-    * will attempt to keep relatively stable, but
-    * may not be fully tested
-  * release branch will be used to cut PyPI releases
-    * will either be the current PyPI release, or
-    * will be used to prepare the next PyPI release canidate
-  * feature branches begin with "feature_" and are places to
-    * explore new directions
-    * commit potentially very broken code
-    * could be deleted from GitHub anytime WITHOUT WARNING
-* Semantic versioning for PyPI releases:
-  * first digit signifies a major event, epoch, or paradigm shift
-  * second digit means
-    * PyPI breaking API changes
-    * PyPI major changes
-  * third digit either means
-    * PyPI API additions
-    * PyPI bugfixes or minor changes
-    * PyPI documentation updates
-    * first development branch breaking API changes
-  * forth digit develoment, feature branches & early PyPI releases)
-    * development git commit count
-    * development environment thrashing
-    * not to be taken too seriously
-
-## Versions - PyPI releases begin with "v"
+PyPI releases begin with "v"
 
 ### version v0.12.2 - PyPI Release date 2024-01-17
 

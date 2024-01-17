@@ -24,21 +24,10 @@ The data structures in this package:
   Python iterators and syntax errors, exceptions are for "exceptional"
   events.
 * Purity is important, but not at the expense of practicality.
-
-Sometimes the real power of a data structure comes not from what
-it empowers you to do, but from what it prevents you from doing
-to yourself.
-
-### Package overview grscheller.datastructures
-
-* [Data Structures][1]
-* [Functional Programming Module][2]
-* [Iterator Library Module][3]
-* [Circular Array Module][4]
-
-### Detailed API for grscheller.datastructures package
-
-* [Detailed grscheller.datastructures API's][5]
+* Sometimes the real power of a data structure comes not from what
+  it empowers you to do, but from what it prevents you from doing
+  to yourself.
+* [grscheller.datastructures API documentation][1]
 
 ### Design choices
 
@@ -73,16 +62,25 @@ While slated for Python 3.13, type annotations work now for Python 3.11
 by including *annotations* from `__future__`.
 
 The best current information I have found so far on type annotations is
-in the Python documentation [here][6]. The PyPI pdoc3 package generates
+in the Python documentation [here][2]. The PyPI pdoc3 package generates
 documentation based on annotations, docstrings, syntax tree, and other
-special comment strings. See pdoc3 documentation [here][7].
+special comment strings. See pdoc3 documentation [here][3].
+
+#### Semantic Versioning
+
+* Semantic versioning for PyPI releases:
+  * first digit signifies a major event, epoch, or paradigm shift
+  * second digit means
+    * PyPI breaking API changes
+    * PyPI major changes
+  * third digit either means
+    * PyPI API additions
+    * PyPI bugfixes or minor changes
+    * PyPI documentation updates
+    * first development branch breaking API changes
 
 ---
 
-[1]: README.d/datastructures.md
-[2]: README.d/fp.md
-[3]: README.d/iterlib.md
-[4]: README.d/circulararray.md
-[5]: https://grscheller.github.io/datastructures/
-[6]: https://docs.python.org/3.13/library/typing.html
-[7]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
+[1]: https://grscheller.github.io/datastructures/
+[2]: https://docs.python.org/3.13/library/typing.html
+[3]: https://pdoc3.github.io/pdoc/doc/pdoc/#gsc.tab=0
