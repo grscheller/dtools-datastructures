@@ -1,8 +1,8 @@
-# Changelog: grscheller.datastrucures
+# grscheller.datastrucures changelog
 
-PyPI releases begin with "v"
+PyPI releases begin with a `v`.
 
-### version v0.12.2 - PyPI Release date 2024-01-17
+## Version v0.12.2 - PyPI Release date 2024-01-17
 
 * designing sensible reduce & accumulate overrides for Maybe & Either
   * default implementations were not that useful
@@ -13,22 +13,22 @@ PyPI releases begin with "v"
   * more Stack tests
 * many more FP tests
 
-### version v0.12.1 - PyPI Release date 2024-01-15
+## Version v0.12.1 - PyPI Release date 2024-01-15
 
 * BUG FIX: FStack reverse() method
 * added more tests
 
-### version v0.12.0 - PyPI Release date 2024-01-14
+## Version v0.12.0 - PyPI Release date 2024-01-14
 
 * Considerable future-proofing for first real Beta release
 
-### version 0.11.3.4 - Finally decided to make next PyPI release Beta
+## Version 0.11.3.4 - Finally decided to make next PyPI release Beta
 
 * Package structure mature and not subject to change beyond additions
 * Will endeavor to keep top level & core module names the same
 * API changes will be deprecated before removed
 
-### Version v0.11.0 - PyPI Release date 2023-12-20
+## Version v0.11.0 - PyPI Release date 2023-12-20
 
 * A lot of work done on class CLArray
   * probably will change its name before the next PyPI Release
@@ -36,7 +36,7 @@ PyPI releases begin with "v"
 * Keeping this release an Alpha version
   * mostly for the freedom to rename and restructure the package
 
-### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
+## Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
 
 * Second release candidate - probably will become next PyPI release
   * main now development branch, release will be release branch
@@ -53,7 +53,7 @@ PyPI releases begin with "v"
     * inherit FTuple from Tuple (use __new__) for performance boost
     * hold off using __slots__ until I understand them better
 
-### Version 0.10.14.2 (0.11.0-RC1) - 2023-12-11
+## Version 0.10.14.2 (0.11.0-RC1) - 2023-12-11
 
 * First release candidate - unlikely this will be the next PyPI release
   * will cut next PyPI release with Flit from main branch
@@ -68,7 +68,7 @@ PyPI releases begin with "v"
       * smalled size & quicker method/attribute lookups
       * big difference when dealing with huge number of data structures
 
-### Version 0.10.14.0 - commit date 2023-12-09
+## Version 0.10.14.0 - commit date 2023-12-09
 
 * Finished massive renaming & repackaging effort
   * to help with future growth in future
@@ -86,7 +86,7 @@ PyPI releases begin with "v"
     * tuplelike
       * FTuple
 
-### Version 0.10.11.0 - commit date 2023-11-27
+## Version 0.10.11.0 - commit date 2023-11-27
 
 * Created new datastructures class CLArray
   * more imperitive version of FCLArray
@@ -99,7 +99,7 @@ PyPI releases begin with "v"
   * TODO: does not yet handle StopIteration events properly
 * made package more overall "atomic"
 
-### Version 0.10.10.0 - commit date 2023-11-26
+## Version 0.10.10.0 - commit date 2023-11-26
 
 * More or less finalized FCLArray API
   * finished overriding default flatMap, mergeMap & exhaustMap from FP
@@ -108,9 +108,9 @@ PyPI releases begin with "v"
     * hopefully find a use for it
   * considering a simplier CLArray version
 
-### Version v0.10.9 - PyPI release date 2023-11-21
+## Version v0.10.9 - PyPI release date 2023-11-21
 
-### Version 0.10.8.0 - commit date 2023-11-18
+## Version 0.10.8.0 - commit date 2023-11-18
 
 * Bumping requires-python = ">=3.11" in pyproject.toml
   * Currently developing & testing on Python 3.11.5
@@ -119,7 +119,7 @@ PyPI releases begin with "v"
     * tests pass but are 4X slower
     * LSP almost useless due to more primative typing module
 
-### Version 0.10.7.0 - commit date 2023-11-18
+## Version 0.10.7.0 - commit date 2023-11-18
 
 * Overhauled __repr__ & __str__ methods for all classes
   * tests that ds == eval(repr(ds)) fo all data structures ds in package
@@ -131,14 +131,14 @@ PyPI releases begin with "v"
     * make an immutable version too?
 * Updated markdown overview documentation
 
-### Version 0.10.1.0 - commit date 2023-11-11
+## Version 0.10.1.0 - commit date 2023-11-11
 
 * Removed flatMap methods from stateful objects
   * FLArray, DQueue, SQueue, PStack
   * kepted the map method for each
 * some restructuring so package will scale better in the future
 
-### Version v0.9.1 - PyPI release date: 2023-11-09
+## Version v0.9.1 - PyPI release date: 2023-11-09
 
 * First Beta release of grscheller.datastructures on PyPI
 * Infrastructure stable
@@ -154,7 +154,7 @@ PyPI releases begin with "v"
   * Monad transformers???
   * Need to use this package in other projects to gain insight
 
-### Version v0.8.6.0 - PyPI release date: 2023-11-05
+## Version v0.8.6.0 - PyPI release date: 2023-11-05
 
 * Finally got queue.py & stack.py inheritance sorted out
 * LSP with Pyright working quite well
@@ -164,13 +164,13 @@ PyPI releases begin with "v"
     * cons and consOr
     * head and headOr
 
-### Version 0.8.4.0 - commit date 2023-11-03
+## Version 0.8.4.0 - commit date 2023-11-03
 
 * new data structure FTuple added
   * wrapped tuple with a FP interface
   * initial minimal viable product
 
-### Version 0.8.3.0 - commit date 2023-11-02
+## Version 0.8.3.0 - commit date 2023-11-02
 
 * major API breaking change
   * now two versions of Stack class
@@ -180,7 +180,7 @@ PyPI releases begin with "v"
   * FLarray renamed FLArray
 * tests now work
 
-### Version 0.8.0.0 - commit date 2023-10-28
+## Version 0.8.0.0 - commit date 2023-10-28
 
 * API breaking changes
   * did not find everything returning self upon mutation
@@ -188,28 +188,28 @@ PyPI releases begin with "v"
   * decided to use pdoc3 over sphinx to generate API documentation
   * need to resolve tension of package being Pythonic and Functional
 
-### Version 0.7.5.0 - commit date 2023-10-26
+## Version 0.7.5.0 - commit date 2023-10-26
 
 * moved pytest testsuite to root of the repo
   * src/grscheller/datastrucures/tests -> tests/
   * seems to be the canonical location of a testsuite
 * instructions to run testsuite in tests/__init__.py
 
-### Version v0.7.4.0 - PyPI release date: 2023-10-25
+## Version v0.7.4.0 - PyPI release date: 2023-10-25
 
 * More mature
 * More Pythonic
 * Major API changes
 * Still tagging it an Alpha release
 
-### Version 0.7.2.0 - commit date 2023-10-18
+## Version 0.7.2.0 - commit date 2023-10-18
 
 * Queue & Dqueue no longer return Maybe objects
   * Neither store None as a value
   * Now safe to return None for non-existent values
     * like popping or peaking from an empty queue or dqueue
 
-### Version 0.7.0.0 - commit date 2023-10-16
+## Version 0.7.0.0 - commit date 2023-10-16
 
 * added Queue data structure repreenting a FIFO queue
 * renamed two Dqueue methods
@@ -224,7 +224,7 @@ PyPI releases begin with "v"
     * objects "contain" their data -> FP methods mutate object
   * added info on class Queue
 
-### Version v0.6.9.0 - PyPI release date: 2023-10-09
+## Version v0.6.9.0 - PyPI release date: 2023-10-09
 
 * deprecated Stack head() method
   * replaced with peak() method
@@ -242,7 +242,7 @@ PyPI releases begin with "v"
   * Stack now implements map, flatMap, mergeMap methods
     * each returns a new Stack instance, with new nodes
 
-### Version 0.6.8.6 - commit date: 2023-10-08
+## Version 0.6.8.6 - commit date: 2023-10-08
 
 * 3 new methods for class Circle and Dqueue
   * mapSelf, flatMapSelf, mergeMapSelf
@@ -257,7 +257,7 @@ PyPI releases begin with "v"
     * one returning new instances
     * the other modifying the object in place
 
-### Version 0.6.8.3 - commit date: 2023-10-06
+## Version 0.6.8.3 - commit date: 2023-10-06
 
 * Stack now works with Python Reversed builtin function
   * using a __reversed__ method which is O(n)
@@ -277,7 +277,7 @@ PyPI releases begin with "v"
 * Ensured that None is never pushed to Stack & Dqueue objects
 
 
-### Version 0.6.4.1 - commit date: 2023-10-01
+## Version 0.6.4.1 - commit date: 2023-10-01
 
 * Initial prototypes for map and flatMap for Dqueue class
 * Started grscheller.datastructures.core module
@@ -289,7 +289,7 @@ PyPI releases begin with "v"
     * mapIter - lazily map a function over an iterator stream
 * Decided to keep Alpha for next PyPI release
 
-### Version 0.6.3.2 - commit date: 2023-09-30
+## Version 0.6.3.2 - commit date: 2023-09-30
 
 * Made functional module into a sub package of datastructures
 * Improved comments and type annotations
@@ -299,26 +299,26 @@ PyPI releases begin with "v"
   * Want to make next PyPI release a Beta release
   * Need to improve test suite first
 
-### Version 0.6.2.0 - commit date: 2023-09-25
+## Version 0.6.2.0 - commit date: 2023-09-25
 
 * Started work on a Left biased Either Monad
 * removed isEmpty method from Stack class
 
-### Version 0.6.1.0 - commit date: 2023-09-25
+## Version 0.6.1.0 - commit date: 2023-09-25
 
 * Maybe get() and getOrElse() API changes
 * getting a better handle on type annotation
   * work-in-progress
   * erroneous LSP error messages greatly reduced
 
-### Version v0.5.2.1 - PyPI release date: 2023-09-24
+## Version v0.5.2.1 - PyPI release date: 2023-09-24
 
 * data structures now support a much more FP style for Python
   * implemented Maybe monad
   * introduces the use of type annotations for this effort
   * much better test coverage
 
-### Version 0.5.0.0 - commit date: 2023-09-20
+## Version 0.5.0.0 - commit date: 2023-09-20
 
 * begin work on a more functional approach
   * create a monadic Option class
@@ -333,7 +333,7 @@ PyPI releases begin with "v"
     * more fun implementing it myself
       * then being dissatified with someone else's design
 
-### Version 0.4.0.0 - commit date: 2023-09-11
+## Version 0.4.0.0 - commit date: 2023-09-11
 
 * subtle paradigm shift for Stack class
   * empty Stacks no longer returned for nonexistent stacks
@@ -342,14 +342,14 @@ PyPI releases begin with "v"
   * Stack & _StackNONE classes inherit from _StackBase
   * still working out the API
 
-### Version v0.3.0.2 - PyPI release date: 2023-09-09
+## Version v0.3.0.2 - PyPI release date: 2023-09-09
 
 * updated class Dqueue
   * added __eq__ method
   * added equality tests to tests/test_dqueue.py
 * improved docstrings
 
-### Version 0.2.3.0 - commit date: 2023-09-06
+## Version 0.2.3.0 - commit date: 2023-09-06
 
 * added __eq__ method to Stack class
 * added some preliminary tests
@@ -357,7 +357,7 @@ PyPI releases begin with "v"
 * worst case O(n)
   * will short circuit fast if possible
 
-### Version v0.2.2.2 - PyPI release date: 2023-09-04
+## Version v0.2.2.2 - PyPI release date: 2023-09-04
 
 * decided base package should have no dependencies other than
   * Python version (>=2.10 due to use of Python match statement)
@@ -367,7 +367,7 @@ PyPI releases begin with "v"
   * https://packaging.python.org/en/latest/tutorials/packaging-projects/
   * could not do the same for tests/ if end users are to have access
 
-### Version v0.2.1.0 - PyPI release date: 2023-09-03
+## Version v0.2.1.0 - PyPI release date: 2023-09-03
 
 * first Version uploaded to PyPI
 * https://pypi.org/project/grscheller.datastructures/
@@ -384,16 +384,16 @@ PyPI releases begin with "v"
       * giving "package not found" errors
     * for CI/CD pipelines requiring unit testing
 
-### Version 0.2.0.2 - github only release date: 2023-08-29
+## Version 0.2.0.2 - github only release date: 2023-08-29
 
 * First version able to be installed from GitHub with pip
 * $ pip install git+https://github.com/grscheller/datastructures@v0.2.0.2
 
-### Version 0.2.0.1 - commit date: 2023-08-29
+## Version 0.2.0.1 - commit date: 2023-08-29
 
 * First failed attempt to make package installable from GitHub with pip
 
-### Version 0.2.0.0 - commit date: 2023-08-29
+## Version 0.2.0.0 - commit date: 2023-08-29
 
 * BREAKING API CHANGE!!!
 * Stack push method now returns reference to self
@@ -403,13 +403,13 @@ PyPI releases begin with "v"
 * Updated tests - before making API changes
 * First version to be "released" on GitHub
 
-### Version 0.1.1.0 - commit date: 2023-08-27
+## Version 0.1.1.0 - commit date: 2023-08-27
 
 * grscheller.datastructures moved to its own GitHub repo
 * https://github.com/grscheller/datastructures
   * GitHub and PyPI user names just a happy coincidence
 
-### Version 0.1.0.0 - initial version: 2023-08-27
+## Version 0.1.0.0 - initial version: 2023-08-27
 
 * Package implementing data structures which do not throw exceptions
 * Did not push to PyPI until version 0.2.1.0

@@ -4,6 +4,8 @@ Data structures geared to different algorithmic use cases. Supportive
 of both functional and imperative programming styles while endeavoring
 to remain Pythonic.
 
+* [grscheller.datastructures API documentation][1]
+
 ## Overview
 
 The data structures in this package:
@@ -27,7 +29,6 @@ The data structures in this package:
 * Sometimes the real power of a data structure comes not from what
   it empowers you to do, but from what it prevents you from doing
   to yourself.
-* [grscheller.datastructures API documentation][1]
 
 ### Design choices
 
@@ -66,7 +67,7 @@ in the Python documentation [here][2]. The PyPI pdoc3 package generates
 documentation based on annotations, docstrings, syntax tree, and other
 special comment strings. See pdoc3 documentation [here][3].
 
-#### Semantic Versioning
+### Semantic Versioning
 
 * Semantic versioning for PyPI releases:
   * first digit signifies a major event, epoch, or paradigm shift
