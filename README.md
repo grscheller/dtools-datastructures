@@ -1,4 +1,4 @@
-# PyPI grscheller.datastructures - development branch (main)
+# PyPI grscheller.datastructures
 
 Data structures geared to different algorithmic use cases. Supportive
 of both functional and imperative programming styles while endeavoring

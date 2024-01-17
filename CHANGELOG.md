@@ -2,7 +2,7 @@
 
 ## Overview
 
-* Single Maintainer PyPI Package - software is a Beta release 
+* Single Maintainer PyPI Package - software is a Beta release
 * PyPI releases are tagged with a leading "v" on GitHub
 * Rolling Release Model
   * maintainer will not back port bug fixes to previous versions
@@ -33,6 +33,17 @@
 
 ## Versions - PyPI releases begin with "v"
 
+### version v0.12.2 - PyPI Release date 2024-01-17
+
+* designing sensible reduce & accumulate overrides for Maybe & Either
+  * default implementations were not that useful
+  * taking their behavior as bugs and not API changes
+  * more tests for accumulate & reduce
+* fixed Stack reverse() method
+  * should have caught this when I fixed FStack on last PyPI release
+  * more Stack tests
+* many more FP tests
+
 ### version v0.12.1 - PyPI Release date 2024-01-15
 
 * BUG FIX: FStack reverse() method
@@ -54,7 +65,7 @@
   * probably will change its name before the next PyPI Release
     * perhaps to "ProcessArray" or "PArray"
 * Keeping this release an Alpha version
-  * mostly due for freedom to rename and restructure the package 
+  * mostly due for freedom to rename and restructure the package
 
 ### Version 0.10.17.0+ (0.11.0-RC2) - 2023-12-17
 
@@ -175,7 +186,7 @@
   * Need to use this package in other projects to gain insight
 
 ### Version v0.8.6.0 - PyPI release date: 2023-11-05
-    
+
 * Finally got queue.py & stack.py inheritance sorted out
 * LSP with Pyright working quite well
 * Goals for next PyPI release:
@@ -216,7 +227,7 @@
 * instructions to run testsuite in tests/__init__.py
 
 ### Version v0.7.4.0 - PyPI release date: 2023-10-25
-    
+
 * More mature
 * More Pythonic
 * Major API changes

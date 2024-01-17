@@ -14,6 +14,7 @@
 
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
+from grscheller.datastructures.core.fp import maybeToEither, eitherToMaybe
 
 def add2(x):
     return x + 2
@@ -179,14 +180,14 @@ class TestEither:
         mbNot = Some()
         val21 = mb21.reduce(lambda x, y: x*y)
         val42 = mb21.reduce(lambda x, y: x*y, 2)
-        valNot = mbNot.reduce(lambda x, y: y//x)
-        val3 = mbNot.reduce(lambda x, y: y//x, 3)
         val7 = mb21.reduce(lambda x, y: y//x, 3)
+        valNone = mbNot.reduce(lambda x, y: y//x)
+        valAlsoNone = mbNot.reduce(lambda x, y: y//x, 3)
         assert val21 == 21
         assert val42 == 42
-        assert valNot == None
-        assert val3 == 3
         assert val7 == 7
+        assert valNone == None
+        assert valAlsoNone == None
 
     def test_accummulate_maybe(self):
         mb21 = Some(21)
@@ -194,11 +195,11 @@ class TestEither:
         ph21 = mb21.accummulate()
         ph7 = mb21.accummulate(lambda x, y: y//x, 3)
         phNot = mbNot.accummulate()
-        ph3 = mbNot.accummulate(lambda x, y: y//x, 3)
+        phAlsoNot = mbNot.accummulate(lambda x, y: y//x, 3)
         assert ph21 == Some(21)
         assert ph7 == Some(7)
+        assert phAlsoNot == Nothing
         assert phNot == Nothing
-        assert ph3 == Some(3)
 
     def test_reduce_either(self):
         lt42 = Left(42)
@@ -213,14 +214,151 @@ class TestEither:
         assert valNotInt == None
         assert valAlsoNotInt == None
 
-  #  def test_accummulate_either(self):
-  #      mb21 = Some(21)
-  #      mbNot = Some()
-  #      ph21 = mb21.accummulate()
-  #      ph7 = mb21.accummulate(lambda x, y: y//x, 3)
-  #      phNot = mbNot.accummulate()
-  #      ph3 = mbNot.accummulate(lambda x, y: y//x, 3)
-  #      assert ph21 == Some(21)
-  #      assert ph7 == Some(7)
-  #      assert phNot == Nothing
-  #      assert ph3 == Some(3)
+    def test_accummulate_either(self):
+        lt10 = Left(10)
+        lt10accu = lt10.accummulate()
+        lt30 = lt10.accummulate(lambda x, y: x*y, None, initial=3, right=' never')
+        rtA = Right('A, ')
+        rtB = rtA.accummulate(right='B, ')
+        rtC = rtA.accummulate(lambda x, y: x*y, initial=3, right='C, ')
+        assert lt10 == Left(10)
+        assert lt10accu == Left(10)
+        assert lt30 == Left(30)
+        assert rtA == Right('A, ')
+        assert rtB == Right('A, B, ')
+        assert rtC == Right('A, C, ')
+
+    def test_maybe_flatMap(self):
+        mb10 = Maybe(10)
+        mbNot = Maybe()
+        mb20 = mb10.flatMap(lambda x: Maybe(2*x))
+        mbNotA = mbNot.flatMap(lambda x: Maybe(2*x))
+        mbNotB = mb10.flatMap(lambda _: Maybe())
+        mbNotC = mbNot.flatMap(lambda _: Maybe())
+        assert mb20 == Maybe(20)
+        assert mbNotA == Nothing
+        assert mbNotB == Nothing
+        assert mbNotC == Nothing
+
+        mb20 = mb10.mergeMap(lambda x: Maybe(2*x))
+        mbNotA = mbNot.mergeMap(lambda x: Maybe(2*x))
+        mbNotB = mb10.mergeMap(lambda _: Maybe())
+        mbNotC = mbNot.mergeMap(lambda _: Maybe())
+        assert mb20 == Maybe(20)
+        assert mbNotA == Nothing
+        assert mbNotB == Nothing
+        assert mbNotC == Nothing
+
+        mb20 = mb10.exhaustMap(lambda x: Maybe(2*x))
+        mbNotA = mbNot.exhaustMap(lambda x: Maybe(2*x))
+        mbNotB = mb10.exhaustMap(lambda _: Maybe())
+        mbNotC = mbNot.exhaustMap(lambda _: Maybe())
+        assert mb20 == Maybe(20)
+        assert mbNotA == Nothing
+        assert mbNotB == Nothing
+        assert mbNotC == Nothing
+
+    def test_either_flatMaps(self):
+        def lessThan2(x: int) -> Either:
+            if x < 2:
+                return Either(x)
+            else:
+                return Either(None, '>=2')
+
+        def lessThan5(x: int) -> Either:
+            if x < 5:
+                return Left(x)
+            else:
+                return Right('>=5')
+
+        left1 = Left(1)
+        left4 = Left(4)
+        left7 = Left(7)
+        right = Right('Nobody home')
+
+        nobody = right.flatMap(lessThan2)
+        assert nobody == Right('Nobody home')
+
+        lt2 = left1.flatMap(lessThan2)
+        lt5 = left1.flatMap(lessThan5)
+        assert lt2 == Left(1)
+        assert lt5 == Left(1)
+
+        lt2 = left4.flatMap(lessThan2)
+        lt5 = left4.flatMap(lessThan5)
+        assert lt2 == Right('>=2')
+        assert lt5 == Left(4)
+
+        lt2 = left7.flatMap(lessThan2)
+        lt5 = left7.flatMap(lessThan5)
+        assert lt2 == Right('>=2')
+        assert lt5 == Right('>=5')
+
+        nobody = right.flatMap(lessThan5, 'NOBODY HOME')
+        assert nobody == Right('NOBODY HOME')
+
+        lt2 = left1.flatMap(lessThan2, 'greater than or equal 2')
+        lt5 = left1.flatMap(lessThan5, 'greater than or equal 5')
+        assert lt2 == Left(1)
+        assert lt5 == Left(1)
+
+        lt2 = left4.flatMap(lessThan2, 'greater than or equal 2')
+        lt5 = left4.flatMap(lessThan5, 'greater than or equal 5')
+        assert lt2 == Right('greater than or equal 2')
+        assert lt5 == Left(4)
+
+        lt2 = left7.flatMap(lessThan2, 'greater than or equal 2')
+        lt5 = left7.flatMap(lessThan5, 'greater than or equal 5')
+        assert lt2 == Right('greater than or equal 2')
+        assert lt5 == Right('greater than or equal 5')
+
+
+        nobody = right.mergeMap(lessThan2)
+        assert nobody == Right('Nobody home')
+
+        lt2 = left1.mergeMap(lessThan2)
+        lt5 = left1.mergeMap(lessThan5)
+        assert lt2 == Left(1)
+        assert lt5 == Left(1)
+
+        lt2 = left4.mergeMap(lessThan2)
+        lt5 = left4.mergeMap(lessThan5)
+        assert lt2 == Right('>=2')
+        assert lt5 == Left(4)
+
+        lt2 = left7.mergeMap(lessThan2)
+        lt5 = left7.mergeMap(lessThan5)
+        assert lt2 == Right('>=2')
+        assert lt5 == Right('>=5')
+
+        nobody = right.mergeMap(lessThan5, ', but us chickens!')
+        assert nobody == Right('Nobody home, but us chickens!')
+
+        lt2 = left1.mergeMap(lessThan2, ', tested for 2')
+        lt5 = left1.mergeMap(lessThan5, ', tested for 5')
+        assert lt2 == Left(1)
+        assert lt5 == Left(1)
+
+        lt2 = left4.mergeMap(lessThan2, ', tested for 2')
+        lt5 = left4.mergeMap(lessThan5, ', tested for 5')
+        assert lt2 == Right('>=2, tested for 2')
+        assert lt5 == Left(4)
+
+        lt2 = left7.mergeMap(lessThan2, ', tested for 2')
+        lt5 = left7.mergeMap(lessThan5, ', tested for 5')
+        assert lt2 == Right('>=2, tested for 2')
+        assert lt5 == Right('>=5, tested for 5')
+        
+    def test_Maybe_Either(self):
+        mb42 = Some(42)
+        mbNot = Nothing
+
+        left42 = maybeToEither(mb42)
+        right = maybeToEither(mbNot, 'Nobody home')
+        assert left42 == Left(42)
+        assert right == Right('Nobody home')
+
+        ph42 = eitherToMaybe(left42)
+        phNot = eitherToMaybe(right)
+        assert mb42 == ph42
+        assert mbNot == phNot
