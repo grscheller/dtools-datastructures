@@ -1,4 +1,4 @@
-# grscheller.datastrucures changelog
+# CHANGELOG: grscheller.datastrucures
 
 PyPI releases begin with a `v`.
 
