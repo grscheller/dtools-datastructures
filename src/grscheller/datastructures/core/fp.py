@@ -24,13 +24,12 @@ __all__ = [ 'FP', 'maybeToEither', 'eitherToMaybe',
             'Either', 'Left', 'Right',
             'Maybe', 'Some', 'Nothing' ]
 __author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
+__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
-from typing import Any, Callable, Type
-from functools import reduce
-from itertools import accumulate, chain
 import operator
+from typing import Any, Callable, Type
+from itertools import accumulate, chain
 from .iterlib import exhaust, merge
 
 class FP():
@@ -38,16 +37,27 @@ class FP():
     __slots__ = ()
 
     def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """FoldLeft with optional inital value"""
+        """Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None."""
         if initial is None:
-            return reduce(f, self)
+            if not self:
+                return None
+            vs = iter(self)
         else:
-            return reduce(f, self, initial)
+            vs = chain((initial,), self)
 
-    def accummulate(self, f: Callable[[Any], [Any]]=None, initial=None) -> type[FP]:
-        """Accummulate partial fold results in same type data structure"""
+        value = next(vs)
+        for v in vs:
+            value = f(value, v)
+
+        return value
+
+    def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -> type[FP]:
+        """Accummulate partial fold results in same type data structure. Works
+        best for variable sized containers."""
         if f is None:
             f = operator.add
+
         if initial is None:
             return type(self)(*accumulate(self, f))
         else:
@@ -131,6 +141,27 @@ class Maybe(FP):
         else:
             return alternate
 
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased foldleft"""
+        if self:
+            if initial is None:
+                return self._value
+            else:
+                return f(initial, self._value)
+        else:
+            return None
+
+    def accummulate(self,
+                    f: Callable[[Any, Any], Any]=None,
+                    initial=None) -> Maybe:
+        """Accummulate but, since the data structure can hold at most only
+        one value, do not include the initial value if the Maybe is not a Nothing, 
+        """
+        if f is None:
+            f = operator.add
+
+        return Maybe(self.reduce(f, initial))
+
 # Maybe convenience functions/vars
 
 def maybeToEither(m: Maybe, right: Any=None) -> Either:
@@ -200,6 +231,12 @@ class Either(FP):
             return self._value
         return default
 
+    def getRight(self) -> Any:
+        """Get value if a Right, otherwise return None"""
+        if self:
+            return None
+        return self._value
+
     def map(self, f: Callable[[Any], Any], right=None) -> Either:
         """Map over a Left(value)"""
         if self:
@@ -212,8 +249,8 @@ class Either(FP):
             return self
         return Right(g(self._value))
 
-    def flatMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with right as default. Replace Right(value) with Right(right)"""
+    def flatMap(self, f: Callable[[Any], Either], right: Any=None) -> Either:
+        """flatMap with right as default. replace right"""
         if self:
             if right is None:
                 return f(self._value)
@@ -225,8 +262,8 @@ class Either(FP):
             else:
                 return self.mapRight(lambda _: right)
 
-    def mergeMap(self, f: Callable[[Any], Either], right=None) -> Either:
-        """flatMap with right as default, replace Right(value) with Right(value + right)"""
+    def mergeMap(self, f: Callable[[Any], Either], right: Any=None) -> Either:
+        """flatMap with right as default, concatenate rights"""
         if self:
             if right is None:
                 return f(self._value)
@@ -237,6 +274,39 @@ class Either(FP):
                 return self
             else:
                 return self.mapRight(lambda x: x + right)
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased foldleft"""
+        if self:
+            if initial is None:
+                return self._value
+            else:
+                return f(initial, self._value)
+        else:
+            return None
+
+    def accummulate(self,
+                    f: Callable[[Any, Any], Any]=None,
+                    g: Callable[[Any, Any], Any]=None,
+                    initial: Any=None,
+                    right: Any=None) -> Either:
+        """Accummulate. The data structure always holds one value, so what
+        gets "accummulated" depends on if the Either is a Left or a Right.
+        By default, a Left contains numeric data, a right a str.
+        """
+        if f is None:
+            f = operator.add
+        if g is None:
+            g = operator.add
+        if initial is None:
+            initial = 0
+        if right is None:
+            right = ''
+
+        if self:
+            return Left(f(initial, self._value), right)
+        else:
+            return Right(g(self._value, right))
 
 # Either convenience functions, act like subtype constructors.
 
