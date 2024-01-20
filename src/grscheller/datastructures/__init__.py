@@ -12,31 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Package grscheller.datastructures - development branch (main)
+"""Classes to implement algorithms, functional and imperative styles supported."""
 
-   Data structures geared to different algorithmic use cases. Supportive
-   of both functional and imperative programming styles while endeavoring
-   to remain Pythonic.
-
-   The data structures in this package:
-
-   - Allow developers to focus on the algorithms the data structures were
-     designed to support.
-   - Take care of all the "bit fiddling" needed to implement data structure
-     behaviors, perform memory management, and deal with edge cases.
-   - Mutate data structure instances safely by manipulating encapsulated
-     data in protected inner scopes.
-   - Iterate over inaccessible copies of internal state allowing the data
-     structures to safely mutate while iterators leisurely iterate. 
-   - Safely share data between multiple data structure instances by making
-     shared data immutable and inaccessible to client code.
-   - Don't force functional programming paradigms on client code, but
-     provide functional tools to opt into.
-   - Don't force exception driven code paths upon client code. Except for
-     Python iterators and syntax errors, exceptions are for "exceptional"
-     events.
-"""
-__version__ = "0.12.2.3"
+__version__ = "0.12.3"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

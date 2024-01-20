@@ -18,11 +18,22 @@ classifiers = [
 ]
 dependencies = []
 dynamic = ["version", "description"]
+keywords = [
+    "datastructures", "data structures",
+    "fifo", "lifo", "stack",
+    "functional", "fp", "maybe", "either"
+] 
+
+[project.optional-dependencies]
+test = ["pytest >=7.4"]
 
 [project.urls]
 Source = "https://github.com/grscheller/datastructures"
 Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
 Documentation = "https://grscheller.github.io/datastructures/"
+
+[tool.flit.sdist]
+exclude = ["docs/*", ".github/*", ".gitignore"]
 
 [tool.pylsp-mypy]
 live-mode = true

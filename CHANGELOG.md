@@ -1,6 +1,27 @@
-# CHANGELOG: grscheller.datastrucures
+# CHANGELOG
 
-PyPI releases begin with a `v`.
+Changelog for the grscheller.datastrucures PyPI project.
+Version numbers for PyPI releases begin with a `v`.
+
+Semantic Versioning will be used:
+
+* Semantic versioning for PyPI releases:
+  * first digit means
+    * A major event, epoch, or paradigm shift
+  * second digit means
+    * PyPI breaking API changes or PyPI major changes
+  * third digit either means
+    * PyPI API additions, PyPI bugfixes or minor changes
+    * Significant documentation updates
+
+## Version v0.12.3 - PyPI Release date 2024-01-20
+
+* cutting next PyPI release from development (main)
+  * if experiment works, will drop release branch
+  * will not include `docs/`
+  * will not include `.gitignore` and `.github/`
+  * will include `tests/`
+  * made pytest >= 7.4 an optional test dependency
 
 ## Version v0.12.2 - PyPI Release date 2024-01-17
 
