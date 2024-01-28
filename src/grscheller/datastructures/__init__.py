@@ -14,13 +14,13 @@
 
 """Classes to implement algorithms, functional and imperative styles supported."""
 
-__version__ = "0.12.3.1"
+__version__ = "0.12.4.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"
 
 from .arrays import PArray
-from .queues import CircularArray, FIFOQueue, LIFOQueue, DoubleQueue
+from .queues import FIFOQueue, LIFOQueue, DoubleQueue
 from .stacks import Stack, FStack
 from .tuples import FTuple
 from .core.fp import Maybe, Some, Nothing, Either, Left, Right
