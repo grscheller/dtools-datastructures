@@ -1,6 +1,6 @@
 # CHANGELOG
 
-Changelog for the grscheller.datastrucures PyPI project.
+Changelog for the grscheller.datastructures PyPI project.
 Version numbers for PyPI releases begin with a `v`.
 
 Semantic Versioning will be used:

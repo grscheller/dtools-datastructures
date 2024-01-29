@@ -16,11 +16,11 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: Apache Software License"
 ]
-dependencies = ["grscheller.circular-array"]
+dependencies = ["grscheller.circular-array >= 0.1.0, < 1"]
 dynamic = ["version", "description"]
 keywords = [
     "datastructures", "data structures",
-    "fifo", "lifo", "stack",
+    "fifo", "lifo", "stack", "queue",
     "functional", "fp", "maybe", "either"
 ] 
 
