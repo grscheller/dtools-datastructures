@@ -193,4 +193,3 @@ class TestStack:
         st4 != st3
         st3.reverse()
         st4 == st3
-

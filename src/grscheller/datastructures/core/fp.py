@@ -36,12 +36,14 @@ class FP():
     """Default functional implentations for data structures"""
     __slots__ = ()
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
         """Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return None."""
+        given and the datastructure is empty, return None.
+        """
+        if not self:
+            return initial
+
         if initial is None:
-            if not self:
-                return None
             vs = iter(self)
         else:
             vs = chain((initial,), self)
@@ -51,6 +53,14 @@ class FP():
             value = f(value, v)
 
         return value
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None.
+
+        Deprecation Warning: use foldL instead
+        """
+        return self.foldL(f, initial)
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -> type[FP]:
         """Accummulate partial fold results in same type data structure. Works
@@ -141,8 +151,8 @@ class Maybe(FP):
         else:
             return alternate
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Left biased foldleft"""
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased fold left"""
         if self:
             if initial is None:
                 return self._value
@@ -150,6 +160,13 @@ class Maybe(FP):
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased left fold
+
+        Deprecated: use foldL instead
+        """
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
@@ -160,7 +177,7 @@ class Maybe(FP):
         if f is None:
             f = operator.add
 
-        return Maybe(self.reduce(f, initial))
+        return Maybe(self.foldL(f, initial))
 
 # Maybe convenience functions/vars
 
@@ -275,8 +292,8 @@ class Either(FP):
             else:
                 return self.mapRight(lambda x: x + right)
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Left biased foldleft"""
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased left fold"""
         if self:
             if initial is None:
                 return self._value
@@ -284,6 +301,13 @@ class Either(FP):
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Left biased foldleft
+
+        Deprecated: use foldL instead
+        """
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,

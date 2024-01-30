@@ -70,12 +70,14 @@ class FP():
     &#34;&#34;&#34;Default functional implentations for data structures&#34;&#34;&#34;
     __slots__ = ()
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
         &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return None.&#34;&#34;&#34;
+        given and the datastructure is empty, return None.
+        &#34;&#34;&#34;
+        if not self:
+            return initial
+
         if initial is None:
-            if not self:
-                return None
             vs = iter(self)
         else:
             vs = chain((initial,), self)
@@ -85,6 +87,14 @@ class FP():
             value = f(value, v)
 
         return value
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None.
+
+        Deprecation Warning: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -&gt; type[FP]:
         &#34;&#34;&#34;Accummulate partial fold results in same type data structure. Works
@@ -175,8 +185,8 @@ class Maybe(FP):
         else:
             return alternate
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased fold left&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -184,6 +194,13 @@ class Maybe(FP):
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased left fold
+
+        Deprecated: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
@@ -194,7 +211,7 @@ class Maybe(FP):
         if f is None:
             f = operator.add
 
-        return Maybe(self.reduce(f, initial))
+        return Maybe(self.foldL(f, initial))
 
 # Maybe convenience functions/vars
 
@@ -309,8 +326,8 @@ class Either(FP):
             else:
                 return self.mapRight(lambda x: x + right)
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased left fold&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -318,6 +335,13 @@ class Either(FP):
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased foldleft
+
+        Deprecated: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
@@ -567,8 +591,8 @@ returns a Nothing.</p></div>
             else:
                 return self.mapRight(lambda x: x + right)
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased left fold&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -576,6 +600,13 @@ returns a Nothing.</p></div>
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased foldleft
+
+        Deprecated: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
@@ -662,6 +693,26 @@ By default, a Left contains numeric data, a right a str.</p></div>
             return self
         else:
             return self.mapRight(lambda _: right)</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.fp.Either.foldL"><code class="name flex">
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Left biased left fold</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Left biased left fold&#34;&#34;&#34;
+    if self:
+        if initial is None:
+            return self._value
+        else:
+            return f(initial, self._value)
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.get"><code class="name flex">
@@ -755,20 +806,18 @@ By default, a Left contains numeric data, a right a str.</p></div>
 <span>def <span class="ident">reduce</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Left biased foldleft</p></div>
+<div class="desc"><p>Left biased foldleft</p>
+<p>Deprecated: use foldL instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
-    if self:
-        if initial is None:
-            return self._value
-        else:
-            return f(initial, self._value)
-    else:
-        return None</code></pre>
+    &#34;&#34;&#34;Left biased foldleft
+
+    Deprecated: use foldL instead
+    &#34;&#34;&#34;
+    return self.foldL(f, initial)</code></pre>
 </details>
 </dd>
 </dl>
@@ -794,12 +843,14 @@ By default, a Left contains numeric data, a right a str.</p></div>
     &#34;&#34;&#34;Default functional implentations for data structures&#34;&#34;&#34;
     __slots__ = ()
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
         &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return None.&#34;&#34;&#34;
+        given and the datastructure is empty, return None.
+        &#34;&#34;&#34;
+        if not self:
+            return initial
+
         if initial is None:
-            if not self:
-                return None
             vs = iter(self)
         else:
             vs = chain((initial,), self)
@@ -809,6 +860,14 @@ By default, a Left contains numeric data, a right a str.</p></div>
             value = f(value, v)
 
         return value
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+        given and the datastructure is empty, return None.
+
+        Deprecation Warning: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -&gt; type[FP]:
         &#34;&#34;&#34;Accummulate partial fold results in same type data structure. Works
@@ -902,6 +961,35 @@ best for variable sized containers.</p></div>
     return type(self)(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
+<dt id="grscheller.datastructures.core.fp.FP.foldL"><code class="name flex">
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fold with an optional initial value. If an initial value is not
+given and the datastructure is empty, return None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
+    given and the datastructure is empty, return None.
+    &#34;&#34;&#34;
+    if not self:
+        return initial
+
+    if initial is None:
+        vs = iter(self)
+    else:
+        vs = chain((initial,), self)
+
+    value = next(vs)
+    for v in vs:
+        value = f(value, v)
+
+    return value</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.core.fp.FP.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
@@ -935,26 +1023,19 @@ best for variable sized containers.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold with an optional initial value. If an initial value is not
-given and the datastructure is empty, return None.</p></div>
+given and the datastructure is empty, return None.</p>
+<p>Deprecation Warning: use foldL instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
     &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-    given and the datastructure is empty, return None.&#34;&#34;&#34;
-    if initial is None:
-        if not self:
-            return None
-        vs = iter(self)
-    else:
-        vs = chain((initial,), self)
+    given and the datastructure is empty, return None.
 
-    value = next(vs)
-    for v in vs:
-        value = f(value, v)
-
-    return value</code></pre>
+    Deprecation Warning: use foldL instead
+    &#34;&#34;&#34;
+    return self.foldL(f, initial)</code></pre>
 </details>
 </dd>
 </dl>
@@ -1039,8 +1120,8 @@ given and the datastructure is empty, return None.</p></div>
         else:
             return alternate
 
-    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
+    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased fold left&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -1048,6 +1129,13 @@ given and the datastructure is empty, return None.</p></div>
                 return f(initial, self._value)
         else:
             return None
+
+    def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Left biased left fold
+
+        Deprecated: use foldL instead
+        &#34;&#34;&#34;
+        return self.foldL(f, initial)
 
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
@@ -1058,7 +1146,7 @@ given and the datastructure is empty, return None.</p></div>
         if f is None:
             f = operator.add
 
-        return Maybe(self.reduce(f, initial))</code></pre>
+        return Maybe(self.foldL(f, initial))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1085,7 +1173,27 @@ one value, do not include the initial value if the Maybe is not a Nothing,</p></
     if f is None:
         f = operator.add
 
-    return Maybe(self.reduce(f, initial))</code></pre>
+    return Maybe(self.foldL(f, initial))</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.fp.Maybe.foldL"><code class="name flex">
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Left biased fold left</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Left biased fold left&#34;&#34;&#34;
+    if self:
+        if initial is None:
+            return self._value
+        else:
+            return f(initial, self._value)
+    else:
+        return None</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Maybe.get"><code class="name flex">
@@ -1112,20 +1220,18 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <span>def <span class="ident">reduce</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Left biased foldleft</p></div>
+<div class="desc"><p>Left biased left fold</p>
+<p>Deprecated: use foldL instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reduce(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Left biased foldleft&#34;&#34;&#34;
-    if self:
-        if initial is None:
-            return self._value
-        else:
-            return f(initial, self._value)
-    else:
-        return None</code></pre>
+    &#34;&#34;&#34;Left biased left fold
+
+    Deprecated: use foldL instead
+    &#34;&#34;&#34;
+    return self.foldL(f, initial)</code></pre>
 </details>
 </dd>
 </dl>
@@ -1176,6 +1282,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.core.fp.Either.accummulate" href="#grscheller.datastructures.core.fp.Either.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.flatMap" href="#grscheller.datastructures.core.fp.Either.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.Either.foldL" href="#grscheller.datastructures.core.fp.Either.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.get" href="#grscheller.datastructures.core.fp.Either.get">get</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.getRight" href="#grscheller.datastructures.core.fp.Either.getRight">getRight</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.map" href="#grscheller.datastructures.core.fp.Either.map">map</a></code></li>
@@ -1190,6 +1297,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.FP.foldL" href="#grscheller.datastructures.core.fp.FP.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
@@ -1199,6 +1307,7 @@ Caller is responsible with dealing with a None alternate return value.</p></div>
 <h4><code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></h4>
 <ul class="">
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.accummulate" href="#grscheller.datastructures.core.fp.Maybe.accummulate">accummulate</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.Maybe.foldL" href="#grscheller.datastructures.core.fp.Maybe.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.get" href="#grscheller.datastructures.core.fp.Maybe.get">get</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.reduce" href="#grscheller.datastructures.core.fp.Maybe.reduce">reduce</a></code></li>
 </ul>

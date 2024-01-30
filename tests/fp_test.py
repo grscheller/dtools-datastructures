@@ -18,7 +18,7 @@ from typing import Any
 from grscheller.datastructures import *
 
 class Test_FP:
-    def test_reduce(self):
+    def test_foldL(self):
         ft0 = FTuple()
         fs0 = FStack()
         pa0 = PArray()
@@ -31,32 +31,32 @@ class Test_FP:
             x.push(y)
             return x
 
-        assert ft1.reduce(l1) == 15
-        assert ft1.reduce(l1, 10) == 25
-        assert ft1.reduce(l2) == 120
-        assert ft1.reduce(l2, 10) == 1200
-        assert ft1.reduce(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
-        assert ft0.reduce(l1) == None
-        assert ft0.reduce(l1, 10) == 10
-        assert ft0.reduce(push, FIFOQueue()) == FIFOQueue()
+        assert ft1.foldL(l1) == 15
+        assert ft1.foldL(l1, 10) == 25
+        assert ft1.foldL(l2) == 120
+        assert ft1.foldL(l2, 10) == 1200
+        assert ft1.foldL(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
+        assert ft0.foldL(l1) == None
+        assert ft0.foldL(l1, 10) == 10
+        assert ft0.foldL(push, FIFOQueue()) == FIFOQueue()
 
-        assert fs1.reduce(l1) == 15
-        assert fs1.reduce(l1, 10) == 25
-        assert fs1.reduce(l2) == 120
-        assert fs1.reduce(l2, 10) == 1200
-        assert fs1.reduce(push, FIFOQueue()) == FIFOQueue(5,4,3,2,1)
-        assert fs0.reduce(l1) == None
-        assert fs0.reduce(l1, 10) == 10
-        assert fs0.reduce(push, FIFOQueue()) == FIFOQueue()
+        assert fs1.foldL(l1) == 15
+        assert fs1.foldL(l1, 10) == 25
+        assert fs1.foldL(l2) == 120
+        assert fs1.foldL(l2, 10) == 1200
+        assert fs1.foldL(push, FIFOQueue()) == FIFOQueue(5,4,3,2,1)
+        assert fs0.foldL(l1) == None
+        assert fs0.foldL(l1, 10) == 10
+        assert fs0.foldL(push, FIFOQueue()) == FIFOQueue()
 
-        assert pa1.reduce(l1) == 15
-        assert pa1.reduce(l1, 10) == 25
-        assert pa1.reduce(l2) == 120
-        assert pa1.reduce(l2, 10) == 1200
-        assert pa1.reduce(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
-        assert pa0.reduce(l1) == None
-        assert pa0.reduce(l1, 10) == 10
-        assert pa0.reduce(push, FIFOQueue()) == FIFOQueue()
+        assert pa1.foldL(l1) == 15
+        assert pa1.foldL(l1, 10) == 25
+        assert pa1.foldL(l2) == 120
+        assert pa1.foldL(l2, 10) == 1200
+        assert pa1.foldL(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
+        assert pa0.foldL(l1) == None
+        assert pa0.foldL(l1, 10) == 10
+        assert pa0.foldL(push, FIFOQueue()) == FIFOQueue()
 
         assert ft1.accummulate(l1) == FTuple(1,3,6,10,15)
         assert ft1.accummulate(l1, 10) == FTuple(10,11,13,16,20,25)

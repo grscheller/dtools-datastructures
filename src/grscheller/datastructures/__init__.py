@@ -14,7 +14,7 @@
 
 """Classes to implement algorithms, functional and imperative styles supported."""
 
-__version__ = "0.12.4.0"
+__version__ = "0.12.4.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Appache License 2.0"

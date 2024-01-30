@@ -152,4 +152,3 @@ class Test_str:
         ca.pushL(42)
         ca.popR()
         assert str(ca) == '(|42, 2, 3, 4|)'
-

@@ -175,14 +175,14 @@ class TestEither:
         assert s4.get('nothing doing') == 'nothing doing'
         assert s4.getRight() == 'more than 5'
 
-    def test_reduce_maybe(self):
+    def test_foldL_maybe(self):
         mb21 = Some(21)
         mbNot = Some()
-        val21 = mb21.reduce(lambda x, y: x*y)
-        val42 = mb21.reduce(lambda x, y: x*y, 2)
-        val7 = mb21.reduce(lambda x, y: y//x, 3)
-        valNone = mbNot.reduce(lambda x, y: y//x)
-        valAlsoNone = mbNot.reduce(lambda x, y: y//x, 3)
+        val21 = mb21.foldL(lambda x, y: x*y)
+        val42 = mb21.foldL(lambda x, y: x*y, 2)
+        val7 = mb21.foldL(lambda x, y: y//x, 3)
+        valNone = mbNot.foldL(lambda x, y: y//x)
+        valAlsoNone = mbNot.foldL(lambda x, y: y//x, 3)
         assert val21 == 21
         assert val42 == 42
         assert val7 == 7
@@ -201,14 +201,14 @@ class TestEither:
         assert phAlsoNot == Nothing
         assert phNot == Nothing
 
-    def test_reduce_either(self):
+    def test_foldL_either(self):
         lt42 = Left(42)
         lt13 = Left(13)
         rtNotInt = Right('Not an int')
-        val42 = lt42.reduce(lambda x, y: x*y)
-        val21 = lt42.reduce(lambda x, y: y//x, 2)
-        valNotInt = rtNotInt.reduce(lambda x, y: y//x)
-        valAlsoNotInt = rtNotInt.reduce(lambda x, y: y//x, 3)
+        val42 = lt42.foldL(lambda x, y: x*y)
+        val21 = lt42.foldL(lambda x, y: y//x, 2)
+        valNotInt = rtNotInt.foldL(lambda x, y: y//x)
+        valAlsoNotInt = rtNotInt.foldL(lambda x, y: y//x, 3)
         assert val42 == 42
         assert val21 == 21
         assert valNotInt == None
