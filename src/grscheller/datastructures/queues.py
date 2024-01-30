@@ -29,7 +29,7 @@ __license__ = "Appache License 2.0"
 
 from typing import Any, Callable
 from .core.fp import FP
-from grscheller.circular_array.circulararray import CircularArray
+from grscheller.circular_array import CircularArray
 
 class QueueBase():
     """Abstract base class for the purposes of DRY inheritance of classes
