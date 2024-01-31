@@ -14,6 +14,23 @@ Semantic Versioning will be used:
     * PyPI API additions, PyPI bugfixes or minor changes
     * Significant documentation updates
 
+## Version v0.13.1 - PyPI Release date 2024-02-01
+
+* FTuple now supports both slicing and indexing
+* more tests fo FTuple
+  * slicing and indexing
+  * map, foldL, accumulate methods
+  * flatMap, mergeMap, exhaustMap methods
+* forgot to update CHANGELOG for v0.13.0 release
+
+## Version v0.13.0 - PyPI Release date 2024-01-31
+
+* BREAKING API CHANGE - CircularArray class removed
+* CircularArray moved to its own PyPI & GitHub repos
+  * https://pypi.org/project/grscheller.circular-array/
+  * https://github.com/grscheller/circular-array
+* Fix various out-of-date docstrings
+
 ## Version v0.12.3 - PyPI Release date 2024-01-20
 
 * cutting next PyPI release from development (main)

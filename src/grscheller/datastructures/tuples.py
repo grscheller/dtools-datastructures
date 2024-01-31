@@ -39,10 +39,13 @@ class FTuple(tuple, FP):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self):
-        """Display data in the FTuple"""
+        """Display data in the FTuple."""
         return "((" + ", ".join(map(repr, self)) + "))"
 
-    def __getitem__(self, sl: slice) -> Any:
+    def __getitem__(self, sl: slice|int) -> Any:
+        """Suports both indexing and slicing."""
+        if isinstance(sl, slice):
+            return FTuple(*super().__getitem__(sl))
         try:
             item = super().__getitem__(sl)
         except IndexError:

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>grscheller.datastructures API documentation</title>
-<meta name="description" content="Classes to implement algorithms, functional and imperative styles supported." />
+<title>grscheller.datastructures.core.nodes API documentation</title>
+<meta name="description" content="Module grscheller.datastructure.core.nodes …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -19,10 +19,12 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>grscheller.datastructures</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.core.nodes</code></h1>
 </header>
 <section id="section-intro">
-<p>Classes to implement algorithms, functional and imperative styles supported.</p>
+<p>Module grscheller.datastructure.core.nodes</p>
+<p>Heap based nodes for for tree type data structures. Data structures should make
+nodes inaccessible to client code.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -41,52 +43,130 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Classes to implement algorithms, functional and imperative styles supported.&#34;&#34;&#34;
+&#34;&#34;&#34;Module grscheller.datastructure.core.nodes
 
-__version__ = &#34;0.13.1&#34;
+Heap based nodes for for tree type data structures. Data structures should make
+nodes inaccessible to client code.
+&#34;&#34;&#34;
+from __future__ import annotations
+
+__all__ = [&#39;SL_Node&#39;, &#39;Tree_Node&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Apache License 2.0&#34;
 
-from .arrays import PArray
-from .queues import FIFOQueue, LIFOQueue, DoubleQueue
-from .stacks import Stack, FStack
-from .tuples import FTuple
-from .core.fp import Maybe, Some, Nothing, Either, Left, Right
-from .core.fp import maybeToEither, eitherToMaybe
-from .core.iterlib import merge, exhaust</code></pre>
+from typing import Any
+
+class SL_Node():
+    &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
+    singularly linked list. This type of node always contain data, it
+    either has a reference to the next SL_Node or None to indicate the
+    bottom of the linked list of nodes.
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_next&#39;
+
+    def __init__(self, data: Any, next: SL_Node|None):
+        &#34;&#34;&#34;Construct an element of a linked list&#34;&#34;&#34;
+        self._data = data
+        self._next = next
+
+    def __bool__(self):
+        &#34;&#34;&#34;Always return true, None will return as false&#34;&#34;&#34;
+        return True
+
+class Tree_Node():
+    &#34;&#34;&#34;Class implementing nodes that can be linked together to form
+    a tree-like data structure. This type of node always contain data.
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._data = data
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        &#34;&#34;&#34;Always return true since a Tree_Node always contains data, even if
+        that data is None.&#34;&#34;&#34;
+        return True
+
+if __name__ == &#34;__main__&#34;:
+    pass</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="grscheller.datastructures.arrays" href="arrays.html">grscheller.datastructures.arrays</a></code></dt>
+<dt id="grscheller.datastructures.core.nodes.SL_Node"><code class="flex name class">
+<span>class <span class="ident">SL_Node</span></span>
+<span>(</span><span>data: Any, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Module grscheller.datastructure.arrays …</p></div>
+<div class="desc"><p>Class implementing nodes that can be linked together to form a
+singularly linked list. This type of node always contain data, it
+either has a reference to the next SL_Node or None to indicate the
+bottom of the linked list of nodes.</p>
+<p>Construct an element of a linked list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SL_Node():
+    &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
+    singularly linked list. This type of node always contain data, it
+    either has a reference to the next SL_Node or None to indicate the
+    bottom of the linked list of nodes.
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_next&#39;
+
+    def __init__(self, data: Any, next: SL_Node|None):
+        &#34;&#34;&#34;Construct an element of a linked list&#34;&#34;&#34;
+        self._data = data
+        self._next = next
+
+    def __bool__(self):
+        &#34;&#34;&#34;Always return true, None will return as false&#34;&#34;&#34;
+        return True</code></pre>
+</details>
 </dd>
-<dt><code class="name"><a title="grscheller.datastructures.core" href="core/index.html">grscheller.datastructures.core</a></code></dt>
+<dt id="grscheller.datastructures.core.nodes.Tree_Node"><code class="flex name class">
+<span>class <span class="ident">Tree_Node</span></span>
+<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Package grscheller.datastructures.core …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.queues" href="queues.html">grscheller.datastructures.queues</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.queues - queue based datastructures …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.stacks" href="stacks.html">grscheller.datastructures.stacks</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.stacks - Stateful &amp; Functional LIFO stacks: …</p></div>
-</dd>
-<dt><code class="name"><a title="grscheller.datastructures.tuples" href="tuples.html">grscheller.datastructures.tuples</a></code></dt>
-<dd>
-<div class="desc"><p>Module grscheller.datastructure.tuples - tuple-like data structures …</p></div>
+<div class="desc"><p>Class implementing nodes that can be linked together to form
+a tree-like data structure. This type of node always contain data.</p>
+<p>Construct an element of a doubly linked list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Tree_Node():
+    &#34;&#34;&#34;Class implementing nodes that can be linked together to form
+    a tree-like data structure. This type of node always contain data.
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._data = data
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        &#34;&#34;&#34;Always return true since a Tree_Node always contains data, even if
+        that data is None.&#34;&#34;&#34;
+        return True</code></pre>
+</details>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -95,13 +175,19 @@ from .core.iterlib import merge, exhaust</code></pre>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="grscheller.datastructures.arrays" href="arrays.html">grscheller.datastructures.arrays</a></code></li>
-<li><code><a title="grscheller.datastructures.core" href="core/index.html">grscheller.datastructures.core</a></code></li>
-<li><code><a title="grscheller.datastructures.queues" href="queues.html">grscheller.datastructures.queues</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks" href="stacks.html">grscheller.datastructures.stacks</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples" href="tuples.html">grscheller.datastructures.tuples</a></code></li>
+<li><code><a title="grscheller.datastructures.core" href="index.html">grscheller.datastructures.core</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>
+</li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>
