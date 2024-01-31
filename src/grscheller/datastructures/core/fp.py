@@ -14,9 +14,9 @@
 
 """Module grscheller.datastructures.core.functional
 
-   - class Maybe: Implements the Maybe Monad, also called the Optional Monad
-   - class Either: Implements a left biased Either Monad.
-   - class FP: default functional implementations for fifo data structure methods
+class Maybe: Implements the Maybe Monad, also called the Optional Monad
+class Either: Implements a left biased Either Monad.
+class FP: default functional implementations for data structure methods
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ __all__ = [ 'FP', 'maybeToEither', 'eitherToMaybe',
             'Maybe', 'Some', 'Nothing' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
+__license__ = "Apache License 2.0"
 
 import operator
 from typing import Any, Callable, Type

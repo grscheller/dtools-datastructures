@@ -14,10 +14,10 @@
 
 """Classes to implement algorithms, functional and imperative styles supported."""
 
-__version__ = "0.12.4.2"
+__version__ = "0.13.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
+__license__ = "Apache License 2.0"
 
 from .arrays import PArray
 from .queues import FIFOQueue, LIFOQueue, DoubleQueue

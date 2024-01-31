@@ -24,8 +24,8 @@ from __future__ import annotations
 
 __all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue']
 __author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023 Geoffrey R. Scheller"
-__license__ = "Appache License 2.0"
+__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
+__license__ = "Apache License 2.0"
 
 from typing import Any, Callable
 from .core.fp import FP
