@@ -1,11 +1,13 @@
-# PyPI grscheller.datastructures
+# PyPI Python grscheller.datastructures Project
 
-Data Structures which support the use and implementation of algorithms.
+Python package of data structures which support the use and
+implementation of algorithms.
 
 * Functional and imperative programming styles are supported
 * Supports functional programming while endeavoring to remain Pythonic
 * Methods which mutate objects don't return anything
-* For detailed API documentation click [here][1].
+* See [grscheller.datastructure][1] on PyPI
+* Detailed [API documentation][2]
 
 ## Overview
 
@@ -28,11 +30,11 @@ from what it prevents you from doing to yourself.
 
 As a design choice, Python `None` is semantically used by this package
 to indicate the absence of a value. While still freely used as an
-implementation detail, `None` as a value is not stored in these data
-structures unless specifically documented. `Maybe` & `Either` classes
-are provided in the functional sub-package as better ways to handle
-"missing" data.
+implementation detail, `None` values are not stored in these data
+structures. Functional `Maybe` and `Either` classes are provided in the
+core.fp sub-module as better ways to handle "missing" data.
 
 ---
 
-[1]: https://grscheller.github.io/datastructures/API/development/html/grscheller/datastructures/index.html
+[1]: https://pypi.org/project/grscheller.datastructures/
+[2]: https://grscheller.github.io/datastructures/API/development/html/grscheller/datastructures/index.html
