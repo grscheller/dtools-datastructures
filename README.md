@@ -1,13 +1,14 @@
-# PyPI Python grscheller.datastructures Project
+# PyPI grscheller.datastructures Project
 
 Python package of data structures which support the use and
 implementation of algorithms.
 
-* Functional and imperative programming styles are supported
-* Supports functional programming while endeavoring to remain Pythonic
+* Functional & imperative programming styles supported
+* FP supported but project endeavors to remain Pythonic
 * Methods which mutate objects don't return anything
-* See [grscheller.datastructure][1] on PyPI
-* Detailed [API documentation][2]
+* [grscheller.circular-array][1] project on PyPI
+* [Detailed API documentation][2] on GH-Pages
+* [Source code][3] on GitHub
 
 ## Overview
 
@@ -38,3 +39,4 @@ core.fp sub-module as better ways to handle "missing" data.
 
 [1]: https://pypi.org/project/grscheller.datastructures/
 [2]: https://grscheller.github.io/datastructures/API/development/html/grscheller/datastructures/index.html
+[3]: https://github.com/grscheller/datastructures

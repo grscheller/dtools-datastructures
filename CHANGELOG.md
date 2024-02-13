@@ -3,16 +3,20 @@
 Changelog for the grscheller.datastructures PyPI project.
 Version numbers for PyPI releases begin with a `v`.
 
-Semantic Versioning will be used:
+**Semantic Versioning:**
 
-* Semantic versioning for PyPI releases:
-  * first digit means
-    * A major event, epoch, or paradigm shift
-  * second digit means
-    * PyPI breaking API changes or PyPI major changes
-  * third digit either means
-    * PyPI API additions, PyPI bugfixes or minor changes
-    * Significant documentation updates
+* first digit:
+  * major event, epoch, or paradigm shift
+* second digit:
+  * PyPI breaking API changes or PyPI major changes
+* third digit:
+  * PyPI API additions, PyPI bugfixes or minor changes
+  * PyPI significant documentation updates
+  * Development API breaking changes
+* forth digit (development environment only):
+  * development API additions
+  * commit count (thrashing)
+  * not to be taken too seriously
 
 ## Version v0.13.1 - PyPI Release date 2024-01-31
 
