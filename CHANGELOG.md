@@ -18,6 +18,11 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version = v0.13.2 - PyPI release date 2024-02-20
+
+* Forgot to update pyproject.toml dependencies
+  * dependencies = ["grscheller.circular-array >= 0.1.1, < 1.1"]
+
 ## Version v0.13.1 - PyPI Release date 2024-01-31
 
 * FTuple now supports both slicing and indexing
