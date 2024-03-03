@@ -18,13 +18,13 @@ Module implementing a LIFO stacks using singularly linked linear trees of
 nodes. The nodes can be safely shared between different stack instances and
 are an implementation detail hidden from client code.
 
-### Class **Stack**
+### Class Stack
 
 * stateful last in, first out (LIFO) stack data structure
 * procedural interface
 * `None` represents the absence of a value and ignored if pushed onto a Stack
 
-### Class **FStack**
+### Class FStack
 
 * immutable last in, first out (LIFO) stack data structure
 * functional interface

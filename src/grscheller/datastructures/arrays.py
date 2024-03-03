@@ -16,7 +16,7 @@
 
 Module implementing array-like data structures.
 
-### Class **PArray**
+### Class PArray
 
 Processing Array  
 
