@@ -132,7 +132,7 @@ Version numbers for PyPI releases begin with a `v`.
 
 * Finished massive renaming & repackaging effort
   * to help with future growth in future
-  * name choices more self documenting
+  * name choices more self-documenting
   * top level modules
     * array
       * CLArray
