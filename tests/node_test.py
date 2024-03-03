@@ -38,11 +38,11 @@ class Test_SL_Node:
 
 class Test_Tree_Node:
     def test_bool(self):
-        tn1 = nodes.Tree_Node(42, None, None)
-        tn2 = nodes.Tree_Node('Monty', tn1, None)
-        tn3 = nodes.Tree_Node('Python', None, tn2)
-        tn4 = nodes.Tree_Node('Monty Python', tn1, tn2)
-        tn0 = nodes.Tree_Node(None, None, None)
+        tn1 = nodes.BT_Node(42, None, None)
+        tn2 = nodes.BT_Node('Monty', tn1, None)
+        tn3 = nodes.BT_Node('Python', None, tn2)
+        tn4 = nodes.BT_Node('Monty Python', tn1, tn2)
+        tn0 = nodes.BT_Node(None, None, None)
         assert tn1
         assert tn2
         assert tn3

@@ -24,6 +24,9 @@
 <section id="section-intro">
 <p>Module grscheller.datastructure.tuples - tuple-like data structures</p>
 <p>Module implementing an immutable tuple like object with a funtional interface.</p>
+<h4 id="class-ftuple">Class <strong>FTuple</strong></h4>
+<p>Class extending Tuple with FP behaviors.</p>
+<p>TODO: Go thru Tuple's methods, override methods returning a Tuple to return an FTuple.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -45,6 +48,12 @@
 &#34;&#34;&#34;Module grscheller.datastructure.tuples - tuple-like data structures
 
 Module implementing an immutable tuple like object with a funtional interface.
+
+#### Class **FTuple**
+
+Class extending Tuple with FP behaviors.
+
+TODO: Go thru Tuple&#39;s methods, override methods returning a Tuple to return an FTuple.
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -58,7 +67,7 @@ from typing import Any
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Tuple with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -83,7 +92,7 @@ class FTuple(tuple, FP):
         return item
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
         return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
@@ -91,15 +100,12 @@ class FTuple(tuple, FP):
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
+        &#34;&#34;&#34;Concatenate two FTuples.&#34;&#34;&#34;
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -&gt; FTuple:
-        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times&#34;&#34;&#34;
-        return FTuple(*super().__mul__(num))
-
-if __name__ == &#34;__main__&#34;:
-    pass</code></pre>
+        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times.&#34;&#34;&#34;
+        return FTuple(*super().__mul__(num))</code></pre>
 </details>
 </section>
 <section>
@@ -116,13 +122,13 @@ if __name__ == &#34;__main__&#34;:
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class extending tuple with FP behaviors.</p></div>
+<div class="desc"><p>Class extending Tuple with FP behaviors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Tuple with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -147,7 +153,7 @@ if __name__ == &#34;__main__&#34;:
         return item
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
         return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
@@ -155,11 +161,11 @@ if __name__ == &#34;__main__&#34;:
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples&#34;&#34;&#34;
+        &#34;&#34;&#34;Concatenate two FTuples.&#34;&#34;&#34;
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -&gt; FTuple:
-        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times&#34;&#34;&#34;
+        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times.&#34;&#34;&#34;
         return FTuple(*super().__mul__(num))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -173,13 +179,13 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; FTuple:
-    &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
     return FTuple(*self)</code></pre>
 </details>
 </dd>
@@ -208,7 +214,6 @@ if __name__ == &#34;__main__&#34;:
 <li><code><a title="grscheller.datastructures.core.fp.FP.foldL" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="core/fp.html#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="core/fp.html#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -219,7 +224,9 @@ if __name__ == &#34;__main__&#34;:
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#class-ftuple">Class FTuple</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>

@@ -23,8 +23,12 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.core.nodes</p>
-<p>Heap based nodes for for tree type data structures. Data structures should make
-nodes inaccessible to client code.</p>
+<ul>
+<li>heap based nodes for for tree-like data structures</li>
+<li>data structures should make nodes inaccessible to client code.</li>
+<li>making nodes inaccessible promotes data sharing between data structures</li>
+<li>nodes always return true in a boolean context, None will return as false</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -45,12 +49,14 @@ nodes inaccessible to client code.</p>
 
 &#34;&#34;&#34;Module grscheller.datastructure.core.nodes
 
-Heap based nodes for for tree type data structures. Data structures should make
-nodes inaccessible to client code.
+* heap based nodes for for tree-like data structures
+* data structures should make nodes inaccessible to client code.
+* making nodes inaccessible promotes data sharing between data structures
+* nodes always return true in a boolean context, None will return as false 
 &#34;&#34;&#34;
 from __future__ import annotations
 
-__all__ = [&#39;SL_Node&#39;, &#39;Tree_Node&#39;]
+__all__ = [&#39;SL_Node&#39;, &#39;BT_Node&#39;, &#39;LT_Node&#39;]
 __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Apache License 2.0&#34;
@@ -59,9 +65,13 @@ from typing import Any
 
 class SL_Node():
     &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
-    singularly linked list. This type of node always contain data, it
-    either has a reference to the next SL_Node or None to indicate the
-    bottom of the linked list of nodes.
+    singularly linked graphs of nodes.
+
+    * this type of node always contain data
+    * it has a reference to the next node in the list
+    * the next node can be `None` to indicate the end of the list
+    * more than one node can point to some node forming bush like graphs
+    * circular graphs are possible
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_next&#39;
 
@@ -71,25 +81,53 @@ class SL_Node():
         self._next = next
 
     def __bool__(self):
-        &#34;&#34;&#34;Always return true, None will return as false&#34;&#34;&#34;
+        # Even if self._data is None
         return True
 
-class Tree_Node():
-    &#34;&#34;&#34;Class implementing nodes that can be linked together to form
-    a tree-like data structure. This type of node always contain data.
+class BT_Node():
+    &#34;&#34;&#34;**Binary Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    graph data structures where data lives in the nodes.
+
+    * this type of node always contain data, enen if that data is `None`
+    * originally intended to implement binary tree graphs
+    * other use cases possible
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
 
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+    def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
         &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
         self._data = data
         self._left = left
         self._right = right
 
     def __bool__(self):
-        &#34;&#34;&#34;Always return true since a Tree_Node always contains data, even if
-        that data is None.&#34;&#34;&#34;
+        # Even if self._data is None
         return True
+
+class LT_Node():
+    &#34;&#34;&#34;**Leaf Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    data structures where data lives &#34;on the leaves.&#34; 
+
+    * this type of node never contain data
+    * both `self._left` &amp; `self._right` reference either data or other LT_Nodes
+    * while `self._root` references the node&#39;s parent node
+    * therefore, to store an LT_Node as data reqires a container for it
+    &#34;&#34;&#34;
+    __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, left: Any, right: Any, root: LT_Node=None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._root = root
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        # Return True if the LT_Node has no leaves
+        return LT_Node == type(self._left) == type(self._right)
 
 if __name__ == &#34;__main__&#34;:
     pass</code></pre>
@@ -104,15 +142,104 @@ if __name__ == &#34;__main__&#34;:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="grscheller.datastructures.core.nodes.BT_Node"><code class="flex name class">
+<span>class <span class="ident">BT_Node</span></span>
+<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a> | None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>Binary Tree Nodes</strong></p>
+<p>Class implementing nodes that can be linked together to form tree-like
+graph data structures where data lives in the nodes.</p>
+<ul>
+<li>this type of node always contain data, enen if that data is <code>None</code></li>
+<li>originally intended to implement binary tree graphs</li>
+<li>other use cases possible</li>
+</ul>
+<p>Construct an element of a doubly linked list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BT_Node():
+    &#34;&#34;&#34;**Binary Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    graph data structures where data lives in the nodes.
+
+    * this type of node always contain data, enen if that data is `None`
+    * originally intended to implement binary tree graphs
+    * other use cases possible
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._data = data
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        # Even if self._data is None
+        return True</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.core.nodes.LT_Node"><code class="flex name class">
+<span>class <span class="ident">LT_Node</span></span>
+<span>(</span><span>left: Any, right: Any, root: <a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a> = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p><strong>Leaf Tree Nodes</strong></p>
+<p>Class implementing nodes that can be linked together to form tree-like
+data structures where data lives "on the leaves." </p>
+<ul>
+<li>this type of node never contain data</li>
+<li>both <code>self._left</code> &amp; <code>self._right</code> reference either data or other LT_Nodes</li>
+<li>while <code>self._root</code> references the node's parent node</li>
+<li>therefore, to store an LT_Node as data reqires a container for it</li>
+</ul>
+<p>Construct an element of a doubly linked list</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LT_Node():
+    &#34;&#34;&#34;**Leaf Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    data structures where data lives &#34;on the leaves.&#34; 
+
+    * this type of node never contain data
+    * both `self._left` &amp; `self._right` reference either data or other LT_Nodes
+    * while `self._root` references the node&#39;s parent node
+    * therefore, to store an LT_Node as data reqires a container for it
+    &#34;&#34;&#34;
+    __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, left: Any, right: Any, root: LT_Node=None):
+        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        self._root = root
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        # Return True if the LT_Node has no leaves
+        return LT_Node == type(self._left) == type(self._right)</code></pre>
+</details>
+</dd>
 <dt id="grscheller.datastructures.core.nodes.SL_Node"><code class="flex name class">
 <span>class <span class="ident">SL_Node</span></span>
 <span>(</span><span>data: Any, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing nodes that can be linked together to form a
-singularly linked list. This type of node always contain data, it
-either has a reference to the next SL_Node or None to indicate the
-bottom of the linked list of nodes.</p>
+singularly linked graphs of nodes.</p>
+<ul>
+<li>this type of node always contain data</li>
+<li>it has a reference to the next node in the list</li>
+<li>the next node can be <code>None</code> to indicate the end of the list</li>
+<li>more than one node can point to some node forming bush like graphs</li>
+<li>circular graphs are possible</li>
+</ul>
 <p>Construct an element of a linked list</p></div>
 <details class="source">
 <summary>
@@ -120,9 +247,13 @@ bottom of the linked list of nodes.</p>
 </summary>
 <pre><code class="python">class SL_Node():
     &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
-    singularly linked list. This type of node always contain data, it
-    either has a reference to the next SL_Node or None to indicate the
-    bottom of the linked list of nodes.
+    singularly linked graphs of nodes.
+
+    * this type of node always contain data
+    * it has a reference to the next node in the list
+    * the next node can be `None` to indicate the end of the list
+    * more than one node can point to some node forming bush like graphs
+    * circular graphs are possible
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_next&#39;
 
@@ -132,37 +263,7 @@ bottom of the linked list of nodes.</p>
         self._next = next
 
     def __bool__(self):
-        &#34;&#34;&#34;Always return true, None will return as false&#34;&#34;&#34;
-        return True</code></pre>
-</details>
-</dd>
-<dt id="grscheller.datastructures.core.nodes.Tree_Node"><code class="flex name class">
-<span>class <span class="ident">Tree_Node</span></span>
-<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a> | None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Class implementing nodes that can be linked together to form
-a tree-like data structure. This type of node always contain data.</p>
-<p>Construct an element of a doubly linked list</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Tree_Node():
-    &#34;&#34;&#34;Class implementing nodes that can be linked together to form
-    a tree-like data structure. This type of node always contain data.
-    &#34;&#34;&#34;
-    __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
-
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
-        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
-        self._data = data
-        self._left = left
-        self._right = right
-
-    def __bool__(self):
-        &#34;&#34;&#34;Always return true since a Tree_Node always contains data, even if
-        that data is None.&#34;&#34;&#34;
+        # Even if self._data is None
         return True</code></pre>
 </details>
 </dd>
@@ -183,10 +284,13 @@ a tree-like data structure. This type of node always contain data.</p>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>
+<h4><code><a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a></code></h4>
 </li>
 <li>
-<h4><code><a title="grscheller.datastructures.core.nodes.Tree_Node" href="#grscheller.datastructures.core.nodes.Tree_Node">Tree_Node</a></code></h4>
+<h4><code><a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a></code></h4>
+</li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>
 </li>
 </ul>
 </li>

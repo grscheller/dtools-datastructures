@@ -6,7 +6,7 @@ implementation of algorithms.
 * Functional & imperative programming styles supported
 * FP supported but project endeavors to remain Pythonic
 * Methods which mutate objects don't return anything
-* [grscheller.circular-array][1] project on PyPI
+* [grscheller.datastructures][1] project on PyPI
 * [Detailed API documentation][2] on GH-Pages
 * [Source code][3] on GitHub
 

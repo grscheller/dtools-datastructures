@@ -23,10 +23,20 @@
 </header>
 <section id="section-intro">
 <p>Module grscheller.datastructure.queues - queue based datastructures</p>
-<p>Module implementing stateful queue data structures with amortized O(1) pushing and
-popping from the queue. Obtaining length (number of elements) of a queue is an O(1)
-operation. Implemented with a Python List based circular array, these data structures
-will resize themselves as needed. Does not store None as a value.</p>
+<p>Module implements</p>
+<ul>
+<li>stateful queue data structures with amortized O(1) pushes and pops</li>
+<li>obtaining length (number of elements) of a queue is an O(1) operation</li>
+<li>implemented with Python List based circular array in a "has-a" relationship</li>
+<li>these data structures will resize themselves as needed</li>
+<li><code>None</code> is not stored in these data structures as a value</li>
+</ul>
+<h4 id="class-fifoqueue">Class <strong>FIFOQueue</strong></h4>
+<p>First In, First Out Queue</p>
+<h4 id="class-lifoqueue">Class LIFOQueue**</h4>
+<p>Last In, First Out Queue</p>
+<h4 id="class-doublequeue">Class DoubleQueue**</h4>
+<p>Double Ended Queue</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -47,10 +57,25 @@ will resize themselves as needed. Does not store None as a value.</p>
 
 &#34;&#34;&#34;Module grscheller.datastructure.queues - queue based datastructures
 
-Module implementing stateful queue data structures with amortized O(1) pushing and
-popping from the queue. Obtaining length (number of elements) of a queue is an O(1)
-operation. Implemented with a Python List based circular array, these data structures
-will resize themselves as needed. Does not store None as a value.
+Module implements
+
+* stateful queue data structures with amortized O(1) pushes and pops
+* obtaining length (number of elements) of a queue is an O(1) operation
+* implemented with Python List based circular array in a &#34;has-a&#34; relationship
+* these data structures will resize themselves as needed
+* `None` is not stored in these data structures as a value
+
+#### Class **FIFOQueue**
+
+First In, First Out Queue
+
+#### Class LIFOQueue**
+
+Last In, First Out Queue
+
+#### Class DoubleQueue**
+
+Double Ended Queue
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -124,8 +149,8 @@ class QueueBase():
         self._ca = self._ca.reverse()
 
 class FIFOQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -163,8 +188,8 @@ class FIFOQueue(QueueBase, FP):
             return None
 
 class LIFOQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an LIFOQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -188,15 +213,15 @@ class LIFOQueue(QueueBase, FP):
         return self._ca.popR()
 
     def peak(self) -&gt; Any:
-        &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
 class DoubleQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DoubleQueue.
+    &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto a DoubleQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -222,11 +247,11 @@ class DoubleQueue(QueueBase, FP):
                 self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popR()
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakR(self) -&gt; Any:
@@ -247,10 +272,7 @@ class DoubleQueue(QueueBase, FP):
         return self._ca[index]
 
     def __setitem__(self, index: int, value):
-        self._ca[index] = value
-
-if __name__ == &#34;__main__&#34;:
-    pass</code></pre>
+        self._ca[index] = value</code></pre>
 </details>
 </section>
 <section>
@@ -267,16 +289,16 @@ if __name__ == &#34;__main__&#34;:
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Stateful double sided queue datastructure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto a DoubleQueue.</p>
+<div class="desc"><p>Stateful double sided queue datastructure. Will resize itself as needed. <code>None</code>
+represents the absence of a value and ignored if pushed onto a DoubleQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DoubleQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DoubleQueue.
+    &#34;&#34;&#34;Stateful double sided queue datastructure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto a DoubleQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -302,11 +324,11 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
                 self._ca.pushL(d)
 
     def popR(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popR()
 
     def popL(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakR(self) -&gt; Any:
@@ -390,13 +412,13 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the DoubleQueue</p></div>
+<div class="desc"><p>Pop data off front of the DoubleQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popL(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off front of the DoubleQueue&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off front of the DoubleQueue.&#34;&#34;&#34;
     return self._ca.popL()</code></pre>
 </details>
 </dd>
@@ -404,13 +426,13 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of the DoubleQueue</p></div>
+<div class="desc"><p>Pop data off rear of the DoubleQueue.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def popR(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off rear of the DoubleQueue&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off rear of the DoubleQueue.&#34;&#34;&#34;
     return self._ca.popR()</code></pre>
 </details>
 </dd>
@@ -457,7 +479,6 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
 <li><code><a title="grscheller.datastructures.core.fp.FP.foldL" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="core/fp.html#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="core/fp.html#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -467,16 +488,16 @@ None represents the absence of a value and ignored if pushed onto a DoubleQueue.
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Stateful single sided FIFO data structure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto an FIFOQueue.</p>
+<div class="desc"><p>Stateful single sided FIFO data structure. Will resize itself as needed. <code>None</code>
+represents the absence of a value and ignored if pushed onto an FIFOQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FIFOQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an FIFOQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -611,7 +632,6 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 <li><code><a title="grscheller.datastructures.core.fp.FP.foldL" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="core/fp.html#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="core/fp.html#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -621,16 +641,16 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Stateful single sided LIFO data structure. Will resize itself as needed.
-None represents the absence of a value and ignored if pushed onto an FIFOQueue.</p>
+<div class="desc"><p>Stateful single sided LIFO data structure. Will resize itself as needed. <code>None</code>
+represents the absence of a value and ignored if pushed onto an LIFOQueue.</p>
 <p>Construct a queue data structure. Cull None values.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class LIFOQueue(QueueBase, FP):
-    &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an LIFOQueue.
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -654,7 +674,7 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
         return self._ca.popR()
 
     def peak(self) -&gt; Any:
-        &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
@@ -687,13 +707,13 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 <span>def <span class="ident">peak</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return last element pushed to the LIFOQueue without consuming it</p></div>
+<div class="desc"><p>Return last element pushed to the LIFOQueue without consuming it.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peak(self) -&gt; Any:
-    &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it&#34;&#34;&#34;
+    &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it.&#34;&#34;&#34;
     if self._ca:
         return self._ca[-1]
     else:
@@ -741,7 +761,6 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 <li><code><a title="grscheller.datastructures.core.fp.FP.foldL" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.map" href="core/fp.html#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.reduce" href="core/fp.html#grscheller.datastructures.core.fp.FP.reduce">reduce</a></code></li>
 </ul>
 </li>
 </ul>
@@ -752,7 +771,11 @@ None represents the absence of a value and ignored if pushed onto an FIFOQueue.<
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#class-fifoqueue">Class FIFOQueue</a></li>
+<li><a href="#class-lifoqueue">Class LIFOQueue**</a></li>
+<li><a href="#class-doublequeue">Class DoubleQueue**</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
