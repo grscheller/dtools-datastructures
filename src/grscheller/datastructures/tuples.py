@@ -15,6 +15,12 @@
 """Module grscheller.datastructure.tuples - tuple-like data structures
 
 Module implementing an immutable tuple like object with a funtional interface.
+
+#### Class **FTuple**
+
+Class extending Tuple with FP behaviors.
+
+TODO: Go thru Tuple's methods, override methods returning a Tuple to return an FTuple.
 """
 
 from __future__ import annotations
@@ -28,7 +34,7 @@ from typing import Any
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    """Class extending tuple with FP behaviors."""
+    """Class extending Tuple with FP behaviors."""
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -53,7 +59,7 @@ class FTuple(tuple, FP):
         return item
 
     def copy(self) -> FTuple:
-        """Return shallow copy of the FTuple in O(1) time & space complexity"""
+        """Return shallow copy of the FTuple in O(1) time & space complexity."""
         return FTuple(*self)
 
     def reverse(self) -> FTuple:
@@ -61,12 +67,9 @@ class FTuple(tuple, FP):
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -> FTuple:
-        """Concatenate two FTuples"""
+        """Concatenate two FTuples."""
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -> FTuple:
-        """Return an FTuple which repeats anothr FTuples num times"""
+        """Return an FTuple which repeats anothr FTuples num times."""
         return FTuple(*super().__mul__(num))
-
-if __name__ == "__main__":
-    pass

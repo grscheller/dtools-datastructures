@@ -14,12 +14,14 @@
 
 """Module grscheller.datastructure.core.nodes
 
-Heap based nodes for for tree type data structures. Data structures should make
-nodes inaccessible to client code.
+* heap based nodes for for tree-like data structures
+* data structures should make nodes inaccessible to client code.
+* making nodes inaccessible promotes data sharing between data structures
+* nodes always return true in a boolean context, None will return as false 
 """
 from __future__ import annotations
 
-__all__ = ['SL_Node', 'Tree_Node']
+__all__ = ['SL_Node', 'BT_Node', 'LT_None']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -28,9 +30,13 @@ from typing import Any
 
 class SL_Node():
     """Class implementing nodes that can be linked together to form a
-    singularly linked list. This type of node always contain data, it
-    either has a reference to the next SL_Node or None to indicate the
-    bottom of the linked list of nodes.
+    singularly linked graphs of nodes.
+
+    * this type of node always contain data
+    * it has a reference to the next node in the list
+    * the next node can be `None` to indicate the end of the list
+    * more than one node can point to some node forming bush like graphs
+    * circular graphs are possible
     """
     __slots__ = '_data', '_next'
 
@@ -40,25 +46,53 @@ class SL_Node():
         self._next = next
 
     def __bool__(self):
-        """Always return true, None will return as false"""
+        # Even if self._data is None
         return True
 
-class Tree_Node():
-    """Class implementing nodes that can be linked together to form
-    a tree-like data structure. This type of node always contain data.
+class BT_Node():
+    """**Binary Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    graph data structures where data lives in the nodes.
+
+    * this type of node always contain data, enen if that data is `None`
+    * originally intended to implement binary tree graphs
+    * other use cases possible
     """
     __slots__ = '_data', '_left', '_right'
 
-    def __init__(self, data: Any, left: Tree_Node|None, right: Tree_Node|None):
+    def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
         """Construct an element of a doubly linked list"""
         self._data = data
         self._left = left
         self._right = right
 
     def __bool__(self):
-        """Always return true since a Tree_Node always contains data, even if
-        that data is None."""
+        # Even if self._data is None
         return True
+
+class LT_Node():
+    """**Leaf Tree Nodes**
+
+    Class implementing nodes that can be linked together to form tree-like
+    data structures where data lives "on the leaves." 
+
+    * this type of node never contain data
+    * both `self._left` & `self._right` reference either data or other LT_Nodes
+    * while `self._root` references the node's parent node
+    * therefore, to store an LT_Node as data reqires a container for it
+    """
+    __slots__ = '_root', '_left', '_right'
+
+    def __init__(self, left: Any, right: Any, root: LT_Node=None):
+        """Construct an element of a doubly linked list"""
+        self._root = root
+        self._left = left
+        self._right = right
+
+    def __bool__(self):
+        # Return True if the LT_Node has no leaves
+        return LT_Node == type(self._left) == type(self._right)
 
 if __name__ == "__main__":
     pass

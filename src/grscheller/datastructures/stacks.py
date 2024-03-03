@@ -14,9 +14,22 @@
 
 """Module grscheller.datastructure.stacks - Stateful & Functional LIFO stacks:
 
-   Module implementing a LIFO stacks using singularly linked linear trees of
-   nodes. The nodes can be safely shared between different stack instances and
-   are an implementation detail hidden from client code.
+Module implementing a LIFO stacks using singularly linked linear trees of
+nodes. The nodes can be safely shared between different stack instances and
+are an implementation detail hidden from client code.
+
+#### Class **Stack**
+
+* stateful last in, first out (LIFO) stack data structure
+* procedural interface
+* `None` represents the absence of a value and ignored if pushed onto a Stack
+
+#### Class **FStack**
+
+* immutable last in, first out (LIFO) stack data structure
+* functional interface
+* `None` represents the absence of a value and can not be used to create new FStacks
+
 """
 
 from __future__ import annotations
@@ -109,15 +122,11 @@ class Stack(StackBase):
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    Stacks are stateful objects, values can be pushed on & popped off.
-
-    A Stack points to either the top node in the list, or to None which indicates
-    an empty stack.
-
-    A Stack keeps a count of the number of objects currently on it. Pushing to,
-    popping from, getting the length and copying the Stack are all O(1) operations.
-
-    None represents the absence of a value and ignored if pushed on a Stack.
+    * Stacks are stateful objects, values can be pushed on & popped off
+    * Stacks referennce either the top node in the list, or `None` indicate if empty
+    * Stacks keep a count of the number of objects currently on them
+    * pushes & pops, getting the size and copying a Stack are all O(1) operations
+    * `None` represents the absence of a value and ignored if pushed on a Stack
     """
     __slots__ = ()
 
@@ -174,15 +183,11 @@ class FStack(StackBase, FP):
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
 
-    FStack stacks are immutable objects.
-
-    An FStack points to either the top node in the list, or to None which indicates
-    an empty FStack.
-
-    An Fstack keeps a count of the number of objects currently on it. Getting the head,
-    tail, length, copying and creating a new Fstack with cons are all O(1) operations.
-
-    None represents the absence of a value and ignored if pushed on an FStack.
+    * FStack stacks are immutable objects.
+    * FStacks referennce either the top node in the list, or `None` indicate if empty
+    * FStacks keep a count of the number of objects currently on them
+    * creating, getting the size and copying an FStack are all O(1) operations
+    * `None` represents the absence of a value and ignored used to create an FStack
     """
     __slots__ = ()
 
@@ -251,6 +256,3 @@ class FStack(StackBase, FP):
     def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
         """Monadicly bind f to the data structure merging until all exhausted"""
         return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
-
-if __name__ == "__main__":
-    pass

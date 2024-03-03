@@ -24,4 +24,4 @@ __license__ = "Apache License 2.0"
 #: Core API not imported from grscheller.datastructures. Useful imports for REPL's like
 #: ipython. Can be used by client code to help implement new data structures.
 from .fp import FP
-from .nodes import SL_Node, Tree_Node
+from .nodes import SL_Node, BT_Node, LT_Node

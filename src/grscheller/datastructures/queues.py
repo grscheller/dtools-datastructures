@@ -14,10 +14,25 @@
 
 """Module grscheller.datastructure.queues - queue based datastructures
 
-Module implementing stateful queue data structures with amortized O(1) pushing and
-popping from the queue. Obtaining length (number of elements) of a queue is an O(1)
-operation. Implemented with a Python List based circular array, these data structures
-will resize themselves as needed. Does not store None as a value.
+Module implements
+
+* stateful queue data structures with amortized O(1) pushes and pops
+* obtaining length (number of elements) of a queue is an O(1) operation
+* implemented with Python List based circular array in a "has-a" relationship
+* these data structures will resize themselves as needed
+* `None` is not stored in these data structures as a value
+
+#### Class **FIFOQueue**
+
+First In, First Out Queue
+
+#### Class LIFOQueue**
+
+Last In, First Out Queue
+
+#### Class DoubleQueue**
+
+Double Ended Queue
 """
 
 from __future__ import annotations
@@ -91,8 +106,8 @@ class QueueBase():
         self._ca = self._ca.reverse()
 
 class FIFOQueue(QueueBase, FP):
-    """Stateful single sided FIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an FIFOQueue.
     """
     __slots__ = ()
 
@@ -130,8 +145,8 @@ class FIFOQueue(QueueBase, FP):
             return None
 
 class LIFOQueue(QueueBase, FP):
-    """Stateful single sided LIFO data structure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    """Stateful single sided LIFO data structure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto an LIFOQueue.
     """
     __slots__ = ()
 
@@ -155,15 +170,15 @@ class LIFOQueue(QueueBase, FP):
         return self._ca.popR()
 
     def peak(self) -> Any:
-        """Return last element pushed to the LIFOQueue without consuming it"""
+        """Return last element pushed to the LIFOQueue without consuming it."""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
 class DoubleQueue(QueueBase, FP):
-    """Stateful double sided queue datastructure. Will resize itself as needed.
-    None represents the absence of a value and ignored if pushed onto a DoubleQueue.
+    """Stateful double sided queue datastructure. Will resize itself as needed. `None`
+    represents the absence of a value and ignored if pushed onto a DoubleQueue.
     """
     __slots__ = ()
 
@@ -189,11 +204,11 @@ class DoubleQueue(QueueBase, FP):
                 self._ca.pushL(d)
 
     def popR(self) -> Any:
-        """Pop data off rear of the DoubleQueue"""
+        """Pop data off rear of the DoubleQueue."""
         return self._ca.popR()
 
     def popL(self) -> Any:
-        """Pop data off front of the DoubleQueue"""
+        """Pop data off front of the DoubleQueue."""
         return self._ca.popL()
 
     def peakR(self) -> Any:
@@ -209,12 +224,3 @@ class DoubleQueue(QueueBase, FP):
             return self._ca[0]
         else:
             return None
-
-    def __getitem__(self, index: int) -> Any:
-        return self._ca[index]
-
-    def __setitem__(self, index: int, value):
-        self._ca[index] = value
-
-if __name__ == "__main__":
-    pass

@@ -14,7 +14,7 @@
 
 """Module grscheller.datastructures.core.iterlib
 
-Library of iterator related functions.
+* library of iterator related functions
 """
 
 from __future__ import annotations

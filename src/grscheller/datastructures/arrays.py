@@ -15,6 +15,15 @@
 """Module grscheller.datastructure.arrays
 
 Module implementing array-like data structures.
+
+#### Class **PArray**
+
+Processing Array  
+
+* mutable fixed length data structure
+* still a work in progress
+* not sure yet its best use case
+* I hope using it in other endeavors will guide me in refining it
 """
 
 from __future__ import annotations
@@ -35,15 +44,17 @@ class PArray(FP):
 
     Class implementing a mutable fixed length array-like data structure with
     O(1) data access. All mutating methods are guaranteed not to change the
-    length of the data structure. None values are not allowed in this data
-    structures.
+    length of the data structure.
 
-    - if size not given, None or 0 then size to the non-None data provided
-    - if size > 0, pad right from back queue or send trailing data to back queue
-    - if size < 0, pad left from back queue or slice initial data to back queue
-    - attempt to preserve original order of sliced data on back queue
-    - push extra non-None data from backlog to end of the back queue
-    - use the default value if back Queue empty, default value "defaults" to ()
+    * none values are not allowed in this data structures.
+    * if size not given, None or 0 then size to the non-None data provided
+    * if size > 0, pad right from back queue or send trailing data to back queue
+    * if size < 0, pad left from back queue or slice initial data to back queue
+    * attempt to preserve original order of sliced data on back queue
+    * push extra non-None data from backlog to end of the back queue
+    * interating over the data structure happen via cached copies
+    * use the default value if back Queue empty, default value "defaults" to ()
+    * in boolean context, return `True` only if a non-default value is contained
 
     Equality of objects is based on the array values and not on values in the
     back log nor the default value.
@@ -66,7 +77,7 @@ class PArray(FP):
 
         if size >= 0:
             if data_size < abs_size:
-                # Pad CLArray on right from backlog, if empty use default value
+                # Pad PArray on right from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushR(backQueue.popL())
                 backQueue.pushR(*backlog)
@@ -81,7 +92,7 @@ class PArray(FP):
                     arrayQueue.pushR(backQueue.popL())
         else:
             if data_size < abs_size:
-                # Pad CLArray on left from backlog, if empty use default value
+                # Pad PArray on left from backlog, if empty use default value
                 while backQueue:
                     arrayQueue.pushL(backQueue.popR())
                 backQueue.pushR(*backlog)
@@ -103,21 +114,20 @@ class PArray(FP):
         self._default = default
 
     def __iter__(self):
-        """Iterate over the current state of the CLArray. Copy is made
-        so original source can safely mutate.
-        """
+        # Iterate over the current state of the PArray. Copy of the internal
+        # state is made so that the PArray can safely mutate.
         for data in self._arrayQueue.copy():
             yield data
 
     def __reversed__(self):
-        """Reverse iterate over the current state of the CLArray. Copy is made
-        so original source can safely mutate.
-        """
+        # Reverse iterate over the current state of the PArray. Copy of the
+        # internal state is made so that the PArray can safely mutate.
         for data in reversed(self._arrayQueue.copy()):
             yield data
 
     def __repr__(self):
-        """Representation of current state of data, does not reproduce the backstore"""
+        # Representation of current state of data and default value,
+        # does not reproduce the backstore."""
         repr1 = f'{self.__class__.__name__}('
         repr2 = ', '.join(map(repr, self))
         if repr2 == '':
@@ -131,24 +141,22 @@ class PArray(FP):
         return '[|' + ', '.join(map(repr, self)) + '|]'
 
     def __bool__(self):
-        """Return true only if there exists an array value not equal to the
-        default value which gets used in lieu of None.
-        """
+        # Return `True` only if there exists an array value not equal to the
+        # default value which gets used in lieu of None.
         for value in self:
             if value != self._default:
                 return True
         return False
 
     def default(self) -> Any:
-        """Return a reference to the default value that gets used in lieu of None"""
+        """Return a reference to the default value that gets used in lieu of None."""
         return self._default
 
     def backQueue(self) -> DoubleQueue:
-        """Return a copy of the backQueue"""
+        """Return a copy of the backQueue."""
         return self._backQueue.copy()
 
     def __len__(self) -> int:
-        """Returns the size of the CLArray"""
         return len(self._arrayQueue)
 
     def __getitem__(self, index: int) -> Any:
@@ -161,26 +169,26 @@ class PArray(FP):
             self._arrayQueue[index] = value
 
     def __eq__(self, other: Any):
-        """Returns True if all the data stored in both compare as equal. Worst case is
-        O(n) behavior for the true case. The default value and the backQueue plays no
-        role in determining equality.
-        """
+        # Returns `True` if all the data stored in both compare as equal. Worst case is
+        # O(n) behavior for the true case. The default value and the backQueue plays no
+        # role in determining equality.
         if not isinstance(other, type(self)):
             return False
         return self._arrayQueue == other._arrayQueue
 
     def copy(self, size: int|None=None, default: Any|None=None) -> PArray:
-        """Return shallow copy of the CLArray in O(n) complexity."""
+        """Return shallow copy of the PArray in O(n) complexity."""
         return self.map(lambda x: x, size, default)
 
     def map(self, f: Callable[[Any], Any],
             size: int|None=None,
             default: Any|None=None) -> PArray:
-        """Apply function f over the CLArray contents. Return a new CLArray with the
-        mapped contents. Size to the data unless size is given. If default is not given,
-        use the value from the CLArray being mapped.
+        """Apply function f over the PArray contents.
 
-        Recommendation: default should be of the same type that f produces
+        * return a new PArray with the mapped contents
+        * size to the data unless size is given
+        * if default is not given, use the value from the PArray being mapped
+        * recommendation: default should be of the same type that f produces
         """
         if default is None:
             default = self._default
@@ -204,12 +212,12 @@ class PArray(FP):
                 size: int|None=None,
                 default: Any|None=None,
                 mapDefault: bool=False) -> PArray:
-        """Map f across self and flatten result by concatenating the CLArray elements
+        """Map f across self and flatten result by concatenating the PArray elements
         generated by f. If a default value is not given, use the default value of the
-        FLArray being flatMapped.
+        FLArray being flat mapped.
 
         Any default values of the FLArrays created by f need not have anything to do
-        with the default value of the FPArray being flat-mapped.
+        with the default value of the FPArray being flat mapped.
         """
         if default is None:
             default = self.default()
@@ -222,9 +230,9 @@ class PArray(FP):
                  size: int|None=None,
                  default: Any|None=None,
                  mapDefault: bool=False) -> PArray:
-        """Map f across self and flatten result by merging the CLArray elements
+        """Map f across self and flatten result by merging the PArray elements
         generated by f until the first is exhausted. If a default value is not given,
-        use the default value of the FLArray being flat-mapped.
+        use the default value of the FLArray being flat mapped.
         """
         if default is None:
             default = self._default
@@ -237,9 +245,9 @@ class PArray(FP):
                   size: int|None=None,
                   default: Any|None=None,
                   mapDefault: bool=False) -> PArray:
-        """Map f across self and flatten result by merging the CLArray elements
+        """Map f across self and flatten result by merging the PArray elements
         generated by f until all are exhausted. If a default value is not given,
-        use the default value of the FLArray being flat-mapped.
+        use the default value of the FLArray being flat mapped.
         """
         if default is None:
             default = self._default
@@ -249,8 +257,5 @@ class PArray(FP):
         return PArray(*exhaust(*self.map(f)), size=size, default=default)
 
     def reverse(self) -> None:
-        """Reverse the elements of the CLArray"""
+        """Reverse the elements of the PArray"""
         self._arrayQueue = DoubleQueue(*reversed(self))
-
-if __name__ == "__main__":
-    pass

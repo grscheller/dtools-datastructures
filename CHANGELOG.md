@@ -18,6 +18,17 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version 0.13.3.0 - Preparing for another PyPI release soon
+    
+* overhauled docstrings with Markdown markup
+* updated pyproject.py to drop project back to an Alpha release
+  * allows more renaming flexibilty
+  * intending to develop more graph based data structures
+* renamed class core.nodes.Tree_Node to core.node.BT_Node
+  * BT for Binary Tree (data in each node of tree)
+* created class core.nodes.LT_Node
+  * LT for Leaf Tree (data are the leaves of the tree)
+
 ## Version = v0.13.2 - PyPI release date 2024-02-20
 
 * Forgot to update pyproject.toml dependencies
