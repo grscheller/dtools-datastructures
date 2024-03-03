@@ -22,15 +22,15 @@ Module implements
 * these data structures will resize themselves as needed
 * `None` is not stored in these data structures as a value
 
-#### Class **FIFOQueue**
+### Class **FIFOQueue**
 
 First In, First Out Queue
 
-#### Class LIFOQueue**
+### Class LIFOQueue**
 
 Last In, First Out Queue
 
-#### Class DoubleQueue**
+### Class DoubleQueue**
 
 Double Ended Queue
 """

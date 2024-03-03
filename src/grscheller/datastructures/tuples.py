@@ -16,7 +16,7 @@
 
 Module implementing an immutable tuple like object with a funtional interface.
 
-#### Class **FTuple**
+### Class **FTuple**
 
 Class extending Tuple with FP behaviors.
 
