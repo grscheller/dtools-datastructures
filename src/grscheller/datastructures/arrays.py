@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.arrays
-
-Module implementing array-like data structures.
+"""Array-like data structures.
 
 ### Class PArray
 
@@ -42,11 +40,8 @@ from .core.fp import FP, Some
 class PArray(FP):
     """Processing Array
 
-    Class implementing a mutable fixed length array-like data structure with
-    O(1) data access. All mutating methods are guaranteed not to change the
-    length of the data structure.
-
-    * none values are not allowed in this data structures.
+    * mutable fixed length array-like data structure with O(1) data access
+    * all mutating methods are guaranteed not to change the length of a PArray
     * if size not given, None or 0 then size to the non-None data provided
     * if size > 0, pad right from back queue or send trailing data to back queue
     * if size < 0, pad left from back queue or slice initial data to back queue
@@ -55,6 +50,7 @@ class PArray(FP):
     * interating over the data structure happen via cached copies
     * use the default value if back Queue empty, default value "defaults" to ()
     * in boolean context, return `True` only if a non-default value is contained
+    * none values are not allowed in this data structures.
 
     Equality of objects is based on the array values and not on values in the
     back log nor the default value.
@@ -170,14 +166,18 @@ class PArray(FP):
 
     def __eq__(self, other: Any):
         # Returns `True` if all the data stored in both compare as equal. Worst case is
-        # O(n) behavior for the true case. The default value and the backQueue plays no
+        # O(n) behavior for the True case. The default value and the backQueue plays no
         # role in determining equality.
         if not isinstance(other, type(self)):
             return False
         return self._arrayQueue == other._arrayQueue
 
-    def copy(self, size: int|None=None, default: Any|None=None) -> PArray:
-        """Return shallow copy of the PArray in O(n) complexity."""
+    def copy(self, size: int|None=None, default: Any=None) -> PArray:
+        """Return shallow copy of the PArray in O(n) complexity. If a default
+        value not given, use the default value of the PArray being copied. If
+        the size is given, resize pushing extra data to the backlog and padding
+        missing data with the default value.
+        """
         return self.map(lambda x: x, size, default)
 
     def map(self, f: Callable[[Any], Any],
@@ -188,6 +188,7 @@ class PArray(FP):
         * return a new PArray with the mapped contents
         * size to the data unless size is given
         * if default is not given, use the value from the PArray being mapped
+        * if size not given, size to the non-
         * recommendation: default should be of the same type that f produces
         """
         if default is None:

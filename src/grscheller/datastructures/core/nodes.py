@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.core.nodes
+"""Various types of nodes for graph-like data structures.
 
 * heap based nodes for for tree-like data structures
 * data structures should make nodes inaccessible to client code.
 * making nodes inaccessible promotes data sharing between data structures
-* nodes always return true in a boolean context, None will return as false 
 """
 from __future__ import annotations
 

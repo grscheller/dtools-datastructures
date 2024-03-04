@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.core.functional
+"""Functional tools
 
-* class **Maybe**: Implements the Maybe Monad, also called the Optional Monad
-* class **Either**: Implements a left biased Either Monad.
 * class **FP**: default functional implementations for data structure methods
+* class **Maybe**: Implements the Maybe Monad
+* class **Either**: Implements a left biased Either Monad
 """
 from __future__ import annotations
 

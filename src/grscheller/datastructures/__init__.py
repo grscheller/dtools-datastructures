@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Classes to implement algorithms, functional and imperative styles supported."""
+"""Classes of containers supporting the use & implementation of various
+algorithms, both functional and imperative programming styles supported.
+"""
 
-__version__ = "0.13.3.3"
+__version__ = "0.13.3.4"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

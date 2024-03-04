@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.queues API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.queues - queue based datastructures …" />
+<meta name="description" content="Queue based datastructures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,14 +22,14 @@
 <h1 class="title">Module <code>grscheller.datastructures.queues</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.queues - queue based datastructures</p>
-<p>Module implements</p>
+<p>Queue based datastructures.</p>
 <ul>
 <li>stateful queue data structures with amortized O(1) pushes and pops</li>
 <li>obtaining length (number of elements) of a queue is an O(1) operation</li>
 <li>implemented with Python List based circular array in a "has-a" relationship</li>
 <li>these data structures will resize themselves as needed</li>
-<li><code>None</code> is not stored in these data structures as a value</li>
+<li>these queues are O(1) indexible, convenient but ignorable feature</li>
+<li>Python's <code>None</code> is not stored in these data structures as a value</li>
 </ul>
 <h3 id="class-fifoqueue">Class FIFOQueue</h3>
 <ul>
@@ -61,15 +61,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.queues - queue based datastructures
-
-Module implements
+&#34;&#34;&#34;Queue based datastructures.
 
 * stateful queue data structures with amortized O(1) pushes and pops
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented with Python List based circular array in a &#34;has-a&#34; relationship
 * these data structures will resize themselves as needed
-* `None` is not stored in these data structures as a value
+* these queues are O(1) indexible, convenient but ignorable feature
+* Python&#39;s `None` is not stored in these data structures as a value
 
 ### Class FIFOQueue
 

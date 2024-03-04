@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Package grscheller.datastructures.core
-
-Modules supporting core infrastructure of grscheller.datastructures.
+"""Modules supporting the core infrastructure of the grscheller.datastructures
+package. Useful imports for REPL's like ipython. Can be used by client code for
+the implemention of new data structures.
 """
 
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-#: Core API not imported from grscheller.datastructures. Useful imports for REPL's like
-#: ipython. Can be used by client code to help implement new data structures.
 from .fp import FP
 from .nodes import SL_Node, BT_Node, LT_Node

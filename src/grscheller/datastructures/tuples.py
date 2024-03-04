@@ -12,15 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.tuples - tuple-like data structures
-
-Module implementing an immutable tuple like object with a funtional interface.
-
-### Class FTuple
-
-Class extending Tuple with FP behaviors.
-
-TODO: Go thru Tuple's methods, override methods returning a Tuple to return an FTuple.
+"""Extending Python's Immutable builtin Tuple data structure with functional
+interfaces.
 """
 
 from __future__ import annotations

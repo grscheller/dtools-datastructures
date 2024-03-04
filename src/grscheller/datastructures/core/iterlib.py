@@ -12,10 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructures.core.iterlib
-
-* library of iterator related functions
-"""
+"""Library of iterator related functions."""
 
 from __future__ import annotations
 from typing import Any, Iterator, Iterable
@@ -28,7 +25,7 @@ __license__ = "Apache License 2.0"
 def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
     """Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRECATED - Use itertools.chain function instead
+    DEPRECATED - Better to use itertools.chain function instead
     """
     for iterator in map(iter,iterables):
         while True:

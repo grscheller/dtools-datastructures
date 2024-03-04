@@ -12,15 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.queues - queue based datastructures
-
-Module implements
+"""Queue based datastructures.
 
 * stateful queue data structures with amortized O(1) pushes and pops
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented with Python List based circular array in a "has-a" relationship
 * these data structures will resize themselves as needed
-* `None` is not stored in these data structures as a value
+* these queues are O(1) indexible, convenient but ignorable feature
+* Python's `None` is not stored in these data structures as a value
 
 ### Class FIFOQueue
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.arrays API documentation</title>
-<meta name="description" content="Module grscheller.datastructure.arrays …" />
+<meta name="description" content="Array-like data structures …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,8 +22,7 @@
 <h1 class="title">Module <code>grscheller.datastructures.arrays</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructure.arrays</p>
-<p>Module implementing array-like data structures.</p>
+<p>Array-like data structures.</p>
 <h3 id="class-parray">Class PArray</h3>
 <p>Processing Array
 </p>
@@ -51,9 +50,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructure.arrays
-
-Module implementing array-like data structures.
+&#34;&#34;&#34;Array-like data structures.
 
 ### Class PArray
 
@@ -81,11 +78,8 @@ from .core.fp import FP, Some
 class PArray(FP):
     &#34;&#34;&#34;Processing Array
 
-    Class implementing a mutable fixed length array-like data structure with
-    O(1) data access. All mutating methods are guaranteed not to change the
-    length of the data structure.
-
-    * none values are not allowed in this data structures.
+    * mutable fixed length array-like data structure with O(1) data access
+    * all mutating methods are guaranteed not to change the length of a PArray
     * if size not given, None or 0 then size to the non-None data provided
     * if size &gt; 0, pad right from back queue or send trailing data to back queue
     * if size &lt; 0, pad left from back queue or slice initial data to back queue
@@ -94,6 +88,7 @@ class PArray(FP):
     * interating over the data structure happen via cached copies
     * use the default value if back Queue empty, default value &#34;defaults&#34; to ()
     * in boolean context, return `True` only if a non-default value is contained
+    * none values are not allowed in this data structures.
 
     Equality of objects is based on the array values and not on values in the
     back log nor the default value.
@@ -209,14 +204,18 @@ class PArray(FP):
 
     def __eq__(self, other: Any):
         # Returns `True` if all the data stored in both compare as equal. Worst case is
-        # O(n) behavior for the true case. The default value and the backQueue plays no
+        # O(n) behavior for the True case. The default value and the backQueue plays no
         # role in determining equality.
         if not isinstance(other, type(self)):
             return False
         return self._arrayQueue == other._arrayQueue
 
-    def copy(self, size: int|None=None, default: Any|None=None) -&gt; PArray:
-        &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity.&#34;&#34;&#34;
+    def copy(self, size: int|None=None, default: Any=None) -&gt; PArray:
+        &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity. If a default
+        value not given, use the default value of the PArray being copied. If
+        the size is given, resize pushing extra data to the backlog and padding
+        missing data with the default value.
+        &#34;&#34;&#34;
         return self.map(lambda x: x, size, default)
 
     def map(self, f: Callable[[Any], Any],
@@ -227,6 +226,7 @@ class PArray(FP):
         * return a new PArray with the mapped contents
         * size to the data unless size is given
         * if default is not given, use the value from the PArray being mapped
+        * if size not given, size to the non-
         * recommendation: default should be of the same type that f produces
         &#34;&#34;&#34;
         if default is None:
@@ -315,11 +315,9 @@ class PArray(FP):
 </code></dt>
 <dd>
 <div class="desc"><p>Processing Array</p>
-<p>Class implementing a mutable fixed length array-like data structure with
-O(1) data access. All mutating methods are guaranteed not to change the
-length of the data structure.</p>
 <ul>
-<li>none values are not allowed in this data structures.</li>
+<li>mutable fixed length array-like data structure with O(1) data access</li>
+<li>all mutating methods are guaranteed not to change the length of a PArray</li>
 <li>if size not given, None or 0 then size to the non-None data provided</li>
 <li>if size &gt; 0, pad right from back queue or send trailing data to back queue</li>
 <li>if size &lt; 0, pad left from back queue or slice initial data to back queue</li>
@@ -328,6 +326,7 @@ length of the data structure.</p>
 <li>interating over the data structure happen via cached copies</li>
 <li>use the default value if back Queue empty, default value "defaults" to ()</li>
 <li>in boolean context, return <code>True</code> only if a non-default value is contained</li>
+<li>none values are not allowed in this data structures.</li>
 </ul>
 <p>Equality of objects is based on the array values and not on values in the
 back log nor the default value.</p></div>
@@ -338,11 +337,8 @@ back log nor the default value.</p></div>
 <pre><code class="python">class PArray(FP):
     &#34;&#34;&#34;Processing Array
 
-    Class implementing a mutable fixed length array-like data structure with
-    O(1) data access. All mutating methods are guaranteed not to change the
-    length of the data structure.
-
-    * none values are not allowed in this data structures.
+    * mutable fixed length array-like data structure with O(1) data access
+    * all mutating methods are guaranteed not to change the length of a PArray
     * if size not given, None or 0 then size to the non-None data provided
     * if size &gt; 0, pad right from back queue or send trailing data to back queue
     * if size &lt; 0, pad left from back queue or slice initial data to back queue
@@ -351,6 +347,7 @@ back log nor the default value.</p></div>
     * interating over the data structure happen via cached copies
     * use the default value if back Queue empty, default value &#34;defaults&#34; to ()
     * in boolean context, return `True` only if a non-default value is contained
+    * none values are not allowed in this data structures.
 
     Equality of objects is based on the array values and not on values in the
     back log nor the default value.
@@ -466,14 +463,18 @@ back log nor the default value.</p></div>
 
     def __eq__(self, other: Any):
         # Returns `True` if all the data stored in both compare as equal. Worst case is
-        # O(n) behavior for the true case. The default value and the backQueue plays no
+        # O(n) behavior for the True case. The default value and the backQueue plays no
         # role in determining equality.
         if not isinstance(other, type(self)):
             return False
         return self._arrayQueue == other._arrayQueue
 
-    def copy(self, size: int|None=None, default: Any|None=None) -&gt; PArray:
-        &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity.&#34;&#34;&#34;
+    def copy(self, size: int|None=None, default: Any=None) -&gt; PArray:
+        &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity. If a default
+        value not given, use the default value of the PArray being copied. If
+        the size is given, resize pushing extra data to the backlog and padding
+        missing data with the default value.
+        &#34;&#34;&#34;
         return self.map(lambda x: x, size, default)
 
     def map(self, f: Callable[[Any], Any],
@@ -484,6 +485,7 @@ back log nor the default value.</p></div>
         * return a new PArray with the mapped contents
         * size to the data unless size is given
         * if default is not given, use the value from the PArray being mapped
+        * if size not given, size to the non-
         * recommendation: default should be of the same type that f produces
         &#34;&#34;&#34;
         if default is None:
@@ -577,16 +579,23 @@ back log nor the default value.</p></div>
 </details>
 </dd>
 <dt id="grscheller.datastructures.arrays.PArray.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, default: Any | None = None) ‑> <a title="grscheller.datastructures.arrays.PArray" href="#grscheller.datastructures.arrays.PArray">PArray</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self, size: int | None = None, default: Any = None) ‑> <a title="grscheller.datastructures.arrays.PArray" href="#grscheller.datastructures.arrays.PArray">PArray</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the PArray in O(n) complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the PArray in O(n) complexity. If a default
+value not given, use the default value of the PArray being copied. If
+the size is given, resize pushing extra data to the backlog and padding
+missing data with the default value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def copy(self, size: int|None=None, default: Any|None=None) -&gt; PArray:
-    &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity.&#34;&#34;&#34;
+<pre><code class="python">def copy(self, size: int|None=None, default: Any=None) -&gt; PArray:
+    &#34;&#34;&#34;Return shallow copy of the PArray in O(n) complexity. If a default
+    value not given, use the default value of the PArray being copied. If
+    the size is given, resize pushing extra data to the backlog and padding
+    missing data with the default value.
+    &#34;&#34;&#34;
     return self.map(lambda x: x, size, default)</code></pre>
 </details>
 </dd>
@@ -673,6 +682,7 @@ with the default value of the FPArray being flat mapped.</p></div>
 <li>return a new PArray with the mapped contents</li>
 <li>size to the data unless size is given</li>
 <li>if default is not given, use the value from the PArray being mapped</li>
+<li>if size not given, size to the non-</li>
 <li>recommendation: default should be of the same type that f produces</li>
 </ul></div>
 <details class="source">
@@ -687,6 +697,7 @@ with the default value of the FPArray being flat mapped.</p></div>
     * return a new PArray with the mapped contents
     * size to the data unless size is given
     * if default is not given, use the value from the PArray being mapped
+    * if size not given, size to the non-
     * recommendation: default should be of the same type that f produces
     &#34;&#34;&#34;
     if default is None:

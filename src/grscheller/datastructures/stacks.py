@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module grscheller.datastructure.stacks - Stateful & Functional LIFO stacks:
+"""Both stateful & functional LIFO stacks.
 
-Module implementing a LIFO stacks using singularly linked linear trees of
+This module implements LIFO stacks using singularly linked lists of trees of
 nodes. The nodes can be safely shared between different stack instances and
 are an implementation detail hidden from client code.
 
@@ -29,7 +29,6 @@ are an implementation detail hidden from client code.
 * immutable last in, first out (LIFO) stack data structure
 * functional interface
 * `None` represents the absence of a value and can not be used to create new FStacks
-
 """
 
 from __future__ import annotations

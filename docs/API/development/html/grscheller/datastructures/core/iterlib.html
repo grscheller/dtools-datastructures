@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.core.iterlib API documentation</title>
-<meta name="description" content="Module grscheller.datastructures.core.iterlib …" />
+<meta name="description" content="Library of iterator related functions." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,10 +22,7 @@
 <h1 class="title">Module <code>grscheller.datastructures.core.iterlib</code></h1>
 </header>
 <section id="section-intro">
-<p>Module grscheller.datastructures.core.iterlib</p>
-<ul>
-<li>library of iterator related functions</li>
-</ul>
+<p>Library of iterator related functions.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -44,10 +41,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-&#34;&#34;&#34;Module grscheller.datastructures.core.iterlib
-
-* library of iterator related functions
-&#34;&#34;&#34;
+&#34;&#34;&#34;Library of iterator related functions.&#34;&#34;&#34;
 
 from __future__ import annotations
 from typing import Any, Iterator, Iterable
@@ -60,7 +54,7 @@ __license__ = &#34;Apache License 2.0&#34;
 def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRECATED - Use itertools.chain function instead
+    DEPRECATED - Better to use itertools.chain function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:
@@ -133,7 +127,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 </code></dt>
 <dd>
 <div class="desc"><p>Sequentually concatenate multiple iterators into one.</p>
-<p>WARNING: DEPRECATED - Use itertools.chain function instead</p></div>
+<p>DEPRECATED - Better to use itertools.chain function instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -141,7 +135,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <pre><code class="python">def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
 
-    WARNING: DEPRECATED - Use itertools.chain function instead
+    DEPRECATED - Better to use itertools.chain function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:
