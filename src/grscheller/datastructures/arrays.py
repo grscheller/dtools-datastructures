@@ -163,10 +163,10 @@ class PArray(FP):
         return self._arrayQueue[index]
 
     def __setitem__(self, index: int, value: Any) -> Any:
-        if value is None:
-            self._arrayQueue[index] = Some(self._backQueue.popL()).get(self._default)
-        else:
+        if value is not None:
             self._arrayQueue[index] = value
+        else:
+            self._arrayQueue[index] = Some(self._backQueue.popL()).get(self._default)
 
     def __eq__(self, other: Any):
         # Returns `True` if all the data stored in both compare as equal. Worst case is

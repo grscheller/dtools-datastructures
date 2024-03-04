@@ -24,15 +24,15 @@ Module implements
 
 ### Class FIFOQueue
 
-First In, First Out Queue
+* first in, first out queue
 
 ### Class LIFOQueue
 
-Last In, First Out Queue
+* last in, first out queue
 
 ### Class DoubleQueue
 
-Double Ended Queue
+* double ended queue
 """
 
 from __future__ import annotations
@@ -47,10 +47,13 @@ from .core.fp import FP
 from grscheller.circular_array import CircularArray
 
 class QueueBase():
-    """Abstract base class for the purposes of DRY inheritance of classes
-    implementing queue type data structures with a list based circular array.
-    Each queue object "has-a" (contains) a circular array to store its data. The
-    circular array used will resize itself as needed. Each QueueBase subclass
+    """Abstract base class for stateful queue-based data structures
+
+    * primarily for DRY implementation inheritance of queue type classes
+    * derived classes used will resize themselves as needed
+    * each queue object "has-a" (contains) a circular array to store its data
+    * 
+    Each QueueBase subclass
     must ensure that None values do not get pushed onto the circular array.
     """
     __slots__ = '_ca',
@@ -105,9 +108,38 @@ class QueueBase():
         """Reverse the elements in the Queue"""
         self._ca = self._ca.reverse()
 
+    def __getitem__(self, index: int) -> Any:
+        cnt = len(self)
+        if -cnt <= index < cnt:
+            return self._ca[index]
+        else:
+            return None
+
+    def __setitem__(self, index: int, value):
+        typePath = 'grscheller.datastructures.queues.'
+        queueType = lambda queue: str(type(queue)).split(typePath)[-1].partition("'")[0]
+
+        cnt = len(self)
+        if -cnt <= index < cnt:
+            if value is not None:
+                self._ca[index] = value
+            else:
+                msg = f'None values are not allowed in {queueType(self)} queues.'
+                raise ValueError(msg)
+        else:
+            if cnt > 0:
+                low = -cnt
+                high = cnt - 1
+                msg1 = f'Out of bounds: index = {index} not from {low} to {high}'
+                msg2 = f' while getting value from a {queueType(self)}.'
+                raise IndexError(msg1 + msg2)
+            else:
+                msg0 = f'Trying to get value from an empty {queueType(self)}.'
+                raise IndexError(msg0)
+
 class FIFOQueue(QueueBase, FP):
     """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto an FIFOQueue.
+    represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
@@ -146,7 +178,7 @@ class FIFOQueue(QueueBase, FP):
 
 class LIFOQueue(QueueBase, FP):
     """Stateful single sided LIFO data structure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto an LIFOQueue.
+    represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
@@ -178,7 +210,7 @@ class LIFOQueue(QueueBase, FP):
 
 class DoubleQueue(QueueBase, FP):
     """Stateful double sided queue datastructure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto a DoubleQueue.
+    represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
@@ -224,10 +256,3 @@ class DoubleQueue(QueueBase, FP):
             return self._ca[0]
         else:
             return None
-
-    def __getitem__(self, index: int) -> Any:
-        return self._ca[index]
-
-    def __setitem__(self, index: int, value):
-        self._ca[index] = value
-
