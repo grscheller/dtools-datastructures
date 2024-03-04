@@ -31,17 +31,11 @@
 <li>these queues are O(1) indexible, convenient but ignorable feature</li>
 <li>Python's <code>None</code> is not stored in these data structures as a value</li>
 </ul>
-<h3 id="class-fifoqueue">Class FIFOQueue</h3>
+<p>Types of Queues.</p>
 <ul>
-<li>first in, first out queue</li>
-</ul>
-<h3 id="class-lifoqueue">Class LIFOQueue</h3>
-<ul>
-<li>last in, first out queue</li>
-</ul>
-<h3 id="class-doublequeue">Class DoubleQueue</h3>
-<ul>
-<li>double ended queue</li>
+<li>class <strong>FIFOQueue</strong>: First In, First Out Queue</li>
+<li>class <strong>LIFOQueue</strong>: Last In, First Out Queue</li>
+<li>class <strong>DoubleQueue</strong>: Double Ended Queue</li>
 </ul>
 <details class="source">
 <summary>
@@ -70,17 +64,11 @@
 * these queues are O(1) indexible, convenient but ignorable feature
 * Python&#39;s `None` is not stored in these data structures as a value
 
-### Class FIFOQueue
+Types of Queues.
 
-* first in, first out queue
-
-### Class LIFOQueue
-
-* last in, first out queue
-
-### Class DoubleQueue
-
-* double ended queue
+* class **FIFOQueue**: First In, First Out Queue
+* class **LIFOQueue**: Last In, First Out Queue
+* class **DoubleQueue**: Double Ended Queue
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -100,9 +88,7 @@ class QueueBase():
     * primarily for DRY implementation inheritance of queue type classes
     * derived classes used will resize themselves as needed
     * each queue object &#34;has-a&#34; (contains) a circular array to store its data
-    * 
-    Each QueueBase subclass
-    must ensure that None values do not get pushed onto the circular array.
+    * None is not stored as a value on Queue data structures
     &#34;&#34;&#34;
     __slots__ = &#39;_ca&#39;,
 
@@ -796,11 +782,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul>
-<li><a href="#class-fifoqueue">Class FIFOQueue</a></li>
-<li><a href="#class-lifoqueue">Class LIFOQueue</a></li>
-<li><a href="#class-doublequeue">Class DoubleQueue</a></li>
-</ul>
+<ul></ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>

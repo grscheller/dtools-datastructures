@@ -22,13 +22,13 @@ are an implementation detail hidden from client code.
 
 * stateful last in, first out (LIFO) stack data structure
 * procedural interface
-* `None` represents the absence of a value and ignored if pushed onto a Stack
+* None represents the absence of a value and ignored if pushed onto a Stack
 
 ### Class FStack
 
 * immutable last in, first out (LIFO) stack data structure
 * functional interface
-* `None` represents the absence of a value and can not be used to create new FStacks
+* None represents the absence of a value and ignored when constructing new FStacks
 """
 
 from __future__ import annotations
@@ -122,10 +122,10 @@ class Stack(StackBase):
     nodes with other Stack instances.
 
     * Stacks are stateful objects, values can be pushed on & popped off
-    * Stacks referennce either the top node in the list, or `None` indicate if empty
+    * Stacks referennce either the top node in the list, or None indicate if empty
     * Stacks keep a count of the number of objects currently on them
     * pushes & pops, getting the size and copying a Stack are all O(1) operations
-    * `None` represents the absence of a value and ignored if pushed on a Stack
+    * None represents the absence of a value and ignored if pushed on a Stack
     """
     __slots__ = ()
 
@@ -183,10 +183,10 @@ class FStack(StackBase, FP):
     nodes with other FStack instances.
 
     * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or `None` indicate if empty
+    * FStacks referennce either the top node in the list, or None indicate if empty
     * FStacks keep a count of the number of objects currently on them
     * creating, getting the size and copying an FStack are all O(1) operations
-    * `None` represents the absence of a value and ignored used to create an FStack
+    * None represents the absence of a value and ignored used to create an FStack
     """
     __slots__ = ()
 

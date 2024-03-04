@@ -30,13 +30,13 @@ are an implementation detail hidden from client code.</p>
 <ul>
 <li>stateful last in, first out (LIFO) stack data structure</li>
 <li>procedural interface</li>
-<li><code>None</code> represents the absence of a value and ignored if pushed onto a Stack</li>
+<li>None represents the absence of a value and ignored if pushed onto a Stack</li>
 </ul>
 <h3 id="class-fstack">Class FStack</h3>
 <ul>
 <li>immutable last in, first out (LIFO) stack data structure</li>
 <li>functional interface</li>
-<li><code>None</code> represents the absence of a value and can not be used to create new FStacks</li>
+<li>None represents the absence of a value and ignored when constructing new FStacks</li>
 </ul>
 <details class="source">
 <summary>
@@ -66,13 +66,13 @@ are an implementation detail hidden from client code.
 
 * stateful last in, first out (LIFO) stack data structure
 * procedural interface
-* `None` represents the absence of a value and ignored if pushed onto a Stack
+* None represents the absence of a value and ignored if pushed onto a Stack
 
 ### Class FStack
 
 * immutable last in, first out (LIFO) stack data structure
 * functional interface
-* `None` represents the absence of a value and can not be used to create new FStacks
+* None represents the absence of a value and ignored when constructing new FStacks
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -166,10 +166,10 @@ class Stack(StackBase):
     nodes with other Stack instances.
 
     * Stacks are stateful objects, values can be pushed on &amp; popped off
-    * Stacks referennce either the top node in the list, or `None` indicate if empty
+    * Stacks referennce either the top node in the list, or None indicate if empty
     * Stacks keep a count of the number of objects currently on them
     * pushes &amp; pops, getting the size and copying a Stack are all O(1) operations
-    * `None` represents the absence of a value and ignored if pushed on a Stack
+    * None represents the absence of a value and ignored if pushed on a Stack
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -227,10 +227,10 @@ class FStack(StackBase, FP):
     nodes with other FStack instances.
 
     * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or `None` indicate if empty
+    * FStacks referennce either the top node in the list, or None indicate if empty
     * FStacks keep a count of the number of objects currently on them
     * creating, getting the size and copying an FStack are all O(1) operations
-    * `None` represents the absence of a value and ignored used to create an FStack
+    * None represents the absence of a value and ignored used to create an FStack
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -320,10 +320,10 @@ pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other FStack instances.</p>
 <ul>
 <li>FStack stacks are immutable objects.</li>
-<li>FStacks referennce either the top node in the list, or <code>None</code> indicate if empty</li>
+<li>FStacks referennce either the top node in the list, or None indicate if empty</li>
 <li>FStacks keep a count of the number of objects currently on them</li>
 <li>creating, getting the size and copying an FStack are all O(1) operations</li>
-<li><code>None</code> represents the absence of a value and ignored used to create an FStack</li>
+<li>None represents the absence of a value and ignored used to create an FStack</li>
 </ul>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
@@ -336,10 +336,10 @@ nodes with other FStack instances.</p>
     nodes with other FStack instances.
 
     * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or `None` indicate if empty
+    * FStacks referennce either the top node in the list, or None indicate if empty
     * FStacks keep a count of the number of objects currently on them
     * creating, getting the size and copying an FStack are all O(1) operations
-    * `None` represents the absence of a value and ignored used to create an FStack
+    * None represents the absence of a value and ignored used to create an FStack
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -594,10 +594,10 @@ pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other Stack instances.</p>
 <ul>
 <li>Stacks are stateful objects, values can be pushed on &amp; popped off</li>
-<li>Stacks referennce either the top node in the list, or <code>None</code> indicate if empty</li>
+<li>Stacks referennce either the top node in the list, or None indicate if empty</li>
 <li>Stacks keep a count of the number of objects currently on them</li>
 <li>pushes &amp; pops, getting the size and copying a Stack are all O(1) operations</li>
-<li><code>None</code> represents the absence of a value and ignored if pushed on a Stack</li>
+<li>None represents the absence of a value and ignored if pushed on a Stack</li>
 </ul>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
@@ -610,10 +610,10 @@ nodes with other Stack instances.</p>
     nodes with other Stack instances.
 
     * Stacks are stateful objects, values can be pushed on &amp; popped off
-    * Stacks referennce either the top node in the list, or `None` indicate if empty
+    * Stacks referennce either the top node in the list, or None indicate if empty
     * Stacks keep a count of the number of objects currently on them
     * pushes &amp; pops, getting the size and copying a Stack are all O(1) operations
-    * `None` represents the absence of a value and ignored if pushed on a Stack
+    * None represents the absence of a value and ignored if pushed on a Stack
     &#34;&#34;&#34;
     __slots__ = ()
 

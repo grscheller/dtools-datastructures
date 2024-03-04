@@ -21,17 +21,11 @@
 * these queues are O(1) indexible, convenient but ignorable feature
 * Python's `None` is not stored in these data structures as a value
 
-### Class FIFOQueue
+Types of Queues.
 
-* first in, first out queue
-
-### Class LIFOQueue
-
-* last in, first out queue
-
-### Class DoubleQueue
-
-* double ended queue
+* class **FIFOQueue**: First In, First Out Queue
+* class **LIFOQueue**: Last In, First Out Queue
+* class **DoubleQueue**: Double Ended Queue
 """
 
 from __future__ import annotations
@@ -51,9 +45,7 @@ class QueueBase():
     * primarily for DRY implementation inheritance of queue type classes
     * derived classes used will resize themselves as needed
     * each queue object "has-a" (contains) a circular array to store its data
-    * 
-    Each QueueBase subclass
-    must ensure that None values do not get pushed onto the circular array.
+    * None is not stored as a value on Queue data structures
     """
     __slots__ = '_ca',
 

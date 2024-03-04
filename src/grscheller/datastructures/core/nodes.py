@@ -33,8 +33,8 @@ class SL_Node():
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be `None` to indicate the end of the list
-    * more than one node can point to some node forming bush like graphs
+    * the next node can be None to indicate the end of the list
+    * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     """
     __slots__ = '_data', '_next'
@@ -54,7 +54,7 @@ class BT_Node():
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is `None`
+    * this type of node always contain data, enen if that data is None
     * originally intended to implement binary tree graphs
     * other use cases possible
     """
@@ -77,8 +77,8 @@ class LT_Node():
     data structures where data lives "on the leaves." 
 
     * this type of node never contain data
-    * both `self._left` & `self._right` reference either data or other LT_Nodes
-    * while `self._root` references the node's parent node
+    * both self._left & self._right reference either data or other LT_Nodes
+    * while self._root references the node's parent node
     * therefore, to store an LT_Node as data reqires a container for it
     """
     __slots__ = '_root', '_left', '_right'

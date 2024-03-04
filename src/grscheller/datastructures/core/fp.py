@@ -88,13 +88,13 @@ class Maybe(FP):
     """Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where `Maybe(value)` constructs `Some(value)`
-    * where `Maybe()` & `Maybe(None)` constructs a `Nothing`
-    * immutable semantics, `map` & `flatMap` return modified copies
-    * where `None` is always treated as a non-existance value
-    * where `None` cannot be stored in an object of type `Maybe`
-    * semantically `None` represent non-existance
-    * where `None` used only as an implementration detail
+    * where Maybe(value) constructs a Some(value)
+    * where Maybe() & Maybe(None) constructs a Nothing
+    * immutable semantics, `map` & flatMap return modified copies
+    * where None is always treated as a non-existance value
+    * where None cannot be stored in an object of type Maybe
+    * semantically None represent non-existance
+    * where None used only as an implementration detail
     """
     __slots__ = '_value',
 
@@ -178,12 +178,11 @@ class Either(FP):
     """Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where `maybe(value, altValue)` constructs `Left(value)` if value not `None`
-    * where `maybe(value, altValue)` constructs `Right(altValue)` if value `None`
-    * if `altValue` not given, set it to the empty string
-    * immutable semantics where `map` & `flatMap` return modified copies
-    * in boolean context, return `True` if a `Left`, `False` if a `Right`
-    * in comparisons return `True` only if both sides same type and compare as equal
+    * where maybe(value, altValue) constructs Left(value) if value not None
+    * where maybe(None, altValue) constructs Right(altValue)
+    * if altValue not given, set it to the empty string
+    * immutable semantics where map & flatMap return modified copies
+    * in boolean context, return True if a Left, False if a Right
     """
     __slots__ = '_value', '_isLeft'
 
@@ -292,7 +291,7 @@ class Either(FP):
         """The `Either` data structure always holds one value, so what gets
         "accummulated" depends on whether the Either is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a right a str.
+        * by default, a Left contains numeric data, a Right a str.
         """
         if f is None:
             f = operator.add

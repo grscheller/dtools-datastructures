@@ -67,8 +67,8 @@ class SL_Node():
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be `None` to indicate the end of the list
-    * more than one node can point to some node forming bush like graphs
+    * the next node can be None to indicate the end of the list
+    * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_next&#39;
@@ -88,7 +88,7 @@ class BT_Node():
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is `None`
+    * this type of node always contain data, enen if that data is None
     * originally intended to implement binary tree graphs
     * other use cases possible
     &#34;&#34;&#34;
@@ -111,8 +111,8 @@ class LT_Node():
     data structures where data lives &#34;on the leaves.&#34; 
 
     * this type of node never contain data
-    * both `self._left` &amp; `self._right` reference either data or other LT_Nodes
-    * while `self._root` references the node&#39;s parent node
+    * both self._left &amp; self._right reference either data or other LT_Nodes
+    * while self._root references the node&#39;s parent node
     * therefore, to store an LT_Node as data reqires a container for it
     &#34;&#34;&#34;
     __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
@@ -149,7 +149,7 @@ if __name__ == &#34;__main__&#34;:
 <p>Class implementing nodes that can be linked together to form tree-like
 graph data structures where data lives in the nodes.</p>
 <ul>
-<li>this type of node always contain data, enen if that data is <code>None</code></li>
+<li>this type of node always contain data, enen if that data is None</li>
 <li>originally intended to implement binary tree graphs</li>
 <li>other use cases possible</li>
 </ul>
@@ -164,7 +164,7 @@ graph data structures where data lives in the nodes.</p>
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is `None`
+    * this type of node always contain data, enen if that data is None
     * originally intended to implement binary tree graphs
     * other use cases possible
     &#34;&#34;&#34;
@@ -191,8 +191,8 @@ graph data structures where data lives in the nodes.</p>
 data structures where data lives "on the leaves." </p>
 <ul>
 <li>this type of node never contain data</li>
-<li>both <code>self._left</code> &amp; <code>self._right</code> reference either data or other LT_Nodes</li>
-<li>while <code>self._root</code> references the node's parent node</li>
+<li>both self._left &amp; self._right reference either data or other LT_Nodes</li>
+<li>while self._root references the node's parent node</li>
 <li>therefore, to store an LT_Node as data reqires a container for it</li>
 </ul>
 <p>Construct an element of a doubly linked list</p></div>
@@ -207,8 +207,8 @@ data structures where data lives "on the leaves." </p>
     data structures where data lives &#34;on the leaves.&#34; 
 
     * this type of node never contain data
-    * both `self._left` &amp; `self._right` reference either data or other LT_Nodes
-    * while `self._root` references the node&#39;s parent node
+    * both self._left &amp; self._right reference either data or other LT_Nodes
+    * while self._root references the node&#39;s parent node
     * therefore, to store an LT_Node as data reqires a container for it
     &#34;&#34;&#34;
     __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
@@ -234,8 +234,8 @@ singularly linked graphs of nodes.</p>
 <ul>
 <li>this type of node always contain data</li>
 <li>it has a reference to the next node in the list</li>
-<li>the next node can be <code>None</code> to indicate the end of the list</li>
-<li>more than one node can point to some node forming bush like graphs</li>
+<li>the next node can be None to indicate the end of the list</li>
+<li>more than one node can point to the same node forming bush like graphs</li>
 <li>circular graphs are possible</li>
 </ul>
 <p>Construct an element of a linked list</p></div>
@@ -249,8 +249,8 @@ singularly linked graphs of nodes.</p>
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be `None` to indicate the end of the list
-    * more than one node can point to some node forming bush like graphs
+    * the next node can be None to indicate the end of the list
+    * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_next&#39;

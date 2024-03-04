@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Extending Python's Immutable builtin Tuple data structure with functional
-interfaces.
+"""Extending Python's Immutable builtin Tuple data structure with
+a functional interfaces.
 """
 
 from __future__ import annotations

@@ -50,7 +50,7 @@ class PArray(FP):
     * interating over the data structure happen via cached copies
     * use the default value if back Queue empty, default value "defaults" to ()
     * in boolean context, return `True` only if a non-default value is contained
-    * none values are not allowed in this data structures.
+    * none values are not allowed in this data structures
 
     Equality of objects is based on the array values and not on values in the
     back log nor the default value.
@@ -187,12 +187,12 @@ class PArray(FP):
 
         * return a new PArray with the mapped contents
         * size to the data unless size is given
-        * if default is not given, use the value from the PArray being mapped
-        * if size not given, size to the non-
-        * recommendation: default should be of the same type that f produces
+        * if default not given, use f(default) where default is from PArray being mapped
+        * if size not given, size to the non-None values produced by f
+        * best practice is for the default being the same type that f produces
         """
         if default is None:
-            default = self._default
+            default = f(self._default)
 
         def F(ff: Callable([Any], Any)) -> Callable([Any], Any):
             def FF(x: Any) -> Any:

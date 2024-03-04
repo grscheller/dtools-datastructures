@@ -122,13 +122,13 @@ class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where `Maybe(value)` constructs `Some(value)`
-    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing`
-    * immutable semantics, `map` &amp; `flatMap` return modified copies
-    * where `None` is always treated as a non-existance value
-    * where `None` cannot be stored in an object of type `Maybe`
-    * semantically `None` represent non-existance
-    * where `None` used only as an implementration detail
+    * where Maybe(value) constructs a Some(value)
+    * where Maybe() &amp; Maybe(None) constructs a Nothing
+    * immutable semantics, `map` &amp; flatMap return modified copies
+    * where None is always treated as a non-existance value
+    * where None cannot be stored in an object of type Maybe
+    * semantically None represent non-existance
+    * where None used only as an implementration detail
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;,
 
@@ -212,12 +212,11 @@ class Either(FP):
     &#34;&#34;&#34;Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where `maybe(value, altValue)` constructs `Left(value)` if value not `None`
-    * where `maybe(value, altValue)` constructs `Right(altValue)` if value `None`
-    * if `altValue` not given, set it to the empty string
-    * immutable semantics where `map` &amp; `flatMap` return modified copies
-    * in boolean context, return `True` if a `Left`, `False` if a `Right`
-    * in comparisons return `True` only if both sides same type and compare as equal
+    * where maybe(value, altValue) constructs Left(value) if value not None
+    * where maybe(None, altValue) constructs Right(altValue)
+    * if altValue not given, set it to the empty string
+    * immutable semantics where map &amp; flatMap return modified copies
+    * in boolean context, return True if a Left, False if a Right
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
@@ -326,7 +325,7 @@ class Either(FP):
         &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
         &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a right a str.
+        * by default, a Left contains numeric data, a Right a str.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -465,12 +464,11 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <div class="desc"><p>Class that either contains a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value or <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value, but not both.</p>
 <ul>
 <li>implements a left biased either monad</li>
-<li>where <code>maybe(value, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>(value)</code> if value not <code>None</code></li>
-<li>where <code>maybe(value, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a>(altValue)</code> if value <code>None</code></li>
-<li>if <code>altValue</code> not given, set it to the empty string</li>
-<li>immutable semantics where <code>map</code> &amp; <code>flatMap</code> return modified copies</li>
-<li>in boolean context, return <code>True</code> if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code>, <code>False</code> if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code></li>
-<li>in comparisons return <code>True</code> only if both sides same type and compare as equal</li>
+<li>where maybe(value, altValue) constructs Left(value) if value not None</li>
+<li>where maybe(None, altValue) constructs Right(altValue)</li>
+<li>if altValue not given, set it to the empty string</li>
+<li>immutable semantics where map &amp; flatMap return modified copies</li>
+<li>in boolean context, return True if a Left, False if a Right</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -480,12 +478,11 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
     &#34;&#34;&#34;Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where `maybe(value, altValue)` constructs `Left(value)` if value not `None`
-    * where `maybe(value, altValue)` constructs `Right(altValue)` if value `None`
-    * if `altValue` not given, set it to the empty string
-    * immutable semantics where `map` &amp; `flatMap` return modified copies
-    * in boolean context, return `True` if a `Left`, `False` if a `Right`
-    * in comparisons return `True` only if both sides same type and compare as equal
+    * where maybe(value, altValue) constructs Left(value) if value not None
+    * where maybe(None, altValue) constructs Right(altValue)
+    * if altValue not given, set it to the empty string
+    * immutable semantics where map &amp; flatMap return modified copies
+    * in boolean context, return True if a Left, False if a Right
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
@@ -594,7 +591,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
         &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a right a str.
+        * by default, a Left contains numeric data, a Right a str.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -623,7 +620,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <div class="desc"><p>The <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> data structure always holds one value, so what gets
 "accummulated" depends on whether the Either is a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> or a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>.</p>
 <ul>
-<li>by default, a Left contains numeric data, a right a str.</li>
+<li>by default, a Left contains numeric data, a Right a str.</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -637,7 +634,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
     &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
     &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
 
-    * by default, a Left contains numeric data, a right a str.
+    * by default, a Left contains numeric data, a Right a str.
     &#34;&#34;&#34;
     if f is None:
         f = operator.add
@@ -985,13 +982,13 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
 <div class="desc"><p>Class representing a potentially missing value.</p>
 <ul>
 <li>implements the Option Monad</li>
-<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(value)</code> constructs <code><a title="grscheller.datastructures.core.fp.Some" href="#grscheller.datastructures.core.fp.Some">Some()</a>(value)</code></li>
-<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> &amp; <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(None)</code> constructs a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code></li>
-<li>immutable semantics, <code>map</code> &amp; <code>flatMap</code> return modified copies</li>
-<li>where <code>None</code> is always treated as a non-existance value</li>
-<li>where <code>None</code> cannot be stored in an object of type <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></li>
-<li>semantically <code>None</code> represent non-existance</li>
-<li>where <code>None</code> used only as an implementration detail</li>
+<li>where Maybe(value) constructs a Some(value)</li>
+<li>where Maybe() &amp; Maybe(None) constructs a Nothing</li>
+<li>immutable semantics, <code>map</code> &amp; flatMap return modified copies</li>
+<li>where None is always treated as a non-existance value</li>
+<li>where None cannot be stored in an object of type Maybe</li>
+<li>semantically None represent non-existance</li>
+<li>where None used only as an implementration detail</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -1001,13 +998,13 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where `Maybe(value)` constructs `Some(value)`
-    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing`
-    * immutable semantics, `map` &amp; `flatMap` return modified copies
-    * where `None` is always treated as a non-existance value
-    * where `None` cannot be stored in an object of type `Maybe`
-    * semantically `None` represent non-existance
-    * where `None` used only as an implementration detail
+    * where Maybe(value) constructs a Some(value)
+    * where Maybe() &amp; Maybe(None) constructs a Nothing
+    * immutable semantics, `map` &amp; flatMap return modified copies
+    * where None is always treated as a non-existance value
+    * where None cannot be stored in an object of type Maybe
+    * semantically None represent non-existance
+    * where None used only as an implementration detail
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;,
 
