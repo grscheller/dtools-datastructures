@@ -19,6 +19,8 @@ class TestPArray:
     def test_map1(self):
         pa1 = PArray(0, 1, 2, 3, size=-6, default=-1)
         pa2 = pa1.map(lambda x: x+1, size=7, default=42)
+        pa3 = pa1.map(lambda x: x+1, size=7, mapDefault=True)
+        pa4 = pa1.map(lambda x: x+1, size=7)
         assert pa1[0] + 1 == pa2[0] == 0
         assert pa1[1] + 1 == pa2[1] == 0
         assert pa1[2] + 1 == pa2[2] == 1
@@ -26,6 +28,10 @@ class TestPArray:
         assert pa1[4] + 1 == pa2[4] == 3
         assert pa1[5] + 1 == pa2[5] == 4
         assert pa2[6] == 42
+        assert pa1.default() == -1
+        assert pa2.default() == 42
+        assert pa3.default() == 0
+        assert pa4.default() == -1
 
     def test_map2(self):
         pa1 = PArray(0, 1, 2, 3, size=6, default=-1)
