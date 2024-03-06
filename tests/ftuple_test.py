@@ -115,10 +115,15 @@ class TestFTuple:
         assert ft1.foldL(lambda x, y: x*y, initial=10) == 1200
         assert ft0.foldL(lambda x, y: x*y, initial=10) == 10
 
-        assert ft1.foldL(lambda x, y: x*y) == 120
-        assert ft0.foldL(lambda x, y: x*y) == None
-        assert ft1.foldL(lambda x, y: x*y, initial=10) == 1200
-        assert ft0.foldL(lambda x, y: x*y, initial=10) == 10
+    def test_foldR(self):
+        ft0 = FTuple()
+        ft1 = FTuple(*range(1, 4))
+        assert ft1 == FTuple(1, 2, 3)
+
+        assert ft1.foldR(lambda x, y: y*y - x) == 48
+        assert ft0.foldR(lambda x, y: y*y - x) == None
+        assert ft1.foldR(lambda x, y: y*y - x, initial=5) == 232323
+        assert ft0.foldR(lambda x, y: y*y - x, initial=5) == 5
 
     def test_accummulate(self):
         ft0 = FTuple()

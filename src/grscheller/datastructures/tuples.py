@@ -14,6 +14,10 @@
 
 """Extending Python's Immutable builtin Tuple data structure with
 a functional interfaces.
+
+Types of Tuples:
+
+* class **ftuple**: extend builtin tuple with functional interface
 """
 
 from __future__ import annotations
@@ -23,11 +27,11 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any
+from typing import Any, Callable
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    """Class extending Tuple with FP behaviors."""
+    """Class extending Python Tuple with FP behaviors."""
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -50,6 +54,10 @@ class FTuple(tuple, FP):
         except IndexError:
             item = None
         return item
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        FF = lambda x, y: f(y, x) 
+        return self[::-1].foldL(FF, initial)
 
     def copy(self) -> FTuple:
         """Return shallow copy of the FTuple in O(1) time & space complexity."""

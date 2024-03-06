@@ -6,7 +6,7 @@
 <meta name="generator" content="pdoc 0.10.0" />
 <title>grscheller.datastructures.tuples API documentation</title>
 <meta name="description" content="Extending Python&#39;s Immutable builtin Tuple data structure with
-a functional interfaces." />
+a functional interfaces …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -25,6 +25,10 @@ a functional interfaces." />
 <section id="section-intro">
 <p>Extending Python's Immutable builtin Tuple data structure with
 a functional interfaces.</p>
+<p>Types of Tuples:</p>
+<ul>
+<li>class <strong>ftuple</strong>: extend builtin tuple with functional interface</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -45,6 +49,10 @@ a functional interfaces.</p>
 
 &#34;&#34;&#34;Extending Python&#39;s Immutable builtin Tuple data structure with
 a functional interfaces.
+
+Types of Tuples:
+
+* class **ftuple**: extend builtin tuple with functional interface
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -54,11 +62,11 @@ __author__ = &#34;Geoffrey R. Scheller&#34;
 __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Apache License 2.0&#34;
 
-from typing import Any
+from typing import Any, Callable
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending Tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Python Tuple with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -81,6 +89,10 @@ class FTuple(tuple, FP):
         except IndexError:
             item = None
         return item
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        FF = lambda x, y: f(y, x) 
+        return self[::-1].foldL(FF, initial)
 
     def copy(self) -&gt; FTuple:
         &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
@@ -113,13 +125,13 @@ class FTuple(tuple, FP):
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class extending Tuple with FP behaviors.</p></div>
+<div class="desc"><p>Class extending Python Tuple with FP behaviors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending Tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Python Tuple with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
@@ -142,6 +154,10 @@ class FTuple(tuple, FP):
         except IndexError:
             item = None
         return item
+
+    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        FF = lambda x, y: f(y, x) 
+        return self[::-1].foldL(FF, initial)
 
     def copy(self) -&gt; FTuple:
         &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
@@ -178,6 +194,20 @@ class FTuple(tuple, FP):
 <pre><code class="python">def copy(self) -&gt; FTuple:
     &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
     return FTuple(*self)</code></pre>
+</details>
+</dd>
+<dt id="grscheller.datastructures.tuples.FTuple.foldR"><code class="name flex">
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    FF = lambda x, y: f(y, x) 
+    return self[::-1].foldL(FF, initial)</code></pre>
 </details>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.reverse"><code class="name flex">
@@ -229,6 +259,7 @@ class FTuple(tuple, FP):
 <h4><code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code></h4>
 <ul class="">
 <li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.foldR" href="#grscheller.datastructures.tuples.FTuple.foldR">foldR</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.reverse" href="#grscheller.datastructures.tuples.FTuple.reverse">reverse</a></code></li>
 </ul>
 </li>

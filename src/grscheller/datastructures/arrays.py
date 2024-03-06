@@ -14,6 +14,8 @@
 
 """Array-like data structures.
 
+Types of Arrays:
+
 ### Class PArray
 
 Processing Array  

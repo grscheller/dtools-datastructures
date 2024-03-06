@@ -31,7 +31,7 @@
 <li>these queues are O(1) indexible, convenient but ignorable feature</li>
 <li>Python's <code>None</code> is not stored in these data structures as a value</li>
 </ul>
-<p>Types of Queues.</p>
+<p>Types of Queues:</p>
 <ul>
 <li>class <strong>FIFOQueue</strong>: First In, First Out Queue</li>
 <li>class <strong>LIFOQueue</strong>: Last In, First Out Queue</li>
@@ -64,7 +64,7 @@
 * these queues are O(1) indexible, convenient but ignorable feature
 * Python&#39;s `None` is not stored in these data structures as a value
 
-Types of Queues.
+Types of Queues:
 
 * class **FIFOQueue**: First In, First Out Queue
 * class **LIFOQueue**: Last In, First Out Queue
@@ -162,13 +162,12 @@ class QueueBase():
                 raise ValueError(msg)
         else:
             if cnt &gt; 0:
-                low = -cnt
-                high = cnt - 1
-                msg1 = f&#39;Out of bounds: index = {index} not from {low} to {high}&#39;
-                msg2 = f&#39; while getting value from a {queueType(self)}.&#39;
-                raise IndexError(msg1 + msg2)
+                msg1 = f&#39;Out of bounds: &#39;
+                msg2 = f&#39;index = {index} not from {-cnt} to {cnt-1} &#39;
+                msg3 = f&#39;while setting value from a {queueType(self)}.&#39;
+                raise IndexError(msg1 + msg2 + msg3)
             else:
-                msg0 = f&#39;Trying to get value from an empty {queueType(self)}.&#39;
+                msg0 = f&#39;Trying to set value from an empty {queueType(self)}.&#39;
                 raise IndexError(msg0)
 
 class FIFOQueue(QueueBase, FP):

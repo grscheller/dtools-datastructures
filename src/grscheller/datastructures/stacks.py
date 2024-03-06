@@ -18,6 +18,8 @@ This module implements LIFO stacks using singularly linked lists of trees of
 nodes. The nodes can be safely shared between different stack instances and
 are an implementation detail hidden from client code.
 
+Types of Stacks:
+
 ### Class Stack
 
 * stateful last in, first out (LIFO) stack data structure
