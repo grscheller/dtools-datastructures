@@ -16,7 +16,7 @@
 algorithms, both functional and imperative programming styles supported.
 """
 
-__version__ = "0.13.4.1"
+__version__ = "0.14.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

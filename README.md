@@ -12,13 +12,14 @@ implementation of algorithms.
 
 ## Overview
 
-The data structures in this package allow developers to focus on the
-algorithms they are using instead of all the "bit fiddling" required to
-implement behaviors, perform memory management, and handle edge cases
-needed if Python builtin types were used instead. These data structures
-allow iterators to leisurely iterate over inaccessible copies of
-internal state while the data stuctures themselves safely mutate. Some
-of these data structures allow data to be safely shared between multiple
+Data structures allowing developers to focus on the algorithms they are
+using instead of all the "bit fiddling" required to implement behaviors,
+perform memory management, handle coding edge cases, and dealing with
+exceptional events. These data structures allow iterators to leisurely
+iterate over inaccessible copies of internal state while the data
+stuctures themselves are free to safely mutate. They are designed to be
+reasonably "atomic" without introducing inordinate complexity. Some of
+these data structures allow data to be safely shared between multiple
 data structure instances by making shared data immutable and
 inaccessible to client code.
 
@@ -31,7 +32,7 @@ from what it prevents you from doing to yourself.
 
 As a design choice, Python `None` is semantically used by this package
 to indicate the absence of a value. While still freely used as an
-implementation detail, `None` values are not stored in these data
+implementation detail, `None` values are not stored in any of these data
 structures. Functional `Maybe` and `Either` classes are provided in the
 core.fp sub-module as better ways to handle "missing" data.
 
