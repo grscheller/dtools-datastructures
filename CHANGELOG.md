@@ -20,7 +20,7 @@ Version numbers for PyPI releases begin with a `v`.
 
 ## Version = v0.14.0 - PyPI release date 2024-03-09
 * updated dependency on CircularArray class
-  * dependencies = ["grscheller.circular-array >= 0.1.1, < 1.1"]
+  * dependencies = ["grscheller.circular-array >= 0.2.0, < 2.1"]
 * minor README.md woodsmithing
 * keeping project an Alpha release for now
 
