@@ -16,7 +16,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "License :: OSI Approved :: Apache Software License"
 ]
-dependencies = ["grscheller.circular-array >= 0.1.1, < 1.1"]
+dependencies = ["grscheller.circular-array >= 2.0.0, < 2.1"]
 dynamic = ["version", "description"]
 keywords = [
     "datastructures", "data structures",
