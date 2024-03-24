@@ -52,9 +52,9 @@ __copyright__ = &#34;Copyright (c) 2023-2024 Geoffrey R. Scheller&#34;
 __license__ = &#34;Apache License 2.0&#34;
 
 def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
+    &#34;&#34;&#34;Sequentially concatenate multiple iterators into one.
 
-    DEPRECATED - Better to use itertools.chain function instead
+    DEPRECATED - Better to use `itertools.chain` function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:
@@ -67,7 +67,7 @@ def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
 
-    If yieldPartial is True, also yield any unmatched extracted values from any
+    If `yieldPartial` is `True,` also yield any unmatched extracted values from any
     of the other iterators. This is useful to prevent data lose if there are
     other references to any of the non-exhausted iterators floating around.
     &#34;&#34;&#34;
@@ -126,16 +126,16 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 <span>def <span class="ident">concat</span></span>(<span>*iterables: Iterable[Any]) ‑> Iterator[Any]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sequentually concatenate multiple iterators into one.</p>
-<p>DEPRECATED - Better to use itertools.chain function instead</p></div>
+<div class="desc"><p>Sequentially concatenate multiple iterators into one.</p>
+<p>DEPRECATED - Better to use <code>itertools.chain</code> function instead</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def concat(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
-    &#34;&#34;&#34;Sequentually concatenate multiple iterators into one.
+    &#34;&#34;&#34;Sequentially concatenate multiple iterators into one.
 
-    DEPRECATED - Better to use itertools.chain function instead
+    DEPRECATED - Better to use `itertools.chain` function instead
     &#34;&#34;&#34;
     for iterator in map(iter,iterables):
         while True:
@@ -186,7 +186,7 @@ def exhaust(*iterables: Iterable[Any]) -&gt; Iterator[Any]:
 </code></dt>
 <dd>
 <div class="desc"><p>Merge multiple iterator streams until one is exhausted.</p>
-<p>If yieldPartial is True, also yield any unmatched extracted values from any
+<p>If <code>yieldPartial</code> is <code>True,</code> also yield any unmatched extracted values from any
 of the other iterators. This is useful to prevent data lose if there are
 other references to any of the non-exhausted iterators floating around.</p></div>
 <details class="source">
@@ -196,7 +196,7 @@ other references to any of the non-exhausted iterators floating around.</p></div
 <pre><code class="python">def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -&gt; Iterator[Any]:
     &#34;&#34;&#34;Merge multiple iterator streams until one is exhausted.
 
-    If yieldPartial is True, also yield any unmatched extracted values from any
+    If `yieldPartial` is `True,` also yield any unmatched extracted values from any
     of the other iterators. This is useful to prevent data lose if there are
     other references to any of the non-exhausted iterators floating around.
     &#34;&#34;&#34;

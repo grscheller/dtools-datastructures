@@ -25,7 +25,7 @@
 <p>Various types of nodes for graph-like data structures.</p>
 <ul>
 <li>heap based nodes for for tree-like data structures</li>
-<li>data structures should make nodes inaccessible to client code.</li>
+<li>data structures should make nodes inaccessible to client code</li>
 <li>making nodes inaccessible promotes data sharing between data structures</li>
 </ul>
 <details class="source">
@@ -49,7 +49,7 @@
 &#34;&#34;&#34;Various types of nodes for graph-like data structures.
 
 * heap based nodes for for tree-like data structures
-* data structures should make nodes inaccessible to client code.
+* data structures should make nodes inaccessible to client code
 * making nodes inaccessible promotes data sharing between data structures
 &#34;&#34;&#34;
 from __future__ import annotations
@@ -62,12 +62,12 @@ __license__ = &#34;Apache License 2.0&#34;
 from typing import Any
 
 class SL_Node():
-    &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
-    singularly linked graphs of nodes.
+    &#34;&#34;&#34;Class implementing nodes that can be linked together
+    to form singularly linked graphs of nodes.
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be None to indicate the end of the list
+    * the next node can be `None` to indicate the end of the list
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     &#34;&#34;&#34;
@@ -88,14 +88,16 @@ class BT_Node():
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is None
+    * this type of node always contain data, even if that data is None
     * originally intended to implement binary tree graphs
-    * other use cases possible
+    * other use cases possible, like doubly linked lists
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
 
     def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
-        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a data containing node element of some type of graph.
+        Usually walked via recursion.
+        &#34;&#34;&#34;
         self._data = data
         self._left = left
         self._right = right
@@ -113,12 +115,14 @@ class LT_Node():
     * this type of node never contain data
     * both self._left &amp; self._right reference either data or other LT_Nodes
     * while self._root references the node&#39;s parent node
-    * therefore, to store an LT_Node as data reqires a container for it
+    * therefore, to store an LT_Node as data requires a container for it
     &#34;&#34;&#34;
     __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
 
     def __init__(self, left: Any, right: Any, root: LT_Node=None):
-        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a node element which contains no data of some type of graph.
+        Can be arbitrarily walked.
+        &#34;&#34;&#34;
         self._root = root
         self._left = left
         self._right = right
@@ -149,11 +153,12 @@ if __name__ == &#34;__main__&#34;:
 <p>Class implementing nodes that can be linked together to form tree-like
 graph data structures where data lives in the nodes.</p>
 <ul>
-<li>this type of node always contain data, enen if that data is None</li>
+<li>this type of node always contain data, even if that data is None</li>
 <li>originally intended to implement binary tree graphs</li>
-<li>other use cases possible</li>
+<li>other use cases possible, like doubly linked lists</li>
 </ul>
-<p>Construct an element of a doubly linked list</p></div>
+<p>Construct a data containing node element of some type of graph.
+Usually walked via recursion.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -164,14 +169,16 @@ graph data structures where data lives in the nodes.</p>
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is None
+    * this type of node always contain data, even if that data is None
     * originally intended to implement binary tree graphs
-    * other use cases possible
+    * other use cases possible, like doubly linked lists
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
 
     def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
-        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a data containing node element of some type of graph.
+        Usually walked via recursion.
+        &#34;&#34;&#34;
         self._data = data
         self._left = left
         self._right = right
@@ -193,9 +200,10 @@ data structures where data lives "on the leaves." </p>
 <li>this type of node never contain data</li>
 <li>both self._left &amp; self._right reference either data or other LT_Nodes</li>
 <li>while self._root references the node's parent node</li>
-<li>therefore, to store an LT_Node as data reqires a container for it</li>
+<li>therefore, to store an LT_Node as data requires a container for it</li>
 </ul>
-<p>Construct an element of a doubly linked list</p></div>
+<p>Construct a node element which contains no data of some type of graph.
+Can be arbitrarily walked.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -209,12 +217,14 @@ data structures where data lives "on the leaves." </p>
     * this type of node never contain data
     * both self._left &amp; self._right reference either data or other LT_Nodes
     * while self._root references the node&#39;s parent node
-    * therefore, to store an LT_Node as data reqires a container for it
+    * therefore, to store an LT_Node as data requires a container for it
     &#34;&#34;&#34;
     __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
 
     def __init__(self, left: Any, right: Any, root: LT_Node=None):
-        &#34;&#34;&#34;Construct an element of a doubly linked list&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct a node element which contains no data of some type of graph.
+        Can be arbitrarily walked.
+        &#34;&#34;&#34;
         self._root = root
         self._left = left
         self._right = right
@@ -229,12 +239,12 @@ data structures where data lives "on the leaves." </p>
 <span>(</span><span>data: Any, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class implementing nodes that can be linked together to form a
-singularly linked graphs of nodes.</p>
+<div class="desc"><p>Class implementing nodes that can be linked together
+to form singularly linked graphs of nodes.</p>
 <ul>
 <li>this type of node always contain data</li>
 <li>it has a reference to the next node in the list</li>
-<li>the next node can be None to indicate the end of the list</li>
+<li>the next node can be <code>None</code> to indicate the end of the list</li>
 <li>more than one node can point to the same node forming bush like graphs</li>
 <li>circular graphs are possible</li>
 </ul>
@@ -244,12 +254,12 @@ singularly linked graphs of nodes.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SL_Node():
-    &#34;&#34;&#34;Class implementing nodes that can be linked together to form a
-    singularly linked graphs of nodes.
+    &#34;&#34;&#34;Class implementing nodes that can be linked together
+    to form singularly linked graphs of nodes.
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be None to indicate the end of the list
+    * the next node can be `None` to indicate the end of the list
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     &#34;&#34;&#34;

@@ -18,7 +18,7 @@
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented with Python List based circular array in a "has-a" relationship
 * these data structures will resize themselves as needed
-* these queues are O(1) indexible, convenient but ignorable feature
+* these queues are O(1) indexable, convenient but ignorable feature
 * Python's `None` is not stored in these data structures as a value
 
 Types of Queues:
@@ -57,7 +57,7 @@ class QueueBase():
                 self._ca.pushR(d)
 
     def __iter__(self):
-        """Iterator yielding data currently stored in queue. Data yielded in
+        """Iterator yielding data currently stored in the queue. Data yielded in
         natural FIFO order.
         """
         cached = self._ca.copy()
@@ -74,7 +74,7 @@ class QueueBase():
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
     def __bool__(self):
-        """Returns true if queue is not empty."""
+        """Returns `True` if queue is not empty."""
         return len(self._ca) > 0
 
     def __len__(self):
@@ -82,7 +82,7 @@ class QueueBase():
         return len(self._ca)
 
     def __eq__(self, other):
-        """Returns True if all the data stored in both compare as equal.
+        """Returns `True` if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
         """
         if not isinstance(other, type(self)):
@@ -90,8 +90,8 @@ class QueueBase():
         return self._ca == other._ca
 
     def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the queue's contents. Suppress any None values
-        returned by f.
+        """Apply function over the queue's contents. Suppress any `None` values
+        returned by `f`.
         """
         self._ca = QueueBase(*map(f, self))._ca
 
@@ -137,30 +137,30 @@ class FIFOQueue(QueueBase, FP):
         return "<< " + " < ".join(map(str, self)) + " <<"
 
     def copy(self) -> FIFOQueue:
-        """Return shallow copy of the FIFOQueue in O(n) time & space complexity."""
+        """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
         fifoqueue = FIFOQueue()
         fifoqueue._ca = self._ca.copy()
         return fifoqueue
 
     def push(self, *ds: Any) -> None:
-        """Push data on rear of the FIFOQueue & no return value."""
+        """Push data on rear of the `FIFOQueue` & no return value."""
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pop(self) -> Any:
-        """Pop data off front of the FIFOQueue."""
+        """Pop data off front of the `FIFOQueue`."""
         return self._ca.popL()
 
     def peakLastIn(self) -> Any:
-        """Return last element pushed to the FIFOQueue without consuming it"""
+        """Return last element pushed to the `FIFOQueue` without consuming it"""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakNextOut(self) -> Any:
-        """Return next element ready to pop from the FIFOQueue."""
+        """Return next element ready to `pop` from the `FIFOQueue`."""
         if self._ca:
             return self._ca[0]
         else:
@@ -176,31 +176,31 @@ class LIFOQueue(QueueBase, FP):
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def copy(self) -> LIFOQueue:
-        """Return shallow copy of the FIFOQueue in O(n) time & space complexity."""
+        """Return shallow copy of the `LIFOQueue` in O(n) time & space complexity."""
         lifoqueue = LIFOQueue()
         lifoqueue._ca = self._ca.copy()
         return lifoqueue
 
     def push(self, *ds: Any) -> None:
-        """Push data on rear of the LIFOQueue & no return value."""
+        """Push data on rear of the `LIFOQueue` & no return value."""
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pop(self) -> Any:
-        """Pop data off rear of the LIFOQueue."""
+        """Pop data off rear of the `LIFOQueue`."""
         return self._ca.popR()
 
     def peak(self) -> Any:
-        """Return last element pushed to the LIFOQueue without consuming it."""
+        """Return last element pushed to the `LIFOQueue` without consuming it."""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
 class DoubleQueue(QueueBase, FP):
-    """Stateful double sided queue datastructure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto the queue.
+    """Stateful double sided queue data structure. Will resize itself as needed.
+    `None` represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
@@ -208,40 +208,40 @@ class DoubleQueue(QueueBase, FP):
         return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DoubleQueue:
-        """Return shallow copy of the DoubleQueue in O(n) time & space complexity."""
+        """Return shallow copy of the `DoubleQueue` in O(n) time & space complexity."""
         dqueue = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
 
     def pushR(self, *ds: Any) -> None:
-        """Push data left to right onto rear of the DoubleQueue."""
+        """Push data left to right onto rear of the `DoubleQueue`."""
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
     def pushL(self, *ds: Any) -> None:
-        """Push data left to right onto front of DoubleQueue."""
+        """Push data left to right onto front of `DoubleQueue`."""
         for d in ds:
             if d != None:
                 self._ca.pushL(d)
 
     def popR(self) -> Any:
-        """Pop data off rear of the DoubleQueue."""
+        """Pop data off rear of the `DoubleQueue`."""
         return self._ca.popR()
 
     def popL(self) -> Any:
-        """Pop data off front of the DoubleQueue."""
+        """Pop data off front of the `DoubleQueue`."""
         return self._ca.popL()
 
     def peakR(self) -> Any:
-        """Return right-most element of the DoubleQueue if it exists."""
+        """Return rightmost element of the `DoubleQueue` if it exists."""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakL(self) -> Any:
-        """Return left-most element of the DoubleQueue if it exists."""
+        """Return leftmost element of the `DoubleQueue` if it exists."""
         if self._ca:
             return self._ca[0]
         else:

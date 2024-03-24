@@ -27,7 +27,7 @@ a functional interfaces …" />
 a functional interfaces.</p>
 <p>Types of Tuples:</p>
 <ul>
-<li>class <strong>ftuple</strong>: extend builtin tuple with functional interface</li>
+<li>class <strong>FTuple</strong>: extend builtin tuple with functional interface</li>
 </ul>
 <details class="source">
 <summary>
@@ -52,7 +52,7 @@ a functional interfaces.
 
 Types of Tuples:
 
-* class **ftuple**: extend builtin tuple with functional interface
+* class **FTuple**: extend builtin tuple with functional interface
 &#34;&#34;&#34;
 
 from __future__ import annotations
@@ -66,22 +66,22 @@ from typing import Any, Callable
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending Python Tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Python `Tuple` with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
-        &#34;&#34;&#34;Construct the tuple with the None values filtered out&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct the `Tuple` with the `None` values filtered out&#34;&#34;&#34;
         return super().__new__(cls, (filter(lambda d: d is not None, ds)))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
 
     def __str__(self):
-        &#34;&#34;&#34;Display data in the FTuple.&#34;&#34;&#34;
+        &#34;&#34;&#34;Display data in the `FTuple`.&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
     def __getitem__(self, sl: slice|int) -&gt; Any:
-        &#34;&#34;&#34;Suports both indexing and slicing.&#34;&#34;&#34;
+        &#34;&#34;&#34;Supports both indexing and slicing.&#34;&#34;&#34;
         if isinstance(sl, slice):
             return FTuple(*super().__getitem__(sl))
         try:
@@ -91,23 +91,24 @@ class FTuple(tuple, FP):
         return item
 
     def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Give `FTuple` a foldright method.&#34;&#34;&#34;
         FF = lambda x, y: f(y, x) 
         return self[::-1].foldL(FF, initial)
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the `FTuple` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return a reversed `FTuple`, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples.&#34;&#34;&#34;
+        &#34;&#34;&#34;Concatenate two `FTuples`.&#34;&#34;&#34;
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -&gt; FTuple:
-        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
         return FTuple(*super().__mul__(num))</code></pre>
 </details>
 </section>
@@ -125,28 +126,28 @@ class FTuple(tuple, FP):
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class extending Python Tuple with FP behaviors.</p></div>
+<div class="desc"><p>Class extending Python <code>Tuple</code> with FP behaviors.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending Python Tuple with FP behaviors.&#34;&#34;&#34;
+    &#34;&#34;&#34;Class extending Python `Tuple` with FP behaviors.&#34;&#34;&#34;
     __slots__ = ()
 
     def __new__(cls, *ds):
-        &#34;&#34;&#34;Construct the tuple with the None values filtered out&#34;&#34;&#34;
+        &#34;&#34;&#34;Construct the `Tuple` with the `None` values filtered out&#34;&#34;&#34;
         return super().__new__(cls, (filter(lambda d: d is not None, ds)))
 
     def __repr__(self):
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
 
     def __str__(self):
-        &#34;&#34;&#34;Display data in the FTuple.&#34;&#34;&#34;
+        &#34;&#34;&#34;Display data in the `FTuple`.&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
     def __getitem__(self, sl: slice|int) -&gt; Any:
-        &#34;&#34;&#34;Suports both indexing and slicing.&#34;&#34;&#34;
+        &#34;&#34;&#34;Supports both indexing and slicing.&#34;&#34;&#34;
         if isinstance(sl, slice):
             return FTuple(*super().__getitem__(sl))
         try:
@@ -156,23 +157,24 @@ class FTuple(tuple, FP):
         return item
 
     def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+        &#34;&#34;&#34;Give `FTuple` a foldright method.&#34;&#34;&#34;
         FF = lambda x, y: f(y, x) 
         return self[::-1].foldL(FF, initial)
 
     def copy(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of the `FTuple` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         return FTuple(*self)
 
     def reverse(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return a reversed `FTuple`, new instance.&#34;&#34;&#34;
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -&gt; FTuple:
-        &#34;&#34;&#34;Concatenate two FTuples.&#34;&#34;&#34;
+        &#34;&#34;&#34;Concatenate two `FTuples`.&#34;&#34;&#34;
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -&gt; FTuple:
-        &#34;&#34;&#34;Return an FTuple which repeats anothr FTuples num times.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
         return FTuple(*super().__mul__(num))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -186,13 +188,13 @@ class FTuple(tuple, FP):
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code> in O(1) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; FTuple:
-    &#34;&#34;&#34;Return shallow copy of the FTuple in O(1) time &amp; space complexity.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of the `FTuple` in O(1) time &amp; space complexity.&#34;&#34;&#34;
     return FTuple(*self)</code></pre>
 </details>
 </dd>
@@ -200,12 +202,13 @@ class FTuple(tuple, FP):
 <span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Give <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code> a foldright method.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    &#34;&#34;&#34;Give `FTuple` a foldright method.&#34;&#34;&#34;
     FF = lambda x, y: f(y, x) 
     return self[::-1].foldL(FF, initial)</code></pre>
 </details>
@@ -214,13 +217,13 @@ class FTuple(tuple, FP):
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a reversed FTuple, new instance.</p></div>
+<div class="desc"><p>Return a reversed <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code>, new instance.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; FTuple:
-    &#34;&#34;&#34;Return a reversed FTuple, new instance.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return a reversed `FTuple`, new instance.&#34;&#34;&#34;
     return(FTuple(*reversed(self)))</code></pre>
 </details>
 </dd>

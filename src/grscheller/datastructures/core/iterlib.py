@@ -23,9 +23,9 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
-    """Sequentually concatenate multiple iterators into one.
+    """Sequentially concatenate multiple iterators into one.
 
-    DEPRECATED - Better to use itertools.chain function instead
+    DEPRECATED - Better to use `itertools.chain` function instead
     """
     for iterator in map(iter,iterables):
         while True:
@@ -38,7 +38,7 @@ def concat(*iterables: Iterable[Any]) -> Iterator[Any]:
 def merge(*iterables: Iterable[Any], yieldPartial: bool=False) -> Iterator[Any]:
     """Merge multiple iterator streams until one is exhausted.
 
-    If yieldPartial is True, also yield any unmatched extracted values from any
+    If `yieldPartial` is `True,` also yield any unmatched extracted values from any
     of the other iterators. This is useful to prevent data lose if there are
     other references to any of the non-exhausted iterators floating around.
     """

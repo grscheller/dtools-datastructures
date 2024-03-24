@@ -72,7 +72,7 @@ class FP():
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
         &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return `None`.
+        given and the data structure is empty, return `None`.
         &#34;&#34;&#34;
         if not self:
             return initial
@@ -89,7 +89,7 @@ class FP():
         return value
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -&gt; type[FP]:
-        &#34;&#34;&#34;Accummulate partial fold results in same type data structure. Works
+        &#34;&#34;&#34;Accumulate partial fold results in same type data structure. Works
         best for variable sized containers.&#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -99,7 +99,7 @@ class FP():
         else:
             return type(self)(*accumulate(chain((initial,), self), f))
 
-    # Default implentations for FIFO data structures,
+    # Default implementations for FIFO data structures,
     # see stacks module for LIFO examples.
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
@@ -107,28 +107,28 @@ class FP():
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure sequentially.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
         return type(self)(*exhaust(*map(iter, map(f, self))))
-    
+
 class Maybe(FP):
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where Maybe(value) constructs a Some(value)
-    * where Maybe() &amp; Maybe(None) constructs a Nothing
-    * immutable semantics, `map` &amp; flatMap return modified copies
-    * where None is always treated as a non-existance value
-    * where None cannot be stored in an object of type Maybe
-    * semantically None represent non-existance
-    * where None used only as an implementration detail
+    * where `Maybe(value)` constructs a `Some(value)`
+    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing`
+    * immutable semantics, `map` &amp; `flatMap` return modified copies
+    * where `None` is always treated as a existence value
+    * where `None` cannot be stored in an object of type `Maybe`
+    * semantically `None` represent non-existence
+    * when used `None` is only as an implementation detail
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;,
 
@@ -147,32 +147,32 @@ class Maybe(FP):
             return &#39;Nothing&#39;
 
     def __bool__(self) -&gt; bool:
-        # Return False if Nothing, otherwise True
+        # Return False if `Nothing,` otherwise `True`
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        # Length of a Maybe is either 0 or 1
+        # Length of a `Maybe` is either `0` or `1`
         if self:
             return 1
         else:
             return 0
 
     def __eq__(self, other: Maybe) -&gt; bool:
-        # Return True if both sides are Nothings or if both sides are
-        # Somes contining values which compare as as equal.
+        # Return `True` if both sides are of type `Nothing` or if both sides
+        # are of type `Some` containing values which compare as as equal.
         if not isinstance(other, type(self)):
             return False
         return self._value == other._value
 
     def get(self, alternate: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get contents if they exist, otherwise return alternate value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Get contents if they exist, otherwise return `alternate` value.&#34;&#34;&#34;
         if self:
             return self._value
         else:
             return alternate
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased fold left.&#34;&#34;&#34;
+        &#34;&#34;&#34;Left biased foldleft.&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -184,9 +184,8 @@ class Maybe(FP):
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
                     initial=None) -&gt; Maybe:
-        &#34;&#34;&#34;Accummulate but, since the data structure can hold at most
-        only one value, do not include the initial value if the `Maybe`
-        is not a `Nothing`. 
+        &#34;&#34;&#34;Accumulate but, since the data structure can only hold at most one value,
+        do not include the initial value if the `Maybe` is not a `Nothing`.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -200,23 +199,23 @@ def maybeToEither(m: Maybe, right: Any=None) -&gt; Either:
     return Either(m.get(), right)
 
 def Some(value=None) -&gt; Maybe:
-    &#34;&#34;&#34;Function for creating a `Maybe` from a value. If value is `None`
-    or missing, returns a `Nothing`.
+    &#34;&#34;&#34;Function for creating a `Maybe` from a `value`.
+    If `value` is `None` or missing, returns a `Nothing`.
     &#34;&#34;&#34;
     return Maybe(value)
 
-#: Nothing is not a singleton! Test via equality, or in a boolean context.
+#: Nothing is not a singleton! Test via equality, or in a Boolean context.
 Nothing: Maybe = Maybe()
 
 class Either(FP):
     &#34;&#34;&#34;Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where maybe(value, altValue) constructs Left(value) if value not None
-    * where maybe(None, altValue) constructs Right(altValue)
-    * if altValue not given, set it to the empty string
-    * immutable semantics where map &amp; flatMap return modified copies
-    * in boolean context, return True if a Left, False if a Right
+    * where `Maybe(value, altValue)` constructs `Left(value)` if value not None
+    * where `Maybe(None, altValue)` constructs `Right(altValue)`
+    * if `altValue` not given, set it to the empty string
+    * immutable semantics where `map` &amp; `flatMap` return modified copies
+    * in Boolean context, return `True` if a `Left,` `False` if a `Right`
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
@@ -242,15 +241,14 @@ class Either(FP):
             return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
 
     def __bool__(self) -&gt; bool:
-        # Return True if a Left, False if a Right
+        # Return `True` if a `Left,` `False` if a `Right`.
         return self._isLeft
 
     def __len__(self) -&gt; int:
-        # An `Either` always contains just one thing, which is not None
+        # An `Either` always contains just one thing, which is not `None`
         return 1
 
     def __eq__(self, other: Either) -&gt; bool:
-        &#34;&#34;&#34;&#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
         if (self and other) or (not self and not other):
@@ -258,13 +256,13 @@ class Either(FP):
         return False
 
     def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
         if self:
             return self._value
         return default
 
     def getRight(self) -&gt; Any:
-        &#34;&#34;&#34;Get value if a Right, otherwise return None&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a `Right`, otherwise return `None`.&#34;&#34;&#34;
         if self:
             return None
         return self._value
@@ -282,7 +280,7 @@ class Either(FP):
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right: Any=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap a `Left` value, but replace/overide a `Right` value.&#34;&#34;&#34;
+        &#34;&#34;&#34;flatmap a `Left` value, but replace/override a `Right` value.&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -323,9 +321,9 @@ class Either(FP):
                     initial: Any=None,
                     right: Any=None) -&gt; Either:
         &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
-        &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
+        &#34;accumulated&#34; depends on whether the `Either` is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a Right a str.
+        * by default, a `Left` contains numeric data, a `Right` a `str`.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -348,13 +346,13 @@ def eitherToMaybe(e: Either) -&gt; Maybe:
     return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns a &#34;Left&#34; `Either` if `left != None`, otherwise it
-    returns a &#34;Right&#34; `Either`.
+    &#34;&#34;&#34;Function returns a `Left` `Either` if `left != None`, otherwise it
+    returns a `Right` `Either`.
     &#34;&#34;&#34;
     return Either(left, right)
 
 def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a &#34;Right&#34; `Either`.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a `Right` `Either`.&#34;&#34;&#34;
     return Either(None, right)
 
 if __name__ == &#34;__main__&#34;:
@@ -368,7 +366,7 @@ if __name__ == &#34;__main__&#34;:
 <dl>
 <dt id="grscheller.datastructures.core.fp.Nothing"><code class="name">var <span class="ident">Nothing</span> : <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></dt>
 <dd>
-<div class="desc"><p>Nothing is not a singleton! Test via equality, or in a boolean context.</p></div>
+<div class="desc"><p>Nothing is not a singleton! Test via equality, or in a Boolean context.</p></div>
 </dd>
 </dl>
 </section>
@@ -379,15 +377,15 @@ if __name__ == &#34;__main__&#34;:
 <span>def <span class="ident">Left</span></span>(<span>left: Any, right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function returns a "Left" <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> if <code>left != None</code>, otherwise it
-returns a "Right" <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
+<div class="desc"><p>Function returns a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> if <code>left != None</code>, otherwise it
+returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Left(left: Any, right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;Function returns a &#34;Left&#34; `Either` if `left != None`, otherwise it
-    returns a &#34;Right&#34; `Either`.
+    &#34;&#34;&#34;Function returns a `Left` `Either` if `left != None`, otherwise it
+    returns a `Right` `Either`.
     &#34;&#34;&#34;
     return Either(left, right)</code></pre>
 </details>
@@ -396,13 +394,13 @@ returns a "Right" <code><a title="grscheller.datastructures.core.fp.Either" href
 <span>def <span class="ident">Right</span></span>(<span>right: Any) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to construct a "Right" <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
+<div class="desc"><p>Function to construct a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Right(right: Any) -&gt; Either:
-    &#34;&#34;&#34;Function to construct a &#34;Right&#34; `Either`.&#34;&#34;&#34;
+    &#34;&#34;&#34;Function to construct a `Right` `Either`.&#34;&#34;&#34;
     return Either(None, right)</code></pre>
 </details>
 </dd>
@@ -410,15 +408,15 @@ returns a "Right" <code><a title="grscheller.datastructures.core.fp.Either" href
 <span>def <span class="ident">Some</span></span>(<span>value=None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function for creating a <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> from a value. If value is <code>None</code>
-or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code>.</p></div>
+<div class="desc"><p>Function for creating a <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> from a <code>value</code>.
+If <code>value</code> is <code>None</code> or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def Some(value=None) -&gt; Maybe:
-    &#34;&#34;&#34;Function for creating a `Maybe` from a value. If value is `None`
-    or missing, returns a `Nothing`.
+    &#34;&#34;&#34;Function for creating a `Maybe` from a `value`.
+    If `value` is `None` or missing, returns a `Nothing`.
     &#34;&#34;&#34;
     return Maybe(value)</code></pre>
 </details>
@@ -464,11 +462,11 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <div class="desc"><p>Class that either contains a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value or <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value, but not both.</p>
 <ul>
 <li>implements a left biased either monad</li>
-<li>where maybe(value, altValue) constructs Left(value) if value not None</li>
-<li>where maybe(None, altValue) constructs Right(altValue)</li>
-<li>if altValue not given, set it to the empty string</li>
-<li>immutable semantics where map &amp; flatMap return modified copies</li>
-<li>in boolean context, return True if a Left, False if a Right</li>
+<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(value, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>(value)</code> if value not None</li>
+<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(None, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a>(altValue)</code></li>
+<li>if <code>altValue</code> not given, set it to the empty string</li>
+<li>immutable semantics where <code>map</code> &amp; <code>flatMap</code> return modified copies</li>
+<li>in Boolean context, return <code>True</code> if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>,</code> <code>False</code> if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code></li>
 </ul></div>
 <details class="source">
 <summary>
@@ -478,11 +476,11 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
     &#34;&#34;&#34;Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where maybe(value, altValue) constructs Left(value) if value not None
-    * where maybe(None, altValue) constructs Right(altValue)
-    * if altValue not given, set it to the empty string
-    * immutable semantics where map &amp; flatMap return modified copies
-    * in boolean context, return True if a Left, False if a Right
+    * where `Maybe(value, altValue)` constructs `Left(value)` if value not None
+    * where `Maybe(None, altValue)` constructs `Right(altValue)`
+    * if `altValue` not given, set it to the empty string
+    * immutable semantics where `map` &amp; `flatMap` return modified copies
+    * in Boolean context, return `True` if a `Left,` `False` if a `Right`
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
@@ -508,15 +506,14 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
             return &#39;Right(&#39; + repr(self._value) + &#39;)&#39;
 
     def __bool__(self) -&gt; bool:
-        # Return True if a Left, False if a Right
+        # Return `True` if a `Left,` `False` if a `Right`.
         return self._isLeft
 
     def __len__(self) -&gt; int:
-        # An `Either` always contains just one thing, which is not None
+        # An `Either` always contains just one thing, which is not `None`
         return 1
 
     def __eq__(self, other: Either) -&gt; bool:
-        &#34;&#34;&#34;&#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False
         if (self and other) or (not self and not other):
@@ -524,13 +521,13 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         return False
 
     def get(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
         if self:
             return self._value
         return default
 
     def getRight(self) -&gt; Any:
-        &#34;&#34;&#34;Get value if a Right, otherwise return None&#34;&#34;&#34;
+        &#34;&#34;&#34;Get value if a `Right`, otherwise return `None`.&#34;&#34;&#34;
         if self:
             return None
         return self._value
@@ -548,7 +545,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right: Any=None) -&gt; Either:
-        &#34;&#34;&#34;flatMap a `Left` value, but replace/overide a `Right` value.&#34;&#34;&#34;
+        &#34;&#34;&#34;flatmap a `Left` value, but replace/override a `Right` value.&#34;&#34;&#34;
         if self:
             if right is None:
                 return f(self._value)
@@ -589,9 +586,9 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
                     initial: Any=None,
                     right: Any=None) -&gt; Either:
         &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
-        &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
+        &#34;accumulated&#34; depends on whether the `Either` is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a Right a str.
+        * by default, a `Left` contains numeric data, a `Right` a `str`.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -618,9 +615,9 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 </code></dt>
 <dd>
 <div class="desc"><p>The <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> data structure always holds one value, so what gets
-"accummulated" depends on whether the Either is a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> or a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>.</p>
+"accumulated" depends on whether the <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> is a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> or a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>.</p>
 <ul>
-<li>by default, a Left contains numeric data, a Right a str.</li>
+<li>by default, a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> contains numeric data, a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> a <code>str</code>.</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -632,9 +629,9 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
                 initial: Any=None,
                 right: Any=None) -&gt; Either:
     &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
-    &#34;accummulated&#34; depends on whether the Either is a `Left` or a `Right`.
+    &#34;accumulated&#34; depends on whether the `Either` is a `Left` or a `Right`.
 
-    * by default, a Left contains numeric data, a Right a str.
+    * by default, a `Left` contains numeric data, a `Right` a `str`.
     &#34;&#34;&#34;
     if f is None:
         f = operator.add
@@ -655,13 +652,13 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>flatMap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but replace/overide a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>
+<div class="desc"><p>flatmap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but replace/override a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], Either], right: Any=None) -&gt; Either:
-    &#34;&#34;&#34;flatMap a `Left` value, but replace/overide a `Right` value.&#34;&#34;&#34;
+    &#34;&#34;&#34;flatmap a `Left` value, but replace/override a `Right` value.&#34;&#34;&#34;
     if self:
         if right is None:
             return f(self._value)
@@ -698,13 +695,13 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <span>def <span class="ident">get</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get value if a Left, otherwise return default value</p></div>
+<div class="desc"><p>Get value if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>,</code> otherwise return <code>default</code> value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, default: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Get value if a Left, otherwise return default value&#34;&#34;&#34;
+    &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
     if self:
         return self._value
     return default</code></pre>
@@ -714,13 +711,13 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <span>def <span class="ident">getRight</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get value if a Right, otherwise return None</p></div>
+<div class="desc"><p>Get value if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>, otherwise return <code>None</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getRight(self) -&gt; Any:
-    &#34;&#34;&#34;Get value if a Right, otherwise return None&#34;&#34;&#34;
+    &#34;&#34;&#34;Get value if a `Right`, otherwise return `None`.&#34;&#34;&#34;
     if self:
         return None
     return self._value</code></pre>
@@ -806,7 +803,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
         &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return `None`.
+        given and the data structure is empty, return `None`.
         &#34;&#34;&#34;
         if not self:
             return initial
@@ -823,7 +820,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         return value
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -&gt; type[FP]:
-        &#34;&#34;&#34;Accummulate partial fold results in same type data structure. Works
+        &#34;&#34;&#34;Accumulate partial fold results in same type data structure. Works
         best for variable sized containers.&#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -833,7 +830,7 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         else:
             return type(self)(*accumulate(chain((initial,), self), f))
 
-    # Default implentations for FIFO data structures,
+    # Default implementations for FIFO data structures,
     # see stacks module for LIFO examples.
 
     def map(self, f: Callable[[Any], Any]) -&gt; type[FP]:
@@ -841,15 +838,15 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure sequentially.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-        &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
         return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Subclasses</h3>
@@ -869,14 +866,14 @@ or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing"
 <span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[Any, Any], Any] = None, initial=None) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Accummulate partial fold results in same type data structure. Works
+<div class="desc"><p>Accumulate partial fold results in same type data structure. Works
 best for variable sized containers.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -&gt; type[FP]:
-    &#34;&#34;&#34;Accummulate partial fold results in same type data structure. Works
+    &#34;&#34;&#34;Accumulate partial fold results in same type data structure. Works
     best for variable sized containers.&#34;&#34;&#34;
     if f is None:
         f = operator.add
@@ -891,13 +888,13 @@ best for variable sized containers.</p></div>
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def exhaustMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-    &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
     return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -905,13 +902,13 @@ best for variable sized containers.</p></div>
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind <code>f</code> to the data structure sequentially.</p></div>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-    &#34;&#34;&#34;Monadicly bind `f` to the data structure sequentially.&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
     return type(self)(*chain(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -920,14 +917,14 @@ best for variable sized containers.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold with an optional initial value. If an initial value is not
-given and the datastructure is empty, return <code>None</code>.</p></div>
+given and the data structure is empty, return <code>None</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
     &#34;&#34;&#34;Fold with an optional initial value. If an initial value is not
-    given and the datastructure is empty, return `None`.
+    given and the data structure is empty, return `None`.
     &#34;&#34;&#34;
     if not self:
         return initial
@@ -962,13 +959,13 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]) ‑> type[<a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], FP]) -&gt; type[FP]:
-    &#34;&#34;&#34;Monadicly bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
     return type(self)(*merge(*map(iter, map(f, self))))</code></pre>
 </details>
 </dd>
@@ -982,13 +979,13 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
 <div class="desc"><p>Class representing a potentially missing value.</p>
 <ul>
 <li>implements the Option Monad</li>
-<li>where Maybe(value) constructs a Some(value)</li>
-<li>where Maybe() &amp; Maybe(None) constructs a Nothing</li>
-<li>immutable semantics, <code>map</code> &amp; flatMap return modified copies</li>
-<li>where None is always treated as a non-existance value</li>
-<li>where None cannot be stored in an object of type Maybe</li>
-<li>semantically None represent non-existance</li>
-<li>where None used only as an implementration detail</li>
+<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(value)</code> constructs a <code><a title="grscheller.datastructures.core.fp.Some" href="#grscheller.datastructures.core.fp.Some">Some()</a>(value)</code></li>
+<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> &amp; <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(None)</code> constructs a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code></li>
+<li>immutable semantics, <code>map</code> &amp; <code>flatMap</code> return modified copies</li>
+<li>where <code>None</code> is always treated as a existence value</li>
+<li>where <code>None</code> cannot be stored in an object of type <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></li>
+<li>semantically <code>None</code> represent non-existence</li>
+<li>when used <code>None</code> is only as an implementation detail</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -998,13 +995,13 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
     &#34;&#34;&#34;Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where Maybe(value) constructs a Some(value)
-    * where Maybe() &amp; Maybe(None) constructs a Nothing
-    * immutable semantics, `map` &amp; flatMap return modified copies
-    * where None is always treated as a non-existance value
-    * where None cannot be stored in an object of type Maybe
-    * semantically None represent non-existance
-    * where None used only as an implementration detail
+    * where `Maybe(value)` constructs a `Some(value)`
+    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing`
+    * immutable semantics, `map` &amp; `flatMap` return modified copies
+    * where `None` is always treated as a existence value
+    * where `None` cannot be stored in an object of type `Maybe`
+    * semantically `None` represent non-existence
+    * when used `None` is only as an implementation detail
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;,
 
@@ -1023,32 +1020,32 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
             return &#39;Nothing&#39;
 
     def __bool__(self) -&gt; bool:
-        # Return False if Nothing, otherwise True
+        # Return False if `Nothing,` otherwise `True`
         return self._value is not None
 
     def __len__(self) -&gt; int:
-        # Length of a Maybe is either 0 or 1
+        # Length of a `Maybe` is either `0` or `1`
         if self:
             return 1
         else:
             return 0
 
     def __eq__(self, other: Maybe) -&gt; bool:
-        # Return True if both sides are Nothings or if both sides are
-        # Somes contining values which compare as as equal.
+        # Return `True` if both sides are of type `Nothing` or if both sides
+        # are of type `Some` containing values which compare as as equal.
         if not isinstance(other, type(self)):
             return False
         return self._value == other._value
 
     def get(self, alternate: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Get contents if they exist, otherwise return alternate value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Get contents if they exist, otherwise return `alternate` value.&#34;&#34;&#34;
         if self:
             return self._value
         else:
             return alternate
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased fold left.&#34;&#34;&#34;
+        &#34;&#34;&#34;Left biased foldleft.&#34;&#34;&#34;
         if self:
             if initial is None:
                 return self._value
@@ -1060,9 +1057,8 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
                     initial=None) -&gt; Maybe:
-        &#34;&#34;&#34;Accummulate but, since the data structure can hold at most
-        only one value, do not include the initial value if the `Maybe`
-        is not a `Nothing`. 
+        &#34;&#34;&#34;Accumulate but, since the data structure can only hold at most one value,
+        do not include the initial value if the `Maybe` is not a `Nothing`.
         &#34;&#34;&#34;
         if f is None:
             f = operator.add
@@ -1079,9 +1075,8 @@ given and the datastructure is empty, return <code>None</code>.</p></div>
 <span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[Any, Any], Any] = None, initial=None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Accummulate but, since the data structure can hold at most
-only one value, do not include the initial value if the <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code>
-is not a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code>.</p></div>
+<div class="desc"><p>Accumulate but, since the data structure can only hold at most one value,
+do not include the initial value if the <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> is not a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1089,9 +1084,8 @@ is not a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grsch
 <pre><code class="python">def accummulate(self,
                 f: Callable[[Any, Any], Any]=None,
                 initial=None) -&gt; Maybe:
-    &#34;&#34;&#34;Accummulate but, since the data structure can hold at most
-    only one value, do not include the initial value if the `Maybe`
-    is not a `Nothing`. 
+    &#34;&#34;&#34;Accumulate but, since the data structure can only hold at most one value,
+    do not include the initial value if the `Maybe` is not a `Nothing`.
     &#34;&#34;&#34;
     if f is None:
         f = operator.add
@@ -1103,13 +1097,13 @@ is not a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grsch
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Left biased fold left.</p></div>
+<div class="desc"><p>Left biased foldleft.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Left biased fold left.&#34;&#34;&#34;
+    &#34;&#34;&#34;Left biased foldleft.&#34;&#34;&#34;
     if self:
         if initial is None:
             return self._value
@@ -1123,13 +1117,13 @@ is not a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grsch
 <span>def <span class="ident">get</span></span>(<span>self, alternate: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get contents if they exist, otherwise return alternate value.</p></div>
+<div class="desc"><p>Get contents if they exist, otherwise return <code>alternate</code> value.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, alternate: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Get contents if they exist, otherwise return alternate value.&#34;&#34;&#34;
+    &#34;&#34;&#34;Get contents if they exist, otherwise return `alternate` value.&#34;&#34;&#34;
     if self:
         return self._value
     else:

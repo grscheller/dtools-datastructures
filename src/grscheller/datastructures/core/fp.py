@@ -38,7 +38,7 @@ class FP():
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
         """Fold with an optional initial value. If an initial value is not
-        given and the datastructure is empty, return `None`.
+        given and the data structure is empty, return `None`.
         """
         if not self:
             return initial
@@ -55,7 +55,7 @@ class FP():
         return value
 
     def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -> type[FP]:
-        """Accummulate partial fold results in same type data structure. Works
+        """Accumulate partial fold results in same type data structure. Works
         best for variable sized containers."""
         if f is None:
             f = operator.add
@@ -65,7 +65,7 @@ class FP():
         else:
             return type(self)(*accumulate(chain((initial,), self), f))
 
-    # Default implentations for FIFO data structures,
+    # Default implementations for FIFO data structures,
     # see stacks module for LIFO examples.
 
     def map(self, f: Callable[[Any], Any]) -> type[FP]:
@@ -73,28 +73,28 @@ class FP():
         return type(self)(*map(f, self))
 
     def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
-        """Monadicly bind `f` to the data structure sequentially."""
+        """Monadically bind `f` to the data structure sequentially."""
         return type(self)(*chain(*map(iter, map(f, self))))
 
     def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
-        """Monadicly bind `f` to the data structure, merge until one exhausted."""
+        """Monadically bind `f` to the data structure, merge until one exhausted."""
         return type(self)(*merge(*map(iter, map(f, self))))
 
     def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
-        """Monadicly bind `f` to the data structure, merge until all are exhausted."""
+        """Monadically bind `f` to the data structure, merge until all are exhausted."""
         return type(self)(*exhaust(*map(iter, map(f, self))))
-    
+
 class Maybe(FP):
     """Class representing a potentially missing value.
 
     * implements the Option Monad
-    * where Maybe(value) constructs a Some(value)
-    * where Maybe() & Maybe(None) constructs a Nothing
-    * immutable semantics, `map` & flatMap return modified copies
-    * where None is always treated as a non-existance value
-    * where None cannot be stored in an object of type Maybe
-    * semantically None represent non-existance
-    * where None used only as an implementration detail
+    * where `Maybe(value)` constructs a `Some(value)`
+    * where `Maybe()` & `Maybe(None)` constructs a `Nothing`
+    * immutable semantics, `map` & `flatMap` return modified copies
+    * where `None` is always treated as a existence value
+    * where `None` cannot be stored in an object of type `Maybe`
+    * semantically `None` represent non-existence
+    * when used `None` is only as an implementation detail
     """
     __slots__ = '_value',
 
@@ -113,32 +113,32 @@ class Maybe(FP):
             return 'Nothing'
 
     def __bool__(self) -> bool:
-        # Return False if Nothing, otherwise True
+        # Return False if `Nothing,` otherwise `True`
         return self._value is not None
 
     def __len__(self) -> int:
-        # Length of a Maybe is either 0 or 1
+        # Length of a `Maybe` is either `0` or `1`
         if self:
             return 1
         else:
             return 0
 
     def __eq__(self, other: Maybe) -> bool:
-        # Return True if both sides are Nothings or if both sides are
-        # Somes contining values which compare as as equal.
+        # Return `True` if both sides are of type `Nothing` or if both sides
+        # are of type `Some` containing values which compare as as equal.
         if not isinstance(other, type(self)):
             return False
         return self._value == other._value
 
     def get(self, alternate: Any=None) -> Any:
-        """Get contents if they exist, otherwise return alternate value."""
+        """Get contents if they exist, otherwise return `alternate` value."""
         if self:
             return self._value
         else:
             return alternate
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Left biased fold left."""
+        """Left biased foldleft."""
         if self:
             if initial is None:
                 return self._value
@@ -150,9 +150,8 @@ class Maybe(FP):
     def accummulate(self,
                     f: Callable[[Any, Any], Any]=None,
                     initial=None) -> Maybe:
-        """Accummulate but, since the data structure can hold at most
-        only one value, do not include the initial value if the `Maybe`
-        is not a `Nothing`. 
+        """Accumulate but, since the data structure can only hold at most one value,
+        do not include the initial value if the `Maybe` is not a `Nothing`.
         """
         if f is None:
             f = operator.add
@@ -166,23 +165,23 @@ def maybeToEither(m: Maybe, right: Any=None) -> Either:
     return Either(m.get(), right)
 
 def Some(value=None) -> Maybe:
-    """Function for creating a `Maybe` from a value. If value is `None`
-    or missing, returns a `Nothing`.
+    """Function for creating a `Maybe` from a `value`.
+    If `value` is `None` or missing, returns a `Nothing`.
     """
     return Maybe(value)
 
-#: Nothing is not a singleton! Test via equality, or in a boolean context.
+#: Nothing is not a singleton! Test via equality, or in a Boolean context.
 Nothing: Maybe = Maybe()
 
 class Either(FP):
     """Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where maybe(value, altValue) constructs Left(value) if value not None
-    * where maybe(None, altValue) constructs Right(altValue)
-    * if altValue not given, set it to the empty string
-    * immutable semantics where map & flatMap return modified copies
-    * in boolean context, return True if a Left, False if a Right
+    * where `Maybe(value, altValue)` constructs `Left(value)` if value not None
+    * where `Maybe(None, altValue)` constructs `Right(altValue)`
+    * if `altValue` not given, set it to the empty string
+    * immutable semantics where `map` & `flatMap` return modified copies
+    * in Boolean context, return `True` if a `Left,` `False` if a `Right`
     """
     __slots__ = '_value', '_isLeft'
 
@@ -208,15 +207,14 @@ class Either(FP):
             return 'Right(' + repr(self._value) + ')'
 
     def __bool__(self) -> bool:
-        # Return True if a Left, False if a Right
+        # Return `True` if a `Left,` `False` if a `Right`.
         return self._isLeft
 
     def __len__(self) -> int:
-        # An `Either` always contains just one thing, which is not None
+        # An `Either` always contains just one thing, which is not `None`
         return 1
 
     def __eq__(self, other: Either) -> bool:
-        """"""
         if not isinstance(other, type(self)):
             return False
         if (self and other) or (not self and not other):
@@ -224,13 +222,13 @@ class Either(FP):
         return False
 
     def get(self, default: Any=None) -> Any:
-        """Get value if a Left, otherwise return default value"""
+        """Get value if a `Left,` otherwise return `default` value."""
         if self:
             return self._value
         return default
 
     def getRight(self) -> Any:
-        """Get value if a Right, otherwise return None"""
+        """Get value if a `Right`, otherwise return `None`."""
         if self:
             return None
         return self._value
@@ -248,7 +246,7 @@ class Either(FP):
         return Right(g(self._value))
 
     def flatMap(self, f: Callable[[Any], Either], right: Any=None) -> Either:
-        """flatMap a `Left` value, but replace/overide a `Right` value."""
+        """flatmap a `Left` value, but replace/override a `Right` value."""
         if self:
             if right is None:
                 return f(self._value)
@@ -289,9 +287,9 @@ class Either(FP):
                     initial: Any=None,
                     right: Any=None) -> Either:
         """The `Either` data structure always holds one value, so what gets
-        "accummulated" depends on whether the Either is a `Left` or a `Right`.
+        "accumulated" depends on whether the `Either` is a `Left` or a `Right`.
 
-        * by default, a Left contains numeric data, a Right a str.
+        * by default, a `Left` contains numeric data, a `Right` a `str`.
         """
         if f is None:
             f = operator.add
@@ -314,13 +312,13 @@ def eitherToMaybe(e: Either) -> Maybe:
     return Maybe(e.get())
 
 def Left(left: Any, right: Any=None) -> Either:
-    """Function returns a "Left" `Either` if `left != None`, otherwise it
-    returns a "Right" `Either`.
+    """Function returns a `Left` `Either` if `left != None`, otherwise it
+    returns a `Right` `Either`.
     """
     return Either(left, right)
 
 def Right(right: Any) -> Either:
-    """Function to construct a "Right" `Either`."""
+    """Function to construct a `Right` `Either`."""
     return Either(None, right)
 
 if __name__ == "__main__":

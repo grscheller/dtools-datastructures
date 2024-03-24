@@ -28,8 +28,8 @@ Types of Stacks:
 
 ### Class FStack
 
-* immutable last in, first out (LIFO) stack data structure
-* functional interface
+* Immutable last in, first out (LIFO) stack data structure
+* Functional interface
 * None represents the absence of a value and ignored when constructing new FStacks
 """
 
@@ -53,8 +53,8 @@ class StackBase():
     stateful object containing a count of the number of elements on it and
     a reference to an immutable node of a linear tree of singularly linked
     nodes. Different stack objects can safely share the same data by each
-    pointing to the same node. Each stack class ensures None values do not
-    get pushed onto the the stack.
+    pointing to the same node. Each stack class ensures `None` values do not
+    get pushed onto the stack.
     """
     __slots__ = '_head', '_count'
 
@@ -123,40 +123,38 @@ class Stack(StackBase):
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    * Stacks are stateful objects, values can be pushed on & popped off
-    * Stacks referennce either the top node in the list, or None indicate if empty
-    * Stacks keep a count of the number of objects currently on them
-    * pushes & pops, getting the size and copying a Stack are all O(1) operations
-    * None represents the absence of a value and ignored if pushed on a Stack
+    * `Stacks` are stateful objects, values can be pushed on & popped off
+    * `Stacks` reference either the top node of the stack, or `None` indicating empty
+    * `Stacks` keep a count of the number of objects currently on them
+    * Pushes & pops, getting the size, and copying a `Stack` are all O(1) operations
+    * `None` represents the absence of a value and ignored if pushed on a `Stack`
     """
     __slots__ = ()
 
     def __str__(self):
-        """Display the data in the Stack, left to right starting at bottom"""
+        """Display the data in the `Stack,` left to right starting at bottom."""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> Stack:
-        """Return shallow copy of a Stack in O(1) time & space complexity"""
+        """Return shallow copy of a `Stack` in O(1) time & space complexity."""
         stack = Stack()
         stack._head, stack._count = self._head, self._count
         return stack
 
     def reverse(self) -> None:
-        """Return shallow copy of a Stack in O(1) time & space complexity"""
+        """Return shallow copy of a `Stack` in O(1) time & space complexity."""
         stack = Stack(*self)
         self._head, self._count = stack._head, stack._count
 
     def push(self, *ds: Any) -> None:
-        """Push data that is not NONE onto top of stack,
-        return the stack being pushed.
-        """
+        """Push data that is not `None` onto top of the `Stack`."""
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
     def pop(self) -> Any:
-        """Pop data off of top of stack"""
+        """Pop data off of top of stack."""
         if self._head is None:
             return None
         else:
@@ -165,39 +163,39 @@ class Stack(StackBase):
             return data
 
     def peak(self, default: Any=None) -> Any:
-        """Returns the data at the top of the stack. Does not consume the data.
-        If stack is empty, data does not exist so in that case return default.
+        """Returns the data at the top of the `Stack`. Does not consume the data.
+        If `Stack` is empty, data does not exist so in that case return default.
         """
         if self._head is None:
             return default
         return self._head._data
 
     def map(self, f: Callable[[Any], Stack]) -> None:
-        """Maps a function (or callable object) over the values on the Stack.
-        Mutates the Stack object. O(n).
+        """Maps a function (or callable object) over the values on the `Stack`.
+        Mutates the `Stack` object. O(n).
         """
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
 
 class FStack(StackBase, FP):
-    """Class implementing an immutable Last IN, First Out (LIFO) data structure
+    """Class implementing an immutable Last In, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
 
-    * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or None indicate if empty
-    * FStacks keep a count of the number of objects currently on them
-    * creating, getting the size and copying an FStack are all O(1) operations
-    * None represents the absence of a value and ignored used to create an FStack
+    * `FStack` stacks are immutable objects.
+    * An `FStack` references either the top node, or `None` to indicate empty
+    * An `FStack` keeps a count of the number of objects currently on it
+    * Creating, getting the size and copying an `FStack` are all O(1) operations
+    * `None` represents the absence of a value and ignored used to create an `FStack`
     """
     __slots__ = ()
 
     def __str__(self):
-        """Display the data in the FStack, left to right starting at bottom"""
+        """Display the data in the `FStack`, left to right starting at bottom."""
         return '| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
     def copy(self) -> FStack:
-        """Return shallow copy of a FStack in O(1) time & space complexity"""
+        """Return shallow copy of a `FStack` in O(1) time & space complexity."""
         fstack = FStack()
         fstack._head = self._head
         fstack._count = self._count
@@ -207,17 +205,17 @@ class FStack(StackBase, FP):
         return FStack(*self)
 
     def head(self, default: Any=None) -> Any:
-        """Returns the data at the top of the FStack. Does not consume the data.
-        If the FStack is empty, head does not exist so in that case return default.
+        """Returns the data at the top of the `FStack`. Does not consume the data.
+        If the `FStack` is empty, head does not exist so in that case return default.
         """
         if self._head is None:
             return default
         return self._head._data
 
-    def tail(self, default=None) -> FStack:
-        """Return tail of the FStack. If FStack is empty, tail does not exist, so
-        return a default of type FStack instead. If default is not given, return
-        an empty FStack.
+    def tail(self, default: FStack|None=None) -> FStack:
+        """Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
+        return a default of type `FStack` instead. If default is not given, return
+        an empty `FStack`.
         """
         if self._head:
             fstack = FStack()
@@ -230,9 +228,9 @@ class FStack(StackBase, FP):
             return default
 
     def cons(self, d: Any) -> FStack:
-        """Return a new FStack with data as head and self as tail. Constructing
-        an FStack using a non-existent value as head results in a non-existent
-        FStack. In that case, just return a copy of the FStack.
+        """Return a new `FStack` with data as head and self as tail. Constructing
+        an `FStack` using a non-existent value as head results in a non-existent
+        `FStack`. In that case, just return a copy of the `FStack`.
         """
         if d is not None:
             fstack = FStack()
@@ -243,17 +241,17 @@ class FStack(StackBase, FP):
             return self.copy()
 
     def map(self, f: Callable[[Any], Any]) -> FStack:
-        """Apply f over the elemrnts of the data structure"""
+        """Apply `f` over the elements of the data structure"""
         return FStack(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Monadicly bind f to the data structure sequentially"""
+        """Monadically bind `f` to the `FStack` sequentially"""
         return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Monadicly bind f to the data structure sequentially"""
+        """Monadically bind f to the `FStack` sequentially until first exhausted"""
         return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
-        """Monadicly bind f to the data structure merging until all exhausted"""
+        """Monadically bind f to the `FStack` merging until all exhausted"""
         return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
