@@ -17,7 +17,7 @@ a functional interfaces.
 
 Types of Tuples:
 
-* class **ftuple**: extend builtin tuple with functional interface
+* class **FTuple**: extend builtin tuple with functional interface
 """
 
 from __future__ import annotations
@@ -31,22 +31,22 @@ from typing import Any, Callable
 from .core.fp import FP
 
 class FTuple(tuple, FP):
-    """Class extending Python Tuple with FP behaviors."""
+    """Class extending Python `Tuple` with FP behaviors."""
     __slots__ = ()
 
     def __new__(cls, *ds):
-        """Construct the tuple with the None values filtered out"""
+        """Construct the `Tuple` with the `None` values filtered out"""
         return super().__new__(cls, (filter(lambda d: d is not None, ds)))
 
     def __repr__(self):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self):
-        """Display data in the FTuple."""
+        """Display data in the `FTuple`."""
         return "((" + ", ".join(map(repr, self)) + "))"
 
     def __getitem__(self, sl: slice|int) -> Any:
-        """Suports both indexing and slicing."""
+        """Supports both indexing and slicing."""
         if isinstance(sl, slice):
             return FTuple(*super().__getitem__(sl))
         try:
@@ -56,21 +56,22 @@ class FTuple(tuple, FP):
         return item
 
     def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+        """Give `FTuple` a foldright method."""
         FF = lambda x, y: f(y, x) 
         return self[::-1].foldL(FF, initial)
 
     def copy(self) -> FTuple:
-        """Return shallow copy of the FTuple in O(1) time & space complexity."""
+        """Return shallow copy of the `FTuple` in O(1) time & space complexity."""
         return FTuple(*self)
 
     def reverse(self) -> FTuple:
-        """Return a reversed FTuple, new instance."""
+        """Return a reversed `FTuple`, new instance."""
         return(FTuple(*reversed(self)))
 
     def __add__(self, other: FTuple) -> FTuple:
-        """Concatenate two FTuples."""
+        """Concatenate two `FTuples`."""
         return FTuple(*super().__add__(other))
 
     def __mul__(self, num: int) -> FTuple:
-        """Return an FTuple which repeats anothr FTuples num times."""
+        """Return an `FTuple` which repeats another `FTuple` `num` times."""
         return FTuple(*super().__mul__(num))

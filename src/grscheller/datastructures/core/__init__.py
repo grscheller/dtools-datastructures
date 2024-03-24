@@ -13,8 +13,8 @@
 # limitations under the License.
 
 """Modules supporting the core infrastructure of the grscheller.datastructures
-package. Useful imports for REPL's like ipython. Can be used by client code for
-the implemention of new data structures.
+package. Useful imports for REPLs like ipython. Can be used by client code for
+the implementation of new data structures.
 """
 
 __author__ = "Geoffrey R. Scheller"

@@ -35,8 +35,8 @@ are an implementation detail hidden from client code.</p>
 </ul>
 <h3 id="class-fstack">Class FStack</h3>
 <ul>
-<li>immutable last in, first out (LIFO) stack data structure</li>
-<li>functional interface</li>
+<li>Immutable last in, first out (LIFO) stack data structure</li>
+<li>Functional interface</li>
 <li>None represents the absence of a value and ignored when constructing new FStacks</li>
 </ul>
 <details class="source">
@@ -73,8 +73,8 @@ Types of Stacks:
 
 ### Class FStack
 
-* immutable last in, first out (LIFO) stack data structure
-* functional interface
+* Immutable last in, first out (LIFO) stack data structure
+* Functional interface
 * None represents the absence of a value and ignored when constructing new FStacks
 &#34;&#34;&#34;
 
@@ -98,8 +98,8 @@ class StackBase():
     stateful object containing a count of the number of elements on it and
     a reference to an immutable node of a linear tree of singularly linked
     nodes. Different stack objects can safely share the same data by each
-    pointing to the same node. Each stack class ensures None values do not
-    get pushed onto the the stack.
+    pointing to the same node. Each stack class ensures `None` values do not
+    get pushed onto the stack.
     &#34;&#34;&#34;
     __slots__ = &#39;_head&#39;, &#39;_count&#39;
 
@@ -168,40 +168,38 @@ class Stack(StackBase):
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    * Stacks are stateful objects, values can be pushed on &amp; popped off
-    * Stacks referennce either the top node in the list, or None indicate if empty
-    * Stacks keep a count of the number of objects currently on them
-    * pushes &amp; pops, getting the size and copying a Stack are all O(1) operations
-    * None represents the absence of a value and ignored if pushed on a Stack
+    * `Stacks` are stateful objects, values can be pushed on &amp; popped off
+    * `Stacks` reference either the top node of the stack, or `None` indicating empty
+    * `Stacks` keep a count of the number of objects currently on them
+    * Pushes &amp; pops, getting the size, and copying a `Stack` are all O(1) operations
+    * `None` represents the absence of a value and ignored if pushed on a `Stack`
     &#34;&#34;&#34;
     __slots__ = ()
 
     def __str__(self):
-        &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom&#34;&#34;&#34;
+        &#34;&#34;&#34;Display the data in the `Stack,` left to right starting at bottom.&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; Stack:
-        &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         stack = Stack()
         stack._head, stack._count = self._head, self._count
         return stack
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         stack = Stack(*self)
         self._head, self._count = stack._head, stack._count
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data that is not NONE onto top of stack,
-        return the stack being pushed.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Push data that is not `None` onto top of the `Stack`.&#34;&#34;&#34;
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
     def pop(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off of top of stack.&#34;&#34;&#34;
         if self._head is None:
             return None
         else:
@@ -210,39 +208,39 @@ class Stack(StackBase):
             return data
 
     def peak(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-        If stack is empty, data does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the `Stack`. Does not consume the data.
+        If `Stack` is empty, data does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
     def map(self, f: Callable[[Any], Stack]) -&gt; None:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
-        Mutates the Stack object. O(n).
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
+        Mutates the `Stack` object. O(n).
         &#34;&#34;&#34;
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
 
 class FStack(StackBase, FP):
-    &#34;&#34;&#34;Class implementing an immutable Last IN, First Out (LIFO) data structure
+    &#34;&#34;&#34;Class implementing an immutable Last In, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
 
-    * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or None indicate if empty
-    * FStacks keep a count of the number of objects currently on them
-    * creating, getting the size and copying an FStack are all O(1) operations
-    * None represents the absence of a value and ignored used to create an FStack
+    * `FStack` stacks are immutable objects.
+    * An `FStack` references either the top node, or `None` to indicate empty
+    * An `FStack` keeps a count of the number of objects currently on it
+    * Creating, getting the size and copying an `FStack` are all O(1) operations
+    * `None` represents the absence of a value and ignored used to create an `FStack`
     &#34;&#34;&#34;
     __slots__ = ()
 
     def __str__(self):
-        &#34;&#34;&#34;Display the data in the FStack, left to right starting at bottom&#34;&#34;&#34;
+        &#34;&#34;&#34;Display the data in the `FStack`, left to right starting at bottom.&#34;&#34;&#34;
         return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
-        &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `FStack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         fstack = FStack()
         fstack._head = self._head
         fstack._count = self._count
@@ -252,17 +250,17 @@ class FStack(StackBase, FP):
         return FStack(*self)
 
     def head(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
-        If the FStack is empty, head does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the `FStack`. Does not consume the data.
+        If the `FStack` is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
-    def tail(self, default=None) -&gt; FStack:
-        &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
-        return a default of type FStack instead. If default is not given, return
-        an empty FStack.
+    def tail(self, default: FStack|None=None) -&gt; FStack:
+        &#34;&#34;&#34;Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
+        return a default of type `FStack` instead. If default is not given, return
+        an empty `FStack`.
         &#34;&#34;&#34;
         if self._head:
             fstack = FStack()
@@ -275,9 +273,9 @@ class FStack(StackBase, FP):
             return default
 
     def cons(self, d: Any) -&gt; FStack:
-        &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
-        an FStack using a non-existent value as head results in a non-existent
-        FStack. In that case, just return a copy of the FStack.
+        &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail. Constructing
+        an `FStack` using a non-existent value as head results in a non-existent
+        `FStack`. In that case, just return a copy of the `FStack`.
         &#34;&#34;&#34;
         if d is not None:
             fstack = FStack()
@@ -288,19 +286,19 @@ class FStack(StackBase, FP):
             return self.copy()
 
     def map(self, f: Callable[[Any], Any]) -&gt; FStack:
-        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
+        &#34;&#34;&#34;Apply `f` over the elements of the data structure&#34;&#34;&#34;
         return FStack(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
         return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
         return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
         return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </section>
@@ -318,15 +316,15 @@ class FStack(StackBase, FP):
 <span>(</span><span>*ds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class implementing an immutable Last IN, First Out (LIFO) data structure
+<div class="desc"><p>Class implementing an immutable Last In, First Out (LIFO) data structure
 pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other FStack instances.</p>
 <ul>
-<li>FStack stacks are immutable objects.</li>
-<li>FStacks referennce either the top node in the list, or None indicate if empty</li>
-<li>FStacks keep a count of the number of objects currently on them</li>
-<li>creating, getting the size and copying an FStack are all O(1) operations</li>
-<li>None represents the absence of a value and ignored used to create an FStack</li>
+<li><code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> stacks are immutable objects.</li>
+<li>An <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> references either the top node, or <code>None</code> to indicate empty</li>
+<li>An <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> keeps a count of the number of objects currently on it</li>
+<li>Creating, getting the size and copying an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> are all O(1) operations</li>
+<li><code>None</code> represents the absence of a value and ignored used to create an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code></li>
 </ul>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
@@ -334,24 +332,24 @@ nodes with other FStack instances.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FStack(StackBase, FP):
-    &#34;&#34;&#34;Class implementing an immutable Last IN, First Out (LIFO) data structure
+    &#34;&#34;&#34;Class implementing an immutable Last In, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
 
-    * FStack stacks are immutable objects.
-    * FStacks referennce either the top node in the list, or None indicate if empty
-    * FStacks keep a count of the number of objects currently on them
-    * creating, getting the size and copying an FStack are all O(1) operations
-    * None represents the absence of a value and ignored used to create an FStack
+    * `FStack` stacks are immutable objects.
+    * An `FStack` references either the top node, or `None` to indicate empty
+    * An `FStack` keeps a count of the number of objects currently on it
+    * Creating, getting the size and copying an `FStack` are all O(1) operations
+    * `None` represents the absence of a value and ignored used to create an `FStack`
     &#34;&#34;&#34;
     __slots__ = ()
 
     def __str__(self):
-        &#34;&#34;&#34;Display the data in the FStack, left to right starting at bottom&#34;&#34;&#34;
+        &#34;&#34;&#34;Display the data in the `FStack`, left to right starting at bottom.&#34;&#34;&#34;
         return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; FStack:
-        &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `FStack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         fstack = FStack()
         fstack._head = self._head
         fstack._count = self._count
@@ -361,17 +359,17 @@ nodes with other FStack instances.</p>
         return FStack(*self)
 
     def head(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
-        If the FStack is empty, head does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the `FStack`. Does not consume the data.
+        If the `FStack` is empty, head does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
-    def tail(self, default=None) -&gt; FStack:
-        &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
-        return a default of type FStack instead. If default is not given, return
-        an empty FStack.
+    def tail(self, default: FStack|None=None) -&gt; FStack:
+        &#34;&#34;&#34;Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
+        return a default of type `FStack` instead. If default is not given, return
+        an empty `FStack`.
         &#34;&#34;&#34;
         if self._head:
             fstack = FStack()
@@ -384,9 +382,9 @@ nodes with other FStack instances.</p>
             return default
 
     def cons(self, d: Any) -&gt; FStack:
-        &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
-        an FStack using a non-existent value as head results in a non-existent
-        FStack. In that case, just return a copy of the FStack.
+        &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail. Constructing
+        an `FStack` using a non-existent value as head results in a non-existent
+        `FStack`. In that case, just return a copy of the `FStack`.
         &#34;&#34;&#34;
         if d is not None:
             fstack = FStack()
@@ -397,19 +395,19 @@ nodes with other FStack instances.</p>
             return self.copy()
 
     def map(self, f: Callable[[Any], Any]) -&gt; FStack:
-        &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
+        &#34;&#34;&#34;Apply `f` over the elements of the data structure&#34;&#34;&#34;
         return FStack(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
         return FStack(*chain(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
         return FStack(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
         return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -423,17 +421,17 @@ nodes with other FStack instances.</p>
 <span>def <span class="ident">cons</span></span>(<span>self, d: Any) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a new FStack with data as head and self as tail. Constructing
-an FStack using a non-existent value as head results in a non-existent
-FStack. In that case, just return a copy of the FStack.</p></div>
+<div class="desc"><p>Return a new <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> with data as head and self as tail. Constructing
+an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> using a non-existent value as head results in a non-existent
+<code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. In that case, just return a copy of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cons(self, d: Any) -&gt; FStack:
-    &#34;&#34;&#34;Return a new FStack with data as head and self as tail. Constructing
-    an FStack using a non-existent value as head results in a non-existent
-    FStack. In that case, just return a copy of the FStack.
+    &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail. Constructing
+    an `FStack` using a non-existent value as head results in a non-existent
+    `FStack`. In that case, just return a copy of the `FStack`.
     &#34;&#34;&#34;
     if d is not None:
         fstack = FStack()
@@ -448,13 +446,13 @@ FStack. In that case, just return a copy of the FStack.</p></div>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of a FStack in O(1) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> in O(1) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; FStack:
-    &#34;&#34;&#34;Return shallow copy of a FStack in O(1) time &amp; space complexity&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of a `FStack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
     fstack = FStack()
     fstack._head = self._head
     fstack._count = self._count
@@ -465,13 +463,13 @@ FStack. In that case, just return a copy of the FStack.</p></div>
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind f to the data structure merging until all exhausted</p></div>
+<div class="desc"><p>Monadically bind f to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> merging until all exhausted</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Monadicly bind f to the data structure merging until all exhausted&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
     return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -479,13 +477,13 @@ FStack. In that case, just return a copy of the FStack.</p></div>
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
+<div class="desc"><p>Monadically bind <code>f</code> to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> sequentially</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
     return FStack(*chain(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -493,15 +491,15 @@ FStack. In that case, just return a copy of the FStack.</p></div>
 <span>def <span class="ident">head</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the FStack. Does not consume the data.
-If the FStack is empty, head does not exist so in that case return default.</p></div>
+<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. Does not consume the data.
+If the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> is empty, head does not exist so in that case return default.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def head(self, default: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Returns the data at the top of the FStack. Does not consume the data.
-    If the FStack is empty, head does not exist so in that case return default.
+    &#34;&#34;&#34;Returns the data at the top of the `FStack`. Does not consume the data.
+    If the `FStack` is empty, head does not exist so in that case return default.
     &#34;&#34;&#34;
     if self._head is None:
         return default
@@ -512,13 +510,13 @@ If the FStack is empty, head does not exist so in that case return default.</p><
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply f over the elemrnts of the data structure</p></div>
+<div class="desc"><p>Apply <code>f</code> over the elements of the data structure</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Any]) -&gt; FStack:
-    &#34;&#34;&#34;Apply f over the elemrnts of the data structure&#34;&#34;&#34;
+    &#34;&#34;&#34;Apply `f` over the elements of the data structure&#34;&#34;&#34;
     return FStack(*map(f, reversed(self)))</code></pre>
 </details>
 </dd>
@@ -526,13 +524,13 @@ If the FStack is empty, head does not exist so in that case return default.</p><
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadicly bind f to the data structure sequentially</p></div>
+<div class="desc"><p>Monadically bind f to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> sequentially until first exhausted</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-    &#34;&#34;&#34;Monadicly bind f to the data structure sequentially&#34;&#34;&#34;
+    &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
     return FStack(*merge(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 </dd>
@@ -550,20 +548,20 @@ If the FStack is empty, head does not exist so in that case return default.</p><
 </details>
 </dd>
 <dt id="grscheller.datastructures.stacks.FStack.tail"><code class="name flex">
-<span>def <span class="ident">tail</span></span>(<span>self, default=None) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
+<span>def <span class="ident">tail</span></span>(<span>self, default: <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a> | None = None) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return tail of the FStack. If FStack is empty, tail does not exist, so
-return a default of type FStack instead. If default is not given, return
-an empty FStack.</p></div>
+<div class="desc"><p>Return tail of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. If <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> is empty, tail does not exist, so
+return a default of type <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> instead. If default is not given, return
+an empty <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def tail(self, default=None) -&gt; FStack:
-    &#34;&#34;&#34;Return tail of the FStack. If FStack is empty, tail does not exist, so
-    return a default of type FStack instead. If default is not given, return
-    an empty FStack.
+<pre><code class="python">def tail(self, default: FStack|None=None) -&gt; FStack:
+    &#34;&#34;&#34;Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
+    return a default of type `FStack` instead. If default is not given, return
+    an empty `FStack`.
     &#34;&#34;&#34;
     if self._head:
         fstack = FStack()
@@ -596,11 +594,11 @@ an empty FStack.</p></div>
 pointing to a singularly linked list of nodes. This class is designed to share
 nodes with other Stack instances.</p>
 <ul>
-<li>Stacks are stateful objects, values can be pushed on &amp; popped off</li>
-<li>Stacks referennce either the top node in the list, or None indicate if empty</li>
-<li>Stacks keep a count of the number of objects currently on them</li>
-<li>pushes &amp; pops, getting the size and copying a Stack are all O(1) operations</li>
-<li>None represents the absence of a value and ignored if pushed on a Stack</li>
+<li><code>Stacks</code> are stateful objects, values can be pushed on &amp; popped off</li>
+<li><code>Stacks</code> reference either the top node of the stack, or <code>None</code> indicating empty</li>
+<li><code>Stacks</code> keep a count of the number of objects currently on them</li>
+<li>Pushes &amp; pops, getting the size, and copying a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> are all O(1) operations</li>
+<li><code>None</code> represents the absence of a value and ignored if pushed on a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code></li>
 </ul>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
@@ -612,40 +610,38 @@ nodes with other Stack instances.</p>
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other Stack instances.
 
-    * Stacks are stateful objects, values can be pushed on &amp; popped off
-    * Stacks referennce either the top node in the list, or None indicate if empty
-    * Stacks keep a count of the number of objects currently on them
-    * pushes &amp; pops, getting the size and copying a Stack are all O(1) operations
-    * None represents the absence of a value and ignored if pushed on a Stack
+    * `Stacks` are stateful objects, values can be pushed on &amp; popped off
+    * `Stacks` reference either the top node of the stack, or `None` indicating empty
+    * `Stacks` keep a count of the number of objects currently on them
+    * Pushes &amp; pops, getting the size, and copying a `Stack` are all O(1) operations
+    * `None` represents the absence of a value and ignored if pushed on a `Stack`
     &#34;&#34;&#34;
     __slots__ = ()
 
     def __str__(self):
-        &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom&#34;&#34;&#34;
+        &#34;&#34;&#34;Display the data in the `Stack,` left to right starting at bottom.&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
     def copy(self) -&gt; Stack:
-        &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         stack = Stack()
         stack._head, stack._count = self._head, self._count
         return stack
 
     def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         stack = Stack(*self)
         self._head, self._count = stack._head, stack._count
 
     def push(self, *ds: Any) -&gt; None:
-        &#34;&#34;&#34;Push data that is not NONE onto top of stack,
-        return the stack being pushed.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Push data that is not `None` onto top of the `Stack`.&#34;&#34;&#34;
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
     def pop(self) -&gt; Any:
-        &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off of top of stack.&#34;&#34;&#34;
         if self._head is None:
             return None
         else:
@@ -654,16 +650,16 @@ nodes with other Stack instances.</p>
             return data
 
     def peak(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-        If stack is empty, data does not exist so in that case return default.
+        &#34;&#34;&#34;Returns the data at the top of the `Stack`. Does not consume the data.
+        If `Stack` is empty, data does not exist so in that case return default.
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
     def map(self, f: Callable[[Any], Stack]) -&gt; None:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
-        Mutates the Stack object. O(n).
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
+        Mutates the `Stack` object. O(n).
         &#34;&#34;&#34;
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count</code></pre>
@@ -678,13 +674,13 @@ nodes with other Stack instances.</p>
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of a Stack in O(1) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> in O(1) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def copy(self) -&gt; Stack:
-    &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
     stack = Stack()
     stack._head, stack._count = self._head, self._count
     return stack</code></pre>
@@ -694,15 +690,15 @@ nodes with other Stack instances.</p>
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a>]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Maps a function (or callable object) over the values on the Stack.
-Mutates the Stack object. O(n).</p></div>
+<div class="desc"><p>Maps a function (or callable object) over the values on the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>.
+Mutates the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> object. O(n).</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def map(self, f: Callable[[Any], Stack]) -&gt; None:
-    &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
-    Mutates the Stack object. O(n).
+    &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
+    Mutates the `Stack` object. O(n).
     &#34;&#34;&#34;
     newStack = Stack(*map(f, reversed(self)))
     self._head, self._count = newStack._head, newStack._count</code></pre>
@@ -712,15 +708,15 @@ Mutates the Stack object. O(n).</p></div>
 <span>def <span class="ident">peak</span></span>(<span>self, default: Any = None) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the stack. Does not consume the data.
-If stack is empty, data does not exist so in that case return default.</p></div>
+<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>. Does not consume the data.
+If <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> is empty, data does not exist so in that case return default.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def peak(self, default: Any=None) -&gt; Any:
-    &#34;&#34;&#34;Returns the data at the top of the stack. Does not consume the data.
-    If stack is empty, data does not exist so in that case return default.
+    &#34;&#34;&#34;Returns the data at the top of the `Stack`. Does not consume the data.
+    If `Stack` is empty, data does not exist so in that case return default.
     &#34;&#34;&#34;
     if self._head is None:
         return default
@@ -731,13 +727,13 @@ If stack is empty, data does not exist so in that case return default.</p></div>
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off of top of stack</p></div>
+<div class="desc"><p>Pop data off of top of stack.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pop(self) -&gt; Any:
-    &#34;&#34;&#34;Pop data off of top of stack&#34;&#34;&#34;
+    &#34;&#34;&#34;Pop data off of top of stack.&#34;&#34;&#34;
     if self._head is None:
         return None
     else:
@@ -750,16 +746,13 @@ If stack is empty, data does not exist so in that case return default.</p></div>
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data that is not NONE onto top of stack,
-return the stack being pushed.</p></div>
+<div class="desc"><p>Push data that is not <code>None</code> onto top of the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def push(self, *ds: Any) -&gt; None:
-    &#34;&#34;&#34;Push data that is not NONE onto top of stack,
-    return the stack being pushed.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Push data that is not `None` onto top of the `Stack`.&#34;&#34;&#34;
     for d in ds:
         if d is not None:
             node = Node(d, self._head)
@@ -770,13 +763,13 @@ return the stack being pushed.</p></div>
 <span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of a Stack in O(1) time &amp; space complexity</p></div>
+<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> in O(1) time &amp; space complexity.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def reverse(self) -&gt; None:
-    &#34;&#34;&#34;Return shallow copy of a Stack in O(1) time &amp; space complexity&#34;&#34;&#34;
+    &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
     stack = Stack(*self)
     self._head, self._count = stack._head, stack._count</code></pre>
 </details>

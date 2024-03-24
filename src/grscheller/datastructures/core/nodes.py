@@ -15,7 +15,7 @@
 """Various types of nodes for graph-like data structures.
 
 * heap based nodes for for tree-like data structures
-* data structures should make nodes inaccessible to client code.
+* data structures should make nodes inaccessible to client code
 * making nodes inaccessible promotes data sharing between data structures
 """
 from __future__ import annotations
@@ -28,12 +28,12 @@ __license__ = "Apache License 2.0"
 from typing import Any
 
 class SL_Node():
-    """Class implementing nodes that can be linked together to form a
-    singularly linked graphs of nodes.
+    """Class implementing nodes that can be linked together
+    to form singularly linked graphs of nodes.
 
     * this type of node always contain data
     * it has a reference to the next node in the list
-    * the next node can be None to indicate the end of the list
+    * the next node can be `None` to indicate the end of the list
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     """
@@ -54,14 +54,16 @@ class BT_Node():
     Class implementing nodes that can be linked together to form tree-like
     graph data structures where data lives in the nodes.
 
-    * this type of node always contain data, enen if that data is None
+    * this type of node always contain data, even if that data is None
     * originally intended to implement binary tree graphs
-    * other use cases possible
+    * other use cases possible, like doubly linked lists
     """
     __slots__ = '_data', '_left', '_right'
 
     def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
-        """Construct an element of a doubly linked list"""
+        """Construct a data containing node element of some type of graph.
+        Usually walked via recursion.
+        """
         self._data = data
         self._left = left
         self._right = right
@@ -79,12 +81,14 @@ class LT_Node():
     * this type of node never contain data
     * both self._left & self._right reference either data or other LT_Nodes
     * while self._root references the node's parent node
-    * therefore, to store an LT_Node as data reqires a container for it
+    * therefore, to store an LT_Node as data requires a container for it
     """
     __slots__ = '_root', '_left', '_right'
 
     def __init__(self, left: Any, right: Any, root: LT_Node=None):
-        """Construct an element of a doubly linked list"""
+        """Construct a node element which contains no data of some type of graph.
+        Can be arbitrarily walked.
+        """
         self._root = root
         self._left = left
         self._right = right
