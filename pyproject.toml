@@ -37,7 +37,7 @@ exclude = ["docs/*", ".github/*", ".gitignore"]
 
 [tool.pylsp-mypy]
 live-mode = true
-strict = false
+strict = true
 report_progress = true
 
 [tool.ruff]

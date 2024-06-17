@@ -35,7 +35,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 from .core.fp import FP
 from grscheller.circular_array import CircularArray
 
@@ -49,14 +49,14 @@ class QueueBase():
     """
     __slots__ = '_ca',
 
-    def __init__(self, *ds):
+    def __init__(self, *ds: Any):
         """Construct a queue data structure. Cull None values."""
         self._ca = CircularArray()
         for d in ds:
             if d is not None:
                 self._ca.pushR(d)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         """Iterator yielding data currently stored in the queue. Data yielded in
         natural FIFO order.
         """

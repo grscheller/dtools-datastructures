@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+from typing import Any
 from grscheller.datastructures.queues import DoubleQueue
 
 class TestDqueue:
-    def test_mutate_returns_none(self):
+    def test_mutate_returns_none(self) -> None:
         dq = DoubleQueue()
         ret = dq.pushL(1,2,3)
         assert ret is None
