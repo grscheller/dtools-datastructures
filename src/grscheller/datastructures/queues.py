@@ -36,10 +36,10 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Any, Callable, Iterator
-from .core.fp import FP
+from .core.fp import FP, FP_Map_Mutate
 from grscheller.circular_array import CircularArray
 
-class QueueBase():
+class QueueBase(FP_Map_Mutate):
     """Abstract base class for stateful queue-based data structures
 
     * primarily for DRY implementation inheritance of queue type classes
@@ -64,24 +64,24 @@ class QueueBase():
         for pos in range(len(cached)):
             yield cached[pos]
 
-    def __reversed__(self):
+    def __reversed__(self) -> Iterator[Any]:
         """Reverse iterate over the current state of the queue."""
         cached = self._ca.copy()
         for pos in range(len(cached)-1, -1, -1):
             yield cached[pos]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns `True` if queue is not empty."""
         return len(self._ca) > 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns current number of values in queue."""
         return len(self._ca)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Returns `True` if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
         """
@@ -95,7 +95,7 @@ class QueueBase():
         """
         self._ca = QueueBase(*map(f, self))._ca
 
-    def reverse(self):
+    def reverse(self) -> None:
         """Reverse the elements in the Queue"""
         self._ca = self._ca.reverse()
 
@@ -106,9 +106,11 @@ class QueueBase():
         else:
             return None
 
-    def __setitem__(self, index: int, value):
+    def __setitem__(self, index: int, value: Any) -> None:
         typePath = 'grscheller.datastructures.queues.'
-        queueType = lambda queue: str(type(queue)).split(typePath)[-1].partition("'")[0]
+
+        def queueType(queue: QueueBase) -> str:
+            return str(type(queue)).split(typePath)[-1].partition("'")[0]
 
         cnt = len(self)
         if -cnt <= index < cnt:
@@ -127,13 +129,13 @@ class QueueBase():
                 msg0 = f'Trying to set value from an empty {queueType(self)}.'
                 raise IndexError(msg0)
 
-class FIFOQueue(QueueBase, FP):
+class FIFOQueue(QueueBase):
     """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
 
     def copy(self) -> FIFOQueue:
@@ -166,13 +168,13 @@ class FIFOQueue(QueueBase, FP):
         else:
             return None
 
-class LIFOQueue(QueueBase, FP):
+class LIFOQueue(QueueBase):
     """Stateful single sided LIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def copy(self) -> LIFOQueue:
@@ -198,13 +200,13 @@ class LIFOQueue(QueueBase, FP):
         else:
             return None
 
-class DoubleQueue(QueueBase, FP):
+class DoubleQueue(QueueBase):
     """Stateful double sided queue data structure. Will resize itself as needed.
     `None` represents the absence of a value and ignored if pushed onto the queue.
     """
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DoubleQueue:

@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# TODO: Add type parameter to FP, FP_Base, FP_Map_Mutate, Either, Maybe
+# TODO: Update docstrings
+
 """Functional tools
 
 * class **FP**: default functional implementations for data structure methods
@@ -20,7 +23,8 @@
 """
 from __future__ import annotations
 
-__all__ = [ 'FP', 'maybeToEither', 'eitherToMaybe',
+__all__ = [ 'FP', 'FP_Map_Mutate',
+            'maybeToEither', 'eitherToMaybe',
             'Either', 'Left', 'Right',
             'Maybe', 'Some', 'Nothing' ]
 __author__ = "Geoffrey R. Scheller"
@@ -28,13 +32,16 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 import operator
-from typing import Any, Callable, Type
+from typing import Any, Callable, Iterator, Type
 from itertools import accumulate, chain
 from .iterlib import exhaust, merge
 
-class FP():
+class FP_Base():
     """Default functional data structure behaviors if not overridden."""
     __slots__ = ()
+
+    def __iter__(self) -> Iterator[Any]:
+        raise NotImplementedError
 
     def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
         """Fold with an optional initial value. If an initial value is not
@@ -51,12 +58,15 @@ class FP():
         value = next(vs)
         for v in vs:
             value = f(value, v)
-
         return value
 
-    def accummulate(self, f: Callable[[Any, Any], Any]=None, initial=None) -> type[FP]:
+    def accummulate(self, f: Callable[[Any, Any], Any]|None=None, initial: Any=None) -> FP_Base:
         """Accumulate partial fold results in same type data structure. Works
         best for variable sized containers."""
+        # May need to tell mypy I am returning a subtype of FP_Base
+        # From: https://stackoverflow.com/questions/55441612/does-mypy-have-a-subclass-acceptable-return-type
+        #  See: https://mypy.readthedocs.io/en/stable/kinds_of_types.html#the-type-of-class-objects
+        #  For: Either errors below
         if f is None:
             f = operator.add
 
@@ -68,21 +78,28 @@ class FP():
     # Default implementations for FIFO data structures,
     # see stacks module for LIFO examples.
 
-    def map(self, f: Callable[[Any], Any]) -> type[FP]:
-        """Apply `f` over the elements of the data structure."""
-        return type(self)(*map(f, self))
-
-    def flatMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def flatMap(self, f: Callable[[Any], FP_Base]) -> FP_Base:
         """Monadically bind `f` to the data structure sequentially."""
         return type(self)(*chain(*map(iter, map(f, self))))
 
-    def mergeMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def mergeMap(self, f: Callable[[Any], FP_Base]) -> FP_Base:
         """Monadically bind `f` to the data structure, merge until one exhausted."""
         return type(self)(*merge(*map(iter, map(f, self))))
 
-    def exhaustMap(self, f: Callable[[Any], FP]) -> type[FP]:
+    def exhaustMap(self, f: Callable[[Any], FP_Base]) -> FP_Base:
         """Monadically bind `f` to the data structure, merge until all are exhausted."""
         return type(self)(*exhaust(*map(iter, map(f, self))))
+
+class FP(FP_Base):
+
+    def map(self, f: Callable[[Any], Any]) -> FP:
+        """Apply `f` over the elements of the data structure."""
+        return type(self)(*map(f, self))
+
+class FP_Map_Mutate(FP_Base):
+
+    def map(self, f: Callable[[Any], Any]) -> None:
+        raise NotImplementedError
 
 class Maybe(FP):
     """Class representing a potentially missing value.
@@ -101,12 +118,12 @@ class Maybe(FP):
     def __init__(self, value: Any=None):
         self._value = value
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         # Yields its value if not a Nothing
         if self:
             yield self._value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self:
             return 'Some(' + repr(self._value) + ')'
         else:
@@ -123,12 +140,17 @@ class Maybe(FP):
         else:
             return 0
 
-    def __eq__(self, other: Maybe) -> bool:
+    def __eq__(self, other: Any) -> bool:
         # Return `True` if both sides are of type `Nothing` or if both sides
         # are of type `Some` containing values which compare as as equal.
-        if not isinstance(other, type(self)):
+        if not isinstance(other, Maybe):
             return False
-        return self._value == other._value
+        # Don't know why I need to do this? Can == return Any?
+        sameValue = self._value == other._value
+        if type(sameValue) == bool:
+            return sameValue
+        else:
+            return False
 
     def get(self, alternate: Any=None) -> Any:
         """Get contents if they exist, otherwise return `alternate` value."""
@@ -148,8 +170,8 @@ class Maybe(FP):
             return None
 
     def accummulate(self,
-                    f: Callable[[Any, Any], Any]=None,
-                    initial=None) -> Maybe:
+                    f: Callable[[Any, Any], Any]|None=None,
+                    initial: Any=None) -> Maybe:
         """Accumulate but, since the data structure can only hold at most one value,
         do not include the initial value if the `Maybe` is not a `Nothing`.
         """
@@ -164,7 +186,7 @@ def maybeToEither(m: Maybe, right: Any=None) -> Either:
     """Convert a `Maybe` to an `Either`."""
     return Either(m.get(), right)
 
-def Some(value=None) -> Maybe:
+def Some(value: Any=None) -> Maybe:
     """Function for creating a `Maybe` from a `value`.
     If `value` is `None` or missing, returns a `Nothing`.
     """
@@ -195,12 +217,12 @@ class Either(FP):
             self._isLeft = True
             self._value = left
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         # Yields its value if a Left.
         if self:
             yield self._value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self:
             return 'Left(' + repr(self._value) + ')'
         else:
@@ -214,11 +236,16 @@ class Either(FP):
         # An `Either` always contains just one thing, which is not `None`
         return 1
 
-    def __eq__(self, other: Either) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, type(self)):
             return False
+        # Don't know why I need to do this? Can == return Any?
         if (self and other) or (not self and not other):
-            return self._value == other._value
+            sameValue = self._value == other._value
+            if type(sameValue) == bool:
+                return sameValue
+            else:
+                return False
         return False
 
     def get(self, default: Any=None) -> Any:
@@ -233,7 +260,7 @@ class Either(FP):
             return None
         return self._value
 
-    def map(self, f: Callable[[Any], Any], right=None) -> Either:
+    def map(self, f: Callable[[Any], Any], right: Any=None) -> Either:
         """Map over a `Left(value)`."""
         if self:
             return Either(f(self._value), right)
@@ -282,8 +309,8 @@ class Either(FP):
             return None
 
     def accummulate(self,
-                    f: Callable[[Any, Any], Any]=None,
-                    g: Callable[[Any, Any], Any]=None,
+                    f: Callable[[Any, Any], Any]|None=None,
+                    g: Callable[[Any, Any], Any]|None=None,
                     initial: Any=None,
                     right: Any=None) -> Either:
         """The `Either` data structure always holds one value, so what gets
