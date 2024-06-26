@@ -42,8 +42,8 @@ __license__ = "Apache License 2.0"
 
 from typing import Any, Callable
 from itertools import chain
+from grscheller.circular_array import CircularArray
 from .core.iterlib import exhaust, merge
-from .queues import CircularArray
 from .core.nodes import SL_Node as Node
 from .core.fp import FP
 
