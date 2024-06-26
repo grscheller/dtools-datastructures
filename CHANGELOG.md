@@ -18,6 +18,11 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version = 0.14.1.1 - Preparing to add TypeVars
+* tests working with grscheller.circular-array >= 3.0.0, <3.2
+  * lots of mypy complaints
+  * first version using TypeVars will be 0.15.0.0
+
 ## Version = v0.14.0 - PyPI release date 2024-03-09
 * updated dependency on CircularArray class
   * dependencies = ["grscheller.circular-array >= 0.2.0, < 2.1"]
