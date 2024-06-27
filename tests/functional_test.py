@@ -14,7 +14,7 @@
 
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.fp import maybeToEither, eitherToMaybe
+from grscheller.datastructures.core.fp import maybe_to_either, either_to_maybe
 
 def add2(x):
     return x + 2
@@ -353,12 +353,12 @@ class TestEither:
         mb42 = Some(42)
         mbNot = Nothing
 
-        left42 = maybeToEither(mb42)
-        right = maybeToEither(mbNot, 'Nobody home')
+        left42 = maybe_to_either(mb42)
+        right = maybe_to_either(mbNot, 'Nobody home')
         assert left42 == Left(42)
         assert right == Right('Nobody home')
 
-        ph42 = eitherToMaybe(left42)
-        phNot = eitherToMaybe(right)
+        ph42 = either_to_maybe(left42)
+        phNot = either_to_maybe(right)
         assert mb42 == ph42
         assert mbNot == phNot

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
-<meta name="generator" content="pdoc3 0.11.0">
+<meta name="generator" content="pdoc3 0.11.1">
 <title>grscheller.datastructures.queues API documentation</title>
 <meta name="description" content="Queue based datastructures …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
@@ -52,7 +52,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue"><code class="flex name class">
 <span>class <span class="ident">DoubleQueue</span></span>
-<span>(</span><span>*ds: Any)</span>
+<span>(</span><span>*ds: _T)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful double sided queue data structure. Will resize itself as needed.
@@ -62,7 +62,7 @@ hljs.highlightAll();
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class DoubleQueue(QueueBase):
+<pre><code class="python">class DoubleQueue(QueueBase[_T]):
     &#34;&#34;&#34;Stateful double sided queue data structure. Will resize itself as needed.
     `None` represents the absence of a value and ignored if pushed onto the queue.
     &#34;&#34;&#34;
@@ -71,40 +71,40 @@ hljs.highlightAll();
     def __str__(self) -&gt; str:
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self) -&gt; DoubleQueue:
+    def copy(self) -&gt; DoubleQueue[_T]:
         &#34;&#34;&#34;Return shallow copy of the `DoubleQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        dqueue = DoubleQueue()
+        dqueue: DoubleQueue[_T] = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
 
-    def pushR(self, *ds: Any) -&gt; None:
+    def pushR(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the `DoubleQueue`.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
-    def pushL(self, *ds: Any) -&gt; None:
+    def pushL(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto front of `DoubleQueue`.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushL(d)
 
-    def popR(self) -&gt; Any:
+    def popR(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off rear of the `DoubleQueue`.&#34;&#34;&#34;
         return self._ca.popR()
 
-    def popL(self) -&gt; Any:
+    def popL(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off front of the `DoubleQueue`.&#34;&#34;&#34;
         return self._ca.popL()
 
-    def peakR(self) -&gt; Any:
+    def peakR(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Return rightmost element of the `DoubleQueue` if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-    def peakL(self) -&gt; Any:
+    def peakL(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Return leftmost element of the `DoubleQueue` if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
@@ -114,49 +114,48 @@ hljs.highlightAll();
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>grscheller.datastructures.queues.QueueBase</li>
-<li><a title="grscheller.datastructures.core.fp.FP_Map_Mutate" href="core/fp.html#grscheller.datastructures.core.fp.FP_Map_Mutate">FP_Map_Mutate</a></li>
-<li>grscheller.datastructures.core.fp.FP_Base</li>
+<li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> in O(n) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return leftmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakR"><code class="name flex">
-<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return rightmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.pushL"><code class="name flex">
-<span>def <span class="ident">pushL</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">pushL</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data left to right onto front of <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.pushR"><code class="name flex">
-<span>def <span class="ident">pushR</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">pushR</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data left to right onto rear of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
@@ -165,7 +164,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue"><code class="flex name class">
 <span>class <span class="ident">FIFOQueue</span></span>
-<span>(</span><span>*ds: Any)</span>
+<span>(</span><span>*ds: _T)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful single sided FIFO data structure. Will resize itself as needed. <code>None</code>
@@ -175,7 +174,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FIFOQueue(QueueBase):
+<pre><code class="python">class FIFOQueue(QueueBase[_T]):
     &#34;&#34;&#34;Stateful single sided FIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     &#34;&#34;&#34;
@@ -184,11 +183,15 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
     def __str__(self) -&gt; str:
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
-    def copy(self) -&gt; FIFOQueue:
+    def copy(self) -&gt; FIFOQueue[_T]:
         &#34;&#34;&#34;Return shallow copy of the `FIFOQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        fifoqueue = FIFOQueue()
-        fifoqueue._ca = self._ca.copy()
-        return fifoqueue
+        return FIFOQueue(*self)
+
+    def map(self, f: Callable[[_T], _S]) -&gt; FIFOQueue[_S]:
+        &#34;&#34;&#34;Apply function over the queue&#39;s contents. Suppress any `None` values
+        returned by `f`.
+        &#34;&#34;&#34;
+        return FIFOQueue(*map(f, self))
 
     def push(self, *ds: Any) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the `FIFOQueue` &amp; no return value.&#34;&#34;&#34;
@@ -196,7 +199,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
             if d != None:
                 self._ca.pushR(d)
 
-    def pop(self) -&gt; Any:
+    def pop(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off front of the `FIFOQueue`.&#34;&#34;&#34;
         return self._ca.popL()
 
@@ -217,16 +220,22 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>grscheller.datastructures.queues.QueueBase</li>
-<li><a title="grscheller.datastructures.core.fp.FP_Map_Mutate" href="core/fp.html#grscheller.datastructures.core.fp.FP_Map_Mutate">FP_Map_Mutate</a></li>
-<li>grscheller.datastructures.core.fp.FP_Base</li>
+<li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.FIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueue.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the queue's contents. Suppress any <code>None</code> values
+returned by <code>f</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peakLastIn"><code class="name flex">
 <span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
@@ -241,7 +250,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <div class="desc"><p>Return next element ready to <code>pop</code> from the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
@@ -256,7 +265,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue"><code class="flex name class">
 <span>class <span class="ident">LIFOQueue</span></span>
-<span>(</span><span>*ds: Any)</span>
+<span>(</span><span>*ds: _T)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful single sided LIFO data structure. Will resize itself as needed. <code>None</code>
@@ -266,7 +275,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class LIFOQueue(QueueBase):
+<pre><code class="python">class LIFOQueue(QueueBase[_T]):
     &#34;&#34;&#34;Stateful single sided LIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     &#34;&#34;&#34;
@@ -275,23 +284,21 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
     def __str__(self) -&gt; str:
         return &#34;|| &#34; + &#34; &gt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self) -&gt; LIFOQueue:
-        &#34;&#34;&#34;Return shallow copy of the `LIFOQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        lifoqueue = LIFOQueue()
-        lifoqueue._ca = self._ca.copy()
-        return lifoqueue
+    def copy(self) -&gt; LIFOQueue[_T]:
+        &#34;&#34;&#34;Return shallow copy of the `FIFOQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
+        return LIFOQueue(*self)
 
-    def push(self, *ds: Any) -&gt; None:
+    def push(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the `LIFOQueue` &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
-    def pop(self) -&gt; Any:
+    def pop(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off rear of the `LIFOQueue`.&#34;&#34;&#34;
         return self._ca.popR()
 
-    def peak(self) -&gt; Any:
+    def peak(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Return last element pushed to the `LIFOQueue` without consuming it.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
@@ -301,31 +308,30 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>grscheller.datastructures.queues.QueueBase</li>
-<li><a title="grscheller.datastructures.core.fp.FP_Map_Mutate" href="core/fp.html#grscheller.datastructures.core.fp.FP_Map_Mutate">FP_Map_Mutate</a></li>
-<li>grscheller.datastructures.core.fp.FP_Base</li>
+<li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.LIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peak</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> without consuming it.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data on rear of the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> &amp; no return value.</p></div>
@@ -361,8 +367,9 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.copy" href="#grscheller.datastructures.queues.FIFOQueue.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueue.map" href="#grscheller.datastructures.queues.FIFOQueue.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.peakLastIn" href="#grscheller.datastructures.queues.FIFOQueue.peakLastIn">peakLastIn</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.peakNextOut" href="#grscheller.datastructures.queues.FIFOQueue.peakNextOut">peakNextOut</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.pop" href="#grscheller.datastructures.queues.FIFOQueue.pop">pop</a></code></li>
@@ -384,7 +391,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.0</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
 </footer>
 </body>
 </html>

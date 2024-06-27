@@ -18,6 +18,16 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
+## Version = 16.0.0.0 - Requires Python >= 3.12
+* preparing to support PEP 695 generics
+  * will require Python 3.12
+  * will not have to import typing for Python 3.12 and beyond
+  * BUT... mypy does not support PEP 695 generics yet (Pyright does)
+* bumped minimum Python version to >= 3.12 in pyproject.toml
+* map methods mutating objects don't play nice with typing
+  * map methods now return copies
+  * THEREFORE: tests need to be completely overhauled
+
 ## Version = 0.14.1.1 - Preparing to add TypeVars
 * tests working with grscheller.circular-array >= 3.0.0, <3.2
   * lots of mypy complaints

@@ -35,11 +35,14 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable, Iterator
-from .core.fp import FP, FP_Map_Mutate
-from grscheller.circular_array import CircularArray
+from typing import Any, Callable, Generic, Iterator, Optional, TypeVar
+from .core.fp import FP
+from grscheller.circular_array.circular_array import CircularArray
 
-class QueueBase(FP_Map_Mutate):
+_T = TypeVar('_T')
+_S = TypeVar('_S')
+
+class QueueBase(Generic[_T]):
     """Abstract base class for stateful queue-based data structures
 
     * primarily for DRY implementation inheritance of queue type classes
@@ -49,14 +52,14 @@ class QueueBase(FP_Map_Mutate):
     """
     __slots__ = '_ca',
 
-    def __init__(self, *ds: Any):
+    def __init__(self, *ds: _T):
         """Construct a queue data structure. Cull None values."""
-        self._ca = CircularArray()
+        self._ca = CircularArray[_T]()
         for d in ds:
             if d is not None:
                 self._ca.pushR(d)
 
-    def __iter__(self) -> Iterator[Any]:
+    def __iter__(self) -> Iterator[_T]:
         """Iterator yielding data currently stored in the queue. Data yielded in
         natural FIFO order.
         """
@@ -64,7 +67,7 @@ class QueueBase(FP_Map_Mutate):
         for pos in range(len(cached)):
             yield cached[pos]
 
-    def __reversed__(self) -> Iterator[Any]:
+    def __reversed__(self) -> Iterator[_T]:
         """Reverse iterate over the current state of the queue."""
         cached = self._ca.copy()
         for pos in range(len(cached)-1, -1, -1):
@@ -81,19 +84,13 @@ class QueueBase(FP_Map_Mutate):
         """Returns current number of values in queue."""
         return len(self._ca)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Returns `True` if all the data stored in both compare as equal.
         Worst case is O(n) behavior for the true case.
         """
         if not isinstance(other, type(self)):
             return False
         return self._ca == other._ca
-
-    def map(self, f: Callable[[Any], Any]) -> None:
-        """Apply function over the queue's contents. Suppress any `None` values
-        returned by `f`.
-        """
-        self._ca = QueueBase(*map(f, self))._ca
 
     def reverse(self) -> None:
         """Reverse the elements in the Queue"""
@@ -109,7 +106,7 @@ class QueueBase(FP_Map_Mutate):
     def __setitem__(self, index: int, value: Any) -> None:
         typePath = 'grscheller.datastructures.queues.'
 
-        def queueType(queue: QueueBase) -> str:
+        def queueType(queue: QueueBase[_T]) -> str:
             return str(type(queue)).split(typePath)[-1].partition("'")[0]
 
         cnt = len(self)
@@ -129,7 +126,7 @@ class QueueBase(FP_Map_Mutate):
                 msg0 = f'Trying to set value from an empty {queueType(self)}.'
                 raise IndexError(msg0)
 
-class FIFOQueue(QueueBase):
+class FIFOQueue(QueueBase[_T]):
     """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     """
@@ -138,11 +135,15 @@ class FIFOQueue(QueueBase):
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
 
-    def copy(self) -> FIFOQueue:
+    def copy(self) -> FIFOQueue[_T]:
         """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
-        fifoqueue = FIFOQueue()
-        fifoqueue._ca = self._ca.copy()
-        return fifoqueue
+        return FIFOQueue(*self)
+
+    def map(self, f: Callable[[_T], _S]) -> FIFOQueue[_S]:
+        """Apply function over the queue's contents. Suppress any `None` values
+        returned by `f`.
+        """
+        return FIFOQueue(*map(f, self))
 
     def push(self, *ds: Any) -> None:
         """Push data on rear of the `FIFOQueue` & no return value."""
@@ -150,7 +151,7 @@ class FIFOQueue(QueueBase):
             if d != None:
                 self._ca.pushR(d)
 
-    def pop(self) -> Any:
+    def pop(self) -> Optional[_T]:
         """Pop data off front of the `FIFOQueue`."""
         return self._ca.popL()
 
@@ -168,7 +169,7 @@ class FIFOQueue(QueueBase):
         else:
             return None
 
-class LIFOQueue(QueueBase):
+class LIFOQueue(QueueBase[_T]):
     """Stateful single sided LIFO data structure. Will resize itself as needed. `None`
     represents the absence of a value and ignored if pushed onto the queue.
     """
@@ -177,30 +178,28 @@ class LIFOQueue(QueueBase):
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
-    def copy(self) -> LIFOQueue:
-        """Return shallow copy of the `LIFOQueue` in O(n) time & space complexity."""
-        lifoqueue = LIFOQueue()
-        lifoqueue._ca = self._ca.copy()
-        return lifoqueue
+    def copy(self) -> LIFOQueue[_T]:
+        """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
+        return LIFOQueue(*self)
 
-    def push(self, *ds: Any) -> None:
+    def push(self, *ds: _T) -> None:
         """Push data on rear of the `LIFOQueue` & no return value."""
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
-    def pop(self) -> Any:
+    def pop(self) -> Optional[_T]:
         """Pop data off rear of the `LIFOQueue`."""
         return self._ca.popR()
 
-    def peak(self) -> Any:
+    def peak(self) -> Optional[_T]:
         """Return last element pushed to the `LIFOQueue` without consuming it."""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-class DoubleQueue(QueueBase):
+class DoubleQueue(QueueBase[_T]):
     """Stateful double sided queue data structure. Will resize itself as needed.
     `None` represents the absence of a value and ignored if pushed onto the queue.
     """
@@ -209,40 +208,40 @@ class DoubleQueue(QueueBase):
     def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
 
-    def copy(self) -> DoubleQueue:
+    def copy(self) -> DoubleQueue[_T]:
         """Return shallow copy of the `DoubleQueue` in O(n) time & space complexity."""
-        dqueue = DoubleQueue()
+        dqueue: DoubleQueue[_T] = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
 
-    def pushR(self, *ds: Any) -> None:
+    def pushR(self, *ds: _T) -> None:
         """Push data left to right onto rear of the `DoubleQueue`."""
         for d in ds:
             if d != None:
                 self._ca.pushR(d)
 
-    def pushL(self, *ds: Any) -> None:
+    def pushL(self, *ds: _T) -> None:
         """Push data left to right onto front of `DoubleQueue`."""
         for d in ds:
             if d != None:
                 self._ca.pushL(d)
 
-    def popR(self) -> Any:
+    def popR(self) -> Optional[_T]:
         """Pop data off rear of the `DoubleQueue`."""
         return self._ca.popR()
 
-    def popL(self) -> Any:
+    def popL(self) -> Optional[_T]:
         """Pop data off front of the `DoubleQueue`."""
         return self._ca.popL()
 
-    def peakR(self) -> Any:
+    def peakR(self) -> Optional[_T]:
         """Return rightmost element of the `DoubleQueue` if it exists."""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-    def peakL(self) -> Any:
+    def peakL(self) -> Optional[_T]:
         """Return leftmost element of the `DoubleQueue` if it exists."""
         if self._ca:
             return self._ca[0]
