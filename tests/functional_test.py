@@ -16,13 +16,13 @@ from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
 from grscheller.datastructures.core.fp import maybe_to_either, either_to_maybe
 
-def add2(x):
+def add2(x: int) -> int:
     return x + 2
 
 class TestMaybe:
-    def test_identity(self):
-        n1 = Maybe()
-        n2 = Maybe()
+    def test_identity(self) -> None:
+        n1: Maybe[int] = Maybe()
+        n2: Maybe[int] = Maybe()
         o1 = Maybe(42)
         o2 = Maybe(40)
         assert o1 is o1
@@ -35,9 +35,9 @@ class TestMaybe:
         assert o1 is not n1
         assert n2 is not o2
 
-    def test_equality(self):
-        n1 = Maybe()
-        n2 = Maybe()
+    def test_equality(self) -> None:
+        n1: Maybe[int] = Maybe()
+        n2: Maybe[int] = Maybe()
         o1 = Maybe(42)
         o2 = Maybe(40)
         assert o1 == o1
@@ -50,10 +50,10 @@ class TestMaybe:
         assert o1 != n1
         assert n2 != o2
 
-    def test_iterate(self):
+    def test_iterate(self) -> None:
         o1 = Maybe(38)
         o2 = o1.map(add2).map(add2)
-        n1 = Maybe()
+        n1: Maybe[int] = Maybe()
         l1 = []
         l2 = []
         for v in n1:
@@ -64,42 +64,42 @@ class TestMaybe:
         assert len(l2) == 1
         assert l2[0] == 42
 
-    def test_get(self):
+    def test_get(self) -> None:
         o1 = Maybe(1)
-        n1 = Maybe()
+        n1: Maybe[int] = Maybe()
         assert o1.get(42) == 1
         assert n1.get(42) == 42
         assert o1.get() == 1
         assert n1.get() is None
         assert n1.get(13) == (10 + 3)
-        assert n1.get(10/7) == (10/7)
+        assert n1.get(10//7) == 10//7
 
-    def test_some(self):
+    def test_some(self) -> None:
         o1 = Some(42)
-        n1 = Some(None)
-        n2 = Some()
+        n1: Maybe[int] = Some(None)
+        n2: Maybe[int] = Some()
         assert n1 == n2
         o2 = o1.map(lambda x: x // 2) 
         assert o2 == Some(21)
         o3 = o1.map(lambda _: None) 
-        assert o3 == Some() == Nothing
+        assert o3 == Some() == Nothing()
 
-    def test_nothing(self):
+    def test_nothing(self) -> None:
         o1 = Maybe(42)
-        n1 = Maybe()
+        n1: Maybe[int] = Maybe()
         n2 = n1
-        assert o1 != Nothing
-        assert n1 == Nothing
+        assert o1 != Nothing()
+        assert n1 == Nothing()
         assert n1 is n1
         assert n1 is n2
 
 class TestEither:
-    def test_identity(self):
-        e1 = Left(42)
-        e2 = Either(42)
-        e3 = Right('not 42')
-        e4 = Right('not 42')
-        e5 = Right('also not 42')
+    def test_identity(self) -> None:
+        e1: Either[int, str] = Left(42)
+        e2: Either[int, str] = Either(42, 'The secret is unknown')
+        e3: Either[int, str] = Right('not 42')
+        e4: Either[int, str] = Right('not 42')
+        e5: Either[int, str] = Right('also not 42')
         e6 = e3
         assert e1 is e1
         assert e1 is not e2
@@ -123,12 +123,12 @@ class TestEither:
         assert e5 is not e6
         assert e6 is e6
 
-    def test_equality(self):
-        e1 = Left(42)
-        e2 = Left(42)
-        e3 = Right('not 42')
-        e4 = Right('not 42')
-        e5 = Right('also not 42')
+    def test_equality(self) -> None:
+        e1: Either[int, str] = Left(42)
+        e2: Either[int, str] = Left(42)
+        e3: Either[int, str] = Right('not 42')
+        e4: Either[int, str] = Right('not 42')
+        e5: Either[int, str] = Right('also not 42')
         e7 = e3
         assert e1 == e1
         assert e1 == e2
@@ -152,7 +152,7 @@ class TestEither:
         assert e5 != e7
         assert e7 == e7
 
-    def test_either_right(self):
+    def test_either_right(self) -> None:
         def noMoreThan5(x: int) -> int|None:
             if x <= 5:
                 return x
@@ -170,14 +170,14 @@ class TestEither:
         assert s2.getRight() == None
         assert s3.getRight() == None
         assert s4.getRight() == 'more than 5'
-        assert s1.get('nothing doing') == 3
-        assert s3.get('nothing doing') == 42
-        assert s4.get('nothing doing') == 'nothing doing'
+        assert s1.get(0) == 3
+        assert s3.get(0) == 42
+        assert s4.get(0) == 0
         assert s4.getRight() == 'more than 5'
 
-    def test_foldL_maybe(self):
+    def test_foldL_maybe(self) -> None:
         mb21 = Some(21)
-        mbNot = Some()
+        mbNot: Maybe[int] = Some()
         val21 = mb21.foldL(lambda x, y: x*y)
         val42 = mb21.foldL(lambda x, y: x*y, 2)
         val7 = mb21.foldL(lambda x, y: y//x, 3)
@@ -189,22 +189,22 @@ class TestEither:
         assert valNone == None
         assert valAlsoNone == None
 
-    def test_accummulate_maybe(self):
+    def test_accummulate_maybe(self) -> None:
         mb21 = Some(21)
-        mbNot = Some()
+        mbNot: Maybe[int] = Some()
         ph21 = mb21.accummulate()
         ph7 = mb21.accummulate(lambda x, y: y//x, 3)
         phNot = mbNot.accummulate()
         phAlsoNot = mbNot.accummulate(lambda x, y: y//x, 3)
         assert ph21 == Some(21)
         assert ph7 == Some(7)
-        assert phAlsoNot == Nothing
-        assert phNot == Nothing
+        assert phAlsoNot == Nothing()
+        assert phNot == Nothing()
 
-    def test_foldL_either(self):
-        lt42 = Left(42)
-        lt13 = Left(13)
-        rtNotInt = Right('Not an int')
+    def test_foldL_either(self) -> None:
+        lt42 = Either(42, '')
+        lt13: Either[int,str] = Left(13)
+        rtNotInt: Either[int,str] = Right('Not an int')
         val42 = lt42.foldL(lambda x, y: x*y)
         val21 = lt42.foldL(lambda x, y: y//x, 2)
         valNotInt = rtNotInt.foldL(lambda x, y: y//x)
@@ -214,11 +214,11 @@ class TestEither:
         assert valNotInt == None
         assert valAlsoNotInt == None
 
-    def test_accummulate_either(self):
-        lt10 = Left(10)
+    def test_accummulate_either(self) -> None:
+        lt10: Either[int,str] = Left(10)
         lt10accu = lt10.accummulate()
         lt30 = lt10.accummulate(lambda x, y: x*y, None, initial=3, right=' never')
-        rtA = Right('A, ')
+        rtA: Either[int,str] = Right('A, ')
         rtB = rtA.accummulate(right='B, ')
         rtC = rtA.accummulate(lambda x, y: x*y, initial=3, right='C, ')
         assert lt10 == Left(10)
@@ -228,37 +228,37 @@ class TestEither:
         assert rtB == Right('A, B, ')
         assert rtC == Right('A, C, ')
 
-    def test_maybe_flatMap(self):
+    def test_maybe_flatMap(self) -> None:
         mb10 = Maybe(10)
-        mbNot = Maybe()
+        mbNot: Maybe[int] = Maybe()
         mb20 = mb10.flatMap(lambda x: Maybe(2*x))
         mbNotA = mbNot.flatMap(lambda x: Maybe(2*x))
         mbNotB = mb10.flatMap(lambda _: Maybe())
         mbNotC = mbNot.flatMap(lambda _: Maybe())
         assert mb20 == Maybe(20)
-        assert mbNotA == Nothing
-        assert mbNotB == Nothing
-        assert mbNotC == Nothing
+        assert mbNotA == Nothing()
+        assert mbNotB == Nothing()
+        assert mbNotC == Nothing()
 
         mb20 = mb10.mergeMap(lambda x: Maybe(2*x))
         mbNotA = mbNot.mergeMap(lambda x: Maybe(2*x))
         mbNotB = mb10.mergeMap(lambda _: Maybe())
         mbNotC = mbNot.mergeMap(lambda _: Maybe())
         assert mb20 == Maybe(20)
-        assert mbNotA == Nothing
-        assert mbNotB == Nothing
-        assert mbNotC == Nothing
+        assert mbNotA == Nothing()
+        assert mbNotB == Nothing()
+        assert mbNotC == Nothing()
 
         mb20 = mb10.exhaustMap(lambda x: Maybe(2*x))
         mbNotA = mbNot.exhaustMap(lambda x: Maybe(2*x))
         mbNotB = mb10.exhaustMap(lambda _: Maybe())
         mbNotC = mbNot.exhaustMap(lambda _: Maybe())
         assert mb20 == Maybe(20)
-        assert mbNotA == Nothing
-        assert mbNotB == Nothing
-        assert mbNotC == Nothing
+        assert mbNotA == Nothing()
+        assert mbNotB == Nothing()
+        assert mbNotC == Nothing()
 
-    def test_either_flatMaps(self):
+    def test_either_flatMaps(self) -> None:
         def lessThan2(x: int) -> Either:
             if x < 2:
                 return Either(x)
@@ -349,9 +349,9 @@ class TestEither:
         assert lt2 == Right('>=2, tested for 2')
         assert lt5 == Right('>=5, tested for 5')
         
-    def test_Maybe_Either(self):
+    def test_Maybe_Either(self) -> None:
         mb42 = Some(42)
-        mbNot = Nothing
+        mbNot = Nothing()
 
         left42 = maybe_to_either(mb42)
         right = maybe_to_either(mbNot, 'Nobody home')

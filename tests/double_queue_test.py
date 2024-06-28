@@ -14,19 +14,18 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue
 
 class TestDqueue:
     def test_mutate_returns_none(self) -> None:
-        dq: DoubleQueue[int] = DoubleQueue()
-        assert dq.pushL(1,2,3) is None           # type: ignore
-        assert dq.pushR(1,2,3) is None           # type: ignore
-        ret = dq.map(lambda x: x-1)
-        assert ret is None
-        assert dq.popL() == dq.popR() == 2
+        dq1: DoubleQueue[int] = DoubleQueue()
+        assert dq1.pushL(1,2,3) is None           # type: ignore
+        assert dq1.pushR(1,2,3) is None           # type: ignore
+        dq2 = dq1.map(lambda x: x-1)
+        assert dq2.popL() == dq2.popR() == 2
 
-    def test_push_then_pop(self):
+    def test_push_then_pop(self) -> None:
         dq1: DoubleQueue[int] = DoubleQueue()
         pushed_1 = 42
         dq1.pushL(pushed_1)
@@ -60,10 +59,10 @@ class TestDqueue:
         dq2.popL()
         assert len(dq2) == 0
 
-    def test_pushing_None(self):
-        dq0 = DoubleQueue()
-        dq1 = DoubleQueue()
-        dq2 = DoubleQueue()
+    def test_pushing_None(self) -> None:
+        dq0: DoubleQueue[int] = DoubleQueue()
+        dq1: DoubleQueue[int] = DoubleQueue()
+        dq2: DoubleQueue[int] = DoubleQueue()
         dq1.pushR(None)
         dq2.pushL(None)
         assert dq0 == dq1 == dq2
@@ -78,7 +77,7 @@ class TestDqueue:
         for d in dq1:
             assert d is not None
 
-    def test_bool_len_peak(self):
+    def test_bool_len_peak(self) -> None:
         dq = DoubleQueue()
         assert not dq
         dq.pushL(2,1)
@@ -112,7 +111,7 @@ class TestDqueue:
         assert dq.peakL() is None
         assert dq.peakR() is None
 
-    def test_iterators(self):
+    def test_iterators(self) -> None:
         data = [1, 2, 3, 4]
         dq = DoubleQueue(*data)
         ii = 0
@@ -130,20 +129,28 @@ class TestDqueue:
             ii += 1
         assert ii == 5
 
-        dq0 = DoubleQueue()
+        dq0: DoubleQueue[bool] = DoubleQueue()
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
-        data = ()
-        dq0 = DoubleQueue(*data)
-        for _ in dq0:
+        data1: tuple[bool, ...] = ()
+        dq1 = DoubleQueue(*data1)
+        for _ in dq1:
             assert False
-        for _ in reversed(dq0):
+        for _ in reversed(dq1):
             assert False
+        dq1.pushR(True)
+        dq1.pushL(True)
+        dq1.pushR(True)
+        dq1.pushL(False)
+        assert not dq1.popL()
+        while dq1:
+            assert dq1.popL()
+        assert dq1.popR() is None
 
-    def test_copy_reversed(self):
+    def test_copy_reversed(self) -> None:
         dq1 = DoubleQueue(*range(20))
         dq2 = dq1.copy()
         assert dq1 == dq2
@@ -157,7 +164,7 @@ class TestDqueue:
             assert jj == ii
             jj += 1
 
-    def test_equality(self):
+    def test_equality(self) -> None:
         dq1 = DoubleQueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         dq2 = DoubleQueue(2, 3, 'Forty-Two')
         dq2.pushL(1)
@@ -186,18 +193,17 @@ class TestDqueue:
         dq2.pushL(200)
         assert dq1 == dq2
 
-    def test_map(self):
+    def test_map(self) -> None:
         def f1(ii: int) -> int:
             return ii*ii - 1
 
         dq = DoubleQueue(5, 2, 3, 1, 42)
-
-        q0 = DoubleQueue()
+        q0: DoubleQueue[int] = DoubleQueue()
         q1 = dq.copy()
         assert q1 == dq
         assert q1 is not dq
-        q0.map(f1)
-        q1.map(f1)
+        q0m = q0.map(f1)
+        q1m = q1.map(f1)
         assert dq == DoubleQueue(5, 2, 3, 1, 42)
-        assert q0 == DoubleQueue()
-        assert q1 == DoubleQueue(24, 3, 8, 0, 1763)
+        assert q0m == DoubleQueue()
+        assert q1m == DoubleQueue(24, 3, 8, 0, 1763)

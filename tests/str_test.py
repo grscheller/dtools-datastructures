@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from grscheller.circular_array.circular_array import CircularArray
 from grscheller.datastructures.arrays import PArray
-from grscheller.datastructures.queues import CircularArray, DoubleQueue, FIFOQueue, LIFOQueue
+from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.stacks import FStack, Stack
 from grscheller.datastructures.tuples import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
@@ -26,31 +27,31 @@ def addLt42(x: int, y: int) -> int|None:
     return None
 
 class Test_str:
-    def test_Maybe(self):
-        n1 = Maybe()
+    def test_Maybe(self) -> None:
+        n1: Maybe[int] = Maybe()
         o1 = Maybe(42)
-        assert str(n1) == 'Nothing'
+        assert str(n1) == 'Nothing()'
         assert str(o1) == 'Some(42)'
         mb1 = Maybe(addLt42(3, 7))
         mb2 = Maybe(addLt42(15, 30))
         assert str(mb1) == 'Some(10)'
-        assert str(mb2) == 'Nothing'
-        nt1 = Nothing
-        nt2 = Some(None)
-        nt3 = Some()
+        assert str(mb2) == 'Nothing()'
+        nt1: Maybe[int] = Nothing()
+        nt2: Maybe[int] = Some(None)
+        nt3: Maybe[int] = Some()
         s1 = Some(1)
-        assert str(nt1) == str(nt2) == str(nt3) == str(mb2) =='Nothing'
+        assert str(nt1) == str(nt2) == str(nt3) == str(mb2) =='Nothing()'
         assert str(s1) == 'Some(1)'
 
-    def test_Either(self):
-        assert str(Either(10)) == 'Left(10)'
-        assert str(Either(addLt42(10, -4))) == 'Left(6)'
-        assert str(Either(addLt42(10, 40))) == "Right('')"
+    def test_Either(self) -> None:
+        assert str(Either(10, '')) == 'Left(10)'
+        assert str(Either(addLt42(10, -4), '')) == 'Left(6)'
+        assert str(Either(addLt42(10, 40), '')) == "Right('')"
         assert str(Either(None, 'Foofoo rules')) == "Right('Foofoo rules')"
         assert str(Left(42)) == 'Left(42)'
         assert str(Right(13)) == 'Right(13)'
 
-    def test_Stack(self):
+    def test_Stack(self) -> None:
         s1 = Stack()
         assert str(s1) == '||  ><'
         s1.push(42)
@@ -75,7 +76,7 @@ class Test_str:
         assert bar == baz
         assert bar is baz
 
-    def test_FStack(self):
+    def test_FStack(self) -> None:
         s1 = FStack()
         assert str(s1) == '|  ><'
         s2 = s1.cons(42)
@@ -99,23 +100,23 @@ class Test_str:
         assert foo ==baz
         assert foo is not baz
 
-    def test_FIFOQueue(self):
-        q1 = FIFOQueue()
+    def test_FIFOQueue(self) -> None:
+        q1: FIFOQueue[int] = FIFOQueue()
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
-    def test_LIFOQueue(self):
-        q1 = LIFOQueue()
+    def test_LIFOQueue(self) -> None:
+        q1: LIFOQueue[int] = LIFOQueue()
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '|| 1 > 2 > 3 ><'
 
-    def test_DQueue(self):
-        dq1 = DoubleQueue()
-        dq2 = DoubleQueue()
+    def test_DQueue(self) -> None:
+        dq1: DoubleQueue[int] = DoubleQueue()
+        dq2: DoubleQueue[int] = DoubleQueue()
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)
@@ -126,19 +127,19 @@ class Test_str:
         assert str(dq1) == '>< 5 | 4 | 3 | 2 ><'
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
-    def test_fclarray(self):
+    def test_fclarray(self) -> None:
         cl = PArray(1,2,3,4,5)
         cl[2] = 42
         assert str(cl) == '[|1, 2, 42, 4, 5|]'
 
-    def test_ftuple(self):
+    def test_ftuple(self) -> None:
         ft1 = FTuple(1,2,3,4,5)
         ft2 = ft1.flatMap(lambda x: FTuple(*range(1, x)))
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'
 
-    def testCircularArray(self):
-        ca = CircularArray()
+    def testCircularArray(self) -> None:
+        ca: CircularArray[int|str] = CircularArray()
         assert str(ca) == '(||)'
         ca.pushR(1)
         ca.pushL('foo')

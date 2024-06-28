@@ -37,9 +37,9 @@ from typing import Any, Callable, Iterable, Iterator
 from itertools import chain, repeat
 from .queues import DoubleQueue
 from .core.iterlib import merge, exhaust
-from .core.fp import FP, Some
+from .core.fp import Some
 
-class PArray(FP):
+class PArray():
     """Processing Array
 
     * mutable fixed length array-like data structure with O(1) data access

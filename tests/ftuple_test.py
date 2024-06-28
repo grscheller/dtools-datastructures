@@ -15,7 +15,7 @@
 from grscheller.datastructures.tuples import FTuple
 
 class TestFTuple:
-    def test_method_returns_copy(self):
+    def test_method_returns_copy(self) -> None:
         ft1 = FTuple(1, 2, 3, 4, 5, 6)
         ft2 = ft1.map(lambda x: x % 3)
         assert ft2[2] == ft2[5] == 0
@@ -24,7 +24,7 @@ class TestFTuple:
         assert ft3 == FTuple(6, 5, 4, 3, 2, 1)
         assert ft1 == FTuple(1, 2, 3, 4, 5, 6)
 
-    def test_empty(self):
+    def test_empty(self) -> None:
         ft1 = FTuple()
         ft2 = FTuple()
         assert ft1 == ft2
@@ -52,7 +52,7 @@ class TestFTuple:
         assert ft1[0] is None
         assert ft2[42] is None
 
-    def test_reverse(self):
+    def test_reverse(self) -> None:
         ft1 = FTuple(1, 2, 3, 'foo', 'bar')
         ft2 = FTuple('bar', 'foo', 3, 2, 1)
         assert ft1 == ft2.reverse()
@@ -74,7 +74,7 @@ class TestFTuple:
         assert ft6 == FTuple(3, 2, 1)
         assert ft5 == ft5.reverse().reverse()
 
-    def test_indexing(self):
+    def test_indexing(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple("Emily", "Rachel", "Sarah", "Rebekah", "Mary")
         assert ft1[2] == "Sarah"
@@ -85,7 +85,7 @@ class TestFTuple:
         assert ft1[42] == None
         assert ft0[0] == None
 
-    def test_slicing(self):
+    def test_slicing(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(*range(0,101,10))
         assert ft1 == FTuple(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
@@ -97,7 +97,7 @@ class TestFTuple:
         assert ft1[8:130] == FTuple(80, 90, 100)
         assert ft0[2:6] == FTuple()
 
-    def test_map(self):
+    def test_map(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(*range(6))
         assert ft1 == FTuple(0, 1, 2, 3, 4, 5)
@@ -105,17 +105,17 @@ class TestFTuple:
         assert ft1.map(lambda x: x*x) == FTuple(0, 1, 4, 9, 16, 25)
         assert ft0.map(lambda x: x*x) == FTuple()
 
-    def test_foldL(self):
+    def test_foldL(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(*range(1, 6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
-        assert ft1.foldL(lambda x, y: x*y) == 120
-        assert ft0.foldL(lambda x, y: x*y) == None
-        assert ft1.foldL(lambda x, y: x*y, initial=10) == 1200
-        assert ft0.foldL(lambda x, y: x*y, initial=10) == 10
+        assert ft1.foldL1(lambda x, y: x*y, 1) == 120
+        assert ft0.foldL1(lambda x, y: x*y, 1) == 1
+        assert ft1.foldL1(lambda x, y: x*y, initial=10) == 1200
+        assert ft0.foldL1(lambda x, y: x*y, initial=10) == 10
 
-    def test_foldR(self):
+    def test_foldR(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(*range(1, 4))
         assert ft1 == FTuple(1, 2, 3)
@@ -125,7 +125,7 @@ class TestFTuple:
         assert ft1.foldR(lambda x, y: y*y - x, initial=5) == 232323
         assert ft0.foldR(lambda x, y: y*y - x, initial=5) == 5
 
-    def test_accummulate(self):
+    def test_accummulate(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(*range(1,6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
@@ -135,7 +135,7 @@ class TestFTuple:
         assert ft1.accummulate(lambda x, y: x+y, initial=1) == FTuple(1, 2, 4, 7, 11, 16)
         assert ft0.accummulate(lambda x, y: x+y, initial=1) == FTuple(1)
 
-    def test_flatmap(self):
+    def test_flatmap(self) -> None:
         ft0 = FTuple()
         ft1 = FTuple(4, 2, 3, 5)
         ft2 = FTuple(4, 2, 0, 3)

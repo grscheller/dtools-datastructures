@@ -44,99 +44,156 @@ a functional interfaces.</p>
 <dl>
 <dt id="grscheller.datastructures.tuples.FTuple"><code class="flex name class">
 <span>class <span class="ident">FTuple</span></span>
-<span>(</span><span>*ds)</span>
+<span>(</span><span>*ds: _T)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class extending Python <code>Tuple</code> with FP behaviors.</p></div>
+<div class="desc"><p>Class implementing a Tuple-like object with FP behaviors.</p>
+<p>Initialize a Tuple-like object with functional methods.</p>
+<ul>
+<li>Null values are not permitted in this data structure</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FTuple(tuple, FP):
-    &#34;&#34;&#34;Class extending Python `Tuple` with FP behaviors.&#34;&#34;&#34;
-    __slots__ = ()
+<pre><code class="python">class FTuple(Generic[_T]):
+    &#34;&#34;&#34;Class implementing a Tuple-like object with FP behaviors.&#34;&#34;&#34;
+    __slots__ = &#39;_tuple&#39;
 
-    def __new__(cls, *ds):
-        &#34;&#34;&#34;Construct the `Tuple` with the `None` values filtered out&#34;&#34;&#34;
-        return super().__new__(cls, (filter(lambda d: d is not None, ds)))
+    def __init__(self, *ds: _T):
+        &#34;&#34;&#34;Initialize a Tuple-like object with functional methods.
 
-    def __repr__(self):
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+        * Null values are not permitted in this data structure
 
-    def __str__(self):
+        &#34;&#34;&#34;
+        self._tuple = tuple(filter(lambda d: d is not None, ds))
+
+    def __iter__(self) -&gt; Iterator[_T]:
+        return iter(self._tuple)
+
+    def __repr__(self) -&gt; str:
+        return &#39;FTuple(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
+
+    def __bool__(self) -&gt; bool:
+        return bool(len(self._tuple))
+
+    def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display data in the `FTuple`.&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
 
-    def __getitem__(self, sl: slice|int) -&gt; Any:
+    def __getitem__(self, sl: slice|int) -&gt; FTuple[_T]|Optional[_T]:
         &#34;&#34;&#34;Supports both indexing and slicing.&#34;&#34;&#34;
         if isinstance(sl, slice):
-            return FTuple(*super().__getitem__(sl))
+            return FTuple(*self._tuple[sl])
         try:
-            item = super().__getitem__(sl)
+            item = self._tuple[sl]
         except IndexError:
             item = None
         return item
 
-    def foldR(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Give `FTuple` a foldright method.&#34;&#34;&#34;
-        FF = lambda x, y: f(y, x) 
-        return self[::-1].foldL(FF, initial)
+    def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -&gt; _S:
+        &#34;&#34;&#34;Fold left with an initial value.
 
-    def copy(self) -&gt; FTuple:
+        * first argument of `f` is for the accumulated value
+        * if empty, return the initial value
+
+        &#34;&#34;&#34;
+        value = init
+        for v in self:
+            value = f(value, v)
+        return value
+
+    def foldR1(self, f: Callable[[_T, _S], _S], init: _S) -&gt; _S:
+        &#34;&#34;&#34;Fold right with an initial value.
+
+        * second argument of `f` is for the accumulated value
+        * if empty, return the initial value
+
+        &#34;&#34;&#34;
+        value = init
+        for v in self:
+            value = f(v, value)
+        return value
+
+    def copy(self) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Return shallow copy of the `FTuple` in O(1) time &amp; space complexity.&#34;&#34;&#34;
         return FTuple(*self)
 
-    def reverse(self) -&gt; FTuple:
-        &#34;&#34;&#34;Return a reversed `FTuple`, new instance.&#34;&#34;&#34;
-        return(FTuple(*reversed(self)))
+    def map(self, f: Callable[[_T], _S]) -&gt; FTuple[_S]:
+        return FTuple(*map(f, self))
 
-    def __add__(self, other: FTuple) -&gt; FTuple:
+    def __add__(self, other: FTuple[_T]) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Concatenate two `FTuples`.&#34;&#34;&#34;
-        return FTuple(*super().__add__(other))
+        return FTuple(*chain(iter(self), other))
 
-    def __mul__(self, num: int) -&gt; FTuple:
+    def __mul__(self, num: int) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
-        return FTuple(*super().__mul__(num))</code></pre>
+        return FTuple(*self._tuple.__mul__(num if num &gt; 0 else 0))
+
+
+    # def accummulate(self, f: Callable[[Any, Any], Any], initial: Any) -&gt; FP[Any]:
+    #     &#34;&#34;&#34;Accumulate partial fold results in same type data structure.
+
+    #     Works best for variable sized containers.
+
+    #     &#34;&#34;&#34;
+    #     # Probably need a subtype of fp[_S]
+    #     return type(self)(*accumulate(chain((initial,), self), f))
+
+    # # Default implementations for FIFO data structures,
+    # # see stacks module for LIFO examples.
+
+    # def flatMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
+    #     &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
+    #     return type(self)(*chain(*map(iter, map(f, self))))
+
+    # def mergeMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
+    #     &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+    #     return type(self)(*merge(*map(iter, map(f, self))))
+
+    # def exhaustMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
+    #     &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+    #     return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>builtins.tuple</li>
-<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
 <li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.tuples.FTuple.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code> in O(1) time &amp; space complexity.</p></div>
 </dd>
-<dt id="grscheller.datastructures.tuples.FTuple.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+<dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
+<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Give <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code> a foldright method.</p></div>
+<div class="desc"><p>Fold left with an initial value.</p>
+<ul>
+<li>first argument of <code>f</code> is for the accumulated value</li>
+<li>if empty, return the initial value</li>
+</ul></div>
 </dd>
-<dt id="grscheller.datastructures.tuples.FTuple.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></span>
+<dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">
+<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_T, _S], _S], init: _S) ‑> ~_S</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a reversed <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code>, new instance.</p></div>
+<div class="desc"><p>Fold right with an initial value.</p>
+<ul>
+<li>second argument of <code>f</code> is for the accumulated value</li>
+<li>if empty, return the initial value</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.tuples.FTuple.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="core/fp.html#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.foldL1" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL1">foldL1</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="core/fp.html#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>
@@ -157,8 +214,9 @@ a functional interfaces.</p>
 <h4><code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code></h4>
 <ul class="">
 <li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.foldR" href="#grscheller.datastructures.tuples.FTuple.foldR">foldR</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.reverse" href="#grscheller.datastructures.tuples.FTuple.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.foldL1" href="#grscheller.datastructures.tuples.FTuple.foldL1">foldL1</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.foldR1" href="#grscheller.datastructures.tuples.FTuple.foldR1">foldR1</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.map" href="#grscheller.datastructures.tuples.FTuple.map">map</a></code></li>
 </ul>
 </li>
 </ul>

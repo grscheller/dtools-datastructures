@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
 <title>grscheller.datastructures.stacks API documentation</title>
-<meta name="description" content="Both stateful &amp; functional LIFO stacks …">
+<meta name="description" content="Stateful &amp; functional LIFO stacks …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -25,7 +25,7 @@ hljs.highlightAll();
 <h1 class="title">Module <code>grscheller.datastructures.stacks</code></h1>
 </header>
 <section id="section-intro">
-<p>Both stateful &amp; functional LIFO stacks.</p>
+<p>Stateful &amp; functional LIFO stacks.</p>
 <p>This module implements LIFO stacks using singularly linked lists of trees of
 nodes. The nodes can be safely shared between different stack instances and
 are an implementation detail hidden from client code.</p>
@@ -72,7 +72,7 @@ nodes with other FStack instances.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FStack(StackBase, FP):
+<pre><code class="python">class FStack(StackBase):
     &#34;&#34;&#34;Class implementing an immutable Last In, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.
@@ -154,8 +154,6 @@ nodes with other FStack instances.</p>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>grscheller.datastructures.stacks.StackBase</li>
-<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
-<li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -219,15 +217,6 @@ return a default of type <code><a title="grscheller.datastructures.stacks.FStack
 an empty <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>.</p></div>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="core/fp.html#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.foldL1" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL1">foldL1</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 <dt id="grscheller.datastructures.stacks.Stack"><code class="flex name class">
 <span>class <span class="ident">Stack</span></span>
@@ -262,7 +251,7 @@ nodes with other Stack instances.</p>
     &#34;&#34;&#34;
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display the data in the `Stack,` left to right starting at bottom.&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 

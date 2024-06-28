@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Both stateful & functional LIFO stacks.
+"""Stateful & functional LIFO stacks.
 
 This module implements LIFO stacks using singularly linked lists of trees of
 nodes. The nodes can be safely shared between different stack instances and
@@ -40,12 +40,11 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 from itertools import chain
-from grscheller.circular_array import CircularArray
+from grscheller.circular_array.circular_array import CircularArray
 from .core.iterlib import exhaust, merge
 from .core.nodes import SL_Node as Node
-from .core.fp import FP
 
 class StackBase():
     """Abstract base class for the purposes of DRY inheritance of classes
@@ -68,14 +67,14 @@ class StackBase():
                 self._head = node
                 self._count += 1
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
             node = node._next
 
-    def __reversed__(self):
+    def __reversed__(self) -> Iterator:
         """Reverse iterate over the contents of the stack"""
         return reversed(CircularArray(*self))
 
@@ -90,7 +89,7 @@ class StackBase():
         """Returns current number of values on the stack"""
         return self._count
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: object) -> bool:
         """Returns True if all the data stored on the two stacks are the same
         and the two stacks are of the same subclass. Worst case is O(n) behavior
         which happens when all the corresponding data elements on the two stacks
@@ -131,7 +130,7 @@ class Stack(StackBase):
     """
     __slots__ = ()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Display the data in the `Stack,` left to right starting at bottom."""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
@@ -177,7 +176,7 @@ class Stack(StackBase):
         newStack = Stack(*map(f, reversed(self)))
         self._head, self._count = newStack._head, newStack._count
 
-class FStack(StackBase, FP):
+class FStack(StackBase):
     """Class implementing an immutable Last In, First Out (LIFO) data structure
     pointing to a singularly linked list of nodes. This class is designed to share
     nodes with other FStack instances.

@@ -21,5 +21,4 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from .fp import FP
 from .nodes import SL_Node, BT_Node, LT_Node

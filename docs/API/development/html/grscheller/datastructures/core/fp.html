@@ -27,7 +27,6 @@ hljs.highlightAll();
 <section id="section-intro">
 <p>Functional tools</p>
 <ul>
-<li>class <strong>FP</strong>: default functional implementations for data structure methods</li>
 <li>class <strong>Maybe</strong>: Implements the Maybe Monad</li>
 <li>class <strong>Either</strong>: Implements a left biased Either Monad</li>
 </ul>
@@ -59,13 +58,25 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <div class="desc"><p>Function to construct a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Some"><code class="name flex">
-<span>def <span class="ident">Some</span></span>(<span>value: Optional[_T]) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[~_T]</span>
+<span>def <span class="ident">Some</span></span>(<span>value: Optional[_T] = None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function for creating a <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> from a <code>value</code>.</p>
 <ul>
 <li>if <code>value</code> is <code>None</code> or missing, returns a <code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing()</a></code>.</li>
 </ul></div>
+</dd>
+<dt id="grscheller.datastructures.core.fp.either_to_maybe"><code class="name flex">
+<span>def <span class="ident">either_to_maybe</span></span>(<span>e: <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, _S]) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert an <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> to a <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code>.</p></div>
+</dd>
+<dt id="grscheller.datastructures.core.fp.maybe_to_either"><code class="name flex">
+<span>def <span class="ident">maybe_to_either</span></span>(<span>m: <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[_T], right: _S) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code> to an <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
 </dd>
 </dl>
 </section>
@@ -74,17 +85,15 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <dl>
 <dt id="grscheller.datastructures.core.fp.Either"><code class="flex name class">
 <span>class <span class="ident">Either</span></span>
-<span>(</span><span>left: Optional[_T], right: Optional[_S])</span>
+<span>(</span><span>left: Optional[_T], right: _S)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class that either contains a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value or <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value, but not both.</p>
 <ul>
 <li>implements a left biased either monad</li>
-<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(value, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>(value)</code> if value not None</li>
-<li>where <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>(None, altValue)</code> constructs <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a>(altValue)</code></li>
-<li>if <code>altValue</code> not given, set it to the empty string</li>
 <li>immutable semantics where <code>map</code> &amp; <code>flatMap</code> return modified copies</li>
-<li>in Boolean context, return <code>True</code> if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>,</code> <code>False</code> if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code></li>
+<li>in Boolean context, return <code>True</code> if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>,</code> <code>False</code> if a `Right</li>
+<li>will not store a <code>None</code> as a <code>left</code> value</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -94,17 +103,14 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
     &#34;&#34;&#34;Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where `Maybe(value, altValue)` constructs `Left(value)` if value not None
-    * where `Maybe(None, altValue)` constructs `Right(altValue)`
-    * if `altValue` not given, set it to the empty string
     * immutable semantics where `map` &amp; `flatMap` return modified copies
-    * in Boolean context, return `True` if a `Left,` `False` if a `Right`
+    * in Boolean context, return `True` if a `Left,` `False` if a `Right
+    * will not store a `None` as a `left` value
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
-    def __init__(self, left: Optional[_T], right: Optional[_S]):
-        if right is None:
-            right = &#39;&#39;
+    def __init__(self, left: Optional[_T], right: _S):
+        self._value: _T|_S|None     # the |None should not be necessary``
         if left == None:
             self._isLeft = False
             self._value = right
@@ -113,9 +119,9 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
             self._value = left
 
     def __iter__(self) -&gt; Iterator[_T]:
-        # Yields its value if a Left.
+        # Yields its value if a Left of type _T.
         if self:
-            yield self._value
+            yield self._value       # type: ignore
 
     def __repr__(self) -&gt; str:
         if self:
@@ -143,7 +149,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
     def get(self, default: Optional[_T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
         if self:
-            return self._value
+            return self._value       # type: ignore
         return default
 
     def getRight(self) -&gt; Any:
@@ -284,124 +290,6 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </dd>
 </dl>
 </dd>
-<dt id="grscheller.datastructures.core.fp.FP"><code class="flex name class">
-<span>class <span class="ident">FP</span></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Default functional data structure behaviors if not overridden.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class FP(Generic[_T]):
-    &#34;&#34;&#34;Default functional data structure behaviors if not overridden.&#34;&#34;&#34;
-    __slots__ = ()
-
-    def __iter__(self) -&gt; Iterator[_T]:
-        raise NotImplementedError
-
-    def __bool__(self) -&gt; bool:
-        &#34;&#34;&#34;By convention, False when &#34;empty&#34;, True otherwise.&#34;&#34;&#34;
-        raise NotImplementedError
-
-    def map(self, f: Callable[[_T], _S]) -&gt; FP[_S]:
-        raise NotImplementedError
-
-    def foldL1(self, f: Callable[[_S, _T], _S], initial: _S) -&gt; _S:
-        &#34;&#34;&#34;Fold left with an initial value.
-
-        * first argument of `f` is for the accumulated value
-        * if empty, return the initial value
-
-        &#34;&#34;&#34;
-        if self:
-            return initial
-
-        value: _S = initial
-        for v in iter(self):
-            value = f(value, v)
-
-        return value
-
-    def accummulate(self, f: Callable[[Any, Any], Any], initial: Any) -&gt; FP[Any]:
-        &#34;&#34;&#34;Accumulate partial fold results in same type data structure.
-
-        Works best for variable sized containers.
-
-        &#34;&#34;&#34;
-        # Probably need a subtype of fp[_S]
-        return type(self)(*accumulate(chain((initial,), self), f))
-
-    # Default implementations for FIFO data structures,
-    # see stacks module for LIFO examples.
-
-    def flatMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
-        return type(self)(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
-        return type(self)(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
-        return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>typing.Generic</li>
-</ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="grscheller.datastructures.arrays.PArray" href="../arrays.html#grscheller.datastructures.arrays.PArray">PArray</a></li>
-<li><a title="grscheller.datastructures.stacks.FStack" href="../stacks.html#grscheller.datastructures.stacks.FStack">FStack</a></li>
-<li><a title="grscheller.datastructures.tuples.FTuple" href="../tuples.html#grscheller.datastructures.tuples.FTuple">FTuple</a></li>
-</ul>
-<h3>Methods</h3>
-<dl>
-<dt id="grscheller.datastructures.core.fp.FP.accummulate"><code class="name flex">
-<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[typing.Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Accumulate partial fold results in same type data structure.</p>
-<p>Works best for variable sized containers.</p></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[Any]]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[typing.Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[Any]]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[typing.Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], initial: _S) ‑> ~_S</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Fold left with an initial value.</p>
-<ul>
-<li>first argument of <code>f</code> is for the accumulated value</li>
-<li>if empty, return the initial value</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[~_S]</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.FP.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[Any]]) ‑> <a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a>[typing.Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
-</dd>
-</dl>
-</dd>
 <dt id="grscheller.datastructures.core.fp.Maybe"><code class="flex name class">
 <span>class <span class="ident">Maybe</span></span>
 <span>(</span><span>value: Optional[_T] = None)</span>
@@ -416,7 +304,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <li>where <code>None</code> is always treated as a existence value</li>
 <li>where <code>None</code> cannot be stored in an object of type <code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></li>
 <li>semantically <code>None</code> represent non-existence</li>
-<li>when used <code>None</code> is only as an implementation detail</li>
+<li>where used, <code>None</code> is only as an implementation detail</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -427,12 +315,12 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 
     * implements the Option Monad
     * where `Maybe(value)` constructs a `Some(value)`
-    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing`
+    * where `Maybe()` &amp; `Maybe(None)` constructs a `Nothing()`
     * immutable semantics, `map` &amp; `flatMap` return modified copies
     * where `None` is always treated as a existence value
     * where `None` cannot be stored in an object of type `Maybe`
     * semantically `None` represent non-existence
-    * when used `None` is only as an implementation detail
+    * where used, `None` is only as an implementation detail
     &#34;&#34;&#34;
     __slots__ = &#39;_value&#39;,
 
@@ -452,7 +340,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
         if self:
             return &#39;Some(&#39; + repr(self._value) + &#39;)&#39;
         else:
-            return &#39;Nothing&#39;
+            return &#39;Nothing()&#39;
 
     def __bool__(self) -&gt; bool:
         # Return False if `Nothing,` otherwise `True`
@@ -534,11 +422,13 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Nothing" href="#grscheller.datastructures.core.fp.Nothing">Nothing</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Some" href="#grscheller.datastructures.core.fp.Some">Some</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.either_to_maybe" href="#grscheller.datastructures.core.fp.either_to_maybe">either_to_maybe</a></code></li>
+<li><code><a title="grscheller.datastructures.core.fp.maybe_to_either" href="#grscheller.datastructures.core.fp.maybe_to_either">maybe_to_either</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
@@ -554,17 +444,6 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <li><code><a title="grscheller.datastructures.core.fp.Either.map" href="#grscheller.datastructures.core.fp.Either.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.mapRight" href="#grscheller.datastructures.core.fp.Either.mapRight">mapRight</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.mergeMap" href="#grscheller.datastructures.core.fp.Either.mergeMap">mergeMap</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="grscheller.datastructures.core.fp.FP" href="#grscheller.datastructures.core.fp.FP">FP</a></code></h4>
-<ul class="two-column">
-<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.exhaustMap" href="#grscheller.datastructures.core.fp.FP.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.flatMap" href="#grscheller.datastructures.core.fp.FP.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.foldL1" href="#grscheller.datastructures.core.fp.FP.foldL1">foldL1</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.map" href="#grscheller.datastructures.core.fp.FP.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.mergeMap" href="#grscheller.datastructures.core.fp.FP.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 <li>

@@ -71,7 +71,7 @@ backing queue nor the default value.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class PArray(FP):
+<pre><code class="python">class PArray():
     &#34;&#34;&#34;Processing Array
 
     * mutable fixed length array-like data structure with O(1) data access
@@ -301,11 +301,6 @@ backing queue nor the default value.</p></div>
         &#34;&#34;&#34;Reverse the elements of the `PArray`.&#34;&#34;&#34;
         self._arrayQueue = DoubleQueue(*reversed(self))</code></pre>
 </details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></li>
-<li>typing.Generic</li>
-</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.arrays.PArray.backQueue"><code class="name flex">
@@ -376,15 +371,6 @@ use the <code>default</code> value of the <code><a title="grscheller.datastructu
 <div class="desc"><p>Reverse the elements of the <code><a title="grscheller.datastructures.arrays.PArray" href="#grscheller.datastructures.arrays.PArray">PArray</a></code>.</p></div>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="grscheller.datastructures.core.fp.FP" href="core/fp.html#grscheller.datastructures.core.fp.FP">FP</a></b></code>:
-<ul class="hlist">
-<li><code><a title="grscheller.datastructures.core.fp.FP.accummulate" href="core/fp.html#grscheller.datastructures.core.fp.FP.accummulate">accummulate</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.FP.foldL1" href="core/fp.html#grscheller.datastructures.core.fp.FP.foldL1">foldL1</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>

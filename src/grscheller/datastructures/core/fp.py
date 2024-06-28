@@ -13,21 +13,19 @@
 # limitations under the License.
 
 # TODO: Update docstrings
-# TODO: FoldR & FoldR1 consistent (short circuit-able) with infite types? 
+# TODO: FoldR & FoldR1 consistent (short circuit-able) with infinite types? 
 # TODO: Get rid of FoldL & FoldR? (redundant for monoids)
 
 """Functional tools
 
-* class **FP**: default functional implementations for data structure methods
 * class **Maybe**: Implements the Maybe Monad
 * class **Either**: Implements a left biased Either Monad
 """
 from __future__ import annotations
 
-__all__ = [ 'FP',
-            'maybeToEither', 'eitherToMaybe',
-            'Either', 'Left', 'Right',
-            'Maybe', 'Some', 'Nothing' ]
+__all__ = [ 'Either', 'Left', 'Right',
+            'Maybe', 'Some', 'Nothing',
+            'maybe_to_either', 'either_to_maybe' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -39,60 +37,6 @@ from .iterlib import exhaust, merge
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
-
-class FP(Generic[_T]):
-    """Default functional data structure behaviors if not overridden."""
-    __slots__ = ()
-
-    def __iter__(self) -> Iterator[_T]:
-        raise NotImplementedError
-
-    def __bool__(self) -> bool:
-        """By convention, False when "empty", True otherwise."""
-        raise NotImplementedError
-
-    def map(self, f: Callable[[_T], _S]) -> FP[_S]:
-        return type(self)(*map(f, self))
-
-    def foldL1(self, f: Callable[[_S, _T], _S], initial: _S) -> _S:
-        """Fold left with an initial value.
-
-        * first argument of `f` is for the accumulated value
-        * if empty, return the initial value
-
-        """
-        if self:
-            return initial
-
-        value: _S = initial
-        for v in iter(self):
-            value = f(value, v)
-
-        return value
-
-    def accummulate(self, f: Callable[[Any, Any], Any], initial: Any) -> FP[Any]:
-        """Accumulate partial fold results in same type data structure.
-
-        Works best for variable sized containers.
-
-        """
-        # Probably need a subtype of fp[_S]
-        return type(self)(*accumulate(chain((initial,), self), f))
-
-    # Default implementations for FIFO data structures,
-    # see stacks module for LIFO examples.
-
-    def flatMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-        """Monadically bind `f` to the data structure sequentially."""
-        return type(self)(*chain(*map(iter, map(f, self))))
-
-    def mergeMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-        """Monadically bind `f` to the data structure, merge until one exhausted."""
-        return type(self)(*merge(*map(iter, map(f, self))))
-
-    def exhaustMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-        """Monadically bind `f` to the data structure, merge until all are exhausted."""
-        return type(self)(*exhaust(*map(iter, map(f, self))))
 
 class Maybe(Generic[_T]):
     """Class representing a potentially missing value.
@@ -165,23 +109,6 @@ class Maybe(Generic[_T]):
                 return f(initial, self._value)
         else:
             return None
-
-# Maybe convenience functions/vars
-
-def maybe_to_either(m: Maybe[_T], right: _S) -> Either[_T,_S]:
-    """Convert a `Maybe` to an `Either`."""
-    return Either(m.get(), right)
-
-def Some(value: Optional[_T]=None) -> Maybe[_T]:
-    """Function for creating a `Maybe` from a `value`.
-    
-    * if `value` is `None` or missing, returns a `Nothing`.
-    """
-    return Maybe(value)
-
-#: Nothing is not a singleton! Test via equality, or in a Boolean context.
-def Nothing() -> Maybe[_T]:
-    return Some(None)
 
 class Either(Generic[_T,_S]):
     """Class that either contains a `Left` value or `Right` value, but not both.
@@ -314,11 +241,19 @@ class Either(Generic[_T,_S]):
         else:
             return Right(g(self._value, right))
 
-# Either convenience functions. They act like subtype constructors.
 
-def either_to_maybe(e: Either[_T,_S]) -> Maybe[_T]:
-    """Convert an `Either` to a `Maybe`."""
-    return Maybe(e.get())
+# Convenience functions - useful as subtype constructors
+
+def Some(value: Optional[_T]=None) -> Maybe[_T]:
+    """Function for creating a `Maybe` from a `value`.
+    
+    * if `value` is `None` or missing, returns a `Nothing`.
+    """
+    return Maybe(value)
+
+#: Nothing does not a singleton! Test via equality, or in a Boolean context.
+def Nothing() -> Maybe[_T]:
+    return Some(None)
 
 def Left[_T,_S](left: Optional[_T], right: _S=None) -> Either[_T,_S]:
     """Function returns a `Left` `Either` if `left != None`, otherwise it
@@ -329,6 +264,16 @@ def Left[_T,_S](left: Optional[_T], right: _S=None) -> Either[_T,_S]:
 def Right[_S](right: _S) -> Either[_T,_S]:
     """Function to construct a `Right` `Either`."""
     return Either(None, right)
+
+# Conversion functions
+
+def maybe_to_either(m: Maybe[_T], right: _S) -> Either[_T,_S]:
+    """Convert a `Maybe` to an `Either`."""
+    return Either(m.get(), right)
+
+def either_to_maybe(e: Either[_T,_S]) -> Maybe[_T]:
+    """Convert an `Either` to a `Maybe`."""
+    return Maybe(e.get())
 
 if __name__ == "__main__":
     pass

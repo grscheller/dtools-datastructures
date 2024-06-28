@@ -36,7 +36,6 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Any, Callable, Generic, Iterator, Optional, TypeVar
-from .core.fp import FP
 from grscheller.circular_array.circular_array import CircularArray
 
 _T = TypeVar('_T')
@@ -50,7 +49,7 @@ class QueueBase(Generic[_T]):
     * each queue object "has-a" (contains) a circular array to store its data
     * None is not stored as a value on Queue data structures
     """
-    __slots__ = '_ca',
+    __slots__ = '_ca'
 
     def __init__(self, *ds: _T):
         """Construct a queue data structure. Cull None values."""
