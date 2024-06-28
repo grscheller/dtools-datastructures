@@ -124,7 +124,7 @@ class Maybe(Generic[_T]):
         if self:
             return 'Some(' + repr(self._value) + ')'
         else:
-            return 'Nothing'
+            return 'Nothing()'
 
     def __bool__(self) -> bool:
         # Return False if `Nothing,` otherwise `True`
@@ -172,7 +172,7 @@ def maybe_to_either(m: Maybe[_T], right: _S) -> Either[_T,_S]:
     """Convert a `Maybe` to an `Either`."""
     return Either(m.get(), right)
 
-def Some(value: Optional[_T]) -> Maybe[_T]:
+def Some(value: Optional[_T]=None) -> Maybe[_T]:
     """Function for creating a `Maybe` from a `value`.
     
     * if `value` is `None` or missing, returns a `Nothing`.
