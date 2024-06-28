@@ -14,20 +14,19 @@
 
 from grscheller.datastructures.queues import FIFOQueue
 
-class TestSQueue:
-    def test_mutate_returns_none(self):
-        s1 = FIFOQueue()
-        ret = s1.push(1,2,3)
-        assert ret is None
-        ret = s1.push(1,2,3)
-        assert ret is None
-        ret = s1.map(lambda x: x-1)
-        assert ret is None
-        assert s1.pop() + 1 == s1.pop() == 1
-        assert s1.peakLastIn() == 2
-        assert s1.peakNextOut() == 2
+class TestFIFOQueue:
+    def test_mutate_returns_none(self) -> None:
+        s1: FIFOQueue[int] = FIFOQueue()
+        assert s1.push(1,2,3) is None            # type: ignore
+        assert s1.push(4,5,6) is None            # type: ignore
+        s2 = s1.map(lambda x: x-1)
+        not_none = s2.pop()
+        assert not_none is not None
+        assert not_none + 1 == s2.pop() == 1
+        assert s2.peakLastIn() == 5
+        assert s2.peakNextOut() == 2
 
-    def test_push_then_pop(self):
+    def test_push_then_pop(self) -> None:
         q = FIFOQueue()
         pushed = 42
         q.push(pushed)
@@ -59,7 +58,7 @@ class TestSQueue:
         q.pop()
         assert len(q) == 0
 
-    def test_pushing_None(self):
+    def test_pushing_None(self) -> None:
         q0 = FIFOQueue()
         q1 = FIFOQueue()
         q2 = FIFOQueue()
@@ -77,7 +76,7 @@ class TestSQueue:
         for d in q1:
             assert d is not None
 
-    def test_bool_len_peak(self):
+    def test_bool_len_peak(self) -> None:
         q = FIFOQueue()
         assert not q
         q.push(1,2,3)
@@ -108,7 +107,7 @@ class TestSQueue:
         assert q.peakNextOut() is None
         assert q.peakLastIn() is None
 
-    def test_iterators(self):
+    def test_iterators(self) -> None:
         data = [1, 2, 3, 4]
         dq = FIFOQueue(*data)
         ii = 0
@@ -139,7 +138,7 @@ class TestSQueue:
         for _ in reversed(dq0):
             assert False
 
-    def test_copy_reversed(self):
+    def test_copy_reversed(self) -> None:
         q1 = FIFOQueue(*range(20))
         q2 = q1.copy()
         assert q1 == q2
@@ -153,7 +152,7 @@ class TestSQueue:
             assert jj == ii
             jj += 1
 
-    def test_equality_identity(self):
+    def test_equality_identity(self) -> None:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
         q1 = FIFOQueue(1, 2, 3, 'Forty-Two', tup1)
@@ -178,18 +177,26 @@ class TestSQueue:
         q2.pop()
         assert q1 == q2
 
-    def test_map(self):
+    def test_map(self) -> None:
         def f1(ii: int) -> int:
             return ii*ii - 1
 
-        dq = FIFOQueue(5, 42, 3, 1, 2)
+        def f2(ii: int) -> str:
+            return str(ii)
 
-        q0 = FIFOQueue()
-        q1 = dq.copy()
-        assert q1 == dq
-        assert q1 is not dq
-        q0.map(f1)
-        q1.map(f1)
-        assert dq == FIFOQueue(5, 42, 3, 1, 2)
-        assert q0 == FIFOQueue()
-        assert q1 == FIFOQueue(24, 1763, 8, 0, 3)
+        q0: FIFOQueue[int] = FIFOQueue()
+        q1 = FIFOQueue(5, 42, 3, 1, 2)
+        q0m = q0.map(f1)
+        q1m = q1.map(f1)
+        assert q0m == FIFOQueue()
+        assert q1m == FIFOQueue(24, 1763, 8, 0, 3)
+
+        q0.push(8, 9, 10)
+        assert q0.pop() == 8
+        assert q0.pop() == 9
+        q2 = q0.map(f1)
+        assert q2 == FIFOQueue(99)
+
+        q2.push(100)
+        q3 = q2.map(f2)
+        assert q3 == FIFOQueue('99', '100')

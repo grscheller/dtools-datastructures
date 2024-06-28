@@ -52,7 +52,7 @@ class FP(Generic[_T]):
         raise NotImplementedError
 
     def map(self, f: Callable[[_T], _S]) -> FP[_S]:
-        raise NotImplementedError
+        return type(self)(*map(f, self))
 
     def foldL1(self, f: Callable[[_S, _T], _S], initial: _S) -> _S:
         """Fold left with an initial value.
@@ -99,12 +99,12 @@ class Maybe(Generic[_T]):
 
     * implements the Option Monad
     * where `Maybe(value)` constructs a `Some(value)`
-    * where `Maybe()` & `Maybe(None)` constructs a `Nothing`
+    * where `Maybe()` & `Maybe(None)` constructs a `Nothing()`
     * immutable semantics, `map` & `flatMap` return modified copies
     * where `None` is always treated as a existence value
     * where `None` cannot be stored in an object of type `Maybe`
     * semantically `None` represent non-existence
-    * when used `None` is only as an implementation detail
+    * where used, `None` is only as an implementation detail
     """
     __slots__ = '_value',
 
@@ -187,17 +187,14 @@ class Either(Generic[_T,_S]):
     """Class that either contains a `Left` value or `Right` value, but not both.
 
     * implements a left biased either monad
-    * where `Maybe(value, altValue)` constructs `Left(value)` if value not None
-    * where `Maybe(None, altValue)` constructs `Right(altValue)`
-    * if `altValue` not given, set it to the empty string
     * immutable semantics where `map` & `flatMap` return modified copies
-    * in Boolean context, return `True` if a `Left,` `False` if a `Right`
+    * in Boolean context, return `True` if a `Left,` `False` if a `Right
+    * will not store a `None` as a `left` value
     """
     __slots__ = '_value', '_isLeft'
 
-    def __init__(self, left: Optional[_T], right: Optional[_S]):
-        if right is None:
-            right = ''
+    def __init__(self, left: Optional[_T], right: _S):
+        self._value: _T|_S|None     # the |None should not be necessary``
         if left == None:
             self._isLeft = False
             self._value = right
@@ -206,9 +203,9 @@ class Either(Generic[_T,_S]):
             self._value = left
 
     def __iter__(self) -> Iterator[_T]:
-        # Yields its value if a Left.
+        # Yields its value if a Left of type _T.
         if self:
-            yield self._value
+            yield self._value       # type: ignore
 
     def __repr__(self) -> str:
         if self:
@@ -236,7 +233,7 @@ class Either(Generic[_T,_S]):
     def get(self, default: Optional[_T]) -> Optional[_T]:
         """Get value if a `Left,` otherwise return `default` value."""
         if self:
-            return self._value
+            return self._value       # type: ignore
         return default
 
     def getRight(self) -> Any:

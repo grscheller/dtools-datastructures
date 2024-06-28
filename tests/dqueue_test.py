@@ -19,46 +19,46 @@ from grscheller.datastructures.queues import DoubleQueue
 
 class TestDqueue:
     def test_mutate_returns_none(self) -> None:
-        dq = DoubleQueue()
-        ret = dq.pushL(1,2,3)
-        assert ret is None
-        ret = dq.pushR(1,2,3)
-        assert ret is None
+        dq: DoubleQueue[int] = DoubleQueue()
+        assert dq.pushL(1,2,3) is None           # type: ignore
+        assert dq.pushR(1,2,3) is None           # type: ignore
         ret = dq.map(lambda x: x-1)
         assert ret is None
         assert dq.popL() == dq.popR() == 2
 
     def test_push_then_pop(self):
-        dq = DoubleQueue()
-        pushed = 42
-        dq.pushL(pushed)
-        popped = dq.popL()
-        assert pushed == popped
-        assert len(dq) == 0
-        pushed = 0
-        dq.pushL(pushed)
-        popped = dq.popR()
-        assert pushed == popped == 0
-        assert not dq
-        pushed = 0
-        dq.pushR(pushed)
-        popped = dq.popL()
-        assert popped is not None
-        assert pushed == popped
-        assert len(dq) == 0
-        pushed = ''
-        dq.pushR(pushed)
-        popped = dq.popR()
-        assert pushed == popped
-        assert len(dq) == 0
-        dq.pushR('first')
-        dq.pushR('second')
-        dq.pushR('last')
-        assert dq.popL() == 'first'
-        assert dq.popR() == 'last'
-        assert dq
-        dq.popL()
-        assert len(dq) == 0
+        dq1: DoubleQueue[int] = DoubleQueue()
+        pushed_1 = 42
+        dq1.pushL(pushed_1)
+        popped_1 = dq1.popL()
+        assert pushed_1 == popped_1
+        assert len(dq1) == 0
+        pushed_1 = 0
+        dq1.pushL(pushed_1)
+        popped_1 = dq1.popR()
+        assert pushed_1 == popped_1 == 0
+        assert not dq1
+        pushed_1 = 0
+        dq1.pushR(pushed_1)
+        popped_1 = dq1.popL()
+        assert popped_1 is not None
+        assert pushed_1 == popped_1
+        assert len(dq1) == 0
+
+        dq2: DoubleQueue[str] = DoubleQueue()
+        pushed_2 = ''
+        dq2.pushR(pushed_2)
+        popped_2 = dq2.popR()
+        assert pushed_2 == popped_2
+        assert len(dq2) == 0
+        dq2.pushR('first')
+        dq2.pushR('second')
+        dq2.pushR('last')
+        assert dq2.popL() == 'first'
+        assert dq2.popR() == 'last'
+        assert dq2
+        dq2.popL()
+        assert len(dq2) == 0
 
     def test_pushing_None(self):
         dq0 = DoubleQueue()

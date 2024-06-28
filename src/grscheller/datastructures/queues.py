@@ -139,11 +139,14 @@ class FIFOQueue(QueueBase[_T]):
         """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
         return FIFOQueue(*self)
 
-    def map(self, f: Callable[[_T], _S]) -> FIFOQueue[_S]:
-        """Apply function over the queue's contents. Suppress any `None` values
-        returned by `f`.
+    def map(self, f: Callable[[_T], Optional[_S]]) -> FIFOQueue[_S]:
+        """Apply function over the fifo queue's contents.
+
+        * suppress any `None` values returned by `f`
+
         """
-        return FIFOQueue(*map(f, self))
+        # initializer strips the None values
+        return FIFOQueue(*map(f, self))          # type: ignore
 
     def push(self, *ds: Any) -> None:
         """Push data on rear of the `FIFOQueue` & no return value."""
@@ -182,6 +185,15 @@ class LIFOQueue(QueueBase[_T]):
         """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
         return LIFOQueue(*self)
 
+    def map(self, f: Callable[[_T], Optional[_S]]) -> LIFOQueue[_S]:
+        """Apply function over the lifo queue's contents.
+
+        * suppress any `None` values returned by `f`
+
+        """
+        # initializer strips the None values
+        return LIFOQueue(*map(f, self))          # type: ignore
+
     def push(self, *ds: _T) -> None:
         """Push data on rear of the `LIFOQueue` & no return value."""
         for d in ds:
@@ -213,6 +225,15 @@ class DoubleQueue(QueueBase[_T]):
         dqueue: DoubleQueue[_T] = DoubleQueue()
         dqueue._ca = self._ca.copy()
         return dqueue
+
+    def map(self, f: Callable[[_T], Optional[_S]]) -> DoubleQueue[_S]:
+        """Apply function over the lifo queue's contents.
+
+        * suppress any `None` values returned by `f`
+
+        """
+        # initializer strips the None values
+        return DoubleQueue(*map(f, self))          # type: ignore
 
     def pushR(self, *ds: _T) -> None:
         """Push data left to right onto rear of the `DoubleQueue`."""
