@@ -35,7 +35,7 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable, Generic, Iterator, Optional, TypeVar
+from typing import Callable, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.circular_array import CircularArray
 
 _T = TypeVar('_T')
@@ -95,14 +95,14 @@ class QueueBase(Generic[_T]):
         """Reverse the elements in the Queue"""
         self._ca = self._ca.reverse()
 
-    def __getitem__(self, index: int) -> Any:
+    def __getitem__(self, index: int) -> Optional[_T]:
         cnt = len(self)
         if -cnt <= index < cnt:
             return self._ca[index]
         else:
             return None
 
-    def __setitem__(self, index: int, value: Any) -> None:
+    def __setitem__(self, index: int, value: _T) -> None:
         typePath = 'grscheller.datastructures.queues.'
 
         def queueType(queue: QueueBase[_T]) -> str:
@@ -124,6 +124,18 @@ class QueueBase(Generic[_T]):
             else:
                 msg0 = f'Trying to set value from an empty {queueType(self)}.'
                 raise IndexError(msg0)
+
+    def foldL(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        return self._ca.foldL(f)
+
+    def foldR(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        return self._ca.foldR(f)
+
+    def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+        return self._ca.foldL1(f, init)
+
+    def foldR1(self, f:Callable[[_T, _S], _S], init: _S) -> _S:
+        return self._ca.foldR1(f, init)
 
 class FIFOQueue(QueueBase[_T]):
     """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
@@ -147,7 +159,7 @@ class FIFOQueue(QueueBase[_T]):
         # initializer strips the None values
         return FIFOQueue(*map(f, self))          # type: ignore
 
-    def push(self, *ds: Any) -> None:
+    def push(self, *ds: _T) -> None:
         """Push data on rear of the `FIFOQueue` & no return value."""
         for d in ds:
             if d != None:
@@ -157,14 +169,14 @@ class FIFOQueue(QueueBase[_T]):
         """Pop data off front of the `FIFOQueue`."""
         return self._ca.popL()
 
-    def peakLastIn(self) -> Any:
+    def peakLastIn(self) -> Optional[_T]:
         """Return last element pushed to the `FIFOQueue` without consuming it"""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-    def peakNextOut(self) -> Any:
+    def peakNextOut(self) -> Optional[_T]:
         """Return next element ready to `pop` from the `FIFOQueue`."""
         if self._ca:
             return self._ca[0]
