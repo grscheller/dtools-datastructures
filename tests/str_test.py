@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.circular_array.circular_array import CircularArray
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.stacks import FStack, Stack
+from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some
 from grscheller.datastructures.core.fp import Either, Left, Right
@@ -50,8 +49,8 @@ class Test_str:
         assert str(Left(42)) == 'Left(42)'
         assert str(Right(13)) == 'Right(13)'
 
-    def test_Stack(self) -> None:
-        s1 = Stack()
+    def test_SplitEnd(self) -> None:
+        s1 = SplitEnd()
         assert str(s1) == '||  ><'
         s1.push(42)
         assert str(s1) == '|| 42 ><'
@@ -61,7 +60,7 @@ class Test_str:
         assert str(s1) == "|| 42 <- 'Buggy the clown' ><"
         assert s1.pop() == 'Buggy the clown'
 
-        foo = Stack(1)
+        foo = SplitEnd(1)
         bar = foo.copy()
         bar.pop()
         foo.push(2,3,4)
@@ -75,27 +74,27 @@ class Test_str:
         assert bar == baz
         assert bar is baz
 
-    def test_FStack(self) -> None:
-        s1 = FStack()
-        assert str(s1) == '|  ><'
+    def test_SplitEnd(self) -> None:
+        s1: SplitEnd[Optional[Int]] = SplitEnd()
+        assert str(s1) == '||  ><'
         s2 = s1.cons(42)
-        assert str(s1) == '|  ><'
-        assert str(s2) == '| 42 ><'
+        assert str(s1) == '||  ><'
+        assert str(s2) == '|| 42 ><'
         del s1
         s1 = s2.cons(None)
         assert s1 == s2
         s1 = s2.cons(())
-        assert str(s1) == '| 42 <- () ><'
+        assert str(s1) == '|| 42 <- () ><'
         s3 = s1.cons('Buggy the clown').cons('wins!')
-        assert str(s3) == "| 42 <- () <- 'Buggy the clown' <- 'wins!' ><"
+        assert str(s3) == "|| 42 <- () <- 'Buggy the clown' <- 'wins!' ><"
 
-        foo = FStack(1, 2)
+        foo = SplitEnd(1, 2)
         bar = foo.copy()
         assert bar.head() == 2
         foo = foo.cons(3).cons(4).cons(5)
         baz = bar.cons(3).cons(4).cons(5)
-        assert str(foo) == '| 1 <- 2 <- 3 <- 4 <- 5 ><'
-        assert str(baz) == '| 1 <- 2 <- 3 <- 4 <- 5 ><'
+        assert str(foo) == '|| 1 <- 2 <- 3 <- 4 <- 5 ><'
+        assert str(baz) == '|| 1 <- 2 <- 3 <- 4 <- 5 ><'
         assert foo ==baz
         assert foo is not baz
 
@@ -131,19 +130,3 @@ class Test_str:
         ft2 = ft1.flatMap(lambda x: FTuple(*range(1, x)))
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'
-
-    def testCircularArray(self) -> None:
-        ca: CircularArray[int|str] = CircularArray()
-        assert str(ca) == '(||)'
-        ca.pushR(1)
-        ca.pushL('foo')
-        assert str(ca) == "(|'foo', 1|)"
-        assert ca.popL() == 'foo'
-        ca.pushR(2)
-        ca.pushR(3)
-        ca.pushR(4)
-        ca.pushR(5)
-        assert ca.popL() == 1
-        ca.pushL(42)
-        ca.popR()
-        assert str(ca) == '(|42, 2, 3, 4|)'

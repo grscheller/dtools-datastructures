@@ -13,8 +13,6 @@
 # limitations under the License.
 
 # TODO: Update docstrings
-# TODO: FoldR & FoldR1 consistent (short circuit-able) with infinite types? 
-# TODO: Get rid of FoldL & FoldR? (redundant for monoids)
 
 """Functional tools
 
@@ -37,6 +35,8 @@ from .iterlib import exhaust, merge
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
+_R = TypeVar('_R')
+_P = TypeVar('_P')
 
 class Maybe(Generic[_T]):
     """Class representing a potentially missing value.
@@ -169,19 +169,19 @@ class Either(Generic[_T,_S]):
             return None
         return self._value
 
-    def map(self, f: Callable[[Any], Any], right: Any=None) -> Either:
+    def map(self, f: Callable[[_T], _T], right: _S=None) -> Either[_T, _S]:
         """Map over a `Left(value)`."""
         if self:
-            return Either(f(self._value), right)
+            return Either(f(self._value), right)   # type: ignore  # TODO: investigate using f: Callable[[_T], _R]
         return self
 
-    def mapRight(self, g: Callable[[Any], Any]) -> Either:
+    def mapRight(self, g: Callable[[_S], _S]) -> Either[_T, _S]:
         """Map over a `Right(value)`."""
         if self:
             return self
-        return Right(g(self._value))
+        return Right(g(self._value))   # type: ignore  # TODO: investigate using g: Callable[[_S], _R]
 
-    def flatMap(self, f: Callable[[Any], Either], right: Any=None) -> Either:
+    def flatMap(self, f: Callable[[_T], Either[_T, _S]], right: Optional[_S]=None) -> Either[_T, _S]:
         """flatmap a `Left` value, but replace/override a `Right` value."""
         if self:
             if right is None:
@@ -194,7 +194,7 @@ class Either(Generic[_T,_S]):
             else:
                 return self.mapRight(lambda _: right)
 
-    def mergeMap(self, f: Callable[[Any], Either], right: Any=None) -> Either:
+    def mergeMap(self, f: Callable[[_T], Either[_T, _S]], right: Any=None) -> Either[_T, _S]:
         """flatMap a `Left` value, but concatenate with a `Right` value."""
         if self:
             if right is None:
@@ -207,7 +207,9 @@ class Either(Generic[_T,_S]):
             else:
                 return self.mapRight(lambda x: x + right)
 
-    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
+    #TODO: foldL & accumulate on an Either might be silly (eliminate them?)
+
+    def foldL(self, f: Callable[[_R, _T], _R], initial: Optional[_R]=None) -> Optional[_R]:
         """Left biased left fold."""
         if self:
             if initial is None:
@@ -218,10 +220,10 @@ class Either(Generic[_T,_S]):
             return None
 
     def accummulate(self,
-                    f: Callable[[Any, Any], Any]|None=None,
-                    g: Callable[[Any, Any], Any]|None=None,
-                    initial: Any=None,
-                    right: Any=None) -> Either:
+                    f: Callable[[_R, _T], _R]|None=None,
+                    g: Callable[[_P, _S], _P]|None=None,
+                    initial: Optional[_R]=None,
+                    right: Optional[_P]=None) -> Either[_R,_P]:
         """The `Either` data structure always holds one value, so what gets
         "accumulated" depends on whether the `Either` is a `Left` or a `Right`.
 
@@ -273,7 +275,7 @@ def maybe_to_either(m: Maybe[_T], right: _S) -> Either[_T,_S]:
 
 def either_to_maybe(e: Either[_T,_S]) -> Maybe[_T]:
     """Convert an `Either` to a `Maybe`."""
-    return Maybe(e.get())
+    return Maybe(e.get(default=None))
 
 if __name__ == "__main__":
     pass

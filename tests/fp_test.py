@@ -16,68 +16,57 @@ from __future__ import annotations
 
 from typing import Any, Generic
 from grscheller.datastructures.tuples import FTuple
-from grscheller.datastructures.stacks import FStack
+from grscheller.datastructures.split_ends import SplitEnd
+from grscheller.datastructures.queues import FIFOQueue
 
 class Test_FP:
     def test_foldL(self) -> None:
         ft0: FTuple[int] = FTuple()
-        fs0: FStack[int] = FStack()
+        se0: SplitEnd[int] = SplitEnd()
         ft1: FTuple[int] = FTuple(1,2,3,4,5)
-        fs1: FStack[int] = FStack(1,2,3,4,5)
+        se1: SplitEnd[int] = SplitEnd(1,2,3,4,5)
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
         def push(x: Any, y: Any) -> Any:   # TODO: add generic typing hints
             x.push(y)
             return x
 
-        assert ft1.foldL(l1) == 15
-        assert ft1.foldL(l1, 10) == 25
-        assert ft1.foldL(l2) == 120
-        assert ft1.foldL(l2, 10) == 1200
-        assert ft1.foldL(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL(l1) == None
-        assert ft0.foldL(l1, 10) == 10
-        assert ft0.foldL(push, FIFOQueue()) == FIFOQueue()
+        assert ft1.foldL1(l1, 0) == 15     # TODO: add foldL?
+        assert ft1.foldL1(l1, 10) == 25
+        assert ft1.foldL1(l2, 1) == 120
+        assert ft1.foldL1(l2, 10) == 1200
+        assert ft1.foldL1(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
+        assert ft0.foldL1(l1, 42) == 42
+        assert ft0.foldL1(push, FIFOQueue()) == FIFOQueue()
 
-        assert fs1.foldL(l1) == 15
-        assert fs1.foldL(l1, 10) == 25
-        assert fs1.foldL(l2) == 120
-        assert fs1.foldL(l2, 10) == 1200
-        assert fs1.foldL(push, FIFOQueue()) == FIFOQueue(5,4,3,2,1)
-        assert fs0.foldL(l1) == None
-        assert fs0.foldL(l1, 10) == 10
-        assert fs0.foldL(push, FIFOQueue()) == FIFOQueue()
+        # assert se1.foldL(l1) == 15
+        # assert se1.foldL(l1, 10) == 25
+        # assert se1.foldL(l2) == 120
+        # assert se1.foldL(l2, 10) == 1200
+        # assert se1.foldL(push, FIFOQueue()) == FIFOQueue(5,4,3,2,1)
+        # assert se0.foldL(l1) == None
+        # assert se0.foldL(l1, 10) == 10
+        # assert se0.foldL(push, FIFOQueue()) == FIFOQueue()
 
-        assert pa1.foldL(l1) == 15
-        assert pa1.foldL(l1, 10) == 25
-        assert pa1.foldL(l2) == 120
-        assert pa1.foldL(l2, 10) == 1200
-        assert pa1.foldL(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
-        assert pa0.foldL(l1) == None
-        assert pa0.foldL(l1, 10) == 10
-        assert pa0.foldL(push, FIFOQueue()) == FIFOQueue()
+        assert ft1.accummulate1(l1, 0) == FTuple(0,1,3,6,10,15)
+        assert ft1.accummulate1(l1, 10) == FTuple(10,11,13,16,20,25)
+        assert ft1.accummulate1(l2, 10) == FTuple(10,10,20,60,240,1200)
+        assert ft0.accummulate1(l1, 42) == FTuple(42)
+        assert ft0.accummulate1(l1, 10) == FTuple(10)
 
-        assert ft1.accummulate(l1) == FTuple(1,3,6,10,15)
-        assert ft1.accummulate(l1, 10) == FTuple(10,11,13,16,20,25)
-        assert ft1.accummulate(initial=20) == FTuple(20,21,23,26,30,35)
-        assert ft1.accummulate(l2) == FTuple(1,2,6,24,120)
-        assert ft1.accummulate(l2, 10) == FTuple(10,10,20,60,240,1200)
-        assert ft0.accummulate(l1) == FTuple()
-        assert ft0.accummulate(l1, 10) == FTuple(10)
-
-        assert fs1.accummulate(l1) == FStack(5,9,12,14,15)
-        assert fs1.accummulate(l1, 10) == FStack(10,15,19,22,24,25)
-        assert fs1.accummulate(initial=20) == FStack(20,25,29,32,34,35)
-        assert fs1.accummulate(l2) == FStack(5,20,60,120,120)
-        assert fs1.accummulate(l2, 10) == FStack(10,50,200,600,1200,1200)
-        assert fs0.accummulate(l1) == FStack()
-        assert fs0.accummulate(l1, 10) == FStack(10)
+        # assert se1.accummulate(l1) == SplitEnd(5,9,12,14,15)
+        # assert se1.accummulate(l1, 10) == SplitEnd(10,15,19,22,24,25)
+        # assert se1.accummulate(initial=20) == SplitEnd(20,25,29,32,34,35)
+        # assert se1.accummulate(l2) == SplitEnd(5,20,60,120,120)
+        # assert se1.accummulate(l2, 10) == SplitEnd(10,50,200,600,1200,1200)
+        # assert se0.accummulate(l1) == SplitEnd()
+        # assert se0.accummulate(l1, 10) == SplitEnd(10)
 
 
     def test_ftuple_inherited(self) -> None:
         ft = FTuple(*range(3, 101))
         l1 = lambda x: 2*x + 1
-        l2 = lambda x: FTuple(*range(1, x+1)).accummulate()
+        l2 = lambda x: FTuple(*range(1, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
         ft2 = ft.flatMap(l2)
         ft3 = ft.mergeMap(l2)

@@ -158,19 +158,19 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
             return None
         return self._value
 
-    def map(self, f: Callable[[Any], Any], right: Any=None) -&gt; Either:
+    def map(self, f: Callable[[_T], _T], right: _S=None) -&gt; Either[_T, _S]:
         &#34;&#34;&#34;Map over a `Left(value)`.&#34;&#34;&#34;
         if self:
-            return Either(f(self._value), right)
+            return Either(f(self._value), right)   # type: ignore  # TODO: investigate using f: Callable[[_T], _R]
         return self
 
-    def mapRight(self, g: Callable[[Any], Any]) -&gt; Either:
+    def mapRight(self, g: Callable[[_S], _S]) -&gt; Either[_T, _S]:
         &#34;&#34;&#34;Map over a `Right(value)`.&#34;&#34;&#34;
         if self:
             return self
-        return Right(g(self._value))
+        return Right(g(self._value))   # type: ignore  # TODO: investigate using g: Callable[[_S], _R]
 
-    def flatMap(self, f: Callable[[Any], Either], right: Any=None) -&gt; Either:
+    def flatMap(self, f: Callable[[_T], Either[_T, _S]], right: Optional[_S]=None) -&gt; Either[_T, _S]:
         &#34;&#34;&#34;flatmap a `Left` value, but replace/override a `Right` value.&#34;&#34;&#34;
         if self:
             if right is None:
@@ -183,7 +183,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
             else:
                 return self.mapRight(lambda _: right)
 
-    def mergeMap(self, f: Callable[[Any], Either], right: Any=None) -&gt; Either:
+    def mergeMap(self, f: Callable[[_T], Either[_T, _S]], right: Any=None) -&gt; Either[_T, _S]:
         &#34;&#34;&#34;flatMap a `Left` value, but concatenate with a `Right` value.&#34;&#34;&#34;
         if self:
             if right is None:
@@ -196,7 +196,9 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
             else:
                 return self.mapRight(lambda x: x + right)
 
-    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
+    #TODO: foldL &amp; accumulate on an Either might be silly (eliminate them?)
+
+    def foldL(self, f: Callable[[_R, _T], _R], initial: Optional[_R]=None) -&gt; Optional[_R]:
         &#34;&#34;&#34;Left biased left fold.&#34;&#34;&#34;
         if self:
             if initial is None:
@@ -207,10 +209,10 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
             return None
 
     def accummulate(self,
-                    f: Callable[[Any, Any], Any]|None=None,
-                    g: Callable[[Any, Any], Any]|None=None,
-                    initial: Any=None,
-                    right: Any=None) -&gt; Either:
+                    f: Callable[[_R, _T], _R]|None=None,
+                    g: Callable[[_P, _S], _P]|None=None,
+                    initial: Optional[_R]=None,
+                    right: Optional[_P]=None) -&gt; Either[_R,_P]:
         &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
         &#34;accumulated&#34; depends on whether the `Either` is a `Left` or a `Right`.
 
@@ -237,7 +239,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.core.fp.Either.accummulate"><code class="name flex">
-<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[Any, Any], Any] | None = None, g: Callable[[Any, Any], Any] | None = None, initial: Any = None, right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
+<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_R, _T], _R] | None = None, g: Callable[[_P, _S], _P] | None = None, initial: Optional[_R] = None, right: Optional[_P] = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_R, ~_P]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> data structure always holds one value, so what gets
@@ -247,13 +249,13 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, _S]], right: Optional[_S] = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>flatmap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but replace/override a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_R, _T], _R], initial: Optional[_R] = None) ‑> Optional[~_R]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Left biased left fold.</p></div>
@@ -271,19 +273,19 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <div class="desc"><p>Get value if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>, otherwise return <code>None</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _T], right: _S = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map over a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>(value)</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.mapRight"><code class="name flex">
-<span>def <span class="ident">mapRight</span></span>(<span>self, g: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
+<span>def <span class="ident">mapRight</span></span>(<span>self, g: Callable[[_S], _S]) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map over a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a>(value)</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, _S]], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>flatMap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but concatenate with a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>

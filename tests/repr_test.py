@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
-from grscheller.datastructures.stacks import Stack, FStack
+from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple
 from grscheller.datastructures.core.fp import Maybe, Nothing, Some, Either, Left, Right
@@ -132,16 +132,16 @@ class Test_repr:
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
-    def test_Stack(self) -> None:
-        ps1 = Stack()
-        assert repr(ps1) == 'Stack()'
+    def test_SplitEnd(self) -> None:
+        ps1: SplitEnd[object] = SplitEnd()
+        assert repr(ps1) == 'SplitEnd()'
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
 
         ps1.push(1)
         ps1.push('foo')
-        assert repr(ps1) == "Stack(1, 'foo')"
+        assert repr(ps1) == "SplitEnd(1, 'foo')"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
@@ -153,20 +153,20 @@ class Test_repr:
         ps1.push(5)
         assert ps1.pop() == 5
         ps1.push(42)
-        assert repr(ps1) == "Stack(1, 2, 3, 4, 42)"
+        assert repr(ps1) == "SplitEnd(1, 2, 3, 4, 42)"
         ps2 = eval(repr(ps1))
         assert ps2 == ps1
         assert ps2 is not ps1
 
-    def test_FStack(self) -> None:
-        fs1 = FStack()
-        assert repr(fs1) == 'FStack()'
+    def test_SplitEnd(self) -> None:
+        fs1 = SplitEnd()
+        assert repr(fs1) == 'SplitEnd()'
         fs2 = eval(repr(fs1))
         assert fs2 == fs1
         assert fs2 is not fs1
 
         fs1 = fs1.cons(1).cons('foo')
-        assert repr(fs1) == "FStack(1, 'foo')"
+        assert repr(fs1) == "SplitEnd(1, 'foo')"
         fs2 = eval(repr(fs1))
         assert fs2 == fs1
         assert fs2 is not fs1
@@ -176,7 +176,7 @@ class Test_repr:
         fs1 = fs1.cons(2).cons(3).cons(4).cons(5)
         assert fs1.head() == 5
         fs1 = fs1.tail().cons(42)
-        assert repr(fs1) == 'FStack(1, 2, 3, 4, 42)'
+        assert repr(fs1) == 'SplitEnd(1, 2, 3, 4, 42)'
         fs2 = eval(repr(fs1))
         assert fs2 == fs1
         assert fs2 is not fs1
@@ -279,7 +279,7 @@ class Test_repr_mix:
     def test_mix1(self) -> None:
         thing1: Any = Left(FIFOQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
-            Stack([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))
+            SplitEnd([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))
         ))
 
         thing2 = eval(repr(thing1))
@@ -290,5 +290,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), Stack([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))))"
+        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), SplitEnd([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))))"
         assert repr_thing1 == repr_str

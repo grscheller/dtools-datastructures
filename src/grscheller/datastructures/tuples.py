@@ -52,6 +52,9 @@ class FTuple(Generic[_T]):
     def __bool__(self) -> bool:
         return bool(len(self._tuple))
 
+    def __len__(self) -> int:
+        return len(self._tuple)
+
     def __repr__(self) -> str:
         return 'FTuple(' + ', '.join(map(repr, self)) + ')'
 
@@ -60,7 +63,7 @@ class FTuple(Generic[_T]):
         return "((" + ", ".join(map(repr, self)) + "))"
 
     def __eq__(self, other: object) -> bool:
-        if type(other) != FTuple[_T]:
+        if not isinstance(other, type(self)):
             return False
         return self._tuple == other._tuple
 
@@ -112,6 +115,10 @@ class FTuple(Generic[_T]):
     def __mul__(self, num: int) -> FTuple[_T]:
         """Return an `FTuple` which repeats another `FTuple` `num` times."""
         return FTuple(*self._tuple.__mul__(num if num > 0 else 0))
+
+    def accummulate(self, f: Callable[[_T, _T], _T]) -> FTuple[_T]:
+        """Accumulate partial fold results in same type data structure."""
+        return FTuple(*accumulate(self, f))
 
     def accummulate1(self, f: Callable[[_S, _T], _S], initial: _S) -> FTuple[_S]:
         """Accumulate partial fold results in same type data structure."""

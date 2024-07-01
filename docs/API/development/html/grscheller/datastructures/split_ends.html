@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>grscheller.datastructures.stacks API documentation</title>
+<title>grscheller.datastructures.split_ends API documentation</title>
 <meta name="description" content="Module split_ends …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,7 +22,7 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.stacks</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.split_ends</code></h1>
 </header>
 <section id="section-intro">
 <p>Module split_ends</p>
@@ -45,7 +45,7 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.stacks.SplitEnd"><code class="flex name class">
+<dt id="grscheller.datastructures.split_ends.SplitEnd"><code class="flex name class">
 <span>class <span class="ident">SplitEnd</span></span>
 <span>(</span><span>*ds: _T)</span>
 </code></dt>
@@ -245,44 +245,44 @@ data by each pointing to the same node.</p>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.stacks.SplitEnd.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, d: _T) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.cons"><code class="name flex">
+<span>def <span class="ident">cons</span></span>(<span>self, d: _T) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a new <code>FStack</code> with data as head and self as tail.</p>
 <p>Constructing an <code>FStack</code> using a non-existent value as head results in
 a non-existent <code>FStack</code>. In that case, return a copy of the <code>FStack</code>.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a copy of a <code>Stack</code> in O(1) time &amp; space complexity.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.exhaustMap"><code class="name flex">
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind f to the <code>FStack</code> merging until all exhausted</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the <code>FStack</code> sequentially</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.head"><code class="name flex">
+<dt id="grscheller.datastructures.split_ends.SplitEnd.head"><code class="name flex">
 <span>def <span class="ident">head</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code>.</p>
+<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a></code>.</p>
 <ul>
 <li>does not consume the data</li>
-<li>for an empty <code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code>, head does not exist, so return default.</li>
+<li>for an empty <code><a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a></code>, head does not exist, so return default.</li>
 </ul></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Maps a function (or callable object) over the values on the <code>Stack</code>.</p>
@@ -291,33 +291,33 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <li>O(n) complexity</li>
 </ul></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind f to the <code>FStack</code> sequentially until first exhausted</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.peak"><code class="name flex">
+<dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
 <span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T]) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the <code>Stack</code>. Does not consume the data.</p>
 <p>If <code>Stack</code> is empty, data does not exist so in that case return default.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.pop"><code class="name flex">
+<dt id="grscheller.datastructures.split_ends.SplitEnd.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off of top of stack.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.push"><code class="name flex">
+<dt id="grscheller.datastructures.split_ends.SplitEnd.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: Optional[_T]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data that is not <code>None</code> onto top of the <code>Stack</code>.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow reversed copy of a <code>Stack</code>.</p>
@@ -326,8 +326,8 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <li>O(1) space &amp; time complexity</li>
 </ul></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.SplitEnd.tail"><code class="name flex">
-<span>def <span class="ident">tail</span></span>(<span>self, default: Optional[<a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_T]] = None) ‑> Optional[<a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]]</span>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.tail"><code class="name flex">
+<span>def <span class="ident">tail</span></span>(<span>self, default: Optional[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]] = None) ‑> Optional[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[~_T]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return tail of the <code>FStack</code>.</p>
@@ -352,20 +352,20 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code></h4>
+<h4><code><a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.cons" href="#grscheller.datastructures.stacks.SplitEnd.cons">cons</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.copy" href="#grscheller.datastructures.stacks.SplitEnd.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.exhaustMap" href="#grscheller.datastructures.stacks.SplitEnd.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.flatMap" href="#grscheller.datastructures.stacks.SplitEnd.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.head" href="#grscheller.datastructures.stacks.SplitEnd.head">head</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.map" href="#grscheller.datastructures.stacks.SplitEnd.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.mergeMap" href="#grscheller.datastructures.stacks.SplitEnd.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.peak" href="#grscheller.datastructures.stacks.SplitEnd.peak">peak</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.pop" href="#grscheller.datastructures.stacks.SplitEnd.pop">pop</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.push" href="#grscheller.datastructures.stacks.SplitEnd.push">push</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.reverse" href="#grscheller.datastructures.stacks.SplitEnd.reverse">reverse</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.SplitEnd.tail" href="#grscheller.datastructures.stacks.SplitEnd.tail">tail</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.cons" href="#grscheller.datastructures.split_ends.SplitEnd.cons">cons</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.copy" href="#grscheller.datastructures.split_ends.SplitEnd.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.exhaustMap" href="#grscheller.datastructures.split_ends.SplitEnd.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.flatMap" href="#grscheller.datastructures.split_ends.SplitEnd.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.head" href="#grscheller.datastructures.split_ends.SplitEnd.head">head</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.map" href="#grscheller.datastructures.split_ends.SplitEnd.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.mergeMap" href="#grscheller.datastructures.split_ends.SplitEnd.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.peak" href="#grscheller.datastructures.split_ends.SplitEnd.peak">peak</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.pop" href="#grscheller.datastructures.split_ends.SplitEnd.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.push" href="#grscheller.datastructures.split_ends.SplitEnd.push">push</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.reverse" href="#grscheller.datastructures.split_ends.SplitEnd.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.tail" href="#grscheller.datastructures.split_ends.SplitEnd.tail">tail</a></code></li>
 </ul>
 </li>
 </ul>
