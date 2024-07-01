@@ -17,24 +17,25 @@ using instead of all the "bit fiddling" required to implement behaviors,
 perform memory management, handle coding edge cases, and dealing with
 exceptional events. These data structures allow iterators to leisurely
 iterate over inaccessible copies of internal state while the data
-stuctures themselves are free to safely mutate. They are designed to be
+structures themselves are free to safely mutate. They are designed to be
 reasonably "atomic" without introducing inordinate complexity. Some of
 these data structures allow data to be safely shared between multiple
 data structure instances by making shared data immutable and
 inaccessible to client code.
 
 This package does not force functional programming paradigms on client
-code, but provide functional tools to opt into. It also does not force
-unnecessary exception driven code paths upon client code. Purity is
-important, but not at the expense of practicality. Sometimes the real
-power of a data structure comes not from what it empowers you to do, but
-from what it prevents you from doing to yourself.
+code, but provide functional tools to opt into. It also tries to avoid
+forcing unnecessary exception driven code paths upon client code.
 
-As a design choice, Python `None` is semantically used by this package
-to indicate the absence of a value. While still freely used as an
-implementation detail, `None` values are not stored in any of these data
-structures. Functional `Maybe` and `Either` classes are provided in the
-core.fp sub-module as better ways to handle "missing" data.
+Originally, as a design choice, this package treated Python `None` to
+semantically indicate the absence of a value. With the advent of the
+typing package, it was decided to treat `None` as any other Python
+datatype. Tooling such as mypy or pyright can be used at the expense of
+more runtime safety with the benefit of more runtime efficiency.
+
+Sometimes the real power of a data structure comes not from what it
+empowers you to do, but from what it prevents you from doing to
+yourself.
 
 ---
 

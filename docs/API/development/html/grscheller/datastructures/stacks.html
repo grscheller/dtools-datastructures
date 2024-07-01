@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
 <title>grscheller.datastructures.stacks API documentation</title>
-<meta name="description" content="Stateful &amp; functional LIFO stacks …">
+<meta name="description" content="Module split_ends …">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -25,22 +25,15 @@ hljs.highlightAll();
 <h1 class="title">Module <code>grscheller.datastructures.stacks</code></h1>
 </header>
 <section id="section-intro">
-<p>Stateful &amp; functional LIFO stacks.</p>
-<p>This module implements LIFO stacks using singularly linked lists of trees of
-nodes. The nodes can be safely shared between different stack instances and
-are an implementation detail hidden from client code.</p>
-<p>Types of Stacks:</p>
-<h3 id="class-stack">Class Stack</h3>
+<p>Module split_ends</p>
+<p>LIFO stacks which can safely share immutable data between themselves.</p>
 <ul>
-<li>stateful last in, first out (LIFO) stack data structure</li>
-<li>procedural interface</li>
-<li>None represents the absence of a value and ignored if pushed onto a Stack</li>
-</ul>
-<h3 id="class-fstack">Class FStack</h3>
-<ul>
-<li>Immutable last in, first out (LIFO) stack data structure</li>
-<li>Functional interface</li>
-<li>None represents the absence of a value and ignored when constructing new FStacks</li>
+<li>top of each stack is a "split end" of a hair that can share common roots</li>
+<li>each SplitEnd containing a count of elements and a top node</li>
+<li>once created, nodes are immutable and can be shared between hairs</li>
+<li>multiple ends can share the same tail, hence the name "split_ends"</li>
+<li>hairs themselves are mutable objects where nodes can be pushed and popped</li>
+<li>functional interfaces are provided so hairs can be treated as immutable</li>
 </ul>
 </section>
 <section>
@@ -52,228 +45,118 @@ are an implementation detail hidden from client code.</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.stacks.FStack"><code class="flex name class">
-<span>class <span class="ident">FStack</span></span>
-<span>(</span><span>*ds)</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd"><code class="flex name class">
+<span>class <span class="ident">SplitEnd</span></span>
+<span>(</span><span>*ds: _T)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class implementing an immutable Last In, First Out (LIFO) data structure
-pointing to a singularly linked list of nodes. This class is designed to share
-nodes with other FStack instances.</p>
-<ul>
-<li><code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> stacks are immutable objects.</li>
-<li>An <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> references either the top node, or <code>None</code> to indicate empty</li>
-<li>An <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> keeps a count of the number of objects currently on it</li>
-<li>Creating, getting the size and copying an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> are all O(1) operations</li>
-<li><code>None</code> represents the absence of a value and ignored used to create an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code></li>
-</ul>
+<div class="desc"><p>Class implementing a stack type data structures called a "thread". Each
+thread is a very simple stateful object containing a count of the number of
+elements on it and a reference to an immutable node of a linear tree of
+singularly linked nodes. Different stack objects can safely share the same
+data by each pointing to the same node.</p>
 <p>Construct a LIFO Stack</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class FStack(StackBase):
-    &#34;&#34;&#34;Class implementing an immutable Last In, First Out (LIFO) data structure
-    pointing to a singularly linked list of nodes. This class is designed to share
-    nodes with other FStack instances.
+<pre><code class="python">class SplitEnd(Generic[_T]):
+    &#34;&#34;&#34;Class implementing a stack type data structures called a &#34;thread&#34;. Each
+    thread is a very simple stateful object containing a count of the number of
+    elements on it and a reference to an immutable node of a linear tree of
+    singularly linked nodes. Different stack objects can safely share the same
+    data by each pointing to the same node.
 
-    * `FStack` stacks are immutable objects.
-    * An `FStack` references either the top node, or `None` to indicate empty
-    * An `FStack` keeps a count of the number of objects currently on it
-    * Creating, getting the size and copying an `FStack` are all O(1) operations
-    * `None` represents the absence of a value and ignored used to create an `FStack`
     &#34;&#34;&#34;
-    __slots__ = ()
+    __slots__ = &#39;_head&#39;, &#39;_count&#39;
 
-    def __str__(self):
-        &#34;&#34;&#34;Display the data in the `FStack`, left to right starting at bottom.&#34;&#34;&#34;
-        return &#39;| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
+    def __init__(self, *ds: _T):
+        &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
+        self._head = None
+        self._count = 0
+        for d in ds:
+            node: Node[_T] = Node(d, self._head)
+            self._head = node
+            self._count += 1
 
-    def copy(self) -&gt; FStack:
-        &#34;&#34;&#34;Return shallow copy of a `FStack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
-        fstack = FStack()
-        fstack._head = self._head
-        fstack._count = self._count
-        return fstack
+    def __iter__(self) -&gt; Iterator[_T]:
+        &#34;&#34;&#34;Iterator yielding data stored on the stack, starting at the head&#34;&#34;&#34;
+        node = self._head
+        while node:
+            yield node._data
+            node = node._next
 
-    def reverse(self) -&gt; FStack:
-        return FStack(*self)
+    def __reversed__(self) -&gt; Iterator[_T]:
+        &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
+        return reversed(CircularArray(*self))
 
-    def head(self, default: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Returns the data at the top of the `FStack`. Does not consume the data.
-        If the `FStack` is empty, head does not exist so in that case return default.
+    def __repr__(self) -&gt; str:
+        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
+
+    def __bool__(self) -&gt; bool:
+        &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
+        return self._count &gt; 0
+
+    def __len__(self) -&gt; int:
+        &#34;&#34;&#34;Returns current number of values on the stack&#34;&#34;&#34;
+        return self._count
+
+    def __eq__(self, other: object) -&gt; bool:
+        &#34;&#34;&#34;Returns True if all the data stored on the two stacks are the same
+        and the two stacks are of the same subclass. Worst case is O(n) behavior
+        which happens when all the corresponding data elements on the two stacks
+        are equal, in whatever sense they equality is defined, and none of the
+        nodes are shared.
+
         &#34;&#34;&#34;
-        if self._head is None:
-            return default
-        return self._head._data
+        if not isinstance(other, type(self)):
+            return False
 
-    def tail(self, default: FStack|None=None) -&gt; FStack:
-        &#34;&#34;&#34;Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
-        return a default of type `FStack` instead. If default is not given, return
-        an empty `FStack`.
-        &#34;&#34;&#34;
-        if self._head:
-            fstack = FStack()
-            fstack._head = self._head._next
-            fstack._count = self._count - 1
-            return fstack
-        elif default is None:
-            return FStack()
-        else:
-            return default
+        if self._count != other._count:
+            return False
 
-    def cons(self, d: Any) -&gt; FStack:
-        &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail. Constructing
-        an `FStack` using a non-existent value as head results in a non-existent
-        `FStack`. In that case, just return a copy of the `FStack`.
-        &#34;&#34;&#34;
-        if d is not None:
-            fstack = FStack()
-            fstack._head = Node(d, self._head)
-            fstack._count = self._count + 1
-            return fstack
-        else:
-            return self.copy()
-
-    def map(self, f: Callable[[Any], Any]) -&gt; FStack:
-        &#34;&#34;&#34;Apply `f` over the elements of the data structure&#34;&#34;&#34;
-        return FStack(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
-        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
-
-    def mergeMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
-        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
-
-    def exhaustMap(self, f: Callable[[Any], FStack]) -&gt; FStack:
-        &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
-        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>grscheller.datastructures.stacks.StackBase</li>
-</ul>
-<h3>Methods</h3>
-<dl>
-<dt id="grscheller.datastructures.stacks.FStack.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, d: Any) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return a new <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> with data as head and self as tail. Constructing
-an <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> using a non-existent value as head results in a non-existent
-<code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. In that case, just return a copy of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>.</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> in O(1) time &amp; space complexity.</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind f to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> merging until all exhausted</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> sequentially</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.head"><code class="name flex">
-<span>def <span class="ident">head</span></span>(<span>self, default: Any = None) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. Does not consume the data.
-If the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> is empty, head does not exist so in that case return default.</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], Any]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Apply <code>f</code> over the elements of the data structure</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a>]) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind f to the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> sequentially until first exhausted</p></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="grscheller.datastructures.stacks.FStack.tail"><code class="name flex">
-<span>def <span class="ident">tail</span></span>(<span>self, default: <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a> | None = None) ‑> <a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return tail of the <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>. If <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> is empty, tail does not exist, so
-return a default of type <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code> instead. If default is not given, return
-an empty <code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code>.</p></div>
-</dd>
-</dl>
-</dd>
-<dt id="grscheller.datastructures.stacks.Stack"><code class="flex name class">
-<span>class <span class="ident">Stack</span></span>
-<span>(</span><span>*ds)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Class implementing a mutable Last In, First Out (LIFO) stack data structure
-pointing to a singularly linked list of nodes. This class is designed to share
-nodes with other Stack instances.</p>
-<ul>
-<li><code>Stacks</code> are stateful objects, values can be pushed on &amp; popped off</li>
-<li><code>Stacks</code> reference either the top node of the stack, or <code>None</code> indicating empty</li>
-<li><code>Stacks</code> keep a count of the number of objects currently on them</li>
-<li>Pushes &amp; pops, getting the size, and copying a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> are all O(1) operations</li>
-<li><code>None</code> represents the absence of a value and ignored if pushed on a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code></li>
-</ul>
-<p>Construct a LIFO Stack</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Stack(StackBase):
-    &#34;&#34;&#34;Class implementing a mutable Last In, First Out (LIFO) stack data structure
-    pointing to a singularly linked list of nodes. This class is designed to share
-    nodes with other Stack instances.
-
-    * `Stacks` are stateful objects, values can be pushed on &amp; popped off
-    * `Stacks` reference either the top node of the stack, or `None` indicating empty
-    * `Stacks` keep a count of the number of objects currently on them
-    * Pushes &amp; pops, getting the size, and copying a `Stack` are all O(1) operations
-    * `None` represents the absence of a value and ignored if pushed on a `Stack`
-    &#34;&#34;&#34;
-    __slots__ = ()
+        left = self._head
+        right = other._head
+        nn = self._count
+        while nn &gt; 0:
+            if left is right:
+                return True
+            if left is None or right is None:
+                return True
+            if left._data != right._data:
+                return False
+            left = left._next
+            right = right._next
+            nn -= 1
+        return True
 
     def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display the data in the `Stack,` left to right starting at bottom.&#34;&#34;&#34;
         return &#39;|| &#39; + &#39; &lt;- &#39;.join(reversed(CircularArray(*self).map(repr))) + &#39; &gt;&lt;&#39;
 
-    def copy(self) -&gt; Stack:
-        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
-        stack = Stack()
+    def copy(self) -&gt; SplitEnd[_T]:
+        &#34;&#34;&#34;Return a copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
+        stack: SplitEnd[_T] = SplitEnd()
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -&gt; None:
-        &#34;&#34;&#34;Return shallow copy of a `Stack` in O(1) time &amp; space complexity.&#34;&#34;&#34;
-        stack = Stack(*self)
-        self._head, self._count = stack._head, stack._count
+    def reverse(self) -&gt; SplitEnd[_T]:
+        &#34;&#34;&#34;Return shallow reversed copy of a `Stack`.
 
-    def push(self, *ds: Any) -&gt; None:
+        * Returns a new `Stack` object with shallow copied new data
+        * O(1) space &amp; time complexity
+
+        &#34;&#34;&#34;
+        return SplitEnd(*self)
+
+    def push(self, *ds: Optional[_T]) -&gt; None:
         &#34;&#34;&#34;Push data that is not `None` onto top of the `Stack`.&#34;&#34;&#34;
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
-    def pop(self) -&gt; Any:
+    def pop(self, default: Optional[_T]=None) -&gt; Optional[_T]:
         &#34;&#34;&#34;Pop data off of top of stack.&#34;&#34;&#34;
         if self._head is None:
             return None
@@ -282,64 +165,174 @@ nodes with other Stack instances.</p>
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Any=None) -&gt; Any:
+    def peak(self, default: Optional[_T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Returns the data at the top of the `Stack`. Does not consume the data.
+
         If `Stack` is empty, data does not exist so in that case return default.
+
         &#34;&#34;&#34;
         if self._head is None:
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], Stack]) -&gt; None:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
-        Mutates the `Stack` object. O(n).
+    def head(self, default: Optional[_T]=None) -&gt; Optional[_T]:
+        &#34;&#34;&#34;Returns the data at the top of the `SplitEnd`.
+
+        * does not consume the data
+        * for an empty `SplitEnd`, head does not exist, so return default.
+
         &#34;&#34;&#34;
-        newStack = Stack(*map(f, reversed(self)))
-        self._head, self._count = newStack._head, newStack._count</code></pre>
+        if self._head is None:
+            return default
+        return self._head._data
+
+    def tail(self, default: Optional[SplitEnd[_T]]=None) -&gt; Optional[SplitEnd[_T]]:
+        &#34;&#34;&#34;Return tail of the `FStack`.
+
+        If `FStack` is empty, tail does not exist, so return a default of type
+        `FStack` instead. If default is not given, return an empty `FStack`.
+
+        &#34;&#34;&#34;
+        if self._head:
+            fstack: SplitEnd[_T] = SplitEnd()
+            fstack._head = self._head._next
+            fstack._count = self._count - 1
+            return fstack
+        elif default is None:
+            return SplitEnd()
+        else:
+            return default
+
+    def cons(self, d: _T) -&gt; SplitEnd[_T]:
+        &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail.
+
+        Constructing an `FStack` using a non-existent value as head results in
+        a non-existent `FStack`. In that case, return a copy of the `FStack`.
+
+        &#34;&#34;&#34;
+        if d is not None:
+            stack: SplitEnd[_T] = SplitEnd()
+            stack._head = Node(d, self._head)
+            stack._count = self._count + 1
+            return stack
+        else:
+            return self.copy()
+
+    def map(self, f: Callable[[_T], _S]) -&gt; SplitEnd[_S]:
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
+
+        * Returns a new `Stack` object with shallow copied new data
+        * O(n) complexity
+
+        &#34;&#34;&#34;
+        return SplitEnd(*map(f, reversed(self)))
+
+    def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
+        &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
+        return SplitEnd(*chain(*map(reversed, map(f, reversed(self)))))
+
+    def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
+        &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
+        return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
+
+    def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
+        &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
+        return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li>grscheller.datastructures.stacks.StackBase</li>
+<li>typing.Generic</li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.stacks.Stack.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.cons"><code class="name flex">
+<span>def <span class="ident">cons</span></span>(<span>self, d: _T) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> in O(1) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return a new <code>FStack</code> with data as head and self as tail.</p>
+<p>Constructing an <code>FStack</code> using a non-existent value as head results in
+a non-existent <code>FStack</code>. In that case, return a copy of the <code>FStack</code>.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.Stack.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[Any], <a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a>]) ‑> None</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Maps a function (or callable object) over the values on the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>.
-Mutates the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> object. O(n).</p></div>
+<div class="desc"><p>Return a copy of a <code>Stack</code> in O(1) time &amp; space complexity.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.Stack.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self, default: Any = None) ‑> Any</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.exhaustMap"><code class="name flex">
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>. Does not consume the data.
-If <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> is empty, data does not exist so in that case return default.</p></div>
+<div class="desc"><p>Monadically bind f to the <code>FStack</code> merging until all exhausted</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.Stack.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Any</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadically bind <code>f</code> to the <code>FStack</code> sequentially</p></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.head"><code class="name flex">
+<span>def <span class="ident">head</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the data at the top of the <code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code>.</p>
+<ul>
+<li>does not consume the data</li>
+<li>for an empty <code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code>, head does not exist, so return default.</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Maps a function (or callable object) over the values on the <code>Stack</code>.</p>
+<ul>
+<li>Returns a new <code>Stack</code> object with shallow copied new data</li>
+<li>O(n) complexity</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadically bind f to the <code>FStack</code> sequentially until first exhausted</p></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.peak"><code class="name flex">
+<span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T]) ‑> Optional[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the data at the top of the <code>Stack</code>. Does not consume the data.</p>
+<p>If <code>Stack</code> is empty, data does not exist so in that case return default.</p></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.pop"><code class="name flex">
+<span>def <span class="ident">pop</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off of top of stack.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.Stack.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.push"><code class="name flex">
+<span>def <span class="ident">push</span></span>(<span>self, *ds: Optional[_T]) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data that is not <code>None</code> onto top of the <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code>.</p></div>
+<div class="desc"><p>Push data that is not <code>None</code> onto top of the <code>Stack</code>.</p></div>
 </dd>
-<dt id="grscheller.datastructures.stacks.Stack.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> None</span>
+<dt id="grscheller.datastructures.stacks.SplitEnd.reverse"><code class="name flex">
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return shallow copy of a <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code> in O(1) time &amp; space complexity.</p></div>
+<div class="desc"><p>Return shallow reversed copy of a <code>Stack</code>.</p>
+<ul>
+<li>Returns a new <code>Stack</code> object with shallow copied new data</li>
+<li>O(1) space &amp; time complexity</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.stacks.SplitEnd.tail"><code class="name flex">
+<span>def <span class="ident">tail</span></span>(<span>self, default: Optional[<a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[_T]] = None) ‑> Optional[<a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a>[~_T]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return tail of the <code>FStack</code>.</p>
+<p>If <code>FStack</code> is empty, tail does not exist, so return a default of type
+<code>FStack</code> instead. If default is not given, return an empty <code>FStack</code>.</p></div>
 </dd>
 </dl>
 </dd>
@@ -348,10 +341,7 @@ If <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.dat
 </article>
 <nav id="sidebar">
 <div class="toc">
-<ul>
-<li><a href="#class-stack">Class Stack</a></li>
-<li><a href="#class-fstack">Class FStack</a></li>
-</ul>
+<ul></ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
@@ -362,28 +352,20 @@ If <code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.dat
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.stacks.FStack" href="#grscheller.datastructures.stacks.FStack">FStack</a></code></h4>
+<h4><code><a title="grscheller.datastructures.stacks.SplitEnd" href="#grscheller.datastructures.stacks.SplitEnd">SplitEnd</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.stacks.FStack.cons" href="#grscheller.datastructures.stacks.FStack.cons">cons</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.copy" href="#grscheller.datastructures.stacks.FStack.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.exhaustMap" href="#grscheller.datastructures.stacks.FStack.exhaustMap">exhaustMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.flatMap" href="#grscheller.datastructures.stacks.FStack.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.head" href="#grscheller.datastructures.stacks.FStack.head">head</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.map" href="#grscheller.datastructures.stacks.FStack.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.mergeMap" href="#grscheller.datastructures.stacks.FStack.mergeMap">mergeMap</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.reverse" href="#grscheller.datastructures.stacks.FStack.reverse">reverse</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.FStack.tail" href="#grscheller.datastructures.stacks.FStack.tail">tail</a></code></li>
-</ul>
-</li>
-<li>
-<h4><code><a title="grscheller.datastructures.stacks.Stack" href="#grscheller.datastructures.stacks.Stack">Stack</a></code></h4>
-<ul class="two-column">
-<li><code><a title="grscheller.datastructures.stacks.Stack.copy" href="#grscheller.datastructures.stacks.Stack.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.Stack.map" href="#grscheller.datastructures.stacks.Stack.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.Stack.peak" href="#grscheller.datastructures.stacks.Stack.peak">peak</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.Stack.pop" href="#grscheller.datastructures.stacks.Stack.pop">pop</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.Stack.push" href="#grscheller.datastructures.stacks.Stack.push">push</a></code></li>
-<li><code><a title="grscheller.datastructures.stacks.Stack.reverse" href="#grscheller.datastructures.stacks.Stack.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.cons" href="#grscheller.datastructures.stacks.SplitEnd.cons">cons</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.copy" href="#grscheller.datastructures.stacks.SplitEnd.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.exhaustMap" href="#grscheller.datastructures.stacks.SplitEnd.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.flatMap" href="#grscheller.datastructures.stacks.SplitEnd.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.head" href="#grscheller.datastructures.stacks.SplitEnd.head">head</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.map" href="#grscheller.datastructures.stacks.SplitEnd.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.mergeMap" href="#grscheller.datastructures.stacks.SplitEnd.mergeMap">mergeMap</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.peak" href="#grscheller.datastructures.stacks.SplitEnd.peak">peak</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.pop" href="#grscheller.datastructures.stacks.SplitEnd.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.push" href="#grscheller.datastructures.stacks.SplitEnd.push">push</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.reverse" href="#grscheller.datastructures.stacks.SplitEnd.reverse">reverse</a></code></li>
+<li><code><a title="grscheller.datastructures.stacks.SplitEnd.tail" href="#grscheller.datastructures.stacks.SplitEnd.tail">tail</a></code></li>
 </ul>
 </li>
 </ul>

@@ -49,15 +49,20 @@ class FTuple(Generic[_T]):
     def __iter__(self) -> Iterator[_T]:
         return iter(self._tuple)
 
-    def __repr__(self) -> str:
-        return 'FTuple(' + ', '.join(map(repr, self)) + ')'
-
     def __bool__(self) -> bool:
         return bool(len(self._tuple))
+
+    def __repr__(self) -> str:
+        return 'FTuple(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         """Display data in the `FTuple`."""
         return "((" + ", ".join(map(repr, self)) + "))"
+
+    def __eq__(self, other: object) -> bool:
+        if type(other) != FTuple[_T]:
+            return False
+        return self._tuple == other._tuple
 
     def __getitem__(self, sl: slice|int) -> FTuple[_T]|Optional[_T]:
         """Supports both indexing and slicing."""
@@ -108,27 +113,18 @@ class FTuple(Generic[_T]):
         """Return an `FTuple` which repeats another `FTuple` `num` times."""
         return FTuple(*self._tuple.__mul__(num if num > 0 else 0))
 
+    def accummulate1(self, f: Callable[[_S, _T], _S], initial: _S) -> FTuple[_S]:
+        """Accumulate partial fold results in same type data structure."""
+        return FTuple(*accumulate(chain((initial,), self), f))
 
-    # def accummulate(self, f: Callable[[Any, Any], Any], initial: Any) -> FP[Any]:
-    #     """Accumulate partial fold results in same type data structure.
+    def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
+        """Monadically bind `f` to the data structure sequentially."""
+        return type(self)(*chain(*map(iter, map(f, self))))
 
-    #     Works best for variable sized containers.
+    def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
+        """Monadically bind `f` to the data structure, merge until one exhausted."""
+        return type(self)(*merge(*map(iter, map(f, self))))
 
-    #     """
-    #     # Probably need a subtype of fp[_S]
-    #     return type(self)(*accumulate(chain((initial,), self), f))
-
-    # # Default implementations for FIFO data structures,
-    # # see stacks module for LIFO examples.
-
-    # def flatMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-    #     """Monadically bind `f` to the data structure sequentially."""
-    #     return type(self)(*chain(*map(iter, map(f, self))))
-
-    # def mergeMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-    #     """Monadically bind `f` to the data structure, merge until one exhausted."""
-    #     return type(self)(*merge(*map(iter, map(f, self))))
-
-    # def exhaustMap(self, f: Callable[[Any], FP[Any]]) -> FP[Any]:
-    #     """Monadically bind `f` to the data structure, merge until all are exhausted."""
-    #     return type(self)(*exhaust(*map(iter, map(f, self))))
+    def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
+        """Monadically bind `f` to the data structure, merge until all are exhausted."""
+        return type(self)(*exhaust(*map(iter, map(f, self))))

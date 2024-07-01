@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 from typing import Any, Optional
-from grscheller.datastructures.arrays import PArray
 from grscheller.datastructures.stacks import Stack, FStack
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple
@@ -100,18 +99,6 @@ class Test_repr:
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
-
-    def test_clarray(self) -> None:
-        cla1 = PArray()
-        assert repr(cla1) == 'PArray(size=0, default=())'
-
-        cla1 = PArray('foo', [10, 22], size=-3, default=42)
-        assert repr(cla1) == "PArray(42, 'foo', [10, 22], size=3, default=42)"
-
-        cla1[2].append(42)
-        assert repr(cla1) == "PArray(42, 'foo', [10, 22, 42], size=3, default=42)"
-        assert cla1[2].pop() == 42
-        assert repr(cla1) == "PArray(42, 'foo', [10, 22], size=3, default=42)"
 
     def test_ftuple(self) -> None:
         ft1 = FTuple()

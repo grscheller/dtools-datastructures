@@ -12,80 +12,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Stateful & functional LIFO stacks.
+"""Module split_ends
 
-This module implements LIFO stacks using singularly linked lists of trees of
-nodes. The nodes can be safely shared between different stack instances and
-are an implementation detail hidden from client code.
+LIFO stacks which can safely share immutable data between themselves.
 
-Types of Stacks:
+* top of each stack is a "split end" of a hair that can share common roots
+* each SplitEnd containing a count of elements and a top node
+* once created, nodes are immutable and can be shared between hairs
+* multiple ends can share the same tail, hence the name "split_ends"
+* hairs themselves are mutable objects where nodes can be pushed and popped
+* functional interfaces are provided so hairs can be treated as immutable
 
-### Class Stack
-
-* stateful last in, first out (LIFO) stack data structure
-* procedural interface
-* None represents the absence of a value and ignored if pushed onto a Stack
-
-### Class FStack
-
-* Immutable last in, first out (LIFO) stack data structure
-* Functional interface
-* None represents the absence of a value and ignored when constructing new FStacks
 """
-
 from __future__ import annotations
 
-__all__ = ['Stack', 'FStack']
+__all__ = ['SplitEnd']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any, Callable, Iterator
+from typing import Callable, Generic, Iterator, Optional, TypeVar
 from itertools import chain
 from grscheller.circular_array.circular_array import CircularArray
 from .core.iterlib import exhaust, merge
 from .core.nodes import SL_Node as Node
 
-class StackBase():
-    """Abstract base class for the purposes of DRY inheritance of classes
-    implementing stack type data structures. Each stack is a very simple
-    stateful object containing a count of the number of elements on it and
-    a reference to an immutable node of a linear tree of singularly linked
-    nodes. Different stack objects can safely share the same data by each
-    pointing to the same node. Each stack class ensures `None` values do not
-    get pushed onto the stack.
+_T = TypeVar('_T')
+_S = TypeVar('_S')
+
+class SplitEnd(Generic[_T]):
+    """Class implementing a stack type data structures called a "thread". Each
+    thread is a very simple stateful object containing a count of the number of
+    elements on it and a reference to an immutable node of a linear tree of
+    singularly linked nodes. Different stack objects can safely share the same
+    data by each pointing to the same node.
+
     """
     __slots__ = '_head', '_count'
 
-    def __init__(self, *ds):
+    def __init__(self, *ds: _T):
         """Construct a LIFO Stack"""
         self._head = None
         self._count = 0
         for d in ds:
-            if d is not None:
-                node = Node(d, self._head)
-                self._head = node
-                self._count += 1
+            node: Node[_T] = Node(d, self._head)
+            self._head = node
+            self._count += 1
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[_T]:
         """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
             node = node._next
 
-    def __reversed__(self) -> Iterator:
+    def __reversed__(self) -> Iterator[_T]:
         """Reverse iterate over the contents of the stack"""
         return reversed(CircularArray(*self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns true if stack is not empty"""
         return self._count > 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns current number of values on the stack"""
         return self._count
 
@@ -95,6 +87,7 @@ class StackBase():
         which happens when all the corresponding data elements on the two stacks
         are equal, in whatever sense they equality is defined, and none of the
         nodes are shared.
+
         """
         if not isinstance(other, type(self)):
             return False
@@ -117,42 +110,33 @@ class StackBase():
             nn -= 1
         return True
 
-class Stack(StackBase):
-    """Class implementing a mutable Last In, First Out (LIFO) stack data structure
-    pointing to a singularly linked list of nodes. This class is designed to share
-    nodes with other Stack instances.
-
-    * `Stacks` are stateful objects, values can be pushed on & popped off
-    * `Stacks` reference either the top node of the stack, or `None` indicating empty
-    * `Stacks` keep a count of the number of objects currently on them
-    * Pushes & pops, getting the size, and copying a `Stack` are all O(1) operations
-    * `None` represents the absence of a value and ignored if pushed on a `Stack`
-    """
-    __slots__ = ()
-
     def __str__(self) -> str:
         """Display the data in the `Stack,` left to right starting at bottom."""
         return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
 
-    def copy(self) -> Stack:
-        """Return shallow copy of a `Stack` in O(1) time & space complexity."""
-        stack = Stack()
+    def copy(self) -> SplitEnd[_T]:
+        """Return a copy of a `Stack` in O(1) time & space complexity."""
+        stack: SplitEnd[_T] = SplitEnd()
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -> None:
-        """Return shallow copy of a `Stack` in O(1) time & space complexity."""
-        stack = Stack(*self)
-        self._head, self._count = stack._head, stack._count
+    def reverse(self) -> SplitEnd[_T]:
+        """Return shallow reversed copy of a `Stack`.
 
-    def push(self, *ds: Any) -> None:
+        * Returns a new `Stack` object with shallow copied new data
+        * O(1) space & time complexity
+
+        """
+        return SplitEnd(*self)
+
+    def push(self, *ds: Optional[_T]) -> None:
         """Push data that is not `None` onto top of the `Stack`."""
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
-    def pop(self) -> Any:
+    def pop(self, default: Optional[_T]=None) -> Optional[_T]:
         """Pop data off of top of stack."""
         if self._head is None:
             return None
@@ -161,96 +145,76 @@ class Stack(StackBase):
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Any=None) -> Any:
+    def peak(self, default: Optional[_T]) -> Optional[_T]:
         """Returns the data at the top of the `Stack`. Does not consume the data.
+
         If `Stack` is empty, data does not exist so in that case return default.
+
         """
         if self._head is None:
             return default
         return self._head._data
 
-    def map(self, f: Callable[[Any], Stack]) -> None:
-        """Maps a function (or callable object) over the values on the `Stack`.
-        Mutates the `Stack` object. O(n).
-        """
-        newStack = Stack(*map(f, reversed(self)))
-        self._head, self._count = newStack._head, newStack._count
+    def head(self, default: Optional[_T]=None) -> Optional[_T]:
+        """Returns the data at the top of the `SplitEnd`.
 
-class FStack(StackBase):
-    """Class implementing an immutable Last In, First Out (LIFO) data structure
-    pointing to a singularly linked list of nodes. This class is designed to share
-    nodes with other FStack instances.
+        * does not consume the data
+        * for an empty `SplitEnd`, head does not exist, so return default.
 
-    * `FStack` stacks are immutable objects.
-    * An `FStack` references either the top node, or `None` to indicate empty
-    * An `FStack` keeps a count of the number of objects currently on it
-    * Creating, getting the size and copying an `FStack` are all O(1) operations
-    * `None` represents the absence of a value and ignored used to create an `FStack`
-    """
-    __slots__ = ()
-
-    def __str__(self):
-        """Display the data in the `FStack`, left to right starting at bottom."""
-        return '| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
-
-    def copy(self) -> FStack:
-        """Return shallow copy of a `FStack` in O(1) time & space complexity."""
-        fstack = FStack()
-        fstack._head = self._head
-        fstack._count = self._count
-        return fstack
-
-    def reverse(self) -> FStack:
-        return FStack(*self)
-
-    def head(self, default: Any=None) -> Any:
-        """Returns the data at the top of the `FStack`. Does not consume the data.
-        If the `FStack` is empty, head does not exist so in that case return default.
         """
         if self._head is None:
             return default
         return self._head._data
 
-    def tail(self, default: FStack|None=None) -> FStack:
-        """Return tail of the `FStack`. If `FStack` is empty, tail does not exist, so
-        return a default of type `FStack` instead. If default is not given, return
-        an empty `FStack`.
+    def tail(self, default: Optional[SplitEnd[_T]]=None) -> Optional[SplitEnd[_T]]:
+        """Return tail of the `FStack`.
+
+        If `FStack` is empty, tail does not exist, so return a default of type
+        `FStack` instead. If default is not given, return an empty `FStack`.
+
         """
         if self._head:
-            fstack = FStack()
+            fstack: SplitEnd[_T] = SplitEnd()
             fstack._head = self._head._next
             fstack._count = self._count - 1
             return fstack
         elif default is None:
-            return FStack()
+            return SplitEnd()
         else:
             return default
 
-    def cons(self, d: Any) -> FStack:
-        """Return a new `FStack` with data as head and self as tail. Constructing
-        an `FStack` using a non-existent value as head results in a non-existent
-        `FStack`. In that case, just return a copy of the `FStack`.
+    def cons(self, d: _T) -> SplitEnd[_T]:
+        """Return a new `FStack` with data as head and self as tail.
+
+        Constructing an `FStack` using a non-existent value as head results in
+        a non-existent `FStack`. In that case, return a copy of the `FStack`.
+
         """
         if d is not None:
-            fstack = FStack()
-            fstack._head = Node(d, self._head)
-            fstack._count = self._count + 1
-            return fstack
+            stack: SplitEnd[_T] = SplitEnd()
+            stack._head = Node(d, self._head)
+            stack._count = self._count + 1
+            return stack
         else:
             return self.copy()
 
-    def map(self, f: Callable[[Any], Any]) -> FStack:
-        """Apply `f` over the elements of the data structure"""
-        return FStack(*map(f, reversed(self)))
+    def map(self, f: Callable[[_T], _S]) -> SplitEnd[_S]:
+        """Maps a function (or callable object) over the values on the `Stack`.
 
-    def flatMap(self, f: Callable[[Any], FStack]) -> FStack:
+        * Returns a new `Stack` object with shallow copied new data
+        * O(n) complexity
+
+        """
+        return SplitEnd(*map(f, reversed(self)))
+
+    def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
         """Monadically bind `f` to the `FStack` sequentially"""
-        return FStack(*chain(*map(reversed, map(f, reversed(self)))))
+        return SplitEnd(*chain(*map(reversed, map(f, reversed(self)))))
 
-    def mergeMap(self, f: Callable[[Any], FStack]) -> FStack:
+    def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
         """Monadically bind f to the `FStack` sequentially until first exhausted"""
-        return FStack(*merge(*map(reversed, map(f, reversed(self)))))
+        return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
 
-    def exhaustMap(self, f: Callable[[Any], FStack]) -> FStack:
+    def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
         """Monadically bind f to the `FStack` merging until all exhausted"""
-        return FStack(*exhaust(*map(reversed, map(f, reversed(self)))))
+        return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))

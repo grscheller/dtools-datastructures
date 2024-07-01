@@ -43,7 +43,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.core.nodes.BT_Node"><code class="flex name class">
 <span>class <span class="ident">BT_Node</span></span>
-<span>(</span><span>data: Any, left: <a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a> | None, right: <a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a> | None)</span>
+<span>(</span><span>data: _T, left: Optional[<a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a>[_T]], right: Optional[<a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a>[_T]])</span>
 </code></dt>
 <dd>
 <div class="desc"><p><strong>Binary Tree Nodes</strong></p>
@@ -54,13 +54,15 @@ graph data structures where data lives in the nodes.</p>
 <li>originally intended to implement binary tree graphs</li>
 <li>other use cases possible, like doubly linked lists</li>
 </ul>
-<p>Construct a data containing node element of some type of graph.
-Usually walked via recursion.</p></div>
+<p>Construct a data containing node element of some type of graph.</p>
+<ul>
+<li>usually walked via recursion.</li>
+</ul></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BT_Node():
+<pre><code class="python">class BT_Node(Generic[_T]):
     &#34;&#34;&#34;**Binary Tree Nodes**
 
     Class implementing nodes that can be linked together to form tree-like
@@ -72,68 +74,32 @@ Usually walked via recursion.</p></div>
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
 
-    def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
+    def __init__(self, data: _T, left: Optional[BT_Node[_T]], right: Optional[BT_Node[_T]]):
         &#34;&#34;&#34;Construct a data containing node element of some type of graph.
-        Usually walked via recursion.
+
+        * usually walked via recursion.
         &#34;&#34;&#34;
         self._data = data
         self._left = left
         self._right = right
 
-    def __bool__(self):
-        # Even if self._data is None
+    def __bool__(self) -&gt; bool:
+        &#34;&#34;&#34;binary tree nodes always contain data.
+
+        * always returns true
+        * this type of node always contain data, even if that data is None
+
+        &#34;&#34;&#34;
         return True</code></pre>
 </details>
-</dd>
-<dt id="grscheller.datastructures.core.nodes.LT_Node"><code class="flex name class">
-<span>class <span class="ident">LT_Node</span></span>
-<span>(</span><span>left: Any, right: Any, root: <a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a> = None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p><strong>Leaf Tree Nodes</strong></p>
-<p>Class implementing nodes that can be linked together to form tree-like
-data structures where data lives "on the leaves." </p>
-<ul>
-<li>this type of node never contain data</li>
-<li>both self._left &amp; self._right reference either data or other LT_Nodes</li>
-<li>while self._root references the node's parent node</li>
-<li>therefore, to store an LT_Node as data requires a container for it</li>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Generic</li>
 </ul>
-<p>Construct a node element which contains no data of some type of graph.
-Can be arbitrarily walked.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class LT_Node():
-    &#34;&#34;&#34;**Leaf Tree Nodes**
-
-    Class implementing nodes that can be linked together to form tree-like
-    data structures where data lives &#34;on the leaves.&#34; 
-
-    * this type of node never contain data
-    * both self._left &amp; self._right reference either data or other LT_Nodes
-    * while self._root references the node&#39;s parent node
-    * therefore, to store an LT_Node as data requires a container for it
-    &#34;&#34;&#34;
-    __slots__ = &#39;_root&#39;, &#39;_left&#39;, &#39;_right&#39;
-
-    def __init__(self, left: Any, right: Any, root: LT_Node=None):
-        &#34;&#34;&#34;Construct a node element which contains no data of some type of graph.
-        Can be arbitrarily walked.
-        &#34;&#34;&#34;
-        self._root = root
-        self._left = left
-        self._right = right
-
-    def __bool__(self):
-        # Return True if the LT_Node has no leaves
-        return LT_Node == type(self._left) == type(self._right)</code></pre>
-</details>
 </dd>
 <dt id="grscheller.datastructures.core.nodes.SL_Node"><code class="flex name class">
 <span>class <span class="ident">SL_Node</span></span>
-<span>(</span><span>data: Any, next: <a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a> | None)</span>
+<span>(</span><span>data: _T, next: Optional[<a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a>[_T]])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing nodes that can be linked together
@@ -150,7 +116,7 @@ to form singularly linked graphs of nodes.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SL_Node():
+<pre><code class="python">class SL_Node(Generic[_T]):
     &#34;&#34;&#34;Class implementing nodes that can be linked together
     to form singularly linked graphs of nodes.
 
@@ -162,15 +128,24 @@ to form singularly linked graphs of nodes.</p>
     &#34;&#34;&#34;
     __slots__ = &#39;_data&#39;, &#39;_next&#39;
 
-    def __init__(self, data: Any, next: SL_Node|None):
+    def __init__(self, data: _T, next: Optional[SL_Node[_T]]):
         &#34;&#34;&#34;Construct an element of a linked list&#34;&#34;&#34;
         self._data = data
         self._next = next
 
-    def __bool__(self):
-        # Even if self._data is None
+    def __bool__(self) -&gt; bool:
+        &#34;&#34;&#34;singularly linked nodes always contain data.
+
+        * always returns true
+        * this type of node always contain data, even if that data is None
+
+        &#34;&#34;&#34;
         return True</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Generic</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -189,9 +164,6 @@ to form singularly linked graphs of nodes.</p>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.core.nodes.BT_Node" href="#grscheller.datastructures.core.nodes.BT_Node">BT_Node</a></code></h4>
-</li>
-<li>
-<h4><code><a title="grscheller.datastructures.core.nodes.LT_Node" href="#grscheller.datastructures.core.nodes.LT_Node">LT_Node</a></code></h4>
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>

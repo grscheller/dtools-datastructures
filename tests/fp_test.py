@@ -14,17 +14,16 @@
 
 from __future__ import annotations
 
-from typing import Any
-from grscheller.datastructures import *
+from typing import Any, Generic
+from grscheller.datastructures.tuples import FTuple
+from grscheller.datastructures.stacks import FStack
 
 class Test_FP:
-    def test_foldL(self):
-        ft0 = FTuple()
-        fs0 = FStack()
-        pa0 = PArray()
-        ft1 = FTuple(1,2,3,4,5)
-        fs1 = FStack(1,2,3,4,5)
-        pa1 = PArray(1,2,3,4,5)
+    def test_foldL(self) -> None:
+        ft0: FTuple[int] = FTuple()
+        fs0: FStack[int] = FStack()
+        ft1: FTuple[int] = FTuple(1,2,3,4,5)
+        fs1: FStack[int] = FStack(1,2,3,4,5)
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
         def push(x: Any, y: Any) -> Any:   # TODO: add generic typing hints
@@ -74,15 +73,8 @@ class Test_FP:
         assert fs0.accummulate(l1) == FStack()
         assert fs0.accummulate(l1, 10) == FStack(10)
 
-        assert pa1.accummulate(l1) == PArray(1,3,6,10,15)
-        assert pa1.accummulate(l1, 10) == PArray(10,11,13,16,20,25)
-        assert pa1.accummulate(initial=20) == PArray(20,21,23,26,30,35)
-        assert pa1.accummulate(l2) == PArray(1,2,6,24,120)
-        assert pa1.accummulate(l2, 10) == PArray(10,10,20,60,240,1200)
-        assert pa0.accummulate(l1) == PArray()
-        assert pa0.accummulate(l1, 10) == PArray(10)
 
-    def test_ftuple_inherited(self):
+    def test_ftuple_inherited(self) -> None:
         ft = FTuple(*range(3, 101))
         l1 = lambda x: 2*x + 1
         l2 = lambda x: FTuple(*range(1, x+1)).accummulate()

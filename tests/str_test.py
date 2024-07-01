@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from grscheller.circular_array.circular_array import CircularArray
-from grscheller.datastructures.arrays import PArray
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.stacks import FStack, Stack
 from grscheller.datastructures.tuples import FTuple
@@ -126,11 +125,6 @@ class Test_str:
         dq2.popR()
         assert str(dq1) == '>< 5 | 4 | 3 | 2 ><'
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
-
-    def test_fclarray(self) -> None:
-        cl = PArray(1,2,3,4,5)
-        cl[2] = 42
-        assert str(cl) == '[|1, 2, 42, 4, 5|]'
 
     def test_ftuple(self) -> None:
         ft1 = FTuple(1,2,3,4,5)

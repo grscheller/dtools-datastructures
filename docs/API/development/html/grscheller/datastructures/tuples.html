@@ -71,15 +71,20 @@ a functional interfaces.</p>
     def __iter__(self) -&gt; Iterator[_T]:
         return iter(self._tuple)
 
-    def __repr__(self) -&gt; str:
-        return &#39;FTuple(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
-
     def __bool__(self) -&gt; bool:
         return bool(len(self._tuple))
+
+    def __repr__(self) -&gt; str:
+        return &#39;FTuple(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
 
     def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display data in the `FTuple`.&#34;&#34;&#34;
         return &#34;((&#34; + &#34;, &#34;.join(map(repr, self)) + &#34;))&#34;
+
+    def __eq__(self, other: object) -&gt; bool:
+        if type(other) != FTuple[_T]:
+            return False
+        return self._tuple == other._tuple
 
     def __getitem__(self, sl: slice|int) -&gt; FTuple[_T]|Optional[_T]:
         &#34;&#34;&#34;Supports both indexing and slicing.&#34;&#34;&#34;
@@ -130,30 +135,21 @@ a functional interfaces.</p>
         &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
         return FTuple(*self._tuple.__mul__(num if num &gt; 0 else 0))
 
+    def accummulate1(self, f: Callable[[_S, _T], _S], initial: _S) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Accumulate partial fold results in same type data structure.&#34;&#34;&#34;
+        return FTuple(*accumulate(chain((initial,), self), f))
 
-    # def accummulate(self, f: Callable[[Any, Any], Any], initial: Any) -&gt; FP[Any]:
-    #     &#34;&#34;&#34;Accumulate partial fold results in same type data structure.
+    def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
+        return type(self)(*chain(*map(iter, map(f, self))))
 
-    #     Works best for variable sized containers.
+    def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+        return type(self)(*merge(*map(iter, map(f, self))))
 
-    #     &#34;&#34;&#34;
-    #     # Probably need a subtype of fp[_S]
-    #     return type(self)(*accumulate(chain((initial,), self), f))
-
-    # # Default implementations for FIFO data structures,
-    # # see stacks module for LIFO examples.
-
-    # def flatMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-    #     &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
-    #     return type(self)(*chain(*map(iter, map(f, self))))
-
-    # def mergeMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-    #     &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
-    #     return type(self)(*merge(*map(iter, map(f, self))))
-
-    # def exhaustMap(self, f: Callable[[Any], FP[Any]]) -&gt; FP[Any]:
-    #     &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
-    #     return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
+    def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+        return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -161,11 +157,29 @@ a functional interfaces.</p>
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="grscheller.datastructures.tuples.FTuple.accummulate1"><code class="name flex">
+<span>def <span class="ident">accummulate1</span></span>(<span>self, f: Callable[[_S, _T], _S], initial: _S) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Accumulate partial fold results in same type data structure.</p></div>
+</dd>
 <dt id="grscheller.datastructures.tuples.FTuple.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code> in O(1) time &amp; space complexity.</p></div>
+</dd>
+<dt id="grscheller.datastructures.tuples.FTuple.exhaustMap"><code class="name flex">
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
+</dd>
+<dt id="grscheller.datastructures.tuples.FTuple.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
 <span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
@@ -193,6 +207,12 @@ a functional interfaces.</p>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="grscheller.datastructures.tuples.FTuple.mergeMap"><code class="name flex">
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -212,11 +232,15 @@ a functional interfaces.</p>
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="grscheller.datastructures.tuples.FTuple.accummulate1" href="#grscheller.datastructures.tuples.FTuple.accummulate1">accummulate1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.exhaustMap" href="#grscheller.datastructures.tuples.FTuple.exhaustMap">exhaustMap</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.flatMap" href="#grscheller.datastructures.tuples.FTuple.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldL1" href="#grscheller.datastructures.tuples.FTuple.foldL1">foldL1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldR1" href="#grscheller.datastructures.tuples.FTuple.foldR1">foldR1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.map" href="#grscheller.datastructures.tuples.FTuple.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.mergeMap" href="#grscheller.datastructures.tuples.FTuple.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 </ul>

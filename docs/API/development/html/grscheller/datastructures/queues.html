@@ -214,7 +214,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
         # initializer strips the None values
         return FIFOQueue(*map(f, self))          # type: ignore
 
-    def push(self, *ds: Any) -&gt; None:
+    def push(self, *ds: _T) -&gt; None:
         &#34;&#34;&#34;Push data on rear of the `FIFOQueue` &amp; no return value.&#34;&#34;&#34;
         for d in ds:
             if d != None:
@@ -224,14 +224,14 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
         &#34;&#34;&#34;Pop data off front of the `FIFOQueue`.&#34;&#34;&#34;
         return self._ca.popL()
 
-    def peakLastIn(self) -&gt; Any:
+    def peakLastIn(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Return last element pushed to the `FIFOQueue` without consuming it&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-    def peakNextOut(self) -&gt; Any:
+    def peakNextOut(self) -&gt; Optional[_T]:
         &#34;&#34;&#34;Return next element ready to `pop` from the `FIFOQueue`.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
@@ -261,13 +261,13 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peakLastIn"><code class="name flex">
-<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakLastIn</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> without consuming it</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peakNextOut"><code class="name flex">
-<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">peakNextOut</span></span>(<span>self) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return next element ready to <code>pop</code> from the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
@@ -279,7 +279,7 @@ represents the absence of a value and ignored if pushed onto the queue.</p>
 <div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Any) ‑> None</span>
+<span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Push data on rear of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> &amp; no return value.</p></div>

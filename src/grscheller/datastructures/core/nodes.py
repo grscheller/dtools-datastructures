@@ -25,9 +25,11 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from typing import Any
+from typing import Any, Generic, Optional, TypeVar
 
-class SL_Node():
+_T = TypeVar('_T')
+
+class SL_Node(Generic[_T]):
     """Class implementing nodes that can be linked together
     to form singularly linked graphs of nodes.
 
@@ -39,16 +41,21 @@ class SL_Node():
     """
     __slots__ = '_data', '_next'
 
-    def __init__(self, data: Any, next: SL_Node|None):
+    def __init__(self, data: _T, next: Optional[SL_Node[_T]]):
         """Construct an element of a linked list"""
         self._data = data
         self._next = next
 
-    def __bool__(self):
-        # Even if self._data is None
+    def __bool__(self) -> bool:
+        """singularly linked nodes always contain data.
+
+        * always returns true
+        * this type of node always contain data, even if that data is None
+
+        """
         return True
 
-class BT_Node():
+class BT_Node(Generic[_T]):
     """**Binary Tree Nodes**
 
     Class implementing nodes that can be linked together to form tree-like
@@ -60,42 +67,23 @@ class BT_Node():
     """
     __slots__ = '_data', '_left', '_right'
 
-    def __init__(self, data: Any, left: BT_Node|None, right: LT_Node|None):
+    def __init__(self, data: _T, left: Optional[BT_Node[_T]], right: Optional[BT_Node[_T]]):
         """Construct a data containing node element of some type of graph.
-        Usually walked via recursion.
+
+        * usually walked via recursion.
         """
         self._data = data
         self._left = left
         self._right = right
 
-    def __bool__(self):
-        # Even if self._data is None
-        return True
+    def __bool__(self) -> bool:
+        """binary tree nodes always contain data.
 
-class LT_Node():
-    """**Leaf Tree Nodes**
+        * always returns true
+        * this type of node always contain data, even if that data is None
 
-    Class implementing nodes that can be linked together to form tree-like
-    data structures where data lives "on the leaves." 
-
-    * this type of node never contain data
-    * both self._left & self._right reference either data or other LT_Nodes
-    * while self._root references the node's parent node
-    * therefore, to store an LT_Node as data requires a container for it
-    """
-    __slots__ = '_root', '_left', '_right'
-
-    def __init__(self, left: Any, right: Any, root: LT_Node=None):
-        """Construct a node element which contains no data of some type of graph.
-        Can be arbitrarily walked.
         """
-        self._root = root
-        self._left = left
-        self._right = right
-
-    def __bool__(self):
-        # Return True if the LT_Node has no leaves
-        return LT_Node == type(self._left) == type(self._right)
+        return True
 
 if __name__ == "__main__":
     pass

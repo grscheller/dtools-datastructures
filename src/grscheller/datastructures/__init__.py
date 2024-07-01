@@ -16,15 +16,7 @@
 Both functional and imperative programming styles supported.
 """
 
-__version__ = "0.16.0.1"
+__version__ = "0.17.0.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
-
-from .arrays import PArray
-from .queues import FIFOQueue, LIFOQueue, DoubleQueue
-from .stacks import Stack, FStack
-from .tuples import FTuple
-from .core.fp import Maybe, Some, Nothing, Either, Left, Right
-from .core.fp import maybe_to_either, either_to_maybe
-from .core.iterlib import merge, exhaust
