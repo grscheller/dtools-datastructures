@@ -60,7 +60,7 @@ class Maybe(Generic[_T]):
 
     def map(self, f: Callable[[_T], _S]) -> Maybe[_S]:
         """Apply `f` over the elements of the data structure."""
-        return Maybe[_S](*map(f, self))
+        return Maybe(*map(f, self))
 
     def __repr__(self) -> str:
         if self:
@@ -108,10 +108,8 @@ class Either(Generic[_T,_S]):
     """
     __slots__ = '_value', '_isLeft'
 
-    def __init__(self, left: Optional[_T], right: Optional[_S|str]=None):
-        if right is None:
-            right = ''
-        self._value: _T|_S|str
+    def __init__(self, left: Optional[_T], right: _S):
+        self._value: _T|_S
         if left is None:
             self._isLeft = False
             self._value = right
@@ -122,7 +120,7 @@ class Either(Generic[_T,_S]):
     def __iter__(self) -> Iterator[_T]:
         # Yields its value if a Left of type _T.
         if self:
-            yield self._value       # type: ignore # always will be an _T
+            yield self._value       # type: ignore # always will be type _T
 
     def __repr__(self) -> str:
         if self:
@@ -192,27 +190,45 @@ class Either(Generic[_T,_S]):
             else:
                 return self.mapRight(gg)              # type: ignore
 
-# Convenience functions - useful as subtype constructors
+# Convenience functions
 
 def Some(value: Optional[_T]=None) -> Maybe[_T]:
     """Function for creating a `Maybe` from a `value`.
     
     * if `value` is `None` or missing, returns a `Nothing`.
+
     """
     return Maybe(value)
 
-#: Nothing does not a singleton! Test via equality, or in a Boolean context.
+#: Nothing does not return a singleton! Test with == or in a Boolean context.
 def Nothing() -> Maybe[_T]:
-    return Some(None)
+    return Maybe()
 
-def Left(left: Optional[_T], right: _S) -> Either[_T,_S]:
-    """Function returns a `Left` `Either` if `left != None`, otherwise it
-    returns a `Right` `Either`.
+def Left(left: Optional[_T], right: str='') -> Either[_T, str]:
+    """Function returns a left `Either[_T, str]`."""
+    return Either(left, right)
+
+def Right(right: str) -> Either[_T, str]:
+    """Function returns a right `Either[_T, str]`."""
+    return Either(None, right)
+
+def LeftT(left: Optional[_T], right: tuple[_S, ...]) -> Either[_T, tuple[_S, ...]]:
+    """Function returns a left `Either[_T, tuple[_S, ...]]`.
+
+    * tuple must contain any number of the same type
+    * annotation needed if given an empty tuple
+
     """
     return Either(left, right)
 
-def Right(right: _S) -> Either[_T,_S]:
-    """Function to construct a `Right` `Either`."""
+def RightT(right: tuple[_S, ...]) -> Either[_T, tuple[_S, ...]]:
+    """Function returns a right `Either[_T, tuple[_S, ...]]`.
+
+    * tuple must contain any number of the same type
+    * annotation needed for the type _T
+    * annotation needed if given an empty tuple
+
+    """
     return Either(None, right)
 
 # Conversion functions
