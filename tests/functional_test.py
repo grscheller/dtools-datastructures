@@ -175,97 +175,14 @@ class TestEither:
         assert s4.get(0) == 0
         assert s4.getRight() == 'more than 5'
 
-    def test_foldL_maybe(self) -> None:
-        mb21 = Some(21)
-        mbNot: Maybe[int] = Some()
-        val21 = mb21.foldL(lambda x, y: x*y)
-        val42 = mb21.foldL(lambda x, y: x*y, 2)
-        val7 = mb21.foldL(lambda x, y: y//x, 3)
-        valNone = mbNot.foldL(lambda x, y: y//x)
-        valAlsoNone = mbNot.foldL(lambda x, y: y//x, 3)
-        assert val21 == 21
-        assert val42 == 42
-        assert val7 == 7
-        assert valNone == None
-        assert valAlsoNone == None
-
-    def test_accummulate_maybe(self) -> None:
-        mb21 = Some(21)
-        mbNot: Maybe[int] = Some()
-        ph21 = mb21.accummulate()
-        ph7 = mb21.accummulate(lambda x, y: y//x, 3)
-        phNot = mbNot.accummulate()
-        phAlsoNot = mbNot.accummulate(lambda x, y: y//x, 3)
-        assert ph21 == Some(21)
-        assert ph7 == Some(7)
-        assert phAlsoNot == Nothing()
-        assert phNot == Nothing()
-
-    def test_foldL_either(self) -> None:
-        lt42 = Either(42, '')
-        lt13: Either[int,str] = Left(13)
-        rtNotInt: Either[int,str] = Right('Not an int')
-        val42 = lt42.foldL(lambda x, y: x*y)
-        val21 = lt42.foldL(lambda x, y: y//x, 2)
-        valNotInt = rtNotInt.foldL(lambda x, y: y//x)
-        valAlsoNotInt = rtNotInt.foldL(lambda x, y: y//x, 3)
-        assert val42 == 42
-        assert val21 == 21
-        assert valNotInt == None
-        assert valAlsoNotInt == None
-
-    def test_accummulate_either(self) -> None:
-        lt10: Either[int,str] = Left(10)
-        lt10accu = lt10.accummulate()
-        lt30 = lt10.accummulate(lambda x, y: x*y, None, initial=3, right=' never')
-        rtA: Either[int,str] = Right('A, ')
-        rtB = rtA.accummulate(right='B, ')
-        rtC = rtA.accummulate(lambda x, y: x*y, initial=3, right='C, ')
-        assert lt10 == Left(10)
-        assert lt10accu == Left(10)
-        assert lt30 == Left(30)
-        assert rtA == Right('A, ')
-        assert rtB == Right('A, B, ')
-        assert rtC == Right('A, C, ')
-
-    def test_maybe_flatMap(self) -> None:
-        mb10 = Maybe(10)
-        mbNot: Maybe[int] = Maybe()
-        mb20 = mb10.flatMap(lambda x: Maybe(2*x))
-        mbNotA = mbNot.flatMap(lambda x: Maybe(2*x))
-        mbNotB = mb10.flatMap(lambda _: Maybe())
-        mbNotC = mbNot.flatMap(lambda _: Maybe())
-        assert mb20 == Maybe(20)
-        assert mbNotA == Nothing()
-        assert mbNotB == Nothing()
-        assert mbNotC == Nothing()
-
-        mb20 = mb10.mergeMap(lambda x: Maybe(2*x))
-        mbNotA = mbNot.mergeMap(lambda x: Maybe(2*x))
-        mbNotB = mb10.mergeMap(lambda _: Maybe())
-        mbNotC = mbNot.mergeMap(lambda _: Maybe())
-        assert mb20 == Maybe(20)
-        assert mbNotA == Nothing()
-        assert mbNotB == Nothing()
-        assert mbNotC == Nothing()
-
-        mb20 = mb10.exhaustMap(lambda x: Maybe(2*x))
-        mbNotA = mbNot.exhaustMap(lambda x: Maybe(2*x))
-        mbNotB = mb10.exhaustMap(lambda _: Maybe())
-        mbNotC = mbNot.exhaustMap(lambda _: Maybe())
-        assert mb20 == Maybe(20)
-        assert mbNotA == Nothing()
-        assert mbNotB == Nothing()
-        assert mbNotC == Nothing()
-
     def test_either_flatMaps(self) -> None:
-        def lessThan2(x: int) -> Either:
+        def lessThan2(x: int) -> Either[int, str]:
             if x < 2:
                 return Either(x)
             else:
                 return Either(None, '>=2')
 
-        def lessThan5(x: int) -> Either:
+        def lessThan5(x: int) -> Either[int, str]:
             if x < 5:
                 return Left(x)
             else:

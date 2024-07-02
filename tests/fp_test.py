@@ -56,7 +56,7 @@ class Test_FP:
 
         # assert se1.accummulate(l1) == SplitEnd(5,9,12,14,15)
         # assert se1.accummulate(l1, 10) == SplitEnd(10,15,19,22,24,25)
-        # assert se1.accummulate(initial=20) == SplitEnd(20,25,29,32,34,35)
+        # assert se1.accummulate(init=20) == SplitEnd(20,25,29,32,34,35)
         # assert se1.accummulate(l2) == SplitEnd(5,20,60,120,120)
         # assert se1.accummulate(l2, 10) == SplitEnd(10,50,200,600,1200,1200)
         # assert se0.accummulate(l1) == SplitEnd()

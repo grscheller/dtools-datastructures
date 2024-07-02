@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO: Update docstrings
-
 """Functional tools
 
 * class **Maybe**: Implements the Maybe Monad
@@ -29,7 +27,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 import operator
-from typing import Any, Callable, Generic, Iterator, Optional, TypeVar
+from typing import Any, Callable, Generic, Iterator, Optional, Protocol, TypeVar
 from itertools import accumulate, chain
 from .iterlib import exhaust, merge
 
@@ -93,22 +91,12 @@ class Maybe(Generic[_T]):
         else:
             return False
 
-    def get(self, alternate: Optional[_T]=None) -> Any:
+    def get(self, alternate: Optional[_T]=None) -> Optional[_T]:
         """Get contents if they exist, otherwise return `alternate` value."""
         if self:
             return self._value
         else:
             return alternate
-
-    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -> Any:
-        """Left biased foldleft."""
-        if self:
-            if initial is None:
-                return self._value
-            else:
-                return f(initial, self._value)
-        else:
-            return None
 
 class Either(Generic[_T,_S]):
     """Class that either contains a `Left` value or `Right` value, but not both.
@@ -120,9 +108,11 @@ class Either(Generic[_T,_S]):
     """
     __slots__ = '_value', '_isLeft'
 
-    def __init__(self, left: Optional[_T], right: _S):
-        self._value: _T|_S|None     # the |None should not be necessary``
-        if left == None:
+    def __init__(self, left: Optional[_T], right: Optional[_S|str]=None):
+        if right is None:
+            right = ''
+        self._value: _T|_S|str
+        if left is None:
             self._isLeft = False
             self._value = right
         else:
@@ -132,7 +122,7 @@ class Either(Generic[_T,_S]):
     def __iter__(self) -> Iterator[_T]:
         # Yields its value if a Left of type _T.
         if self:
-            yield self._value       # type: ignore
+            yield self._value       # type: ignore # always will be an _T
 
     def __repr__(self) -> str:
         if self:
@@ -157,92 +147,50 @@ class Either(Generic[_T,_S]):
         else:
             return False
 
-    def get(self, default: Optional[_T]) -> Optional[_T]:
+    def get(self, default: Optional[_T]=None) -> Optional[_T]:
         """Get value if a `Left,` otherwise return `default` value."""
         if self:
-            return self._value       # type: ignore
+            return self._value    # type: ignore
         return default
 
-    def getRight(self) -> Any:
+    def getRight(self) -> Optional[_S]:
         """Get value if a `Right`, otherwise return `None`."""
         if self:
             return None
-        return self._value
+        return self._value    # type: ignore
 
-    def map(self, f: Callable[[_T], _T], right: _S=None) -> Either[_T, _S]:
+    def map(self, f: Callable[[_T], Optional[_R]], right: _P) -> Either[_R, _P]:
         """Map over a `Left(value)`."""
         if self:
-            return Either(f(self._value), right)   # type: ignore  # TODO: investigate using f: Callable[[_T], _R]
-        return self
+            return Either(f(self._value), right)    # type: ignore
+        return Either(None, right)
 
     def mapRight(self, g: Callable[[_S], _S]) -> Either[_T, _S]:
         """Map over a `Right(value)`."""
         if self:
             return self
-        return Right(g(self._value))   # type: ignore  # TODO: investigate using g: Callable[[_S], _R]
+        return Either(None, g(self._value))    # type: ignore
 
-    def flatMap(self, f: Callable[[_T], Either[_T, _S]], right: Optional[_S]=None) -> Either[_T, _S]:
-        """flatmap a `Left` value, but replace/override a `Right` value."""
-        if self:
-            if right is None:
-                return f(self._value)
-            else:
-                return f(self._value).mapRight(lambda _: right)
-        else:
-            if right is None:
-                return self
-            else:
-                return self.mapRight(lambda _: right)
-
-    def mergeMap(self, f: Callable[[_T], Either[_T, _S]], right: Any=None) -> Either[_T, _S]:
-        """flatMap a `Left` value, but concatenate with a `Right` value."""
-        if self:
-            if right is None:
-                return f(self._value)
-            else:
-                return f(self._value).mapRight(lambda x: x + right)
-        else:
-            if right is None:
-                return self
-            else:
-                return self.mapRight(lambda x: x + right)
-
-    #TODO: foldL & accumulate on an Either might be silly (eliminate them?)
-
-    def foldL(self, f: Callable[[_R, _T], _R], initial: Optional[_R]=None) -> Optional[_R]:
-        """Left biased left fold."""
-        if self:
-            if initial is None:
-                return self._value
-            else:
-                return f(initial, self._value)
-        else:
-            return None
-
-    def accummulate(self,
-                    f: Callable[[_R, _T], _R]|None=None,
-                    g: Callable[[_P, _S], _P]|None=None,
-                    initial: Optional[_R]=None,
-                    right: Optional[_P]=None) -> Either[_R,_P]:
-        """The `Either` data structure always holds one value, so what gets
-        "accumulated" depends on whether the `Either` is a `Left` or a `Right`.
-
-        * by default, a `Left` contains numeric data, a `Right` a `str`.
-        """
-        if f is None:
-            f = operator.add
+    def flatMap(self,
+                f: Callable[[_T], Either[_R, _S]],
+                g: Optional[Callable[[_S], _S]]=None,
+                right: Optional[_S]=None) -> Either[_R, _S]:
+        """flatmap a `Left` value, propagate `Right` values."""
         if g is None:
-            g = operator.add
-        if initial is None:
-            initial = 0
-        if right is None:
-            right = ''
-
-        if self:
-            return Left(f(initial, self._value), right)
+            gg = lambda x: x + right
         else:
-            return Right(g(self._value, right))
+            gg = g
 
+        if right is None:
+            if self:
+                return f(self._value)                 # type: ignore
+            else:
+                return self                           # type: ignore
+        else:
+            if self:
+                return f(self._value).mapRight(gg)    # type: ignore
+            else:
+                return self.mapRight(gg)              # type: ignore
 
 # Convenience functions - useful as subtype constructors
 
@@ -257,13 +205,13 @@ def Some(value: Optional[_T]=None) -> Maybe[_T]:
 def Nothing() -> Maybe[_T]:
     return Some(None)
 
-def Left[_T,_S](left: Optional[_T], right: _S=None) -> Either[_T,_S]:
+def Left(left: Optional[_T], right: _S) -> Either[_T,_S]:
     """Function returns a `Left` `Either` if `left != None`, otherwise it
     returns a `Right` `Either`.
     """
     return Either(left, right)
 
-def Right[_S](right: _S) -> Either[_T,_S]:
+def Right(right: _S) -> Either[_T,_S]:
     """Function to construct a `Right` `Either`."""
     return Either(None, right)
 
@@ -275,7 +223,7 @@ def maybe_to_either(m: Maybe[_T], right: _S) -> Either[_T,_S]:
 
 def either_to_maybe(e: Either[_T,_S]) -> Maybe[_T]:
     """Convert an `Either` to a `Maybe`."""
-    return Maybe(e.get(default=None))
+    return Maybe(e.get())
 
 if __name__ == "__main__":
     pass

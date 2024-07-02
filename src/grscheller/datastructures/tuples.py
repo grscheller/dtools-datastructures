@@ -49,6 +49,10 @@ class FTuple(Generic[_T]):
     def __iter__(self) -> Iterator[_T]:
         return iter(self._tuple)
 
+    def __reversed__(self) -> Iterator[_T]:
+        copy = tuple(reversed(self._tuple))
+        return iter(copy)
+
     def __bool__(self) -> bool:
         return bool(len(self._tuple))
 
@@ -77,6 +81,41 @@ class FTuple(Generic[_T]):
             item = None
         return item
 
+    def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Fold CircularArray left.
+
+        * first argument of `f` is for the accumulated value
+        * if CircularArray is empty, return `None`
+
+        """
+        if len(self._tuple) == 0:
+            return None
+
+        iter_self = iter(self)
+        value = next(iter_self)
+
+        for v in iter_self:
+            value = f(value, v)
+
+        return value
+
+    def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Fold CircularArray right.
+
+        * second argument of `f` is for the accumulated value
+        * if CircularArray is empty, return `None`
+
+        """
+        if len(self._tuple) == 0:
+            return None
+
+        rev_self = reversed(self)
+        value = next(rev_self)
+        for v in rev_self:
+            value = f(v, value)
+
+        return value
+
     def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -> _S:
         """Fold left with an initial value.
 
@@ -97,7 +136,7 @@ class FTuple(Generic[_T]):
 
         """
         value = init
-        for v in self:
+        for v in reversed(self):
             value = f(v, value)
         return value
 
@@ -120,9 +159,9 @@ class FTuple(Generic[_T]):
         """Accumulate partial fold results in same type data structure."""
         return FTuple(*accumulate(self, f))
 
-    def accummulate1(self, f: Callable[[_S, _T], _S], initial: _S) -> FTuple[_S]:
+    def accummulate1(self, f: Callable[[_S, _T], _S], init: _S) -> FTuple[_S]:
         """Accumulate partial fold results in same type data structure."""
-        return FTuple(*accumulate(chain((initial,), self), f))
+        return FTuple(*accumulate(chain((init,), self), f))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure sequentially."""

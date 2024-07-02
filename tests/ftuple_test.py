@@ -76,37 +76,37 @@ class TestFTuple:
         assert ft0.map(lambda x: x*x) == FTuple()
 
     def test_foldL(self) -> None:
-        ft0 = FTuple()
+        ft0: FTuple[int] = FTuple()
         ft1 = FTuple(*range(1, 6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
-        assert ft1.foldL1(lambda x, y: x*y, 1) == 120
-        assert ft0.foldL1(lambda x, y: x*y, 1) == 1
-        assert ft1.foldL1(lambda x, y: x*y, initial=10) == 1200
-        assert ft0.foldL1(lambda x, y: x*y, initial=10) == 10
+        assert ft1.foldL(lambda x, y: x*y) == 120
+        assert ft0.foldL(lambda x, y: x*y) is None
+        assert ft1.foldL1(lambda x, y: x*y, init=10) == 1200
+        assert ft0.foldL1(lambda x, y: x*y, init=10) == 10
 
     def test_foldR(self) -> None:
-        ft0 = FTuple()
+        ft0: FTuple[int] = FTuple()
         ft1 = FTuple(*range(1, 4))
         assert ft1 == FTuple(1, 2, 3)
 
         assert ft1.foldR(lambda x, y: y*y - x) == 48
         assert ft0.foldR(lambda x, y: y*y - x) == None
-        assert ft1.foldR(lambda x, y: y*y - x, initial=5) == 232323
-        assert ft0.foldR(lambda x, y: y*y - x, initial=5) == 5
+        assert ft1.foldR1(lambda x, y: y*y - x, init=5) == 232323
+        assert ft0.foldR1(lambda x, y: y*y - x, init=5) == 5
 
     def test_accummulate(self) -> None:
-        ft0 = FTuple()
+        ft0: FTuple[int] = FTuple()
         ft1 = FTuple(*range(1,6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
         assert ft1.accummulate(lambda x, y: x+y) == FTuple(1, 3, 6, 10, 15)
         assert ft0.accummulate(lambda x, y: x+y) == FTuple()
-        assert ft1.accummulate(lambda x, y: x+y, initial=1) == FTuple(1, 2, 4, 7, 11, 16)
-        assert ft0.accummulate(lambda x, y: x+y, initial=1) == FTuple(1)
+        assert ft1.accummulate1(lambda x, y: x+y, init=1) == FTuple(1, 2, 4, 7, 11, 16)
+        assert ft0.accummulate1(lambda x, y: x+y, init=1) == FTuple(1)
 
     def test_flatmap(self) -> None:
-        ft0 = FTuple()
+        ft0: FTuple[int] = FTuple()
         ft1 = FTuple(4, 2, 3, 5)
         ft2 = FTuple(4, 2, 0, 3)
 
