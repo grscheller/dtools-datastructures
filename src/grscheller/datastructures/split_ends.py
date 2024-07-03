@@ -52,8 +52,8 @@ class SplitEnd(Generic[_T]):
 
     def __init__(self, *ds: _T):
         """Construct a LIFO Stack"""
-        self._head = None
-        self._count = 0
+        self._head: Optional[Node[_T]] = None
+        self._count: int = 0
         for d in ds:
             node: Node[_T] = Node(d, self._head)
             self._head = node

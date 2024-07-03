@@ -53,7 +53,7 @@ class QueueBase(Generic[_T]):
 
     def __init__(self, *ds: _T):
         """Construct a queue data structure. Cull None values."""
-        self._ca = CircularArray[_T]()
+        self._ca: CircularArray[_T] = CircularArray()
         for d in ds:
             if d is not None:
                 self._ca.pushR(d)

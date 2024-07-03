@@ -38,13 +38,17 @@ class FTuple(Generic[_T]):
     """Class implementing a Tuple-like object with FP behaviors."""
     __slots__ = '_tuple'
 
-    def __init__(self, *ds: _T):
+    def __init__(self, *ds: Optional[_T]):
         """Initialize a Tuple-like object with functional methods.
 
         * Null values are not permitted in this data structure
+        * this is how I should have done it
 
         """
-        self._tuple = tuple(filter(lambda d: d is not None, ds))
+        def notNone(d: Optional[_T]) -> bool:
+            return d is not None
+
+        self._tuple: tuple[_T] = tuple(filter(notNone, ds))    # type: ignore
 
     def __iter__(self) -> Iterator[_T]:
         return iter(self._tuple)
