@@ -178,7 +178,7 @@ class TestEither:
     def test_either_flatMaps(self) -> None:
         def lessThan2(x: int) -> Either[int, str]:
             if x < 2:
-                return Either(x)
+                return Either(x, 'fail!')
             else:
                 return Either(None, '>=2')
 
@@ -191,7 +191,7 @@ class TestEither:
         left1 = Left(1)
         left4 = Left(4)
         left7 = Left(7)
-        right = Right('Nobody home')
+        right: Either[int, str] = Right('Nobody home')
 
         nobody = right.flatMap(lessThan2)
         assert nobody == Right('Nobody home')
@@ -211,66 +211,29 @@ class TestEither:
         assert lt2 == Right('>=2')
         assert lt5 == Right('>=5')
 
-        nobody = right.flatMap(lessThan5, 'NOBODY HOME')
-        assert nobody == Right('NOBODY HOME')
+        nobody = right.flatMap(lessThan5, right=', STILL NOBODY HOME')
+        assert nobody == Right('Nobody home, STILL NOBODY HOME')
 
-        lt2 = left1.flatMap(lessThan2, 'greater than or equal 2')
-        lt5 = left1.flatMap(lessThan5, 'greater than or equal 5')
+        lt2 = left1.flatMap(lessThan2, right='greater than or equal 2')
+        lt5 = left1.flatMap(lessThan5, right='greater than or equal 5')
         assert lt2 == Left(1)
         assert lt5 == Left(1)
 
-        lt2 = left4.flatMap(lessThan2, 'greater than or equal 2')
-        lt5 = left4.flatMap(lessThan5, 'greater than or equal 5')
-        assert lt2 == Right('greater than or equal 2')
-        assert lt5 == Left(4)
-
-        lt2 = left7.flatMap(lessThan2, 'greater than or equal 2')
-        lt5 = left7.flatMap(lessThan5, 'greater than or equal 5')
-        assert lt2 == Right('greater than or equal 2')
-        assert lt5 == Right('greater than or equal 5')
-
-
-        nobody = right.mergeMap(lessThan2)
-        assert nobody == Right('Nobody home')
-
-        lt2 = left1.mergeMap(lessThan2)
-        lt5 = left1.mergeMap(lessThan5)
-        assert lt2 == Left(1)
-        assert lt5 == Left(1)
-
-        lt2 = left4.mergeMap(lessThan2)
-        lt5 = left4.mergeMap(lessThan5)
+        lt2 = left4.flatMap(lessThan2)
+        lt5 = left4.flatMap(lessThan5, right=', greater than or equal 5')
         assert lt2 == Right('>=2')
         assert lt5 == Left(4)
 
-        lt2 = left7.mergeMap(lessThan2)
-        lt5 = left7.mergeMap(lessThan5)
-        assert lt2 == Right('>=2')
-        assert lt5 == Right('>=5')
+        lt2 = left7.flatMap(lessThan2, g=lambda x, r: r, right='greater than or equal 2')
+        lt5 = left7.flatMap(lessThan5, right=', greater than or equal 5')
+        assert lt2 == Right('greater than or equal 2')
+        assert lt5 == Right('>=5, greater than or equal 5')
 
-        nobody = right.mergeMap(lessThan5, ', but us chickens!')
-        assert nobody == Right('Nobody home, but us chickens!')
-
-        lt2 = left1.mergeMap(lessThan2, ', tested for 2')
-        lt5 = left1.mergeMap(lessThan5, ', tested for 5')
-        assert lt2 == Left(1)
-        assert lt5 == Left(1)
-
-        lt2 = left4.mergeMap(lessThan2, ', tested for 2')
-        lt5 = left4.mergeMap(lessThan5, ', tested for 5')
-        assert lt2 == Right('>=2, tested for 2')
-        assert lt5 == Left(4)
-
-        lt2 = left7.mergeMap(lessThan2, ', tested for 2')
-        lt5 = left7.mergeMap(lessThan5, ', tested for 5')
-        assert lt2 == Right('>=2, tested for 2')
-        assert lt5 == Right('>=5, tested for 5')
-        
     def test_Maybe_Either(self) -> None:
         mb42 = Some(42)
-        mbNot = Nothing()
+        mbNot: Maybe[int] = Nothing()
 
-        left42 = maybe_to_either(mb42)
+        left42 = maybe_to_either(mb42, 'fail!')
         right = maybe_to_either(mbNot, 'Nobody home')
         assert left42 == Left(42)
         assert right == Right('Nobody home')

@@ -71,6 +71,10 @@ a functional interfaces.</p>
     def __iter__(self) -&gt; Iterator[_T]:
         return iter(self._tuple)
 
+    def __reversed__(self) -&gt; Iterator[_T]:
+        copy = tuple(reversed(self._tuple))
+        return iter(copy)
+
     def __bool__(self) -&gt; bool:
         return bool(len(self._tuple))
 
@@ -99,6 +103,41 @@ a functional interfaces.</p>
             item = None
         return item
 
+    def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
+        &#34;&#34;&#34;Fold CircularArray left.
+
+        * first argument of `f` is for the accumulated value
+        * if CircularArray is empty, return `None`
+
+        &#34;&#34;&#34;
+        if len(self._tuple) == 0:
+            return None
+
+        iter_self = iter(self)
+        value = next(iter_self)
+
+        for v in iter_self:
+            value = f(value, v)
+
+        return value
+
+    def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
+        &#34;&#34;&#34;Fold CircularArray right.
+
+        * second argument of `f` is for the accumulated value
+        * if CircularArray is empty, return `None`
+
+        &#34;&#34;&#34;
+        if len(self._tuple) == 0:
+            return None
+
+        rev_self = reversed(self)
+        value = next(rev_self)
+        for v in rev_self:
+            value = f(v, value)
+
+        return value
+
     def foldL1(self, f: Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Fold left with an initial value.
 
@@ -119,7 +158,7 @@ a functional interfaces.</p>
 
         &#34;&#34;&#34;
         value = init
-        for v in self:
+        for v in reversed(self):
             value = f(v, value)
         return value
 
@@ -142,9 +181,9 @@ a functional interfaces.</p>
         &#34;&#34;&#34;Accumulate partial fold results in same type data structure.&#34;&#34;&#34;
         return FTuple(*accumulate(self, f))
 
-    def accummulate1(self, f: Callable[[_S, _T], _S], initial: _S) -&gt; FTuple[_S]:
+    def accummulate1(self, f: Callable[[_S, _T], _S], init: _S) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Accumulate partial fold results in same type data structure.&#34;&#34;&#34;
-        return FTuple(*accumulate(chain((initial,), self), f))
+        return FTuple(*accumulate(chain((init,), self), f))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
@@ -171,7 +210,7 @@ a functional interfaces.</p>
 <div class="desc"><p>Accumulate partial fold results in same type data structure.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.accummulate1"><code class="name flex">
-<span>def <span class="ident">accummulate1</span></span>(<span>self, f: Callable[[_S, _T], _S], initial: _S) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+<span>def <span class="ident">accummulate1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Accumulate partial fold results in same type data structure.</p></div>
@@ -194,6 +233,16 @@ a functional interfaces.</p>
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
 </dd>
+<dt id="grscheller.datastructures.tuples.FTuple.foldL"><code class="name flex">
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fold CircularArray left.</p>
+<ul>
+<li>first argument of <code>f</code> is for the accumulated value</li>
+<li>if CircularArray is empty, return <code>None</code></li>
+</ul></div>
+</dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
 <span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
 </code></dt>
@@ -202,6 +251,16 @@ a functional interfaces.</p>
 <ul>
 <li>first argument of <code>f</code> is for the accumulated value</li>
 <li>if empty, return the initial value</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.tuples.FTuple.foldR"><code class="name flex">
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fold CircularArray right.</p>
+<ul>
+<li>second argument of <code>f</code> is for the accumulated value</li>
+<li>if CircularArray is empty, return <code>None</code></li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">
@@ -251,7 +310,9 @@ a functional interfaces.</p>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.exhaustMap" href="#grscheller.datastructures.tuples.FTuple.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.flatMap" href="#grscheller.datastructures.tuples.FTuple.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.foldL" href="#grscheller.datastructures.tuples.FTuple.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldL1" href="#grscheller.datastructures.tuples.FTuple.foldL1">foldL1</a></code></li>
+<li><code><a title="grscheller.datastructures.tuples.FTuple.foldR" href="#grscheller.datastructures.tuples.FTuple.foldR">foldR</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldR1" href="#grscheller.datastructures.tuples.FTuple.foldR1">foldR1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.map" href="#grscheller.datastructures.tuples.FTuple.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.mergeMap" href="#grscheller.datastructures.tuples.FTuple.mergeMap">mergeMap</a></code></li>

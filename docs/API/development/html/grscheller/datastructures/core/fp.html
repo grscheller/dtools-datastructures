@@ -39,11 +39,10 @@ hljs.highlightAll();
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="grscheller.datastructures.core.fp.Left"><code class="name flex">
-<span>def <span class="ident">Left</span></span>(<span>left: Optional[_T], right: _S = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
+<span>def <span class="ident">Left</span></span>(<span>left: Optional[_T], right: str = '') ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function returns a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> if <code>left != None</code>, otherwise it
-returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
+<div class="desc"><p>Function returns a left <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, str]</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Nothing"><code class="name flex">
 <span>def <span class="ident">Nothing</span></span>(<span>) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[~_T]</span>
@@ -52,10 +51,10 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <div class="desc"></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Right"><code class="name flex">
-<span>def <span class="ident">Right</span></span>(<span>right: _S) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
+<span>def <span class="ident">Right</span></span>(<span>right: str) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Function to construct a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code>.</p></div>
+<div class="desc"><p>Function returns a right <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, str]</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Some"><code class="name flex">
 <span>def <span class="ident">Some</span></span>(<span>value: Optional[_T] = None) ‑> <a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a>[~_T]</span>
@@ -110,8 +109,8 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
     __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
 
     def __init__(self, left: Optional[_T], right: _S):
-        self._value: _T|_S|None     # the |None should not be necessary``
-        if left == None:
+        self._value: _T|_S
+        if left is None:
             self._isLeft = False
             self._value = right
         else:
@@ -121,7 +120,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
     def __iter__(self) -&gt; Iterator[_T]:
         # Yields its value if a Left of type _T.
         if self:
-            yield self._value       # type: ignore
+            yield self._value       # type: ignore # always will be type _T
 
     def __repr__(self) -&gt; str:
         if self:
@@ -146,91 +145,53 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
         else:
             return False
 
-    def get(self, default: Optional[_T]) -&gt; Optional[_T]:
+    def get(self, default: Optional[_T]=None) -&gt; Optional[_T]:
         &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
         if self:
-            return self._value       # type: ignore
+            return self._value    # type: ignore
         return default
 
-    def getRight(self) -&gt; Any:
+    def getRight(self) -&gt; Optional[_S]:
         &#34;&#34;&#34;Get value if a `Right`, otherwise return `None`.&#34;&#34;&#34;
         if self:
             return None
-        return self._value
+        return self._value    # type: ignore
 
-    def map(self, f: Callable[[_T], _T], right: _S=None) -&gt; Either[_T, _S]:
+    def map(self, f: Callable[[_T], Optional[_R]], right: _P) -&gt; Either[_R, _P]:
         &#34;&#34;&#34;Map over a `Left(value)`.&#34;&#34;&#34;
         if self:
-            return Either(f(self._value), right)   # type: ignore  # TODO: investigate using f: Callable[[_T], _R]
-        return self
+            return Either(f(self._value), right)    # type: ignore
+        return Either(None, right)
 
     def mapRight(self, g: Callable[[_S], _S]) -&gt; Either[_T, _S]:
         &#34;&#34;&#34;Map over a `Right(value)`.&#34;&#34;&#34;
         if self:
             return self
-        return Right(g(self._value))   # type: ignore  # TODO: investigate using g: Callable[[_S], _R]
+        return Either(None, g(self._value))    # type: ignore
 
-    def flatMap(self, f: Callable[[_T], Either[_T, _S]], right: Optional[_S]=None) -&gt; Either[_T, _S]:
-        &#34;&#34;&#34;flatmap a `Left` value, but replace/override a `Right` value.&#34;&#34;&#34;
-        if self:
-            if right is None:
-                return f(self._value)
-            else:
-                return f(self._value).mapRight(lambda _: right)
-        else:
-            if right is None:
-                return self
-            else:
-                return self.mapRight(lambda _: right)
+    def flatMap(self,
+                f: Callable[[_T], Either[_R, _S]],
+                right: Optional[_S]=None,
+                g: Optional[Callable[[_S, _S], _S]]=None) -&gt; Either[_R, _S]:
+        &#34;&#34;&#34;flatmap a `Left` value, propagate `Right` values.
 
-    def mergeMap(self, f: Callable[[_T], Either[_T, _S]], right: Any=None) -&gt; Either[_T, _S]:
-        &#34;&#34;&#34;flatMap a `Left` value, but concatenate with a `Right` value.&#34;&#34;&#34;
-        if self:
-            if right is None:
-                return f(self._value)
-            else:
-                return f(self._value).mapRight(lambda x: x + right)
-        else:
-            if right is None:
-                return self
-            else:
-                return self.mapRight(lambda x: x + right)
-
-    #TODO: foldL &amp; accumulate on an Either might be silly (eliminate them?)
-
-    def foldL(self, f: Callable[[_R, _T], _R], initial: Optional[_R]=None) -&gt; Optional[_R]:
-        &#34;&#34;&#34;Left biased left fold.&#34;&#34;&#34;
-        if self:
-            if initial is None:
-                return self._value
-            else:
-                return f(initial, self._value)
-        else:
-            return None
-
-    def accummulate(self,
-                    f: Callable[[_R, _T], _R]|None=None,
-                    g: Callable[[_P, _S], _P]|None=None,
-                    initial: Optional[_R]=None,
-                    right: Optional[_P]=None) -&gt; Either[_R,_P]:
-        &#34;&#34;&#34;The `Either` data structure always holds one value, so what gets
-        &#34;accumulated&#34; depends on whether the `Either` is a `Left` or a `Right`.
-
-        * by default, a `Left` contains numeric data, a `Right` a `str`.
+        * throws TypeError if _S does not support __add__
         &#34;&#34;&#34;
-        if f is None:
-            f = operator.add
-        if g is None:
-            g = operator.add
-        if initial is None:
-            initial = 0
         if right is None:
-            right = &#39;&#39;
-
-        if self:
-            return Left(f(initial, self._value), right)
+            if self:
+                return f(self._value)                 # type: ignore
+            else:
+                return self                           # type: ignore
         else:
-            return Right(g(self._value, right))</code></pre>
+            if g is None:
+                gg: Callable[[_S], _S] = lambda x: x + right     # type: ignore  # accepting runtime risk
+            else:
+                gg = lambda x: g(x, right)
+
+            if self:
+                return f(self._value).mapRight(gg)    # type: ignore
+            else:
+                return self.mapRight(gg)              # type: ignore</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -238,42 +199,29 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.core.fp.Either.accummulate"><code class="name flex">
-<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_R, _T], _R] | None = None, g: Callable[[_P, _S], _P] | None = None, initial: Optional[_R] = None, right: Optional[_P] = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_R, ~_P]</span>
+<dt id="grscheller.datastructures.core.fp.Either.flatMap"><code class="name flex">
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_R, _S]], right: Optional[_S] = None, g: Optional[Callable[[_S, _S], _S]] = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_R, ~_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>The <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> data structure always holds one value, so what gets
-"accumulated" depends on whether the <code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code> is a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> or a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>.</p>
+<div class="desc"><p>flatmap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, propagate <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> values.</p>
 <ul>
-<li>by default, a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> contains numeric data, a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> a <code>str</code>.</li>
+<li>throws TypeError if _S does not support <strong>add</strong></li>
 </ul></div>
 </dd>
-<dt id="grscheller.datastructures.core.fp.Either.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, _S]], right: Optional[_S] = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>flatmap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but replace/override a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.Either.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_R, _T], _R], initial: Optional[_R] = None) ‑> Optional[~_R]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Left biased left fold.</p></div>
-</dd>
 <dt id="grscheller.datastructures.core.fp.Either.get"><code class="name flex">
-<span>def <span class="ident">get</span></span>(<span>self, default: Optional[_T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">get</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get value if a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>,</code> otherwise return <code>default</code> value.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.getRight"><code class="name flex">
-<span>def <span class="ident">getRight</span></span>(<span>self) ‑> Any</span>
+<span>def <span class="ident">getRight</span></span>(<span>self) ‑> Optional[~_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get value if a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code>, otherwise return <code>None</code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.core.fp.Either.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _T], right: _S = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], Optional[_R]], right: _P) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_R, ~_P]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Map over a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a>(value)</code>.</p></div>
@@ -283,12 +231,6 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </code></dt>
 <dd>
 <div class="desc"><p>Map over a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a>(value)</code>.</p></div>
-</dd>
-<dt id="grscheller.datastructures.core.fp.Either.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[_T, _S]], right: Any = None) ‑> <a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a>[~_T, ~_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>flatMap a <code><a title="grscheller.datastructures.core.fp.Left" href="#grscheller.datastructures.core.fp.Left">Left()</a></code> value, but concatenate with a <code><a title="grscheller.datastructures.core.fp.Right" href="#grscheller.datastructures.core.fp.Right">Right()</a></code> value.</p></div>
 </dd>
 </dl>
 </dd>
@@ -336,7 +278,7 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 
     def map(self, f: Callable[[_T], _S]) -&gt; Maybe[_S]:
         &#34;&#34;&#34;Apply `f` over the elements of the data structure.&#34;&#34;&#34;
-        return Maybe[_S](*map(f, self))
+        return Maybe(*map(f, self))
 
     def __repr__(self) -&gt; str:
         if self:
@@ -367,22 +309,12 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
         else:
             return False
 
-    def get(self, alternate: Optional[_T]=None) -&gt; Any:
+    def get(self, alternate: Optional[_T]=None) -&gt; Optional[_T]:
         &#34;&#34;&#34;Get contents if they exist, otherwise return `alternate` value.&#34;&#34;&#34;
         if self:
             return self._value
         else:
-            return alternate
-
-    def foldL(self, f: Callable[[Any, Any], Any], initial: Any=None) -&gt; Any:
-        &#34;&#34;&#34;Left biased foldleft.&#34;&#34;&#34;
-        if self:
-            if initial is None:
-                return self._value
-            else:
-                return f(initial, self._value)
-        else:
-            return None</code></pre>
+            return alternate</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -390,14 +322,8 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.core.fp.Maybe.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[Any, Any], Any], initial: Any = None) ‑> Any</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Left biased foldleft.</p></div>
-</dd>
 <dt id="grscheller.datastructures.core.fp.Maybe.get"><code class="name flex">
-<span>def <span class="ident">get</span></span>(<span>self, alternate: Optional[_T] = None) ‑> Any</span>
+<span>def <span class="ident">get</span></span>(<span>self, alternate: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Get contents if they exist, otherwise return <code>alternate</code> value.</p></div>
@@ -437,21 +363,17 @@ returns a <code><a title="grscheller.datastructures.core.fp.Right" href="#grsche
 <ul>
 <li>
 <h4><code><a title="grscheller.datastructures.core.fp.Either" href="#grscheller.datastructures.core.fp.Either">Either</a></code></h4>
-<ul class="two-column">
-<li><code><a title="grscheller.datastructures.core.fp.Either.accummulate" href="#grscheller.datastructures.core.fp.Either.accummulate">accummulate</a></code></li>
+<ul class="">
 <li><code><a title="grscheller.datastructures.core.fp.Either.flatMap" href="#grscheller.datastructures.core.fp.Either.flatMap">flatMap</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.Either.foldL" href="#grscheller.datastructures.core.fp.Either.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.get" href="#grscheller.datastructures.core.fp.Either.get">get</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.getRight" href="#grscheller.datastructures.core.fp.Either.getRight">getRight</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.map" href="#grscheller.datastructures.core.fp.Either.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Either.mapRight" href="#grscheller.datastructures.core.fp.Either.mapRight">mapRight</a></code></li>
-<li><code><a title="grscheller.datastructures.core.fp.Either.mergeMap" href="#grscheller.datastructures.core.fp.Either.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.core.fp.Maybe" href="#grscheller.datastructures.core.fp.Maybe">Maybe</a></code></h4>
 <ul class="">
-<li><code><a title="grscheller.datastructures.core.fp.Maybe.foldL" href="#grscheller.datastructures.core.fp.Maybe.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.get" href="#grscheller.datastructures.core.fp.Maybe.get">get</a></code></li>
 <li><code><a title="grscheller.datastructures.core.fp.Maybe.map" href="#grscheller.datastructures.core.fp.Maybe.map">map</a></code></li>
 </ul>

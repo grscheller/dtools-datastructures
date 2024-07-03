@@ -171,20 +171,23 @@ class Either(Generic[_T,_S]):
 
     def flatMap(self,
                 f: Callable[[_T], Either[_R, _S]],
-                g: Optional[Callable[[_S], _S]]=None,
-                right: Optional[_S]=None) -> Either[_R, _S]:
-        """flatmap a `Left` value, propagate `Right` values."""
-        if g is None:
-            gg = lambda x: x + right
-        else:
-            gg = g
+                right: Optional[_S]=None,
+                g: Optional[Callable[[_S, _S], _S]]=None) -> Either[_R, _S]:
+        """flatmap a `Left` value, propagate `Right` values.
 
+        * throws TypeError if _S does not support __add__
+        """
         if right is None:
             if self:
                 return f(self._value)                 # type: ignore
             else:
                 return self                           # type: ignore
         else:
+            if g is None:
+                gg: Callable[[_S], _S] = lambda x: x + right     # type: ignore  # accepting runtime risk
+            else:
+                gg = lambda x: g(x, right)
+
             if self:
                 return f(self._value).mapRight(gg)    # type: ignore
             else:
