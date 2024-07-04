@@ -44,13 +44,14 @@ a functional interfaces.</p>
 <dl>
 <dt id="grscheller.datastructures.tuples.FTuple"><code class="flex name class">
 <span>class <span class="ident">FTuple</span></span>
-<span>(</span><span>*ds: _T)</span>
+<span>(</span><span>*ds: Optional[_T])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a Tuple-like object with FP behaviors.</p>
 <p>Initialize a Tuple-like object with functional methods.</p>
 <ul>
 <li>Null values are not permitted in this data structure</li>
+<li>this is how I should have done it</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -60,13 +61,17 @@ a functional interfaces.</p>
     &#34;&#34;&#34;Class implementing a Tuple-like object with FP behaviors.&#34;&#34;&#34;
     __slots__ = &#39;_tuple&#39;
 
-    def __init__(self, *ds: _T):
+    def __init__(self, *ds: Optional[_T]):
         &#34;&#34;&#34;Initialize a Tuple-like object with functional methods.
 
         * Null values are not permitted in this data structure
+        * this is how I should have done it
 
         &#34;&#34;&#34;
-        self._tuple = tuple(filter(lambda d: d is not None, ds))
+        def notNone(d: Optional[_T]) -&gt; bool:
+            return d is not None
+
+        self._tuple: tuple[_T] = tuple(filter(notNone, ds))    # type: ignore
 
     def __iter__(self) -&gt; Iterator[_T]:
         return iter(self._tuple)

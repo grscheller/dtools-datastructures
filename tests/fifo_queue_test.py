@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+from typing import Optional
 from grscheller.datastructures.queues import FIFOQueue
 
 class TestFIFOQueue:
@@ -23,11 +26,11 @@ class TestFIFOQueue:
         not_none = s2.pop()
         assert not_none is not None
         assert not_none + 1 == s2.pop() == 1
-        assert s2.peakLastIn() == 5
-        assert s2.peakNextOut() == 2
+        assert s2.peak_last_in() == 5
+        assert s2.peak_next_out() == 2
 
     def test_push_then_pop(self) -> None:
-        q = FIFOQueue()
+        q: FIFOQueue[object] = FIFOQueue()
         pushed = 42
         q.push(pushed)
         popped = q.pop()
@@ -44,10 +47,10 @@ class TestFIFOQueue:
         assert popped is not None
         assert pushed == popped
         assert len(q) == 0
-        pushed = ''
-        q.push(pushed)
-        popped = q.pop()
-        assert pushed == popped
+        pushed2 = ''
+        q.push(pushed2)
+        popped2 = q.pop()
+        assert pushed2 == popped2
         assert len(q) == 0
         q.push('first')
         q.push('second')
@@ -59,30 +62,28 @@ class TestFIFOQueue:
         assert len(q) == 0
 
     def test_pushing_None(self) -> None:
-        q0 = FIFOQueue()
-        q1 = FIFOQueue()
-        q2 = FIFOQueue()
+        q1: FIFOQueue[object] = FIFOQueue()
+        q2: FIFOQueue[object] = FIFOQueue()
         q1.push(None)
         q2.push(None)
-        assert q0 == q1 == q2
+        assert q1 == q2
 
-        barNone = (1, 2, None, 3, None, 4)
-        bar = (1, 2, 3, 4)
-        q0 = FIFOQueue(*barNone)
-        q1 = FIFOQueue(*bar)
-        assert q0 == q1
-        for d in q0:
-            assert d is not None
-        for d in q1:
-            assert d is not None
+        def is42(ii: int) -> Optional[int]:
+            return None if ii == 42 else ii
+
+        barNone = (None, 1, 2, 3, None)
+        bar42 = (42, 1, 2, 3, 42)
+        q3 = FIFOQueue(*barNone)
+        q4 = FIFOQueue(*map(is42, bar42))
+        assert q3 == q4
 
     def test_bool_len_peak(self) -> None:
-        q = FIFOQueue()
+        q: FIFOQueue[object] = FIFOQueue()
         assert not q
         q.push(1,2,3)
         assert q
-        assert q.peakNextOut() == 1
-        assert q.peakLastIn() == 3
+        assert q.peak_next_out() == 1
+        assert q.peak_last_in() == 3
         assert len(q) == 3
         assert q.pop() == 1
         assert len(q) == 2
@@ -98,14 +99,14 @@ class TestFIFOQueue:
         assert not q
         q.push(42)
         assert q
-        assert q.peakNextOut() == 42
-        assert q.peakLastIn() == 42
+        assert q.peak_next_out() == 42
+        assert q.peak_last_in() == 42
         assert len(q) == 1
         assert q
         assert q.pop() == 42
         assert not q
-        assert q.peakNextOut() is None
-        assert q.peakLastIn() is None
+        assert q.peak_next_out() is None
+        assert q.peak_last_in() is None
 
     def test_iterators(self) -> None:
         data = [1, 2, 3, 4]
@@ -125,17 +126,17 @@ class TestFIFOQueue:
             ii += 1
         assert ii == 5
 
-        dq0 = FIFOQueue()
+        dq0: FIFOQueue[int] = FIFOQueue()
         for _ in dq0:
             assert False
         for _ in reversed(dq0):
             assert False
 
-        data = ()
-        dq0 = FIFOQueue(*data)
-        for _ in dq0:
+        data0 = ()
+        dq00: FIFOQueue[int] = FIFOQueue(*data0)
+        for _ in dq00:
             assert False
-        for _ in reversed(dq0):
+        for _ in reversed(dq00):
             assert False
 
     def test_copy_reversed(self) -> None:
@@ -168,7 +169,7 @@ class TestFIFOQueue:
         q1.push(q1.pop(), q1.pop(), q1.pop())
         q2.push(q2.pop(), q2.pop(), q2.pop())
         q2.pop()
-        assert tup2 == q2.peakNextOut()
+        assert tup2 == q2.peak_next_out()
         assert q1 != q2
         assert q1.pop() != q2.pop()
         assert q1 == q2

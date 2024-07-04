@@ -72,8 +72,8 @@ data by each pointing to the same node.</p>
 
     def __init__(self, *ds: _T):
         &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
-        self._head = None
-        self._count = 0
+        self._head: Optional[Node[_T]] = None
+        self._count: int = 0
         for d in ds:
             node: Node[_T] = Node(d, self._head)
             self._head = node

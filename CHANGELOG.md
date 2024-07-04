@@ -18,7 +18,16 @@ Version numbers for PyPI releases begin with a `v`.
   * commit count (thrashing)
   * not to be taken too seriously
 
-## Version = 16.0.0.0 - Requires Python >= 3.12
+## Version = 0.17.0.4 
+
+* have begun relaxing the requirement of not storing None as a value
+  * completed for queues.py
+* requires grscheller.circular-array >= 3.0.3.0
+* perhaps next PyPI release will be v1.0.0 ???
+
+## Version = 0.16.0.0 
+
+* Requires Python >= 3.12
 * preparing to support PEP 695 generics
   * will require Python 3.12
   * will not have to import typing for Python 3.12 and beyond
@@ -29,11 +38,13 @@ Version numbers for PyPI releases begin with a `v`.
   * THEREFORE: tests need to be completely overhauled
 
 ## Version = 0.14.1.1 - Preparing to add TypeVars
+
 * tests working with grscheller.circular-array >= 3.0.0, <3.2
   * lots of mypy complaints
   * first version using TypeVars will be 0.15.0.0
 
 ## Version = v0.14.0 - PyPI release date 2024-03-09
+
 * updated dependency on CircularArray class
   * dependencies = ["grscheller.circular-array >= 0.2.0, < 2.1"]
 * minor README.md woodsmithing

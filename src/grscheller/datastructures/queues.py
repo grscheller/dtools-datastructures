@@ -18,8 +18,6 @@
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented with Python List based circular array in a "has-a" relationship
 * these data structures will resize themselves as needed
-* these queues are O(1) indexable, convenient but ignorable feature
-* Python's `None` is not stored in these data structures as a value
 
 Types of Queues:
 
@@ -47,30 +45,28 @@ class QueueBase(Generic[_T]):
     * primarily for DRY implementation inheritance of queue type classes
     * derived classes used will resize themselves as needed
     * each queue object "has-a" (contains) a circular array to store its data
-    * None is not stored as a value on Queue data structures
+    * care is needed if None is stored as a value on Queue data structures 
     """
     __slots__ = '_ca'
 
     def __init__(self, *ds: _T):
         """Construct a queue data structure. Cull None values."""
-        self._ca: CircularArray[_T] = CircularArray()
-        for d in ds:
-            if d is not None:
-                self._ca.pushR(d)
+        self._ca: CircularArray[_T] = CircularArray(*ds)
 
+    # TODO: change to yield in the "natural" data retrieval order of the queue
     def __iter__(self) -> Iterator[_T]:
         """Iterator yielding data currently stored in the queue. Data yielded in
         natural FIFO order.
         """
-        cached = self._ca.copy()
-        for pos in range(len(cached)):
-            yield cached[pos]
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
 
     def __reversed__(self) -> Iterator[_T]:
         """Reverse iterate over the current state of the queue."""
-        cached = self._ca.copy()
-        for pos in range(len(cached)-1, -1, -1):
-            yield cached[pos]
+        ca = self._ca.copy()
+        for pos in range(len(ca)-1, -1, -1):
+            yield ca[pos]
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
@@ -91,39 +87,7 @@ class QueueBase(Generic[_T]):
             return False
         return self._ca == other._ca
 
-    def reverse(self) -> None:
-        """Reverse the elements in the Queue"""
-        self._ca = self._ca.reverse()
-
-    def __getitem__(self, index: int) -> Optional[_T]:
-        cnt = len(self)
-        if -cnt <= index < cnt:
-            return self._ca[index]
-        else:
-            return None
-
-    def __setitem__(self, index: int, value: _T) -> None:
-        typePath = 'grscheller.datastructures.queues.'
-
-        def queueType(queue: QueueBase[_T]) -> str:
-            return str(type(queue)).split(typePath)[-1].partition("'")[0]
-
-        cnt = len(self)
-        if -cnt <= index < cnt:
-            if value is not None:
-                self._ca[index] = value
-            else:
-                msg = f'None values are not allowed in {queueType(self)} queues.'
-                raise ValueError(msg)
-        else:
-            if cnt > 0:
-                msg1 = f'Out of bounds: '
-                msg2 = f'index = {index} not from {-cnt} to {cnt-1} '
-                msg3 = f'while setting value from a {queueType(self)}.'
-                raise IndexError(msg1 + msg2 + msg3)
-            else:
-                msg0 = f'Trying to set value from an empty {queueType(self)}.'
-                raise IndexError(msg0)
+    # TODO: change to fold in the "natural" data retrieval order of the queue
 
     def foldL(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
         return self._ca.foldL(f)
@@ -151,7 +115,7 @@ class FIFOQueue(QueueBase[_T]):
         return FIFOQueue(*self)
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> FIFOQueue[_S]:
-        """Apply function over the fifo queue's contents.
+        """Apply function over the FIFO queue's contents.
 
         * suppress any `None` values returned by `f`
 
@@ -160,23 +124,21 @@ class FIFOQueue(QueueBase[_T]):
         return FIFOQueue(*map(f, self))          # type: ignore
 
     def push(self, *ds: _T) -> None:
-        """Push data on rear of the `FIFOQueue` & no return value."""
-        for d in ds:
-            if d != None:
-                self._ca.pushR(d)
+        """Push data onto the `FIFOQueue`."""
+        self._ca.pushR(*ds)
 
     def pop(self) -> Optional[_T]:
         """Pop data off front of the `FIFOQueue`."""
         return self._ca.popL()
 
-    def peakLastIn(self) -> Optional[_T]:
+    def peak_last_in(self) -> Optional[_T]:
         """Return last element pushed to the `FIFOQueue` without consuming it"""
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
-    def peakNextOut(self) -> Optional[_T]:
+    def peak_next_out(self) -> Optional[_T]:
         """Return next element ready to `pop` from the `FIFOQueue`."""
         if self._ca:
             return self._ca[0]
@@ -197,7 +159,7 @@ class LIFOQueue(QueueBase[_T]):
         return LIFOQueue(*self)
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> LIFOQueue[_S]:
-        """Apply function over the lifo queue's contents.
+        """Apply function over the LIFO queue's contents.
 
         * suppress any `None` values returned by `f`
 
@@ -206,14 +168,15 @@ class LIFOQueue(QueueBase[_T]):
         return LIFOQueue(*map(f, self))          # type: ignore
 
     def push(self, *ds: _T) -> None:
-        """Push data on rear of the `LIFOQueue` & no return value."""
-        for d in ds:
-            if d != None:
-                self._ca.pushR(d)
+        """Push data onto the `LIFOQueue` & no return value."""
+        self._ca.pushR(*ds)
 
     def pop(self) -> Optional[_T]:
         """Pop data off rear of the `LIFOQueue`."""
-        return self._ca.popR()
+        if self._ca:
+            return self._ca.popR()
+        else:
+            return None
 
     def peak(self) -> Optional[_T]:
         """Return last element pushed to the `LIFOQueue` without consuming it."""
@@ -238,7 +201,7 @@ class DoubleQueue(QueueBase[_T]):
         return dqueue
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> DoubleQueue[_S]:
-        """Apply function over the lifo queue's contents.
+        """Apply function over the LIFO queue's contents.
 
         * suppress any `None` values returned by `f`
 
@@ -248,15 +211,11 @@ class DoubleQueue(QueueBase[_T]):
 
     def pushR(self, *ds: _T) -> None:
         """Push data left to right onto rear of the `DoubleQueue`."""
-        for d in ds:
-            if d != None:
-                self._ca.pushR(d)
+        self._ca.pushR(*ds)
 
     def pushL(self, *ds: _T) -> None:
         """Push data left to right onto front of `DoubleQueue`."""
-        for d in ds:
-            if d != None:
-                self._ca.pushL(d)
+        self._ca.pushL(*ds)
 
     def popR(self) -> Optional[_T]:
         """Pop data off rear of the `DoubleQueue`."""

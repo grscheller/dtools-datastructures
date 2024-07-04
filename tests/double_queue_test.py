@@ -60,25 +60,23 @@ class TestDqueue:
         assert len(dq2) == 0
 
     def test_pushing_None(self) -> None:
-        dq0: DoubleQueue[int] = DoubleQueue()
-        dq1: DoubleQueue[int] = DoubleQueue()
-        dq2: DoubleQueue[int] = DoubleQueue()
+        dq1: DoubleQueue[Optional[int]] = DoubleQueue()
+        dq2: DoubleQueue[Optional[int]] = DoubleQueue()
         dq1.pushR(None)
         dq2.pushL(None)
-        assert dq0 == dq1 == dq2
+        assert dq1 == dq2
+
+        def is42(ii: int) -> Optional[int]:
+            return None if ii == 42 else ii
 
         barNone = (1, 2, None, 3, None, 4)
-        bar = (1, 2, 3, 4)
-        dq0 = DoubleQueue(*barNone)
-        dq1 = DoubleQueue(*bar)
-        assert dq0 == dq1
-        for d in iter(dq0):
-            assert d is not None
-        for d in dq1:
-            assert d is not None
+        bar42 = (1, 2, 42, 3, 42, 4)
+        dq3 = DoubleQueue(*barNone)
+        dq4 = DoubleQueue(*map(is42, bar42))
+        assert dq3 == dq4
 
     def test_bool_len_peak(self) -> None:
-        dq = DoubleQueue()
+        dq: DoubleQueue[int] = DoubleQueue()
         assert not dq
         dq.pushL(2,1)
         dq.pushR(3)
