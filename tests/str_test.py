@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
+from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
@@ -47,35 +50,10 @@ class Test_str:
         assert str(Either(addLt42(10, 40), '')) == "Right('')"
         assert str(Either(None, 'Foofoo rules')) == "Right('Foofoo rules')"
         assert str(Left(42)) == 'Left(42)'
-        assert str(Right(13)) == 'Right(13)'
+        assert str(Right('13')) == "Right('13')"
 
     def test_SplitEnd(self) -> None:
-        s1 = SplitEnd()
-        assert str(s1) == '||  ><'
-        s1.push(42)
-        assert str(s1) == '|| 42 ><'
-        s1.push()
-        assert str(s1) == '|| 42 ><'
-        s1.push('Buggy the clown')
-        assert str(s1) == "|| 42 <- 'Buggy the clown' ><"
-        assert s1.pop() == 'Buggy the clown'
-
-        foo = SplitEnd(1)
-        bar = foo.copy()
-        bar.pop()
-        foo.push(2,3,4)
-        bar.push(2)
-        bar.push(3)
-        bar.push(4)
-        baz = bar
-        assert str(foo) == '|| 1 <- 2 <- 3 <- 4 ><'
-        assert str(baz) == '|| 2 <- 3 <- 4 ><'
-        assert str(bar) == '|| 2 <- 3 <- 4 ><'
-        assert bar == baz
-        assert bar is baz
-
-    def test_SplitEnd(self) -> None:
-        s1: SplitEnd[Optional[Int]] = SplitEnd()
+        s1: SplitEnd[Optional[object]] = SplitEnd()
         assert str(s1) == '||  ><'
         s2 = s1.cons(42)
         assert str(s1) == '||  ><'
@@ -110,7 +88,7 @@ class Test_str:
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
-        assert str(q1) == '|| 1 > 2 > 3 ><'
+        assert str(q1) == '|| 3 > 2 > 1 ><'
 
     def test_DQueue(self) -> None:
         dq1: DoubleQueue[int] = DoubleQueue()

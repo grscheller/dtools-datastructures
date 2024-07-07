@@ -28,7 +28,7 @@ Types of Queues:
 
 from __future__ import annotations
 
-__all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue']
+__all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -42,34 +42,20 @@ _S = TypeVar('_S')
 class QueueBase(Generic[_T]):
     """Abstract base class for stateful queue-based data structures
 
-    * primarily for DRY implementation inheritance of queue type classes
-    * derived classes used will resize themselves as needed
+    * provided to allow users to define their own queue type classes
+    * primarily for DRY implementation inheritance and generics
     * each queue object "has-a" (contains) a circular array to store its data
-    * care is needed if None is stored as a value on Queue data structures 
+    * initial data to initializer stored in same order as provided
+    * care is needed if `None` is stored as a value on derived data structures
     """
     __slots__ = '_ca'
 
     def __init__(self, *ds: _T):
-        """Construct a queue data structure. Cull None values."""
-        self._ca: CircularArray[_T] = CircularArray(*ds)
+        """Construct a queue data structure.
 
-    # TODO: change to yield in the "natural" data retrieval order of the queue
-    def __iter__(self) -> Iterator[_T]:
-        """Iterator yielding data currently stored in the queue. Data yielded in
-        natural FIFO order.
+        * data always internally stored in the same order as `ds`
         """
-        ca = self._ca.copy()
-        for pos in range(len(ca)):
-            yield ca[pos]
-
-    def __reversed__(self) -> Iterator[_T]:
-        """Reverse iterate over the current state of the queue."""
-        ca = self._ca.copy()
-        for pos in range(len(ca)-1, -1, -1):
-            yield ca[pos]
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, self)) + ')'
+        self._ca: CircularArray[_T] = CircularArray(*ds)
 
     def __bool__(self) -> bool:
         """Returns `True` if queue is not empty."""
@@ -81,47 +67,43 @@ class QueueBase(Generic[_T]):
 
     def __eq__(self, other: object) -> bool:
         """Returns `True` if all the data stored in both compare as equal.
-        Worst case is O(n) behavior for the true case.
+
+        * worst case is O(n) behavior for the true case.
         """
         if not isinstance(other, type(self)):
             return False
         return self._ca == other._ca
 
-    # TODO: change to fold in the "natural" data retrieval order of the queue
-
-    def foldL(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
-        return self._ca.foldL(f)
-
-    def foldR(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
-        return self._ca.foldR(f)
-
-    def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
-        return self._ca.foldL1(f, init)
-
-    def foldR1(self, f:Callable[[_T, _S], _S], init: _S) -> _S:
-        return self._ca.foldR1(f, init)
-
 class FIFOQueue(QueueBase[_T]):
-    """Stateful single sided FIFO data structure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto the queue.
+    """Stateful First In First Out (FIFO) data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in natural FIFO order
     """
     __slots__ = ()
+
+    def __iter__(self) -> Iterator[_T]:
+        """Iterator yielding data currently stored in the queue.
+
+        * data yielded in natural FIFO order.
+        """
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
+
+    def __repr__(self) -> str:
+        return 'FIFOQueue(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
 
     def copy(self) -> FIFOQueue[_T]:
         """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
-        return FIFOQueue(*self)
+        return FIFOQueue(*self._ca)
 
-    def map(self, f: Callable[[_T], Optional[_S]]) -> FIFOQueue[_S]:
-        """Apply function over the FIFO queue's contents.
-
-        * suppress any `None` values returned by `f`
-
-        """
-        # initializer strips the None values
-        return FIFOQueue(*map(f, self))          # type: ignore
+    def map(self, f: Callable[[_T], _S]) -> FIFOQueue[_S]:
+        """Apply function over the FIFO queue's contents."""
+        return FIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -> None:
         """Push data onto the `FIFOQueue`."""
@@ -145,27 +127,55 @@ class FIFOQueue(QueueBase[_T]):
         else:
             return None
 
+    def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Reduce with f.
+
+        * if FIFOArray is not empty, returns a value of the of type _T
+        * if FIFOArray empty, returns None
+        * folds in natural FIFO Order
+        """
+        return self._ca.foldL(f)
+
+    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+        """Reduce with f.
+
+        * always returns a value of type _S
+        * type _S can be the same type as _T
+        * folds in natural LIFO Order
+        """
+        return self._ca.foldL1(f, init)
+
 class LIFOQueue(QueueBase[_T]):
-    """Stateful single sided LIFO data structure. Will resize itself as needed. `None`
-    represents the absence of a value and ignored if pushed onto the queue.
+    """Stateful Last In First Out (LIFO) data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in natural LIFO order
     """
     __slots__ = ()
 
+    def __iter__(self) -> Iterator[_T]:
+        """Iterator yielding data currently stored in the queue.
+
+        * data yielded in natural LIFO order.
+        """
+        ca = self._ca.copy()
+        for pos in range(len(ca)-1, -1, -1):
+            yield ca[pos]
+
+    def __repr__(self) -> str:
+        return 'LIFOQueue(' + ', '.join(map(repr, self._ca)) + ')'
+
     def __str__(self) -> str:
+        # TODO: This may need fixing
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def copy(self) -> LIFOQueue[_T]:
         """Return shallow copy of the `FIFOQueue` in O(n) time & space complexity."""
-        return LIFOQueue(*self)
+        return LIFOQueue(*self._ca)
 
-    def map(self, f: Callable[[_T], Optional[_S]]) -> LIFOQueue[_S]:
-        """Apply function over the LIFO queue's contents.
-
-        * suppress any `None` values returned by `f`
-
-        """
-        # initializer strips the None values
-        return LIFOQueue(*map(f, self))          # type: ignore
+    def map(self, f: Callable[[_T], _S]) -> LIFOQueue[_S]:
+        """Apply function over the LIFO queue's contents."""
+        return LIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -> None:
         """Push data onto the `LIFOQueue` & no return value."""
@@ -173,10 +183,7 @@ class LIFOQueue(QueueBase[_T]):
 
     def pop(self) -> Optional[_T]:
         """Pop data off rear of the `LIFOQueue`."""
-        if self._ca:
-            return self._ca.popR()
-        else:
-            return None
+        return self._ca.popR()
 
     def peak(self) -> Optional[_T]:
         """Return last element pushed to the `LIFOQueue` without consuming it."""
@@ -185,11 +192,43 @@ class LIFOQueue(QueueBase[_T]):
         else:
             return None
 
+    def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Reduce with f.
+
+        * if LIFOArray is not empty, returns a value of the of type _T
+        * if LIFOArray empty, returns None
+        * folds in natural LIFO Order
+        """
+        return self._ca.foldR(f)
+
+    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+        """Reduce with f.
+
+        * always returns a value of type _S
+        * type _S can be the same type as _T
+        * folds in natural LIFO Order
+        """
+        return self._ca.foldR1(lambda s, t: f(t, s), init)
+
 class DoubleQueue(QueueBase[_T]):
-    """Stateful double sided queue data structure. Will resize itself as needed.
-    `None` represents the absence of a value and ignored if pushed onto the queue.
+    """Stateful Double Sided Queue data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in FIFO order
     """
     __slots__ = ()
+
+    def __iter__(self) -> Iterator[_T]:
+        """Iterator yielding data currently stored in the queue.
+
+        * data yielded in FIFO (left to right) order.
+        """
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
+
+    def __repr__(self) -> str:
+        return 'DoubleQueue(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
@@ -201,12 +240,7 @@ class DoubleQueue(QueueBase[_T]):
         return dqueue
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> DoubleQueue[_S]:
-        """Apply function over the LIFO queue's contents.
-
-        * suppress any `None` values returned by `f`
-
-        """
-        # initializer strips the None values
+        """Apply function over the Double queue's contents."""
         return DoubleQueue(*map(f, self))          # type: ignore
 
     def pushR(self, *ds: _T) -> None:
@@ -238,3 +272,35 @@ class DoubleQueue(QueueBase[_T]):
             return self._ca[0]
         else:
             return None
+
+    def foldL(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Reduce Left with f.
+
+        * if DoubleArray is not empty, returns a value of the of type _T
+        * if DoubleArray empty, returns None
+        """
+        return self._ca.foldL(f)
+
+    def foldR(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Reduce right with f.
+
+        * if DoubleArray is not empty, returns a value of the of type _T
+        * if DoubleArray empty, returns None
+        """
+        return self._ca.foldR(f)
+
+    def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+        """Reduce Left with f starting with an initial value.
+
+        * always returns a value of type _S
+        * type _S can be the same type as _T
+        """
+        return self._ca.foldL1(f, init)
+
+    def foldR1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+        """Reduce Right with f starting with an initial value.
+
+        * always returns a value of type _S
+        * type _S can be the same type as _T
+        """
+        return self._ca.foldR1(lambda t, s: f(s, t), init)

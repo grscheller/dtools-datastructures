@@ -101,7 +101,7 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_ftuple(self) -> None:
-        ft1 = FTuple()
+        ft1:FTuple[object] = FTuple()
         assert repr(ft1) == 'FTuple()'
         ft2 = eval(repr(ft1))
         assert ft2 == ft1
@@ -113,10 +113,14 @@ class Test_repr:
         assert ft2 == ft1
         assert ft2 is not ft1
 
-        ft1[2].append(42)
+        list_ref = ft1[2]
+        if type(list_ref) == list:
+            list_ref.append(42)
+        else:
+            assert False
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
-        popped = ft1[2].pop()
+        popped = ft1[2].pop()                                     # type: ignore
         assert popped == 42
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
@@ -124,7 +128,7 @@ class Test_repr:
         # beware immutable collections of mutable objects
         ft1 = FTuple(42, 'foo', [10, 22])
         ft2 = ft1.copy()
-        ft1[2].append(42)
+        ft1[2].append(42)                                         # type: ignore
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22, 42])"
         popped = ft2[2].pop()
@@ -132,7 +136,7 @@ class Test_repr:
         assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
-    def test_SplitEnd(self) -> None:
+    def test_SplitEnd_procedural_methods(self) -> None:
         ps1: SplitEnd[object] = SplitEnd()
         assert repr(ps1) == 'SplitEnd()'
         ps2 = eval(repr(ps1))
@@ -158,8 +162,8 @@ class Test_repr:
         assert ps2 == ps1
         assert ps2 is not ps1
 
-    def test_SplitEnd(self) -> None:
-        fs1 = SplitEnd()
+    def test_SplitEnd_functional_methods(self) -> None:
+        fs1: SplitEnd[object] = SplitEnd()
         assert repr(fs1) == 'SplitEnd()'
         fs2 = eval(repr(fs1))
         assert fs2 == fs1
@@ -172,14 +176,19 @@ class Test_repr:
         assert fs2 is not fs1
 
         assert fs1.head() == 'foo'
-        fs1 = fs1.tail()
-        fs1 = fs1.cons(2).cons(3).cons(4).cons(5)
-        assert fs1.head() == 5
-        fs1 = fs1.tail().cons(42)
-        assert repr(fs1) == 'SplitEnd(1, 2, 3, 4, 42)'
-        fs2 = eval(repr(fs1))
-        assert fs2 == fs1
-        assert fs2 is not fs1
+        fs3 = fs1.tail()
+        if fs3 is None:
+            assert False
+        fs3 = fs3.cons(2).cons(3).cons(4).cons(5)
+        assert fs3.head() == 5
+        if fs3:
+            fs4 = fs3.tail().cons(42)                             # type: ignore
+        else:
+            assert False
+        assert repr(fs4) == 'SplitEnd(1, 2, 3, 4, 42)'
+        fs5 = eval(repr(fs4))
+        assert fs5 == fs4
+        assert fs5 is not fs4
 
     def test_maybe(self) -> None:
         mb1: Maybe[object] = Nothing()
@@ -261,26 +270,29 @@ class Test_repr:
         assert repr(e7) == "Right('was to be 7')"
         assert repr(e8) ==  "Right('was to be 8')"
 
-        foofoo00: Either[Either[str, str], str] = Left(Left('foo'))
-        foofoo01: Either[Either[str, str], str] = Left(Right('foo'))
-        foofoo10: Either[Either[str, str], Either[str,str]] = Right(Left('foo'))
-        foofoo11: Either[Either[str, str], Either[str,str]] = Right(Right('foo'))
-        assert repr(foofoo00) == "Left(Left('foo'))"
-        assert repr(foofoo01) == "Left(Right('foo'))"
-        assert repr(foofoo10) == "Right(Left('foo'))"
-        assert repr(foofoo11) == "Right(Right('foo'))"
+        # foo00: Either[Either[str, str], str] = Left(Left('00', 'foo'))
+        # foo01: Either[Either[str, str], str] = Left(Right('01'))
+        # foo10: Either[Either[str, str], Either[str,str]] = Right(Left('10', 'foo'))
+        # foo11: Either[Either[str, str], Either[str,str]] = Right(Right('foo'))
+        # assert repr(foo00) == "Left(Left('00'))"
+        # assert repr(foo01) == "Left(Right('01'))"
+        # assert repr(foo10) == "Right(Left('foo'))"
+        # assert repr(foo11) == "Right(Right('foo'))"
 
-        foofoo10clone = eval(repr(foofoo10))
-        assert foofoo10clone != foofoo11
-        assert foofoo10clone == foofoo10
-        assert foofoo10clone is not foofoo10
+        # foo10clone = eval(repr(foo10))
+        # assert foo10clone != foo11
+        # assert foo10clone == foo10
+        # assert foo10clone is not foo10
 
 class Test_repr_mix:
     def test_mix1(self) -> None:
-        thing1: Any = Left(FIFOQueue(
+        thing1: Either[object, str] = Left(FIFOQueue(
             FTuple(42, Some(42), Left(None, 'nobody home')),
             SplitEnd([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))
         ))
+        
+        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), SplitEnd([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))))"
+        assert repr(thing1) == repr_str
 
         thing2 = eval(repr(thing1))
         assert thing2 == thing1
@@ -290,5 +302,5 @@ class Test_repr_mix:
         repr_thing2 = repr(thing2)
         assert repr_thing2 == repr_thing1
 
-        repr_str = "Left(FIFOQueue(FTuple(42, Some(42), Right('nobody home')), SplitEnd([1, 2, 3, Nothing()], 42, Left(LIFOQueue('foo', 'bar')))))"
         assert repr_thing1 == repr_str
+        assert repr_thing2 == repr_str

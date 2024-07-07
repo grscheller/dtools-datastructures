@@ -20,7 +20,7 @@
 """
 from __future__ import annotations
 
-__all__ = ['SL_Node', 'BT_Node', 'LT_Node']
+__all__ = ['SL_Node', 'BT_Node']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
