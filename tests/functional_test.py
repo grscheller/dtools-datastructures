@@ -72,6 +72,13 @@ class TestMB:
         assert n1.get(13) == (10 + 3)
         assert n1.get(10//7) == 10//7
 
+    def test_equal_self(self) -> None:
+        mb42 = MB(40+2)
+        mbno: MB[int] = MB()
+        mb42 != mbno
+        mb42 == mb42
+        mbno == mbno
+
 class TestXOR:
     def test_identity(self) -> None:
         e1: XOR[int, str] = XOR(42, '')
@@ -131,6 +138,24 @@ class TestXOR:
         assert e5 != e7
         assert e7 == e7
 
+    def test_equal_self(self) -> None:
+        xor42 = XOR(40+2, 'forty-two')
+        xorno42: XOR[int, str] = XOR(None, 'no forty-two')
+        xor_fortytwo = XOR('forty-two', 21*2)
+        xor42tuple = XOR(42, (2, 3))
+
+        assert xor42 == xor42
+        assert xorno42 == xorno42
+        assert xor_fortytwo == xor_fortytwo
+        assert xor42tuple == xor42tuple
+
+        assert xor42 != xor_fortytwo
+        assert xor42 == xor42tuple
+
+        thing1: XOR[int, str] = xor42.map(lambda _: None, 'none').mapRight(lambda s: s + '?')
+        thing2: XOR[int, str] = xor42.flatMap(lambda _: XOR(None, 'none?'))
+        assert thing1 == thing2
+
     def test_either_right(self) -> None:
         def noMoreThan5(x: int) -> int|None:
             if x <= 5:
@@ -138,9 +163,9 @@ class TestXOR:
             else:
                 return None
 
-        s1 = XOR(3, right = 'foofoo rules')
+        s1 = XOR(3, default_right = 'foofoo rules')
         s2 = s1.map(noMoreThan5, 'more than 5')
-        s3 = XOR(42, right = 'foofoo rules')
+        s3 = XOR(42, 'foofoo rules')
         s4 = s3.map(noMoreThan5, 'more than 5')
         assert s1.get() == 3
         assert s2.get() == 3
@@ -216,7 +241,7 @@ class TestXOR:
 
         left42 = mb_to_xor(mb42, 'fail!')
         right = mb_to_xor(mbNot, 'Nobody home')
-        assert left42 == XOR(42, '')
+        assert left42 == XOR(42, 'fail!')
         assert right == XOR(None, 'Nobody home')
 
         ph42 = xor_to_mb(left42)

@@ -266,8 +266,9 @@ class Test_repr:
         assert e7 != e8
         assert e7 == eval(repr(e7))
 
-        assert repr(e1) == repr(e2) ==  'XOR(2)'
-        assert repr(e3) ==  'XOR(3)'
+        assert repr(e1) ==  "XOR(2, 'TODO: should I be comparing error messages?')"
+        assert repr(e2) ==  "XOR(2, 'None!')"
+        assert repr(e3) ==  "XOR(3, 'None!')"
         assert repr(e7) == "XOR(None, 'was to be 7')"
         assert repr(e8) ==  "XOR(None, 'was to be 8')"
 

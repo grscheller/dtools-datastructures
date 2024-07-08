@@ -44,12 +44,12 @@ class Test_str:
         assert str(s1) == 'MB(1)'
 
     def test_XOR(self) -> None:
-        assert str(XOR(10, '')) == "XOR(10)"
-        assert str(XOR(addLt42(10, -4), 'foofoo')) == "XOR(6)"
+        assert str(XOR(10, '')) == "XOR(10, '')"
+        assert str(XOR(addLt42(10, -4), 'foofoo')) == "XOR(6, 'foofoo')"
         assert str(XOR(addLt42(10, 40), '')) == "XOR(None, '')"
         assert str(XOR(None, 'Foofoo rules')) == "XOR(None, 'Foofoo rules')"
-        assert str(XOR(42, '')) == 'XOR(42)'
-        assert str(XOR('13', 0)) == "XOR('13')"
+        assert str(XOR(42, '')) == "XOR(42, '')"
+        assert str(XOR('13', 0)) == "XOR('13', 0)"
 
     def test_SplitEnd(self) -> None:
         s1: SplitEnd[Optional[object]] = SplitEnd()

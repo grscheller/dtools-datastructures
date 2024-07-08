@@ -89,9 +89,9 @@ class MB(Generic[_T]):
         * default alternate value is `None`
         """
         if self._value is None:
-            return self._value
-        else:
             return alt
+        else:
+            return self._value
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> MB[_S]:
         """Map `f` over the 0 or 1 elements of the data structure."""
@@ -148,6 +148,8 @@ class XOR(Generic[_L,_R]):
 
         if self and other:
             return self._left == other._left
+        elif not self and not other:
+            return self._right == other._right
         else:
             return False
 
