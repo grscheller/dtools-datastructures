@@ -37,7 +37,7 @@ class MB(Generic[_T]):
 
     * implements the Maybe Monad
     * where `MB(value)` contains a value of type _T
-    * and `MB()` & `MB(None)` both semantically represent "Nothing"
+    * and `MB( )` & `MB(None)` both semantically represent "Nothing"
     * above two imply `None` as a value cannot be stored in a `MB`
     * immutable, a `MB` does not change after being created
     * immutable semantics, `map` & `flatMap` never change `self`
@@ -156,7 +156,7 @@ class XOR(Generic[_L,_R]):
     def get(self, alt: Optional[_L]=None) -> Optional[_L]:
         """Get value if a Left.
 
-        * if XOR is a left, return its value
+        * if the XOR is a left, return its value
         * otherwise return an alternate value of type `_L|NoneType`
         * default alternate value is None
         """
@@ -167,8 +167,8 @@ class XOR(Generic[_L,_R]):
     def getRight(self, alt: Optional[_R]=None) -> Optional[_R]:
         """Get value if a Right.
 
-        * if XOR is a right, return its value
-        * otherwise return an alternate value of type `_S|NoneType`
+        * if the XOR is a right, return its value
+        * otherwise return an alternate value of type `_R|NoneType`
         * default alternate value is None
         """
         if self._left is None:

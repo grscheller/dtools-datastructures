@@ -64,7 +64,7 @@ hljs.highlightAll();
 <ul>
 <li>implements the Maybe Monad</li>
 <li>where <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>(value)</code> contains a value of type _T</li>
-<li>and <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code> &amp; <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>(None)</code> both semantically represent "Nothing"</li>
+<li>and <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>( )</code> &amp; <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>(None)</code> both semantically represent "Nothing"</li>
 <li>above two imply <code>None</code> as a value cannot be stored in a <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code></li>
 <li>immutable, a <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code> does not change after being created</li>
 <li>immutable semantics, <code>map</code> &amp; <code>flatMap</code> never change <code>self</code></li>
@@ -78,7 +78,7 @@ hljs.highlightAll();
 
     * implements the Maybe Monad
     * where `MB(value)` contains a value of type _T
-    * and `MB()` &amp; `MB(None)` both semantically represent &#34;Nothing&#34;
+    * and `MB( )` &amp; `MB(None)` both semantically represent &#34;Nothing&#34;
     * above two imply `None` as a value cannot be stored in a `MB`
     * immutable, a `MB` does not change after being created
     * immutable semantics, `map` &amp; `flatMap` never change `self`
@@ -247,7 +247,7 @@ hljs.highlightAll();
     def get(self, alt: Optional[_L]=None) -&gt; Optional[_L]:
         &#34;&#34;&#34;Get value if a Left.
 
-        * if XOR is a left, return its value
+        * if the XOR is a left, return its value
         * otherwise return an alternate value of type `_L|NoneType`
         * default alternate value is None
         &#34;&#34;&#34;
@@ -258,8 +258,8 @@ hljs.highlightAll();
     def getRight(self, alt: Optional[_R]=None) -&gt; Optional[_R]:
         &#34;&#34;&#34;Get value if a Right.
 
-        * if XOR is a right, return its value
-        * otherwise return an alternate value of type `_S|NoneType`
+        * if the XOR is a right, return its value
+        * otherwise return an alternate value of type `_R|NoneType`
         * default alternate value is None
         &#34;&#34;&#34;
         if self._left is None:
@@ -307,7 +307,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Get value if a Left.</p>
 <ul>
-<li>if XOR is a left, return its value</li>
+<li>if the XOR is a left, return its value</li>
 <li>otherwise return an alternate value of type <code>_L|NoneType</code></li>
 <li>default alternate value is None</li>
 </ul></div>
@@ -318,8 +318,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Get value if a Right.</p>
 <ul>
-<li>if XOR is a right, return its value</li>
-<li>otherwise return an alternate value of type <code>_S|NoneType</code></li>
+<li>if the XOR is a right, return its value</li>
+<li>otherwise return an alternate value of type <code>_R|NoneType</code></li>
 <li>default alternate value is None</li>
 </ul></div>
 </dd>
