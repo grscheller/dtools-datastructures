@@ -124,30 +124,26 @@ hljs.highlightAll();
         return self._value == other._value
 
     def get(self, alt: Optional[_T]=None) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Get contents if they exist, otherwise return an alternate value.&#34;&#34;&#34;
-        if self:
+        &#34;&#34;&#34;Get contents if they exist
+
+        * otherwise return an alternate value of type `_T|NoneType`
+        * default alternate value is `None`
+        &#34;&#34;&#34;
+        if self._value is None:
             return self._value
         else:
             return alt
 
     def map(self, f: Callable[[_T], Optional[_S]]) -&gt; MB[_S]:
-        &#34;&#34;&#34;Map `f` over the 0 or 1 elements of the data structure.
-
-        * returns a new `MB` instance only if necessary
-        * to help keep reference count low, will re-use self
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Map `f` over the 0 or 1 elements of the data structure.&#34;&#34;&#34;
         if self._value is None:
-            return self         # type: ignore # at runtime, just another &#34;Nothing&#34;
+            return MB()
         return MB(f(self._value))
 
     def flatmap(self, f: Callable[[_T], MB[_S]]) -&gt; MB[_S]:
-        &#34;&#34;&#34;Map `f` and flatten.
-
-        * returns a new `MB` instance only if necessary
-        * to help keep reference count low, will re-use self
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Map `f` and flatten.&#34;&#34;&#34;
         if self._value is None:
-            return self         # type: ignore # at runtime, just another &#34;Nothing&#34;
+            return MB()
         return f(self._value)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -160,45 +156,41 @@ hljs.highlightAll();
 <span>def <span class="ident">flatmap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>[_S]]) ‑> <a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>[~_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Map <code>f</code> and flatten.</p>
-<ul>
-<li>returns a new <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code> instance only if necessary</li>
-<li>to help keep reference count low, will re-use self</li>
-</ul></div>
+<div class="desc"><p>Map <code>f</code> and flatten.</p></div>
 </dd>
 <dt id="grscheller.datastructures.fp.MB.get"><code class="name flex">
 <span>def <span class="ident">get</span></span>(<span>self, alt: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get contents if they exist, otherwise return an alternate value.</p></div>
+<div class="desc"><p>Get contents if they exist</p>
+<ul>
+<li>otherwise return an alternate value of type <code>_T|NoneType</code></li>
+<li>default alternate value is <code>None</code></li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.fp.MB.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], Optional[_S]]) ‑> <a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a>[~_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Map <code>f</code> over the 0 or 1 elements of the data structure.</p>
-<ul>
-<li>returns a new <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code> instance only if necessary</li>
-<li>to help keep reference count low, will re-use self</li>
-</ul></div>
+<div class="desc"><p>Map <code>f</code> over the 0 or 1 elements of the data structure.</p></div>
 </dd>
 </dl>
 </dd>
 <dt id="grscheller.datastructures.fp.XOR"><code class="flex name class">
 <span>class <span class="ident">XOR</span></span>
-<span>(</span><span>left: Optional[_L], right: _R)</span>
+<span>(</span><span>potential_left: Optional[_L], default_right: _R)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class that either contains a "left" value or "right" value, but not both.</p>
 <ul>
 <li>implements a left biased Either Monad</li>
-<li>where `XOR(None, r: _S): XOR[_T,_S]</li>
-<li>where `XOR(l: _T, None): XOR[_T,_S]</li>
-<li>above two imply <code>None</code> as a value cannot be stored in a "left" <code><a title="grscheller.datastructures.fp.MB" href="#grscheller.datastructures.fp.MB">MB</a></code></li>
-<li>in Boolean context, returns <code>True</code> if a "left", <code>False</code> if a "right"</li>
-<li>immutable, does not change after being created</li>
+<li>semantically containing 1 of 2 possible types of values</li>
+<li><code>XOR(l: _T, r: _S)</code> produces "left" value</li>
+<li><code>XOR(None, r: _S)</code> produces a "right" value</li>
+<li>therefore <code>None</code> (as a value, not implementation detail) can't be stored in a "left"</li>
+<li>in a Boolean context, returns <code>True</code> if a "left", <code>False</code> if a "right"</li>
 <li>immutable, an <code><a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a></code> does not change after being created</li>
-<li>immutable semantics, <code>map</code> &amp; <code>flatMap</code> never change <code>self</code></li>
+<li>immutable semantics, <code>map</code> &amp; <code>flatMap</code> never mutate <code>self</code></li>
 </ul></div>
 <details class="source">
 <summary>
@@ -208,94 +200,92 @@ hljs.highlightAll();
     &#34;&#34;&#34;Class that either contains a &#34;left&#34; value or &#34;right&#34; value, but not both.
 
     * implements a left biased Either Monad
-    * where `XOR(None, r: _S): XOR[_T,_S]
-    * where `XOR(l: _T, None): XOR[_T,_S]
-    * above two imply `None` as a value cannot be stored in a &#34;left&#34; `MB`
-    * in Boolean context, returns `True` if a &#34;left&#34;, `False` if a &#34;right&#34;
-    * immutable, does not change after being created
+    * semantically containing 1 of 2 possible types of values
+    * `XOR(l: _T, r: _S)` produces &#34;left&#34; value
+    * `XOR(None, r: _S)` produces a &#34;right&#34; value
+    * therefore `None` (as a value, not implementation detail) can&#39;t be stored in a &#34;left&#34;
+    * in a Boolean context, returns `True` if a &#34;left&#34;, `False` if a &#34;right&#34;
     * immutable, an `XOR` does not change after being created
-    * immutable semantics, `map` &amp; `flatMap` never change `self`
+    * immutable semantics, `map` &amp; `flatMap` never mutate `self`
     &#34;&#34;&#34;
-    __slots__ = &#39;_value&#39;, &#39;_isLeft&#39;
+    __slots__ = &#39;_left&#39;, &#39;_right&#39;
 
-    def __init__(self, left: Optional[_L], right: _R):
-        self._value: _L|_R
-        if left is None:
-            self._isLeft = False
-            self._value = right
-        else:
-            self._isLeft = True
-            self._value = left
-
-    def __iter__(self) -&gt; Iterator[_L]:
-        &#34;&#34;&#34;Yields its value if a &#34;left&#34; XOR.&#34;&#34;&#34;
-        if self._isLeft:
-            yield self._value       # type: ignore # always will be type _T
-
-    def __repr__(self) -&gt; str:
-        if self._isLeft:
-            return &#39;XOR(&#39; + repr(self._value) + &#39;)&#39;
-        else:
-            return &#39;XOR(None, &#39; + repr(self._value) + &#39;)&#39;
+    def __init__(self, potential_left: Optional[_L], default_right: _R):
+        self._left, self._right = potential_left, default_right
 
     def __bool__(self) -&gt; bool:
-        &#34;&#34;&#34;Determine if an `XOR` contains a &#34;left&#34; or &#34;right&#34; value.
+        &#34;&#34;&#34;Predicate to determine if the `XOR` contains a &#34;left&#34; or a &#34;right&#34;.
 
-        * `True` if a &#34;left&#34; `XOR`
-        * `False` if a &#34;right&#34; `XOR`
+        * true if the XOR is a &#34;left&#34;
+        * false if the XOR is a &#34;right&#34;
         &#34;&#34;&#34;
-        return self._isLeft
+        return self._left is not None
+
+    def __iter__(self) -&gt; Iterator[_L]:
+        &#34;&#34;&#34;Yields its value if the XOR is a &#34;left&#34;.&#34;&#34;&#34;
+        if self._left is not None:
+            yield self._left
+
+    def __repr__(self) -&gt; str:
+        return &#39;XOR(&#39; + repr(self._left) + &#39;, &#39; + repr(self._right) + &#39;)&#39;
 
     def __len__(self) -&gt; int:
-        &#34;&#34;&#34;An `XOR` always contains just one value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Semantically, an `XOR` always contains just one value.&#34;&#34;&#34;
         return 1
 
     def __eq__(self, other: object) -&gt; bool:
         if not isinstance(other, type(self)):
             return False
 
-        if (self._isLeft and other._isLeft) or (not self._isLeft and not other._isLeft):
-            return self._value == other._value
+        if self and other:
+            return self._left == other._left
         else:
             return False
 
     def get(self, alt: Optional[_L]=None) -&gt; Optional[_L]:
-        &#34;&#34;&#34;Get value if a `Left,` otherwise return `default` value.&#34;&#34;&#34;
-        if self:
-            return self._value    # type: ignore
-        return alt
+        &#34;&#34;&#34;Get value if a Left.
 
-    def getRight(self, alt: Optional[_S]=None) -&gt; Optional[_S]:
-        &#34;&#34;&#34;Get value if a `Right`, otherwise return `None`.&#34;&#34;&#34;
-        if self:
+        * if XOR is a left, return its value
+        * otherwise return an alternate value of type `_L|NoneType`
+        * default alternate value is None
+        &#34;&#34;&#34;
+        if self._left is None:
             return alt
-        return self._value    # type: ignore # returns a &#34;right&#34; value 
+        return self._left
+
+    def getRight(self, alt: Optional[_R]=None) -&gt; Optional[_R]:
+        &#34;&#34;&#34;Get value if a Right.
+
+        * if XOR is a right, return its value
+        * otherwise return an alternate value of type `_S|NoneType`
+        * default alternate value is None
+        &#34;&#34;&#34;
+        if self._left is None:
+            return self._right
+        return alt
 
     def map(self, f: Callable[[_L], Optional[_S]], right: _R) -&gt; XOR[_S, _R]:
         &#34;&#34;&#34;Map over an `XOR`.
 
-        * returns a new `XOR` instance only if necessary
-        * to help keep reference count low, will re-use self
+        * if a &#34;left&#34;, apply f to the value, use `right` only if f returns `None`
+        * if a &#34;right&#34;, propagate existing &#34;right&#34; value
         &#34;&#34;&#34;
-        if self:
-            return XOR(f(self._value), right)    # type: ignore
-        return self                              # type: ignore
+        if self._left is None:
+            return XOR(None, self._right)
+        return XOR(f(self._left), right)
 
     def mapRight(self, g: Callable[[_R], _R]) -&gt; XOR[_L, _R]:
         &#34;&#34;&#34;Map over a `Right(value)`.&#34;&#34;&#34;
-        if self:
-            return self
-        return XOR(None, g(self._value))    # type: ignore # contains a &#34;right&#34; of type _R
+        if self._left is None:
+            return XOR(None, g(self._right))
+        return self
 
     def flatMap(self, f: Callable[[_L], XOR[_S, _R]]) -&gt; XOR[_S, _R]:
-        &#34;&#34;&#34;Map and flatten a `Left` value, propagate `Right` values.
-
-        * raises TypeError if _S does not support __add__ g is `None`
-        &#34;&#34;&#34;
-        if self:
-            return f(self._value)    # type: ignore # f applied to a _L
+        &#34;&#34;&#34;Map and flatten a `Left` value, propagate `Right` values.&#34;&#34;&#34;
+        if self._left is None:
+            return XOR(None, self._right)
         else:
-            return self     # type: ignore # contains a &#34;right&#34; of type _R</code></pre>
+            return f(self._left)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -307,22 +297,29 @@ hljs.highlightAll();
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_L], <a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a>[_S, _R]]) ‑> <a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a>[~_S, ~_R]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Map and flatten a <code>Left</code> value, propagate <code>Right</code> values.</p>
-<ul>
-<li>raises TypeError if _S does not support <strong>add</strong> g is <code>None</code></li>
-</ul></div>
+<div class="desc"><p>Map and flatten a <code>Left</code> value, propagate <code>Right</code> values.</p></div>
 </dd>
 <dt id="grscheller.datastructures.fp.XOR.get"><code class="name flex">
 <span>def <span class="ident">get</span></span>(<span>self, alt: Optional[_L] = None) ‑> Optional[~_L]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get value if a <code>Left,</code> otherwise return <code>default</code> value.</p></div>
+<div class="desc"><p>Get value if a Left.</p>
+<ul>
+<li>if XOR is a left, return its value</li>
+<li>otherwise return an alternate value of type <code>_L|NoneType</code></li>
+<li>default alternate value is None</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.fp.XOR.getRight"><code class="name flex">
-<span>def <span class="ident">getRight</span></span>(<span>self, alt: Optional[_S] = None) ‑> Optional[~_S]</span>
+<span>def <span class="ident">getRight</span></span>(<span>self, alt: Optional[_R] = None) ‑> Optional[~_R]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get value if a <code>Right</code>, otherwise return <code>None</code>.</p></div>
+<div class="desc"><p>Get value if a Right.</p>
+<ul>
+<li>if XOR is a right, return its value</li>
+<li>otherwise return an alternate value of type <code>_S|NoneType</code></li>
+<li>default alternate value is None</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.fp.XOR.map"><code class="name flex">
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_L], Optional[_S]], right: _R) ‑> <a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a>[~_S, ~_R]</span>
@@ -330,8 +327,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Map over an <code><a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a></code>.</p>
 <ul>
-<li>returns a new <code><a title="grscheller.datastructures.fp.XOR" href="#grscheller.datastructures.fp.XOR">XOR</a></code> instance only if necessary</li>
-<li>to help keep reference count low, will re-use self</li>
+<li>if a "left", apply f to the value, use <code>right</code> only if f returns <code>None</code></li>
+<li>if a "right", propagate existing "right" value</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.fp.XOR.mapRight"><code class="name flex">
