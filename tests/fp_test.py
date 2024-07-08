@@ -64,9 +64,9 @@ class Test_FP:
 
 
     def test_ftuple_inherited(self) -> None:
-        ft = FTuple(*range(3, 101))
+        ft:FTuple[int] = FTuple(*range(3, 101))
         l1 = lambda x: 2*x + 1
-        l2 = lambda x: FTuple(*range(1, x+1)).accummulate(lambda x, y: x+y)
+        l2 = lambda x: FTuple(*range(2, x+1)).accummulate1(lambda x, y: x+y, 1)
         ft1 = ft.map(l1)
         ft2 = ft.flatMap(l2)
         ft3 = ft.mergeMap(l2)

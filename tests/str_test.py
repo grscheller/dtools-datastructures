@@ -18,8 +18,7 @@ from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
-from grscheller.datastructures.core.fp import Maybe, Nothing, Some
-from grscheller.datastructures.core.fp import Either, Left, Right
+from grscheller.datastructures.fp import MB, XOR
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -28,29 +27,29 @@ def addLt42(x: int, y: int) -> int|None:
     return None
 
 class Test_str:
-    def test_Maybe(self) -> None:
-        n1: Maybe[int] = Maybe()
-        o1 = Maybe(42)
-        assert str(n1) == 'Nothing()'
-        assert str(o1) == 'Some(42)'
-        mb1 = Maybe(addLt42(3, 7))
-        mb2 = Maybe(addLt42(15, 30))
-        assert str(mb1) == 'Some(10)'
-        assert str(mb2) == 'Nothing()'
-        nt1: Maybe[int] = Nothing()
-        nt2: Maybe[int] = Some(None)
-        nt3: Maybe[int] = Some()
-        s1 = Some(1)
-        assert str(nt1) == str(nt2) == str(nt3) == str(mb2) =='Nothing()'
-        assert str(s1) == 'Some(1)'
+    def test_MB(self) -> None:
+        n1: MB[int] = MB()
+        o1 = MB(42)
+        assert str(n1) == 'MB()'
+        assert str(o1) == 'MB(42)'
+        mb1 = MB(addLt42(3, 7))
+        mb2 = MB(addLt42(15, 30))
+        assert str(mb1) == 'MB(10)'
+        assert str(mb2) == 'MB()'
+        nt1: MB[int] = MB()
+        nt2: MB[int] = MB(None)
+        nt3: MB[int] = MB()
+        s1 = MB(1)
+        assert str(nt1) == str(nt2) == str(nt3) == str(mb2) =='MB()'
+        assert str(s1) == 'MB(1)'
 
-    def test_Either(self) -> None:
-        assert str(Either(10, '')) == 'Left(10)'
-        assert str(Either(addLt42(10, -4), '')) == 'Left(6)'
-        assert str(Either(addLt42(10, 40), '')) == "Right('')"
-        assert str(Either(None, 'Foofoo rules')) == "Right('Foofoo rules')"
-        assert str(Left(42)) == 'Left(42)'
-        assert str(Right('13')) == "Right('13')"
+    def test_XOR(self) -> None:
+        assert str(XOR(10, '')) == "XOR(10)"
+        assert str(XOR(addLt42(10, -4), 'foofoo')) == "XOR(6)"
+        assert str(XOR(addLt42(10, 40), '')) == "XOR(None, '')"
+        assert str(XOR(None, 'Foofoo rules')) == "XOR(None, 'Foofoo rules')"
+        assert str(XOR(42, '')) == 'XOR(42)'
+        assert str(XOR('13', 0)) == "XOR('13')"
 
     def test_SplitEnd(self) -> None:
         s1: SplitEnd[Optional[object]] = SplitEnd()
@@ -105,6 +104,6 @@ class Test_str:
 
     def test_ftuple(self) -> None:
         ft1 = FTuple(1,2,3,4,5)
-        ft2 = ft1.flatMap(lambda x: FTuple(*range(1, x)))
+        ft2: FTuple[int] = ft1.flatMap(lambda x: FTuple(*range(1, x)))
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'

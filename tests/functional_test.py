@@ -12,19 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.core.fp import Maybe, Nothing, Some
-from grscheller.datastructures.core.fp import Either, Left, Right
-from grscheller.datastructures.core.fp import maybe_to_either, either_to_maybe
+from grscheller.datastructures.fp import MB, XOR, mb_to_xor, xor_to_mb
 
 def add2(x: int) -> int:
     return x + 2
 
-class TestMaybe:
+class TestMB:
     def test_identity(self) -> None:
-        n1: Maybe[int] = Maybe()
-        n2: Maybe[int] = Maybe()
-        o1 = Maybe(42)
-        o2 = Maybe(40)
+        n1: MB[int] = MB()
+        n2: MB[int] = MB()
+        o1 = MB(42)
+        o2 = MB(40)
         assert o1 is o1
         assert o1 is not o2
         o3 = o2.map(add2)
@@ -36,10 +34,10 @@ class TestMaybe:
         assert n2 is not o2
 
     def test_equality(self) -> None:
-        n1: Maybe[int] = Maybe()
-        n2: Maybe[int] = Maybe()
-        o1 = Maybe(42)
-        o2 = Maybe(40)
+        n1: MB[int] = MB()
+        n2: MB[int] = MB()
+        o1 = MB(42)
+        o2 = MB(40)
         assert o1 == o1
         assert o1 != o2
         o3 = o2.map(add2)
@@ -51,9 +49,9 @@ class TestMaybe:
         assert n2 != o2
 
     def test_iterate(self) -> None:
-        o1 = Maybe(38)
+        o1 = MB(38)
         o2 = o1.map(add2).map(add2)
-        n1: Maybe[int] = Maybe()
+        n1: MB[int] = MB()
         l1 = []
         l2 = []
         for v in n1:
@@ -65,8 +63,8 @@ class TestMaybe:
         assert l2[0] == 42
 
     def test_get(self) -> None:
-        o1 = Maybe(1)
-        n1: Maybe[int] = Maybe()
+        o1 = MB(1)
+        n1: MB[int] = MB()
         assert o1.get(42) == 1
         assert n1.get(42) == 42
         assert o1.get() == 1
@@ -74,32 +72,13 @@ class TestMaybe:
         assert n1.get(13) == (10 + 3)
         assert n1.get(10//7) == 10//7
 
-    def test_some(self) -> None:
-        o1 = Some(42)
-        n1: Maybe[int] = Some(None)
-        n2: Maybe[int] = Some()
-        assert n1 == n2
-        o2 = o1.map(lambda x: x // 2) 
-        assert o2 == Some(21)
-        o3 = o1.map(lambda _: None) 
-        assert o3 == Some() == Nothing()
-
-    def test_nothing(self) -> None:
-        o1 = Maybe(42)
-        n1: Maybe[int] = Maybe()
-        n2 = n1
-        assert o1 != Nothing()
-        assert n1 == Nothing()
-        assert n1 is n1
-        assert n1 is n2
-
-class TestEither:
+class TestXOR:
     def test_identity(self) -> None:
-        e1: Either[int, str] = Left(42)
-        e2: Either[int, str] = Either(42, 'The secret is unknown')
-        e3: Either[int, str] = Right('not 42')
-        e4: Either[int, str] = Right('not 42')
-        e5: Either[int, str] = Right('also not 42')
+        e1: XOR[int, str] = XOR(42, '')
+        e2: XOR[int, str] = XOR(42, 'The secret is unknown')
+        e3: XOR[int, str] = XOR(None, 'not 42')
+        e4: XOR[int, str] = XOR(None, 'not 42')
+        e5: XOR[int, str] = XOR(None, 'also not 42')
         e6 = e3
         assert e1 is e1
         assert e1 is not e2
@@ -124,11 +103,11 @@ class TestEither:
         assert e6 is e6
 
     def test_equality(self) -> None:
-        e1: Either[int, str] = Left(42)
-        e2: Either[int, str] = Left(42)
-        e3: Either[int, str] = Right('not 42')
-        e4: Either[int, str] = Right('not 42')
-        e5: Either[int, str] = Right('also not 42')
+        e1: XOR[int, str] = XOR(42, '')
+        e2: XOR[int, str] = XOR(42, '')
+        e3: XOR[int, str] = XOR(None, 'not 42')
+        e4: XOR[int, str] = XOR(None, 'not 42')
+        e5: XOR[int, str] = XOR(None, 'also not 42')
         e7 = e3
         assert e1 == e1
         assert e1 == e2
@@ -159,13 +138,13 @@ class TestEither:
             else:
                 return None
 
-        s1 = Left(3, right = 'foofoo rules')
+        s1 = XOR(3, right = 'foofoo rules')
         s2 = s1.map(noMoreThan5, 'more than 5')
-        s3 = Left(42, right = 'foofoo rules')
+        s3 = XOR(42, right = 'foofoo rules')
         s4 = s3.map(noMoreThan5, 'more than 5')
-        assert s1 == Left(3)
-        assert s2 == Left(3)
-        assert s4 == Right('more than 5')
+        assert s1.get() == 3
+        assert s2.get() == 3
+        assert s4.get(42) == 42
         assert s1.getRight() == None
         assert s2.getRight() == None
         assert s3.getRight() == None
@@ -176,69 +155,71 @@ class TestEither:
         assert s4.getRight() == 'more than 5'
 
     def test_either_flatMaps(self) -> None:
-        def lessThan2(x: int) -> Either[int, str]:
+        def lessThan2(x: int) -> XOR[int, str]:
             if x < 2:
-                return Either(x, 'fail!')
+                return XOR(x, 'fail!')
             else:
-                return Either(None, '>=2')
+                return XOR(None, '>=2')
 
-        def lessThan5(x: int) -> Either[int, str]:
+        def lessThan5(x: int) -> XOR[int, str]:
             if x < 5:
-                return Left(x)
+                return XOR(x, '')
             else:
-                return Right('>=5')
+                return XOR(None, '>=5')
 
-        left1 = Left(1)
-        left4 = Left(4)
-        left7 = Left(7)
-        right: Either[int, str] = Right('Nobody home')
+        left1 = XOR(1, 'nono')
+        left4 = XOR(4, '')
+        left7 = XOR(7, 'foobar')
+        right: XOR[int, str] = XOR(None, 'Nobody home')
 
         nobody = right.flatMap(lessThan2)
-        assert nobody == Right('Nobody home')
+        assert nobody == XOR(None, 'Nobody home')
 
         lt2 = left1.flatMap(lessThan2)
         lt5 = left1.flatMap(lessThan5)
-        assert lt2 == Left(1)
-        assert lt5 == Left(1)
+        assert lt2 == XOR(1, 'foofoo rules')
+        assert lt5 == XOR(1, '')
 
         lt2 = left4.flatMap(lessThan2)
         lt5 = left4.flatMap(lessThan5)
-        assert lt2 == Right('>=2')
-        assert lt5 == Left(4)
+        assert lt2 == XOR(None, '>=2')
+        assert lt5 == XOR(4, '>=5')
 
         lt2 = left7.flatMap(lessThan2)
         lt5 = left7.flatMap(lessThan5)
-        assert lt2 == Right('>=2')
-        assert lt5 == Right('>=5')
+        assert lt2 == XOR(None, '>=2')
+        assert lt5 == XOR(None, '>=5')
 
-        nobody = right.flatMap(lessThan5, right=', STILL NOBODY HOME')
-        assert nobody == Right('Nobody home, STILL NOBODY HOME')
+        nobody = right.flatMap(lessThan5)
+        assert nobody == XOR(None, 'Nobody home')
 
-        lt2 = left1.flatMap(lessThan2, right='greater than or equal 2')
-        lt5 = left1.flatMap(lessThan5, right='greater than or equal 5')
-        assert lt2 == Left(1)
-        assert lt5 == Left(1)
+        lt2 = left1.flatMap(lessThan2)
+        lt5 = left1.flatMap(lessThan5)
+        assert lt2 == XOR(1,'not me')
+        assert lt5 == XOR(1, 'not me too')
 
         lt2 = left4.flatMap(lessThan2)
-        lt5 = left4.flatMap(lessThan5, right=', greater than or equal 5')
-        assert lt2 == Right('>=2')
-        assert lt5 == Left(4)
+        lt5 = left4.flatMap(lessThan5)
+        assert lt2 == XOR(None, '>=2')
+        assert lt2 != XOR(42, '>=42')
+        assert lt5 == XOR(4, 'boo')
+        assert lt5 != XOR(42, 'boohoo')
 
-        lt2 = left7.flatMap(lessThan2, g=lambda x, r: r, right='greater than or equal 2')
-        lt5 = left7.flatMap(lessThan5, right=', greater than or equal 5')
-        assert lt2 == Right('greater than or equal 2')
-        assert lt5 == Right('>=5, greater than or equal 5')
+        lt2 = left7.flatMap(lessThan2).mapRight(lambda _: 'greater than or equal 2')
+        lt5 = left7.flatMap(lessThan5).mapRight(lambda s: s + ', greater than or equal 5')
+        assert lt2 == XOR(None, 'greater than or equal 2')
+        assert lt5 == XOR(None, '>=5, greater than or equal 5')
 
-    def test_Maybe_Either(self) -> None:
-        mb42 = Some(42)
-        mbNot: Maybe[int] = Nothing()
+    def test_MB_XOR(self) -> None:
+        mb42 = MB(42)
+        mbNot: MB[int] = MB()
 
-        left42 = maybe_to_either(mb42, 'fail!')
-        right = maybe_to_either(mbNot, 'Nobody home')
-        assert left42 == Left(42)
-        assert right == Right('Nobody home')
+        left42 = mb_to_xor(mb42, 'fail!')
+        right = mb_to_xor(mbNot, 'Nobody home')
+        assert left42 == XOR(42, '')
+        assert right == XOR(None, 'Nobody home')
 
-        ph42 = either_to_maybe(left42)
-        phNot = either_to_maybe(right)
+        ph42 = xor_to_mb(left42)
+        phNot = xor_to_mb(right)
         assert mb42 == ph42
         assert mbNot == phNot
