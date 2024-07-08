@@ -40,7 +40,7 @@ _T = TypeVar('_T')
 _S = TypeVar('_S')
 
 class QueueBase(Generic[_T]):
-    """Abstract base class for stateful queue-based data structures
+    """Base class for stateful queue-based data structures
 
     * provided to allow users to define their own queue type classes
     * primarily for DRY implementation inheritance and generics

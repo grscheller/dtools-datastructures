@@ -83,124 +83,118 @@ class MB(Generic[_T]):
         return self._value == other._value
 
     def get(self, alt: Optional[_T]=None) -> Optional[_T]:
-        """Get contents if they exist, otherwise return an alternate value."""
-        if self:
+        """Get contents if they exist
+
+        * otherwise return an alternate value of type `_T|NoneType`
+        * default alternate value is `None`
+        """
+        if self._value is None:
             return self._value
         else:
             return alt
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> MB[_S]:
-        """Map `f` over the 0 or 1 elements of the data structure.
-
-        * returns a new `MB` instance only if necessary
-        * to help keep reference count low, will re-use self
-        """
+        """Map `f` over the 0 or 1 elements of the data structure."""
         if self._value is None:
-            return self         # type: ignore # at runtime, just another "Nothing"
+            return MB()
         return MB(f(self._value))
 
     def flatmap(self, f: Callable[[_T], MB[_S]]) -> MB[_S]:
-        """Map `f` and flatten.
-
-        * returns a new `MB` instance only if necessary
-        * to help keep reference count low, will re-use self
-        """
+        """Map `f` and flatten."""
         if self._value is None:
-            return self         # type: ignore # at runtime, just another "Nothing"
+            return MB()
         return f(self._value)
 
 class XOR(Generic[_L,_R]):
     """Class that either contains a "left" value or "right" value, but not both.
 
     * implements a left biased Either Monad
-    * where `XOR(None, r: _S): XOR[_T,_S]
-    * where `XOR(l: _T, None): XOR[_T,_S]
-    * above two imply `None` as a value cannot be stored in a "left" `MB`
-    * in Boolean context, returns `True` if a "left", `False` if a "right"
-    * immutable, does not change after being created
+    * semantically containing 1 of 2 possible types of values
+    * `XOR(l: _T, r: _S)` produces "left" value
+    * `XOR(None, r: _S)` produces a "right" value
+    * therefore `None` (as a value, not implementation detail) can't be stored in a "left"
+    * in a Boolean context, returns `True` if a "left", `False` if a "right"
     * immutable, an `XOR` does not change after being created
-    * immutable semantics, `map` & `flatMap` never change `self`
+    * immutable semantics, `map` & `flatMap` never mutate `self`
     """
-    __slots__ = '_value', '_isLeft'
+    __slots__ = '_left', '_right'
 
-    def __init__(self, left: Optional[_L], right: _R):
-        self._value: _L|_R
-        if left is None:
-            self._isLeft = False
-            self._value = right
-        else:
-            self._isLeft = True
-            self._value = left
-
-    def __iter__(self) -> Iterator[_L]:
-        """Yields its value if a "left" XOR."""
-        if self._isLeft:
-            yield self._value       # type: ignore # always will be type _T
-
-    def __repr__(self) -> str:
-        if self._isLeft:
-            return 'XOR(' + repr(self._value) + ')'
-        else:
-            return 'XOR(None, ' + repr(self._value) + ')'
+    def __init__(self, potential_left: Optional[_L], default_right: _R):
+        self._left, self._right = potential_left, default_right
 
     def __bool__(self) -> bool:
-        """Determine if an `XOR` contains a "left" or "right" value.
+        """Predicate to determine if the `XOR` contains a "left" or a "right".
 
-        * `True` if a "left" `XOR`
-        * `False` if a "right" `XOR`
+        * true if the XOR is a "left"
+        * false if the XOR is a "right"
         """
-        return self._isLeft
+        return self._left is not None
+
+    def __iter__(self) -> Iterator[_L]:
+        """Yields its value if the XOR is a "left"."""
+        if self._left is not None:
+            yield self._left
+
+    def __repr__(self) -> str:
+        return 'XOR(' + repr(self._left) + ', ' + repr(self._right) + ')'
 
     def __len__(self) -> int:
-        """An `XOR` always contains just one value."""
+        """Semantically, an `XOR` always contains just one value."""
         return 1
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
 
-        if (self._isLeft and other._isLeft) or (not self._isLeft and not other._isLeft):
-            return self._value == other._value
+        if self and other:
+            return self._left == other._left
         else:
             return False
 
     def get(self, alt: Optional[_L]=None) -> Optional[_L]:
-        """Get value if a `Left,` otherwise return `default` value."""
-        if self:
-            return self._value    # type: ignore
-        return alt
+        """Get value if a Left.
 
-    def getRight(self, alt: Optional[_S]=None) -> Optional[_S]:
-        """Get value if a `Right`, otherwise return `None`."""
-        if self:
+        * if XOR is a left, return its value
+        * otherwise return an alternate value of type `_L|NoneType`
+        * default alternate value is None
+        """
+        if self._left is None:
             return alt
-        return self._value    # type: ignore # returns a "right" value 
+        return self._left
+
+    def getRight(self, alt: Optional[_R]=None) -> Optional[_R]:
+        """Get value if a Right.
+
+        * if XOR is a right, return its value
+        * otherwise return an alternate value of type `_S|NoneType`
+        * default alternate value is None
+        """
+        if self._left is None:
+            return self._right
+        return alt
 
     def map(self, f: Callable[[_L], Optional[_S]], right: _R) -> XOR[_S, _R]:
         """Map over an `XOR`.
 
-        * returns a new `XOR` instance only if necessary
-        * to help keep reference count low, will re-use self
+        * if a "left", apply f to the value, use `right` only if f returns `None`
+        * if a "right", propagate existing "right" value
         """
-        if self:
-            return XOR(f(self._value), right)    # type: ignore
-        return self                              # type: ignore
+        if self._left is None:
+            return XOR(None, self._right)
+        return XOR(f(self._left), right)
 
     def mapRight(self, g: Callable[[_R], _R]) -> XOR[_L, _R]:
         """Map over a `Right(value)`."""
-        if self:
-            return self
-        return XOR(None, g(self._value))    # type: ignore # contains a "right" of type _R
+        if self._left is None:
+            return XOR(None, g(self._right))
+        return self
 
     def flatMap(self, f: Callable[[_L], XOR[_S, _R]]) -> XOR[_S, _R]:
-        """Map and flatten a `Left` value, propagate `Right` values.
-
-        * raises TypeError if _S does not support __add__ g is `None`
-        """
-        if self:
-            return f(self._value)    # type: ignore # f applied to a _L
+        """Map and flatten a `Left` value, propagate `Right` values."""
+        if self._left is None:
+            return XOR(None, self._right)
         else:
-            return self     # type: ignore # contains a "right" of type _R
+            return f(self._left)
 
 # Conversion functions
 
