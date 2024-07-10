@@ -192,15 +192,15 @@ a functional interfaces.</p>
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
-        return type(self)(*chain(*map(iter, map(f, self))))
+        return FTuple(*chain(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
-        return type(self)(*merge(*map(iter, map(f, self))))
+        return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
 
     def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
-        return type(self)(*exhaust(*map(iter, map(f, self))))</code></pre>
+        return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
