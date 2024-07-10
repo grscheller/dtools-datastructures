@@ -15,10 +15,10 @@
 from __future__ import annotations
 
 from typing import Any, Optional
+from grscheller.fp.wo_exception import MB, XOR
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple
-from grscheller.datastructures.fp import MB, XOR
 
 class Test_repr:
     def test_DoubleQueue(self) -> None:
@@ -189,102 +189,6 @@ class Test_repr:
         fs5 = eval(repr(fs4))
         assert fs5 == fs4
         assert fs5 is not fs4
-
-    def test_maybe(self) -> None:
-        mb1: MB[object] = MB()
-        mb2: MB[object] = MB()
-        mb3: MB[object] = MB(None)
-        assert mb1 == mb2 == mb3 == MB()
-        assert repr(mb2) == 'MB()'
-        mb4 = eval(repr(mb3))
-        assert mb4 == mb3
-
-        def lt5OrNone(x: int) -> Optional[int]:
-            if x < 5:
-                return x
-            else:
-                return None
-
-        def lt5OrNoneMB(x: int) -> MB[int]:
-            if x < 5:
-                return MB(x)
-            else:
-                return MB()
-
-        mb5 = MB(lt5OrNone(2))
-        mb6 = lt5OrNoneMB(2)
-        mb7 = lt5OrNoneMB(3)
-        mb8 = MB(lt5OrNone(7))
-        mb9 = lt5OrNoneMB(8)
-
-        assert mb5 == mb6
-        assert mb6 != mb7
-        assert mb8 == mb9
-
-        assert repr(mb5) == repr(mb6) ==  'MB(2)'
-        assert repr(mb7) ==  'MB(3)'
-        assert repr(mb8) == repr(mb9) ==  'MB()'
-
-        foofoo = MB(MB('foo'))
-        foofoo2 = eval(repr(foofoo))
-        assert foofoo2 == foofoo
-        assert repr(foofoo) == "MB(MB('foo'))"
-
-    def test_either(self) -> None:
-        e1: XOR[int, str] = XOR(None, 'Nobody home!')
-        e2: XOR[int, str] = XOR(None, 'Somebody not home!')
-        e3: XOR[int, str] = XOR(None, '')
-        assert e1 != e2
-        e5 = eval(repr(e2))
-        assert e2 != XOR(None, 'Nobody home!')
-        assert e2 == XOR(None, 'Somebody not home!')
-        assert e5 == e2
-        assert e5 != e3
-        assert e5 is not e2
-        assert e5 is not e3
-
-        def lt5OrNone(x: int) -> Optional[int]:
-            if x < 5:
-                return x
-            else:
-                return None
-
-        def lt5OrNoneXOR(x: int) -> XOR[int, str]:
-            if x < 5:
-                return XOR(x, 'None!')
-            else:
-                return XOR(None, f'was to be {x}')
-
-        e1 = XOR(lt5OrNone(2), 'TODO: should I be comparing error messages?')
-        e2 = lt5OrNoneXOR(2)
-        e3 = lt5OrNoneXOR(3)
-        e7: XOR[int, str] = XOR(lt5OrNone(7), 'was to be 7')
-        e8 = XOR(8, 'no go for 8').flatMap(lt5OrNoneXOR)
-
-        assert e1 == e2
-        assert e2 != e3
-        assert e7 != e8
-        assert e7 == eval(repr(e7))
-
-        assert repr(e1) ==  "XOR(2, 'TODO: should I be comparing error messages?')"
-        assert repr(e2) ==  "XOR(2, 'None!')"
-        assert repr(e3) ==  "XOR(3, 'None!')"
-        assert repr(e7) == "XOR(None, 'was to be 7')"
-        assert repr(e8) ==  "XOR(None, 'was to be 8')"
-
-        # foo00: XOR[XOR[str, str], str] = XOR(XOR('00', 'foo'))
-        # foo01: XOR[XOR[str, str], str] = XOR(XOR('01'))
-        # foo10: XOR[XOR[str, str], XOR[str,str]] = XOR(XOR('10', 'foo'))
-        # foo11: XOR[XOR[str, str], XOR[str,str]] = XOR(XOR('foo'))
-        # assert repr(foo00) == "XOR(XOR('00'))"
-        # assert repr(foo01) == "XOR(XOR('01'))"
-        # assert repr(foo10) == "XOR(XOR('foo'))"
-        # assert repr(foo11) == "XOR(XOR('foo'))"
-
-        # foo10clone = eval(repr(foo10))
-        # assert foo10clone != foo11
-        # assert foo10clone == foo10
-        # assert foo10clone is not foo10
 
 class Test_repr_mix:
     def test_mix1(self) -> None:
