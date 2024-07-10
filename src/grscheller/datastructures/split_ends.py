@@ -35,7 +35,7 @@ from typing import Callable, Generic, Iterator, Optional, TypeVar
 from itertools import chain
 from grscheller.circular_array.circular_array import CircularArray
 from grscheller.fp.iterators import exhaust, merge
-from .core.nodes import SL_Node as Node
+from .nodes.sl import SL_Node as Node
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')

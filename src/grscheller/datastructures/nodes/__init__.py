@@ -12,13 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Modules supporting the core infrastructure of the grscheller.datastructures
-package. Useful imports for REPLs like ipython. Can be used by client code for
-the implementation of new data structures.
+"""Module supporting nodes for tree-like datastructures.
+
+* heap based nodes
+* data structures should make nodes inaccessible to client code
+* making nodes inaccessible promotes data sharing between data structures
 """
 
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
-from .nodes import SL_Node, BT_Node

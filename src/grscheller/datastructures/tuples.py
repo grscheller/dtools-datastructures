@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Extending Python's Immutable builtin Tuple data structure with
-a functional interfaces.
+"""Immutable Tuple-like data structure with a functional interfaces.
 
 Types of Tuples:
 
