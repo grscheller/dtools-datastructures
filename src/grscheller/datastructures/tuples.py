@@ -29,7 +29,7 @@ __license__ = "Apache License 2.0"
 
 from typing import Any, Callable, Iterator, Generic, Optional, TypeVar
 from itertools import accumulate, chain
-from .core.iterlib import exhaust, merge
+from grscheller.fp.iterators import exhaust, merge
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -169,12 +169,12 @@ class FTuple(Generic[_T]):
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure sequentially."""
-        return type(self)(*chain(*map(iter, map(f, self))))
+        return FTuple(*chain(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure, merge until one exhausted."""
-        return type(self)(*merge(*map(iter, map(f, self))))
+        return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
 
     def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure, merge until all are exhausted."""
-        return type(self)(*exhaust(*map(iter, map(f, self))))
+        return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))

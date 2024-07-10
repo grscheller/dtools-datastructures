@@ -34,7 +34,7 @@ __license__ = "Apache License 2.0"
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 from itertools import chain
 from grscheller.circular_array.circular_array import CircularArray
-from .core.iterlib import exhaust, merge
+from grscheller.fp.iterators import exhaust, merge
 from .core.nodes import SL_Node as Node
 
 _T = TypeVar('_T')
