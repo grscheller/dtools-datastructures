@@ -173,13 +173,13 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[~_T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> in O(n) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce Left with f.</p>
@@ -190,7 +190,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
+<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce Left with f starting with an initial value.</p>
@@ -201,7 +201,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce right with f.</p>
@@ -212,7 +212,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
+<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce Right with f starting with an initial value.</p>
@@ -223,31 +223,31 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], Optional[_S]]) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[~_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], Optional[_S]]) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the Double queue's contents.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return leftmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakR"><code class="name flex">
-<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peakR</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return rightmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popL"><code class="name flex">
-<span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popR"><code class="name flex">
-<span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
@@ -363,13 +363,13 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.FIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[~_T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -380,7 +380,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -391,25 +391,25 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[~_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the FIFO queue's contents.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peak_last_in"><code class="name flex">
-<span>def <span class="ident">peak_last_in</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peak_last_in</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> without consuming it</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peak_next_out"><code class="name flex">
-<span>def <span class="ident">peak_next_out</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peak_next_out</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return next element ready to <code>pop</code> from the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
@@ -513,13 +513,13 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.LIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[~_T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -530,7 +530,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> ~_S</span>
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -541,19 +541,19 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[~_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the LIFO queue's contents.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peak</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> without consuming it.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[~_T]</span>
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code>.</p></div>
