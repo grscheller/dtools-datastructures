@@ -34,7 +34,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
-from grscheller.circular_array.circular_array import CircularArray
+from grscheller.circular_array.ca import CircularArray
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -130,8 +130,8 @@ class FIFOQueue(QueueBase[_T]):
     def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
         """Reduce with f.
 
-        * if FIFOArray is not empty, returns a value of the of type _T
-        * if FIFOArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
         * folds in natural FIFO Order
         """
         return self._ca.foldL(f)
@@ -139,9 +139,9 @@ class FIFOQueue(QueueBase[_T]):
     def fold1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
         """Reduce with f.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
-        * folds in natural LIFO Order
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural FIFO Order
         """
         return self._ca.foldL1(f, init)
 
@@ -195,8 +195,8 @@ class LIFOQueue(QueueBase[_T]):
     def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
         """Reduce with f.
 
-        * if LIFOArray is not empty, returns a value of the of type _T
-        * if LIFOArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
         * folds in natural LIFO Order
         """
         return self._ca.foldR(f)
@@ -276,31 +276,35 @@ class DoubleQueue(QueueBase[_T]):
     def foldL(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
         """Reduce Left with f.
 
-        * if DoubleArray is not empty, returns a value of the of type _T
-        * if DoubleArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in FIFO Order
         """
         return self._ca.foldL(f)
 
     def foldR(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
         """Reduce right with f.
 
-        * if DoubleArray is not empty, returns a value of the of type _T
-        * if DoubleArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in LIFO Order
         """
         return self._ca.foldR(f)
 
     def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
         """Reduce Left with f starting with an initial value.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in FIFO Order
         """
         return self._ca.foldL1(f, init)
 
     def foldR1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
         """Reduce Right with f starting with an initial value.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in LIFO Order
         """
         return self._ca.foldR1(lambda t, s: f(s, t), init)

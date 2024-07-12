@@ -165,10 +165,11 @@ data by each pointing to the same node.</p>
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Optional[_T]) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Returns the data at the top of the `Stack`. Does not consume the data.
+    def peak(self, default: Optional[_T]=None) -&gt; Optional[_T]:
+        &#34;&#34;&#34;Returns the data at the top of the `Stack`.
 
-        If `Stack` is empty, data does not exist so in that case return default.
+        * does not consume the data
+        * if Stack empty, data does not exist, so in that case return default
 
         &#34;&#34;&#34;
         if self._head is None:
@@ -218,9 +219,43 @@ data by each pointing to the same node.</p>
         else:
             return self.copy()
 
+    def fold(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in natural LIFO Order
+        &#34;&#34;&#34;
+        node: Optional[Node[_T]] = self._head
+        if not node:
+            return None
+        acc: _T = node._data
+        while node:
+            if (node := node._next) is None:
+                break
+            acc = f(acc, node._data)
+        return acc
+
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural LIFO Order
+        &#34;&#34;&#34;
+        node: Optional[Node[_T]] = self._head
+        if not node:
+            return s
+        acc: _S = s
+        while node:
+            acc = f(acc, node._data)
+            node = node._next
+        return acc
+
     def map(self, f: Callable[[_T], _S]) -&gt; SplitEnd[_S]:
         &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
 
+        * TODO: Redo in &#34;natural&#34; order?
         * Returns a new `Stack` object with shallow copied new data
         * O(n) complexity
 
@@ -271,6 +306,28 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the <code>FStack</code> sequentially</p></div>
 </dd>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.fold"><code class="name flex">
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
+<li>folds in natural LIFO Order</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.split_ends.SplitEnd.fold1"><code class="name flex">
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> ~_S</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in natural LIFO Order</li>
+</ul></div>
+</dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.head"><code class="name flex">
 <span>def <span class="ident">head</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
@@ -287,6 +344,7 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <dd>
 <div class="desc"><p>Maps a function (or callable object) over the values on the <code>Stack</code>.</p>
 <ul>
+<li>TODO: Redo in "natural" order?</li>
 <li>Returns a new <code>Stack</code> object with shallow copied new data</li>
 <li>O(n) complexity</li>
 </ul></div>
@@ -298,11 +356,14 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <div class="desc"><p>Monadically bind f to the <code>FStack</code> sequentially until first exhausted</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns the data at the top of the <code>Stack</code>. Does not consume the data.</p>
-<p>If <code>Stack</code> is empty, data does not exist so in that case return default.</p></div>
+<div class="desc"><p>Returns the data at the top of the <code>Stack</code>.</p>
+<ul>
+<li>does not consume the data</li>
+<li>if Stack empty, data does not exist, so in that case return default</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[~_T]</span>
@@ -358,6 +419,8 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.copy" href="#grscheller.datastructures.split_ends.SplitEnd.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.exhaustMap" href="#grscheller.datastructures.split_ends.SplitEnd.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.flatMap" href="#grscheller.datastructures.split_ends.SplitEnd.flatMap">flatMap</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.fold" href="#grscheller.datastructures.split_ends.SplitEnd.fold">fold</a></code></li>
+<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.fold1" href="#grscheller.datastructures.split_ends.SplitEnd.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.head" href="#grscheller.datastructures.split_ends.SplitEnd.head">head</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.map" href="#grscheller.datastructures.split_ends.SplitEnd.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.mergeMap" href="#grscheller.datastructures.split_ends.SplitEnd.mergeMap">mergeMap</a></code></li>

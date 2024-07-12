@@ -132,32 +132,36 @@ hljs.highlightAll();
     def foldL(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Reduce Left with f.
 
-        * if DoubleArray is not empty, returns a value of the of type _T
-        * if DoubleArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in FIFO Order
         &#34;&#34;&#34;
         return self._ca.foldL(f)
 
     def foldR(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Reduce right with f.
 
-        * if DoubleArray is not empty, returns a value of the of type _T
-        * if DoubleArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in LIFO Order
         &#34;&#34;&#34;
         return self._ca.foldR(f)
 
     def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce Left with f starting with an initial value.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in FIFO Order
         &#34;&#34;&#34;
         return self._ca.foldL1(f, init)
 
     def foldR1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce Right with f starting with an initial value.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in LIFO Order
         &#34;&#34;&#34;
         return self._ca.foldR1(lambda t, s: f(s, t), init)</code></pre>
 </details>
@@ -180,8 +184,9 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce Left with f.</p>
 <ul>
-<li>if DoubleArray is not empty, returns a value of the of type _T</li>
-<li>if DoubleArray empty, returns None</li>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
+<li>folds in FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL1"><code class="name flex">
@@ -190,8 +195,9 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce Left with f starting with an initial value.</p>
 <ul>
-<li>always returns a value of type _S</li>
-<li>type _S can be the same type as _T</li>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR"><code class="name flex">
@@ -200,8 +206,9 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce right with f.</p>
 <ul>
-<li>if DoubleArray is not empty, returns a value of the of type _T</li>
-<li>if DoubleArray empty, returns None</li>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
+<li>folds in LIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR1"><code class="name flex">
@@ -210,8 +217,9 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce Right with f starting with an initial value.</p>
 <ul>
-<li>always returns a value of type _S</li>
-<li>type _S can be the same type as _T</li>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in LIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.map"><code class="name flex">
@@ -332,8 +340,8 @@ hljs.highlightAll();
     def fold(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Reduce with f.
 
-        * if FIFOArray is not empty, returns a value of the of type _T
-        * if FIFOArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
         * folds in natural FIFO Order
         &#34;&#34;&#34;
         return self._ca.foldL(f)
@@ -341,9 +349,9 @@ hljs.highlightAll();
     def fold1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce with f.
 
-        * always returns a value of type _S
-        * type _S can be the same type as _T
-        * folds in natural LIFO Order
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural FIFO Order
         &#34;&#34;&#34;
         return self._ca.foldL1(f, init)</code></pre>
 </details>
@@ -366,8 +374,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce with f.</p>
 <ul>
-<li>if FIFOArray is not empty, returns a value of the of type _T</li>
-<li>if FIFOArray empty, returns None</li>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
@@ -377,9 +385,9 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce with f.</p>
 <ul>
-<li>always returns a value of type _S</li>
-<li>type _S can be the same type as _T</li>
-<li>folds in natural LIFO Order</li>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.map"><code class="name flex">
@@ -482,8 +490,8 @@ hljs.highlightAll();
     def fold(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Reduce with f.
 
-        * if LIFOArray is not empty, returns a value of the of type _T
-        * if LIFOArray empty, returns None
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
         * folds in natural LIFO Order
         &#34;&#34;&#34;
         return self._ca.foldR(f)
@@ -516,8 +524,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Reduce with f.</p>
 <ul>
-<li>if LIFOArray is not empty, returns a value of the of type _T</li>
-<li>if LIFOArray empty, returns None</li>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
 <li>folds in natural LIFO Order</li>
 </ul></div>
 </dd>

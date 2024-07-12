@@ -85,10 +85,10 @@ class FTuple(Generic[_T]):
         return item
 
     def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold CircularArray left.
+        """Fold (reduce) left.
 
         * first argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * if FTuple is empty, return `None`
 
         """
         if len(self._tuple) == 0:
@@ -103,10 +103,10 @@ class FTuple(Generic[_T]):
         return value
 
     def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold CircularArray right.
+        """Fold (reduce) right.
 
         * second argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * if FTuple is empty, return `None`
 
         """
         if len(self._tuple) == 0:

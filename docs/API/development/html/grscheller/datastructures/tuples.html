@@ -107,10 +107,10 @@ hljs.highlightAll();
         return item
 
     def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Fold CircularArray left.
+        &#34;&#34;&#34;Fold (reduce) left.
 
         * first argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * if FTuple is empty, return `None`
 
         &#34;&#34;&#34;
         if len(self._tuple) == 0:
@@ -125,10 +125,10 @@ hljs.highlightAll();
         return value
 
     def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Fold CircularArray right.
+        &#34;&#34;&#34;Fold (reduce) right.
 
         * second argument of `f` is for the accumulated value
-        * if CircularArray is empty, return `None`
+        * if FTuple is empty, return `None`
 
         &#34;&#34;&#34;
         if len(self._tuple) == 0:
@@ -240,10 +240,10 @@ hljs.highlightAll();
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Fold CircularArray left.</p>
+<div class="desc"><p>Fold (reduce) left.</p>
 <ul>
 <li>first argument of <code>f</code> is for the accumulated value</li>
-<li>if CircularArray is empty, return <code>None</code></li>
+<li>if FTuple is empty, return <code>None</code></li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
@@ -260,10 +260,10 @@ hljs.highlightAll();
 <span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Fold CircularArray right.</p>
+<div class="desc"><p>Fold (reduce) right.</p>
 <ul>
 <li>second argument of <code>f</code> is for the accumulated value</li>
-<li>if CircularArray is empty, return <code>None</code></li>
+<li>if FTuple is empty, return <code>None</code></li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">

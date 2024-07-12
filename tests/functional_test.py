@@ -14,10 +14,23 @@
 
 from __future__ import annotations
 
-from typing import Any, Generic
+from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import FIFOQueue
+
+_T = TypeVar('_T')
+
+def pushFQ(x: FIFOQueue[_T], y: _T) -> FIFOQueue[_T]:
+    x.push(y)
+    return x
+
+def pushSE(x: SplitEnd[_T], y: _T) -> SplitEnd[_T]:
+    x.push(y)
+    return x
+
+l1 = lambda x, y: x + y
+l2 = lambda x, y: x * y
 
 class Test_FP:
     def test_foldL(self) -> None:
@@ -25,28 +38,26 @@ class Test_FP:
         se0: SplitEnd[int] = SplitEnd()
         ft1: FTuple[int] = FTuple(1,2,3,4,5)
         se1: SplitEnd[int] = SplitEnd(1,2,3,4,5)
-        l1 = lambda x, y: x + y
-        l2 = lambda x, y: x * y
-        def push(x: Any, y: Any) -> Any:   # TODO: add generic typing hints
-            x.push(y)
-            return x
 
-        assert ft1.foldL1(l1, 0) == 15     # TODO: add foldL?
+        assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
+        assert ft1.foldL(l1) == 15
+        assert ft1.foldL1(l1, 0) == 15
         assert ft1.foldL1(l1, 10) == 25
         assert ft1.foldL1(l2, 1) == 120
         assert ft1.foldL1(l2, 10) == 1200
-        assert ft1.foldL1(push, FIFOQueue()) == FIFOQueue(1,2,3,4,5)
+        assert ft1.foldL1(pushFQ, FIFOQueue[int]()) == FIFOQueue(1,2,3,4,5)
         assert ft0.foldL1(l1, 42) == 42
-        assert ft0.foldL1(push, FIFOQueue()) == FIFOQueue()
+        assert ft0.foldL1(pushFQ, FIFOQueue[int]()) == FIFOQueue()
 
-        # assert se1.foldL(l1) == 15
-        # assert se1.foldL(l1, 10) == 25
-        # assert se1.foldL(l2) == 120
-        # assert se1.foldL(l2, 10) == 1200
-        # assert se1.foldL(push, FIFOQueue()) == FIFOQueue(5,4,3,2,1)
-        # assert se0.foldL(l1) == None
-        # assert se0.foldL(l1, 10) == 10
-        # assert se0.foldL(push, FIFOQueue()) == FIFOQueue()
+        assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5)'
+        assert se1.fold(l1) == 15
+        assert se1.fold1(l1, 10) == 25
+        assert se1.fold(l2) == 120
+        assert se1.fold1(l2, 10) == 1200
+        assert se1.fold1(pushSE, SplitEnd[int]()) == SplitEnd(5,4,3,2,1)
+        assert se0.fold(l1) == None
+        assert se0.fold1(l1, 10) == 10
+        assert se0.fold1(pushSE, SplitEnd[int]()) == SplitEnd()
 
         assert ft1.accummulate1(l1, 0) == FTuple(0,1,3,6,10,15)
         assert ft1.accummulate1(l1, 10) == FTuple(10,11,13,16,20,25)

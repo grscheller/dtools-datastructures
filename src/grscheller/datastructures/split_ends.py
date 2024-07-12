@@ -33,7 +33,7 @@ __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 from itertools import chain
-from grscheller.circular_array.circular_array import CircularArray
+from grscheller.circular_array.ca import CircularArray
 from grscheller.fp.iterators import exhaust, merge
 from .nodes.sl import SL_Node as Node
 
@@ -145,10 +145,11 @@ class SplitEnd(Generic[_T]):
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Optional[_T]) -> Optional[_T]:
-        """Returns the data at the top of the `Stack`. Does not consume the data.
+    def peak(self, default: Optional[_T]=None) -> Optional[_T]:
+        """Returns the data at the top of the `Stack`.
 
-        If `Stack` is empty, data does not exist so in that case return default.
+        * does not consume the data
+        * if Stack empty, data does not exist, so in that case return default
 
         """
         if self._head is None:
@@ -198,9 +199,43 @@ class SplitEnd(Generic[_T]):
         else:
             return self.copy()
 
+    def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+        """Reduce with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in natural LIFO Order
+        """
+        node: Optional[Node[_T]] = self._head
+        if not node:
+            return None
+        acc: _T = node._data
+        while node:
+            if (node := node._next) is None:
+                break
+            acc = f(acc, node._data)
+        return acc
+
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
+        """Reduce with f.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural LIFO Order
+        """
+        node: Optional[Node[_T]] = self._head
+        if not node:
+            return s
+        acc: _S = s
+        while node:
+            acc = f(acc, node._data)
+            node = node._next
+        return acc
+
     def map(self, f: Callable[[_T], _S]) -> SplitEnd[_S]:
         """Maps a function (or callable object) over the values on the `Stack`.
 
+        * TODO: Redo in "natural" order?
         * Returns a new `Stack` object with shallow copied new data
         * O(n) complexity
 

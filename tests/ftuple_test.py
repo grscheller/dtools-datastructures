@@ -57,7 +57,7 @@ class TestFTuple:
 
     def test_slicing(self) -> None:
         ft0: FTuple[int] = FTuple()
-        ft1 = FTuple(*range(0,101,10))
+        ft1: FTuple[int]  = FTuple(*range(0,101,10))
         assert ft1 == FTuple(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
         assert ft1[2:7:2] == FTuple(20, 40, 60)
         assert ft1[8:2:-2] == FTuple(80, 60, 40)
@@ -69,7 +69,7 @@ class TestFTuple:
 
     def test_map(self) -> None:
         ft0: FTuple[int] = FTuple()
-        ft1 = FTuple(*range(6))
+        ft1: FTuple[int]  = FTuple(*range(6))
         assert ft1 == FTuple(0, 1, 2, 3, 4, 5)
 
         assert ft1.map(lambda x: x*x) == FTuple(0, 1, 4, 9, 16, 25)
@@ -77,7 +77,7 @@ class TestFTuple:
 
     def test_foldL(self) -> None:
         ft0: FTuple[int] = FTuple()
-        ft1 = FTuple(*range(1, 6))
+        ft1: FTuple[int]  = FTuple(*range(1, 6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
         assert ft1.foldL(lambda x, y: x*y) == 120
@@ -87,7 +87,7 @@ class TestFTuple:
 
     def test_foldR(self) -> None:
         ft0: FTuple[int] = FTuple()
-        ft1 = FTuple(*range(1, 4))
+        ft1: FTuple[int]  = FTuple(*range(1, 4))
         assert ft1 == FTuple(1, 2, 3)
 
         assert ft1.foldR(lambda x, y: y*y - x) == 48
@@ -97,7 +97,7 @@ class TestFTuple:
 
     def test_accummulate(self) -> None:
         ft0: FTuple[int] = FTuple()
-        ft1 = FTuple(*range(1,6))
+        ft1: FTuple[int]  = FTuple(*range(1,6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
         assert ft1.accummulate(lambda x, y: x+y) == FTuple(1, 3, 6, 10, 15)
