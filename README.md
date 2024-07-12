@@ -23,16 +23,6 @@ these data structures allow data to be safely shared between multiple
 data structure instances by making shared data immutable and
 inaccessible to client code.
 
-This package does not force functional programming paradigms on client
-code, but provide functional tools to opt into. It also tries to avoid
-forcing unnecessary exception driven code paths upon client code.
-
-Originally, as a design choice, this package treated Python `None` to
-semantically indicate the absence of a value. With the advent of the
-typing package, it was decided to treat `None` as any other Python
-datatype. Tooling such as mypy or pyright can be used at the expense of
-more runtime safety with the benefit of more runtime efficiency.
-
 Sometimes the real power of a data structure comes not from what it
 empowers you to do, but from what it prevents you from doing to
 yourself.
@@ -40,5 +30,5 @@ yourself.
 ---
 
 [1]: https://pypi.org/project/grscheller.datastructures/
-[2]: https://grscheller.github.io/datastructures/API/development/html/grscheller/datastructures/index.html
-[3]: https://github.com/grscheller/datastructures
+[2]: https://grscheller.github.io/datastructures/
+[3]: https://github.com/grscheller/datastructures/

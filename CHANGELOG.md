@@ -19,6 +19,13 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.18.0.0 - Beginning to prepare for PyPI release 1.0.0
+
+* first devel version requiring circular-array 3.1.0
+* still some design work to be done
+* gave Class SplitEnd fold and fold1 methods
+* TODO: Verify flatMap family yields results in "natural" order
+
 ### Version 0.17.0.4 - Start of effort to relax None restrictions
 
 * have begun relaxing the requirement of not storing None as a value
@@ -52,7 +59,7 @@ PyPI grscheller.datastructures project.
 * keeping project an Alpha release for now
 
 ### Version 0.13.3.1 - Preparing for another PyPI release soon
-    
+
 * overhauled docstrings with Markdown markup
 * updated pyproject.py to drop project back to an Alpha release
   * allows more renaming flexibilty
