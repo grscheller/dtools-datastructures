@@ -192,31 +192,31 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.tuples.FTuple.accummulate"><code class="name flex">
-<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_T]</span>
+<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Accumulate partial fold results in an FTuple.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold (reduce) left.</p>
@@ -226,7 +226,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> ~_S</span>
+<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold left with an initial value.</p>
@@ -236,7 +236,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[~_T]</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold (reduce) right.</p>
@@ -246,7 +246,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_T, _S], _S], s: _S) ‑> ~_S</span>
+<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_T, _S], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold right with an initial value.</p>
@@ -256,13 +256,13 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[~_S]</span>
+<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
