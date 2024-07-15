@@ -22,9 +22,8 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
-from itertools import chain
 from grscheller.circular_array.ca import CircularArray
-from grscheller.fp.iterators import exhaust, merge
+from grscheller.fp.iterators import concat, exhaust, merge
 from .nodes.sl import SL_Node as Node
 
 _T = TypeVar('_T')
@@ -226,7 +225,7 @@ class SplitEnd(Generic[_T]):
 
     def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
         """Monadically bind `f` to the `FStack` sequentially"""
-        return SplitEnd(*chain(*map(reversed, map(f, reversed(self)))))
+        return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
         """Monadically bind f to the `FStack` sequentially until first exhausted"""

@@ -250,7 +250,7 @@ hljs.highlightAll();
 
     def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
-        return SplitEnd(*chain(*map(reversed, map(f, reversed(self)))))
+        return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
         &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;

@@ -159,7 +159,7 @@ hljs.highlightAll();
 
     def __add__(self, other: FTuple[_T]) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Concatenate two FTuples.&#34;&#34;&#34;
-        return FTuple(*chain(iter(self), other))
+        return FTuple(*concat(iter(self), other))
 
     def __mul__(self, num: int) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
@@ -175,7 +175,7 @@ hljs.highlightAll();
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
-        return FTuple(*chain(*map(lambda x: iter(x), map(f, self))))
+        return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;

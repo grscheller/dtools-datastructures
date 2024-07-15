@@ -27,8 +27,8 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Any, Callable, Iterator, Generic, Optional, TypeVar
-from itertools import accumulate, chain
-from grscheller.fp.iterators import exhaust, merge
+from itertools import accumulate
+from grscheller.fp.iterators import concat, exhaust, merge
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -142,7 +142,7 @@ class FTuple(Generic[_T]):
 
     def __add__(self, other: FTuple[_T]) -> FTuple[_T]:
         """Concatenate two FTuples."""
-        return FTuple(*chain(iter(self), other))
+        return FTuple(*concat(iter(self), other))
 
     def __mul__(self, num: int) -> FTuple[_T]:
         """Return an `FTuple` which repeats another `FTuple` `num` times."""
@@ -158,7 +158,7 @@ class FTuple(Generic[_T]):
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure sequentially."""
-        return FTuple(*chain(*map(lambda x: iter(x), map(f, self))))
+        return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind `f` to the data structure, merge until one exhausted."""
