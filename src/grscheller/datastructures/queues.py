@@ -46,7 +46,7 @@ class QueueBase(Generic[_T]):
     * primarily for DRY implementation inheritance and generics
     * each queue object "has-a" (contains) a circular array to store its data
     * initial data to initializer stored in same order as provided
-    * care is needed if `None` is stored as a value on derived data structures
+    * some care is needed if storing `None` as a value in these data structures
     """
     __slots__ = '_ca'
 
@@ -166,7 +166,6 @@ class LIFOQueue(QueueBase[_T]):
         return 'LIFOQueue(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
-        # TODO: This may need fixing
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def copy(self) -> LIFOQueue[_T]:

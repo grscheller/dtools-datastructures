@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module supporting nodes for tree-like datastructures.
+"""Module supporting nodes for graph based datastructures.
 
-* heap based nodes
 * data structures should make nodes inaccessible to client code
 * making nodes inaccessible promotes data sharing between data structures
 """

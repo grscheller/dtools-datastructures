@@ -19,6 +19,13 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.19.0 - PyPI release date 2024-07-15
+
+* continuing to prepare for PyPI release 1.0.0
+* cleaned up docstrings for a 1.0.0 release
+* changed accumulate1 to accumulate for FTuple
+* considering requiring grscheller.fp as a dependency
+
 ### Version 0.18.0.0 - Beginning to prepare for PyPI release 1.0.0
 
 * first devel version requiring circular-array 3.1.0

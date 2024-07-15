@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module for doubly link nodes for graph-like data structures."""
+"""Doubly link nodes for graph-based data structures."""
+
 from __future__ import annotations
 
 __all__ = ['DL_Node']
@@ -27,6 +28,9 @@ _T = TypeVar('_T')
 class DL_Node(Generic[_T]):
     """Class for doubly link nodes for graph-like data structures.
 
+    * this type of node always contain data, even if that data is None
+    * more than one node can point to the same node forming bush like graphs
+    * circular graphs are possible
     * doubly link lists possible
     * recursive binary trees possible
     """

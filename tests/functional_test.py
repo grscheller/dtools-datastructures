@@ -59,48 +59,38 @@ class Test_FP:
         assert se0.fold1(l1, 10) == 10
         assert se0.fold1(pushSE, SplitEnd[int]()) == SplitEnd()
 
-        assert ft1.accummulate1(l1, 0) == FTuple(0,1,3,6,10,15)
-        assert ft1.accummulate1(l1, 10) == FTuple(10,11,13,16,20,25)
-        assert ft1.accummulate1(l2, 10) == FTuple(10,10,20,60,240,1200)
-        assert ft0.accummulate1(l1, 42) == FTuple(42)
-        assert ft0.accummulate1(l1, 10) == FTuple(10)
-
-        # assert se1.accummulate(l1) == SplitEnd(5,9,12,14,15)
-        # assert se1.accummulate(l1, 10) == SplitEnd(10,15,19,22,24,25)
-        # assert se1.accummulate(init=20) == SplitEnd(20,25,29,32,34,35)
-        # assert se1.accummulate(l2) == SplitEnd(5,20,60,120,120)
-        # assert se1.accummulate(l2, 10) == SplitEnd(10,50,200,600,1200,1200)
-        # assert se0.accummulate(l1) == SplitEnd()
-        # assert se0.accummulate(l1, 10) == SplitEnd(10)
-
+        assert ft1.accummulate(l1) == FTuple(1,3,6,10,15)
+        # assert ft1.accummulate1(l1, 10) == FTuple(10,11,13,16,20,25)
+        assert ft1.accummulate(l2) == FTuple(1,2,6,24,120)
+        assert ft0.accummulate(l1) == FTuple()
+        assert ft0.accummulate(l2) == FTuple()
 
     def test_ftuple_inherited(self) -> None:
         ft:FTuple[int] = FTuple(*range(3, 101))
         l1 = lambda x: 2*x + 1
-        l2 = lambda x: FTuple(*range(2, x+1)).accummulate1(lambda x, y: x+y, 1)
+        l2 = lambda x: FTuple(*range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
         ft2 = ft.flatMap(l2)
         ft3 = ft.mergeMap(l2)
         ft4 = ft.exhaustMap(l2)
-        assert (ft1[0], ft1[1], ft1[-1]) == (7, 9, 201)
-        assert (ft2[0], ft2[1], ft2[2]) == (1, 3, 6)
-        assert (ft2[3], ft2[4], ft2[5], ft2[6])  == (1, 3, 6, 10)
-        assert (ft2[7], ft2[8], ft2[9], ft2[10], ft2[11])  == (1, 3, 6, 10, 15)
-        assert ft2[-1] == ft2[5046] == 5050
-        assert ft2[5047] is None
-        assert (ft3[0], ft3[1]) == (1, 1)
-        assert (ft3[2], ft3[3]) == (1, 1)
-        assert (ft3[4], ft3[5]) == (1, 1)
-        assert (ft3[96], ft3[97]) == (1, 1)
-        assert (ft3[98], ft3[99]) == (3, 3)
-        assert (ft3[194], ft3[195]) == (3, 3)
-        assert (ft3[196], ft3[197]) == (6, 6)
-        assert ft3[-1] == ft3[293] == 6
-        assert ft3[294] is None
-        assert (ft4[0], ft4[1], ft4[2]) == (1, 1, 1)
-        assert (ft4[95], ft4[96], ft4[97]) == (1, 1, 1)
-        assert (ft4[98], ft4[99], ft4[100]) == (3, 3, 3)
-        assert (ft4[193], ft4[194], ft4[195]) == (3, 3, 3)
-        assert (ft4[196], ft4[197], ft4[198]) == (6, 6, 6)
-        assert ft2[-1] == ft2[5046] == 5050
-        assert ft2[5047] is None
+        assert (ft1[0], ft1[1], ft1[2], ft1[-1]) == (7, 9, 11, 201)
+        assert (ft2[0], ft2[1]) == (2, 5)
+        assert (ft2[2], ft2[3], ft2[4])  == (2, 5, 9)
+        assert (ft2[5], ft2[6], ft2[7], ft2[8])  == (2, 5, 9, 14)
+        assert ft2[-1] == ft2[4948] == 5049
+        assert ft2[4949] is None
+        assert (ft3[0], ft3[1]) == (2, 2)
+        assert (ft3[2], ft3[3]) == (2, 2)
+        assert (ft3[4], ft3[5]) == (2, 2)
+        assert (ft3[96], ft3[97]) == (2, 2)
+        assert (ft3[98], ft3[99]) == (5, 5)
+        assert (ft3[194], ft3[195]) == (5, 5)
+        assert ft3[196] == None
+        assert (ft4[0], ft4[1], ft4[2]) == (2, 2, 2)
+        assert (ft4[95], ft4[96], ft4[97]) == (2, 2, 2)
+        assert (ft4[98], ft4[99], ft4[100]) == (5, 5, 5)
+        assert (ft4[290], ft4[291], ft4[292]) == (9, 9, 9)
+        assert (ft4[293], ft4[294], ft4[295]) == (14, 14, 14)
+        assert (ft4[-4], ft4[-3], ft4[-2], ft4[-1]) == (4850, 4949, 4949, 5049)
+        assert ft4[-1] == ft4[4948] == 5049
+        assert ft2[4949] is None

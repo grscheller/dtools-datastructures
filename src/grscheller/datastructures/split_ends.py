@@ -12,18 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module split_ends
+"""Module of LIFO stacks that can safely share immutable data between themselves."""
 
-LIFO stacks which can safely share immutable data between themselves.
-
-* top of each stack is a "split end" of a hair that can share common roots
-* each SplitEnd containing a count of elements and a top node
-* once created, nodes are immutable and can be shared between hairs
-* multiple ends can share the same tail, hence the name "split_ends"
-* hairs themselves are mutable objects where nodes can be pushed and popped
-* functional interfaces are provided so hairs can be treated as immutable
-
-"""
 from __future__ import annotations
 
 __all__ = ['SplitEnd']
@@ -41,11 +31,13 @@ _T = TypeVar('_T')
 _S = TypeVar('_S')
 
 class SplitEnd(Generic[_T]):
-    """Class implementing a stack type data structures called a "thread". Each
-    thread is a very simple stateful object containing a count of the number of
-    elements on it and a reference to an immutable node of a linear tree of
-    singularly linked nodes. Different stack objects can safely share the same
-    data by each pointing to the same node.
+    """Class implementing a stack type data structures called a "split end".
+
+    * each "split end" is a very simple LIFO stateful data structure
+    * contains a count of nodes & reference to first node of a linked list
+    * different "split ends" can safely share the same "tail"
+    * each "split end" sees itself as a singularly linked list
+    * bush-like datastructures can be formed using multiple "split ends"
 
     """
     __slots__ = '_head', '_count'
@@ -73,22 +65,18 @@ class SplitEnd(Generic[_T]):
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
+    def __str__(self) -> str:
+        """Display the data in the `Stack,` left to right starting at bottom."""
+        return '>< ' + ' <- '.join(CircularArray(*self).map(str)) + ' ||'
+
     def __bool__(self) -> bool:
         """Returns true if stack is not empty"""
         return self._count > 0
 
     def __len__(self) -> int:
-        """Returns current number of values on the stack"""
         return self._count
 
     def __eq__(self, other: object) -> bool:
-        """Returns True if all the data stored on the two stacks are the same
-        and the two stacks are of the same subclass. Worst case is O(n) behavior
-        which happens when all the corresponding data elements on the two stacks
-        are equal, in whatever sense they equality is defined, and none of the
-        nodes are shared.
-
-        """
         if not isinstance(other, type(self)):
             return False
 
@@ -110,34 +98,31 @@ class SplitEnd(Generic[_T]):
             nn -= 1
         return True
 
-    def __str__(self) -> str:
-        """Display the data in the `Stack,` left to right starting at bottom."""
-        return '|| ' + ' <- '.join(reversed(CircularArray(*self).map(repr))) + ' ><'
-
     def copy(self) -> SplitEnd[_T]:
-        """Return a copy of a `Stack` in O(1) time & space complexity."""
+        """Return a copy of a `Stack` in O(1) space & time complexity."""
         stack: SplitEnd[_T] = SplitEnd()
         stack._head, stack._count = self._head, self._count
         return stack
 
     def reverse(self) -> SplitEnd[_T]:
-        """Return shallow reversed copy of a `Stack`.
+        """Return shallow reversed copy of a SplitEnd.
 
         * Returns a new `Stack` object with shallow copied new data
+        * creates all new nodes
         * O(1) space & time complexity
 
         """
         return SplitEnd(*self)
 
     def push(self, *ds: Optional[_T]) -> None:
-        """Push data that is not `None` onto top of the `Stack`."""
+        """Push data onto top of the SplitEnd."""
         for d in ds:
             if d is not None:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
     def pop(self, default: Optional[_T]=None) -> Optional[_T]:
-        """Pop data off of top of stack."""
+        """Pop data off of top of the SplitEnd."""
         if self._head is None:
             return None
         else:
@@ -146,7 +131,7 @@ class SplitEnd(Generic[_T]):
             return data
 
     def peak(self, default: Optional[_T]=None) -> Optional[_T]:
-        """Returns the data at the top of the `Stack`.
+        """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
         * if Stack empty, data does not exist, so in that case return default
@@ -157,21 +142,20 @@ class SplitEnd(Generic[_T]):
         return self._head._data
 
     def head(self, default: Optional[_T]=None) -> Optional[_T]:
-        """Returns the data at the top of the `SplitEnd`.
+        """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
-        * for an empty `SplitEnd`, head does not exist, so return default.
+        * for an empty SplitEnd, head does not exist, so return default.
 
         """
         if self._head is None:
             return default
         return self._head._data
 
-    def tail(self, default: Optional[SplitEnd[_T]]=None) -> Optional[SplitEnd[_T]]:
-        """Return tail of the `FStack`.
+    def tail(self) -> SplitEnd[_T]:
+        """Return tail of the SplitEnd.
 
-        If `FStack` is empty, tail does not exist, so return a default of type
-        `FStack` instead. If default is not given, return an empty `FStack`.
+        * if SplitEnd is empty, tail does not exist, so return an empty SplitEnd
 
         """
         if self._head:
@@ -179,10 +163,8 @@ class SplitEnd(Generic[_T]):
             fstack._head = self._head._next
             fstack._count = self._count - 1
             return fstack
-        elif default is None:
-            return SplitEnd()
         else:
-            return default
+            return SplitEnd()
 
     def cons(self, d: _T) -> SplitEnd[_T]:
         """Return a new `FStack` with data as head and self as tail.

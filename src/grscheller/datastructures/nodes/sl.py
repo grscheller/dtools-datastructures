@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module for singularly link nodes for graph-like data structures."""
+"""Singularly link nodes for graph-like data structures."""
+
 from __future__ import annotations
 
 __all__ = ['SL_Node']
@@ -28,8 +29,6 @@ class SL_Node(Generic[_T]):
     """Class for singularly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
-    * it has a reference to the next node in the list
-    * the next node can be `None` to indicate the end of the list
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
     """
