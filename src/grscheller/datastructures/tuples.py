@@ -27,8 +27,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Any, Callable, Iterator, Generic, Optional, TypeVar
-from itertools import accumulate
-from grscheller.fp.iterators import concat, exhaust, merge
+from grscheller.fp.iterators import concat, exhaust, merge, accumulate
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')

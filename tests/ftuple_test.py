@@ -100,8 +100,11 @@ class TestFTuple:
         ft1: FTuple[int]  = FTuple(*range(1,6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
-        assert ft1.accummulate(lambda x, y: x+y) == FTuple(1, 3, 6, 10, 15)
-        assert ft0.accummulate(lambda x, y: x+y) == FTuple()
+        def add(x: int, y: int) -> int:
+            return x + y
+
+        assert ft1.accummulate(add) == FTuple(1, 3, 6, 10, 15)
+        assert ft0.accummulate(add) == FTuple()
         # assert ft1.accummulate1(lambda x, y: x+y, s=1) == FTuple(1, 2, 4, 7, 11, 16)
         # assert ft0.accummulate1(lambda x, y: x+y, s=1) == FTuple(1)
 
