@@ -24,17 +24,21 @@ Types of Queues:
 * class **FIFOQueue**: First In, First Out Queue
 * class **LIFOQueue**: Last In, First Out Queue
 * class **DoubleQueue**: Double Ended Queue
+* class **FIFOQueueMB**: First In, First Out Functional Queue
+* class **LIFOQueueMB**: Last In, First Out Functional Queue
+* class **DoubleQueueMB**: Double Ended Functional Queue
 """
 
 from __future__ import annotations
 
-__all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase']
+__all__ = ['DoubleQueue', 'FIFOQueue', 'FIFOQueueMB', 'LIFOQueue', 'QueueBase']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.ca import CircularArray
+from grscheller.fp.wo_exception import MB
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -53,7 +57,7 @@ class QueueBase(Generic[_T]):
     def __init__(self, *ds: _T):
         """Construct a queue data structure.
 
-        * data always internally stored in the same order as `ds`
+        * data always internally stored in the same order as ds
         """
         self._ca: CircularArray[_T] = CircularArray(*ds)
 
@@ -102,7 +106,7 @@ class FIFOQueue(QueueBase[_T]):
         return FIFOQueue(*self._ca)
 
     def map(self, f: Callable[[_T], _S]) -> FIFOQueue[_S]:
-        """Apply function over the FIFO queue's contents."""
+        """Apply function over the contents of the FIFOQueue."""
         return FIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -> None:
@@ -136,14 +140,88 @@ class FIFOQueue(QueueBase[_T]):
         """
         return self._ca.foldL(f)
 
-    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
         """Reduce with f.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
         """
-        return self._ca.foldL1(f, init)
+        return self._ca.foldL1(f, s)
+
+class FIFOQueueMB(QueueBase[_T]):
+    """Stateful First In First Out (FIFO) functional data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in natural FIFO order
+    """
+    __slots__ = ()
+
+    def __iter__(self) -> Iterator[_T]:
+        """Iterator yielding data currently stored in the queue.
+
+        * data yielded in natural FIFO order.
+        """
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
+
+    def __repr__(self) -> str:
+        return 'FIFOQueueMB(' + ', '.join(map(repr, self._ca)) + ')'
+
+    def __str__(self) -> str:
+        return "<<< " + " < ".join(map(str, self)) + " <<<"
+
+    def copy(self) -> FIFOQueueMB[_T]:
+        """Return shallow copy of the `FIFOQueueMB` in O(n) time & space complexity."""
+        return FIFOQueueMB(*self._ca)
+
+    def map(self, f: Callable[[_T], _S]) -> FIFOQueueMB[_S]:
+        """Apply function over the contents of the FIFOQueueMB."""
+        return FIFOQueueMB(*map(f, self._ca))
+
+    def push(self, *ds: _T) -> None:
+        """Push data onto the `FIFOQueueMB`."""
+        self._ca.pushR(*ds)
+
+    def pop(self) -> Optional[MB[_T]]:
+        """Pop data off front of the `FIFOQueueMB`."""
+        if self._ca:
+            return MB(self._ca.popL())
+        else:
+            return None
+
+    def peak_last_in(self) -> MB[_T]:
+        """Return last element pushed to the `FIFOQueueMB` without consuming it"""
+        if self._ca:
+            return MB(self._ca[-1])
+        else:
+            return MB()
+
+    def peak_next_out(self) -> MB[_T]:
+        """Return next element ready to `pop` from the `FIFOQueueMB`."""
+        if self._ca:
+            return MB(self._ca[0])
+        else:
+            return MB()
+
+    def fold(self, f:Callable[[_T, _T], _T]) -> MB[_T]:
+        """Reduce with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in natural FIFO Order
+        """
+        return MB(self._ca.foldL(f))
+
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
+        """Reduce with f.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural FIFO Order
+        """
+        return self._ca.foldL1(f, s)
 
 class LIFOQueue(QueueBase[_T]):
     """Stateful Last In First Out (LIFO) data structure.
@@ -173,7 +251,7 @@ class LIFOQueue(QueueBase[_T]):
         return LIFOQueue(*self._ca)
 
     def map(self, f: Callable[[_T], _S]) -> LIFOQueue[_S]:
-        """Apply function over the LIFO queue's contents."""
+        """Apply function over the contents of the LIFOQueue."""
         return LIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -> None:
@@ -200,14 +278,14 @@ class LIFOQueue(QueueBase[_T]):
         """
         return self._ca.foldR(f)
 
-    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
         """Reduce with f.
 
         * always returns a value of type _S
         * type _S can be the same type as _T
         * folds in natural LIFO Order
         """
-        return self._ca.foldR1(lambda s, t: f(t, s), init)
+        return self._ca.foldR1(lambda s, t: f(t, s), s)
 
 class DoubleQueue(QueueBase[_T]):
     """Stateful Double Sided Queue data structure.
@@ -239,7 +317,7 @@ class DoubleQueue(QueueBase[_T]):
         return dqueue
 
     def map(self, f: Callable[[_T], Optional[_S]]) -> DoubleQueue[_S]:
-        """Apply function over the Double queue's contents."""
+        """Apply function over the contents of the DoubleQueue."""
         return DoubleQueue(*map(f, self))          # type: ignore
 
     def pushR(self, *ds: _T) -> None:
@@ -290,20 +368,20 @@ class DoubleQueue(QueueBase[_T]):
         """
         return self._ca.foldR(f)
 
-    def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+    def foldL1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
         """Reduce Left with f starting with an initial value.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in FIFO Order
         """
-        return self._ca.foldL1(f, init)
+        return self._ca.foldL1(f, s)
 
-    def foldR1(self, f:Callable[[_S, _T], _S], init: _S) -> _S:
+    def foldR1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
         """Reduce Right with f starting with an initial value.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in LIFO Order
         """
-        return self._ca.foldR1(lambda t, s: f(s, t), init)
+        return self._ca.foldR1(lambda t, s: f(s, t), s)
