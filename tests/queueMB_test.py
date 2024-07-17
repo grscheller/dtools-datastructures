@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Optional
 # from grscheller.datastructures.queues import DoubleQueueMB, FIFOQueueMB, LIFOQueueMB
-from grscheller.datastructures.queues import FIFOQueueMB
+from grscheller.datastructures.queues import FIFOQueueMB, LIFOQueueMB
 from grscheller.fp.wo_exception import MB
 
 class TestQueueTypes:
@@ -37,14 +37,14 @@ class TestQueueTypes:
         assert fq2.peak_last_in() == MB(5) != MB()
         assert fq2.peak_next_out() == MB(2)
 
-    #   lq1: LIFOQueueMB[int] = LIFOQueueMB()
-    #   assert lq1.push(1,2,3) is None            # type: ignore
-    #   assert lq1.push(4,5,6) is None            # type: ignore
-    #   lq2 = lq1.map(lambda x: x+1)
-    #   last = lq2.pop()
-    #   assert last is not None
-    #   assert last - 1 == lq1.pop() == 6
-    #   assert lq2.peak() == 6
+        lq1: LIFOQueueMB[int] = LIFOQueueMB()
+        assert lq1.push(1,2,3) is None            # type: ignore
+        assert lq1.push(4,5,6) is None            # type: ignore
+        lq2 = lq1.map(lambda x: x+1)
+        last = lq2.pop().get()
+        assert last is not None
+        assert last - 1 == lq1.pop().get(1024) == 6
+        assert lq2.peak() == MB(6)
 
     def test_push_then_pop(self) -> None:
     #   dq1: DoubleQueueMB[int] = DoubleQueueMB()
@@ -80,7 +80,7 @@ class TestQueueTypes:
     #   dq2.popL()
     #   assert len(dq2) == 0
 
-        fq: FIFOQueueMB[object] = FIFOQueueMB()
+        fq: FIFOQueueMB[int|str] = FIFOQueueMB()
         pushed = 42
         fq.push(pushed)
         popped = fq.pop()
@@ -164,21 +164,21 @@ class TestQueueTypes:
         fq4 = FIFOQueueMB(*map(is42, bar42))
         assert fq3 == fq4
 
-    #   lq1: LIFOQueueMB[Optional[int]] = LIFOQueueMB()
-    #   lq2: LIFOQueueMB[Optional[int]] = LIFOQueueMB()
-    #   lq1.push(None, 1, 2, None)
-    #   lq2.push(None, 1, 2, None)
-    #   assert lq1 == lq2
-    #   assert len(lq1) == 4
+        lq1: LIFOQueueMB[Optional[int]] = LIFOQueueMB()
+        lq2: LIFOQueueMB[Optional[int]] = LIFOQueueMB()
+        lq1.push(None, 1, 2, None)
+        lq2.push(None, 1, 2, None)
+        assert lq1 == lq2
+        assert len(lq1) == 4
 
-    #   barNone2 = (None, 1, 2, None, 3)
-    #   bar42 = (42, 1, 2, 42, 3)
-    #   lq3 = LIFOQueueMB(*barNone2)
-    #   lq4 = LIFOQueueMB(*map(is42, bar42))
-    #   assert lq3 == lq4
+        barNone2 = (None, 1, 2, None, 3)
+        bar42 = (42, 1, 2, 42, 3)
+        lq3 = LIFOQueueMB(*barNone2)
+        lq4 = LIFOQueueMB(*map(is42, bar42))
+        assert lq3 == lq4
 
 
-    def test_pushing_None(self) -> None:
+    #def test_pushing_None(self) -> None:
     #    dq1: DoubleQueueMB[Optional[int]] = DoubleQueueMB()
     #    dq2: DoubleQueueMB[Optional[int]] = DoubleQueueMB()
     #    dq1.pushR(None)
@@ -194,7 +194,7 @@ class TestQueueTypes:
     #    dq4 = DoubleQueueMB(*map(is42, bar42))
     #    assert dq3 == dq4
 
-    #def test_bool_len_peak(self) -> None:
+    def test_bool_len_peak(self) -> None:
     #    dq: DoubleQueueMB[int] = DoubleQueueMB()
     #    assert not dq
     #    dq.pushL(2,1)
@@ -244,7 +244,7 @@ class TestQueueTypes:
         assert fq.pop() == MB(3)
         assert len(fq) == 0
         assert not fq
-        assert fq.pop() is None
+        assert fq.pop() == MB()
         assert len(fq) == 0
         assert not fq
         fq.push(42)
@@ -258,39 +258,41 @@ class TestQueueTypes:
         assert fq.peak_next_out() == MB()
         assert fq.peak_last_in() == MB()
 
-    #   lq: LIFOQueueMB[int] = LIFOQueueMB()
-    #   assert not lq
-    #   lq.push(1,2,3)
-    #   assert lq
-    #   assert lq.peak() == 3
-    #   assert len(lq) == 3
-    #   assert lq.pop() == 3
-    #   assert len(lq) == 2
-    #   assert lq
-    #   assert lq.pop() == 2
-    #   assert len(lq) == 1
-    #   assert lq
-    #   assert lq.pop() == 1
-    #   assert len(lq) == 0
-    #   assert not lq
-    #   assert lq.pop() is None
-    #   assert len(lq) == 0
-    #   assert not lq
-    #   lq.push(42)
-    #   assert lq
-    #   assert lq.peak() == 42
-    #   assert len(lq) == 1
-    #   assert lq
-    #   lq.push(0)
-    #   assert lq.peak() == 0
-    #   popped = lq.pop()
-    #   assert popped == 0
-    #   assert lq.peak() == 42
-    #   popped = lq.pop()
-    #   assert popped == 42
-    #   assert lq.peak() is None
-    #   assert lq.pop() is None
-    #   assert not lq
+        lq: LIFOQueueMB[int] = LIFOQueueMB()
+        assert not lq
+        lq.push(1,2,3)
+        assert lq
+        assert lq.peak() == MB(3)
+        assert len(lq) == 3
+        assert lq.pop() == MB(3)
+        assert len(lq) == 2
+        assert lq
+        assert lq.pop().get(42) == 2
+        assert len(lq) == 1
+        assert lq
+        assert lq.pop() == MB(1)
+        assert len(lq) == 0
+        assert not lq
+        assert lq.pop() == MB()
+        assert len(lq) == 0
+        assert not lq
+        lq.push(42)
+        assert lq
+        assert lq.peak() == MB(42)
+        assert len(lq) == 1
+        assert lq
+        lq.push(0)
+        assert lq.peak() == MB(0)
+        popped = lq.pop().get(-1)
+        assert popped == 0
+        assert lq.peak().get() == 42
+        popped = lq.pop()
+        assert popped == MB(42)
+        assert not lq
+        assert lq.peak() == MB()
+        assert lq.pop() == MB()
+        assert lq.peak().get(42) is 42
+        assert lq.pop().get(21) is 21
 
     def test_iterators(self) -> None:
     #   data_d = [1, 2, 3, 4, 5]
@@ -335,22 +337,22 @@ class TestQueueTypes:
             assert False
         assert not fq00
 
-    #   data = [*range(1,1001)]
-    #   lq = LIFOQueueMB(*data)
-    #   ii = len(data) - 1
-    #   for item in lq:
-    #       assert data[ii] == item
-    #       ii -= 1
-    #   assert ii == -1
+        data = [*range(1,1001)]
+        lq = LIFOQueueMB(*data)
+        ii = len(data) - 1
+        for item in lq:
+            assert data[ii] == item
+            ii -= 1
+        assert ii == -1
 
-    #   lq0: LIFOQueueMB[int] = LIFOQueueMB()
-    #   for _ in lq0:
-    #       assert False
+        lq0: LIFOQueueMB[int] = LIFOQueueMB()
+        for _ in lq0:
+            assert False
 
-    #   lq00: LIFOQueueMB[int] = LIFOQueueMB(*())
-    #   for _ in lq00:
-    #       assert False
-    #   assert not lq00
+        lq00: LIFOQueueMB[int] = LIFOQueueMB(*())
+        for _ in lq00:
+            assert False
+        assert not lq00
 
     def test_equality(self) -> None:
     #   dq1 = DoubleQueueMB(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
@@ -407,30 +409,31 @@ class TestQueueTypes:
         fq2.pop()
         assert fq1 == fq2
 
-    #   l1 = ['foofoo', 7, 11]
-    #   l2 = ['foofoo', 42]
+        l1 = ['foofoo', 7, 11]
+        l2 = ['foofoo', 42]
 
-    #   lq1 = LIFOQueueMB(3, 'Forty-Two', l1, 1)
-    #   lq2 = LIFOQueueMB(3, 'Forty-Two', 2)
-    #   assert lq1.pop() == 1
-    #   peak = lq1.peak()
-    #   assert type(peak) == list
-    #   peak.pop()
-    #   peak.pop()
-    #   peak.append(42)
-    #   assert lq2.pop() == 2
-    #   lq2.push(l2)
-    #   assert lq1 == lq2
+        lq1 = LIFOQueueMB(3, 'Forty-Two', l1, 1)
+        lq2 = LIFOQueueMB(3, 'Forty-Two', 2)
+        assert lq1.pop().get() == 1
+        peak = lq1.peak().get()
+        assert peak == l1
+        assert type(peak) == list
+        assert peak.pop() == 11
+        assert peak.pop() == 7
+        peak.append(42)
+        assert lq2.pop() == MB(2)
+        lq2.push(l2)
+        assert lq1 == lq2
 
-    #   lq2.push(42)
-    #   assert lq1 != lq2
+        lq2.push(42)
+        assert lq1 != lq2
 
-    #   lq3 = LIFOQueueMB(*map(lambda i: str(i), range(43)))
-    #   lq4 = LIFOQueueMB(*range(-1, 39), 41, 40, 39)
+        lq3 = LIFOQueueMB(*map(lambda i: str(i), range(43)))
+        lq4 = LIFOQueueMB(*range(-1, 39), 41, 40, 39)
 
-    #   lq3.push(lq3.pop(), lq3.pop(), lq3.pop())   # type: ignore # should I give pop a default value?
-    #   lq5 = lq4.map(lambda i: str(i+1))
-    #   assert lq3 == lq5
+        lq3.push(lq3.pop().get('Huey'), lq3.pop().get('Dewey'), lq3.pop().get('Louie'))
+        lq5 = lq4.map(lambda i: str(i+1))
+        assert lq3 == lq5
 
     def test_map(self) -> None:
         def f1(ii: int) -> int:
@@ -469,19 +472,19 @@ class TestQueueTypes:
         fq3 = fq2.map(f2)
         assert fq3 == FIFOQueueMB('99', '100')
 
-    #   lq0: LIFOQueueMB[int] = LIFOQueueMB()
-    #   lq1 = LIFOQueueMB(5, 42, 3, 1, 2)
-    #   lq0m = lq0.map(f1)
-    #   lq1m = lq1.map(f1)
-    #   assert lq0m == LIFOQueueMB()
-    #   assert lq1m == LIFOQueueMB(24, 1763, 8, 0, 3)
+        lq0: LIFOQueueMB[int] = LIFOQueueMB()
+        lq1 = LIFOQueueMB(5, 42, 3, 1, 2)
+        lq0m = lq0.map(f1)
+        lq1m = lq1.map(f1)
+        assert lq0m == LIFOQueueMB()
+        assert lq1m == LIFOQueueMB(24, 1763, 8, 0, 3)
 
-    #   lq0.push(8, 9, 10)
-    #   assert lq0.pop() == 10
-    #   assert lq0.pop() == 9
-    #   lq2 = lq0.map(f1)
-    #   assert lq2 == LIFOQueueMB(63)
+        lq0.push(8, 9, 10)
+        assert lq0.pop() == MB(10)
+        assert lq0.pop().get() == 9
+        lq2 = lq0.map(f1)
+        assert lq2 == LIFOQueueMB(63)
 
-    #   lq2.push(42)
-    #   lq3 = lq2.map(f2)
-    #   assert lq3 == LIFOQueueMB('63', '42')
+        lq2.push(42)
+        lq3 = lq2.map(f2)
+        assert lq3 == LIFOQueueMB('63', '42')

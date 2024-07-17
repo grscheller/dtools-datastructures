@@ -37,6 +37,9 @@ hljs.highlightAll();
 <li>class <strong>FIFOQueue</strong>: First In, First Out Queue</li>
 <li>class <strong>LIFOQueue</strong>: Last In, First Out Queue</li>
 <li>class <strong>DoubleQueue</strong>: Double Ended Queue</li>
+<li>class <strong>FIFOQueueMB</strong>: First In, First Out Functional Queue</li>
+<li>class <strong>LIFOQueueMB</strong>: Last In, First Out Functional Queue</li>
+<li>class <strong>DoubleQueueMB</strong>: Double Ended Functional Queue</li>
 </ul>
 </section>
 <section>
@@ -60,7 +63,7 @@ hljs.highlightAll();
 </ul>
 <p>Construct a queue data structure.</p>
 <ul>
-<li>data always internally stored in the same order as <code>ds</code></li>
+<li>data always internally stored in the same order as ds</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -83,47 +86,38 @@ hljs.highlightAll();
         for pos in range(len(ca)):
             yield ca[pos]
 
-    def __repr__(self) -&gt; str:
-        return &#39;DoubleQueue(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
-
     def __str__(self) -&gt; str:
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self) -&gt; DoubleQueue[_T]:
-        &#34;&#34;&#34;Return shallow copy of the `DoubleQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        dqueue: DoubleQueue[_T] = DoubleQueue()
-        dqueue._ca = self._ca.copy()
-        return dqueue
-
-    def map(self, f: Callable[[_T], Optional[_S]]) -&gt; DoubleQueue[_S]:
-        &#34;&#34;&#34;Apply function over the Double queue&#39;s contents.&#34;&#34;&#34;
-        return DoubleQueue(*map(f, self))          # type: ignore
+    def map(self, f: Callable[[_T], _S]) -&gt; DoubleQueue[_S]:
+        &#34;&#34;&#34;Apply function over the contents of the FIFOQueue subtype.&#34;&#34;&#34;
+        return DoubleQueue(*map(f, self._ca))
 
     def pushR(self, *ds: _T) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto rear of the `DoubleQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto rear of the DoubleQueue.&#34;&#34;&#34;
         self._ca.pushR(*ds)
 
     def pushL(self, *ds: _T) -&gt; None:
-        &#34;&#34;&#34;Push data left to right onto front of `DoubleQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data left to right onto front of DoubleQueue.&#34;&#34;&#34;
         self._ca.pushL(*ds)
 
     def popR(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Pop data off rear of the `DoubleQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popR()
 
     def popL(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Pop data off front of the `DoubleQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the DoubleQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peakR(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Return rightmost element of the `DoubleQueue` if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return rightmost element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peakL(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Return leftmost element of the `DoubleQueue` if it exists.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return leftmost element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -147,23 +141,23 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return self._ca.foldR(f)
 
-    def foldL1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
+    def foldL1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce Left with f starting with an initial value.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in FIFO Order
         &#34;&#34;&#34;
-        return self._ca.foldL1(f, init)
+        return self._ca.foldL1(f, s)
 
-    def foldR1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
+    def foldR1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce Right with f starting with an initial value.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in LIFO Order
         &#34;&#34;&#34;
-        return self._ca.foldR1(lambda t, s: f(s, t), init)</code></pre>
+        return self._ca.foldR1(lambda t, s: f(s, t), s)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -172,12 +166,6 @@ hljs.highlightAll();
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queues.DoubleQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> in O(n) time &amp; space complexity.</p></div>
-</dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL"><code class="name flex">
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
@@ -190,7 +178,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
+<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce Left with f starting with an initial value.</p>
@@ -212,7 +200,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
+<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce Right with f starting with an initial value.</p>
@@ -223,48 +211,56 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], Optional[_S]]) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the Double queue's contents.</p></div>
+<div class="desc"><p>Apply function over the contents of the FIFOQueue subtype.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakL"><code class="name flex">
 <span>def <span class="ident">peakL</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return leftmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
+<div class="desc"><p>Return leftmost element of the DoubleQueue if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakR"><code class="name flex">
 <span>def <span class="ident">peakR</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return rightmost element of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code> if it exists.</p></div>
+<div class="desc"><p>Return rightmost element of the DoubleQueue if it exists.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popL"><code class="name flex">
 <span>def <span class="ident">popL</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
+<div class="desc"><p>Pop data off front of the DoubleQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.popR"><code class="name flex">
 <span>def <span class="ident">popR</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
+<div class="desc"><p>Pop data off rear of the DoubleQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.pushL"><code class="name flex">
 <span>def <span class="ident">pushL</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto front of <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
+<div class="desc"><p>Push data left to right onto front of DoubleQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.pushR"><code class="name flex">
 <span>def <span class="ident">pushR</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data left to right onto rear of the <code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code>.</p></div>
+<div class="desc"><p>Push data left to right onto rear of the DoubleQueue.</p></div>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue"><code class="flex name class">
 <span>class <span class="ident">FIFOQueue</span></span>
@@ -278,7 +274,7 @@ hljs.highlightAll();
 </ul>
 <p>Construct a queue data structure.</p>
 <ul>
-<li>data always internally stored in the same order as <code>ds</code></li>
+<li>data always internally stored in the same order as ds</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -301,37 +297,30 @@ hljs.highlightAll();
         for pos in range(len(ca)):
             yield ca[pos]
 
-    def __repr__(self) -&gt; str:
-        return &#39;FIFOQueue(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;)&#39;
-
     def __str__(self) -&gt; str:
         return &#34;&lt;&lt; &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &lt;&lt;&#34;
 
-    def copy(self) -&gt; FIFOQueue[_T]:
-        &#34;&#34;&#34;Return shallow copy of the `FIFOQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        return FIFOQueue(*self._ca)
-
     def map(self, f: Callable[[_T], _S]) -&gt; FIFOQueue[_S]:
-        &#34;&#34;&#34;Apply function over the FIFO queue&#39;s contents.&#34;&#34;&#34;
+        &#34;&#34;&#34;Apply function over the contents of the FIFOQueue subtype.&#34;&#34;&#34;
         return FIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -&gt; None:
-        &#34;&#34;&#34;Push data onto the `FIFOQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the FIFOQueue.&#34;&#34;&#34;
         self._ca.pushR(*ds)
 
     def pop(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Pop data off front of the `FIFOQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off front of the FIFOQueue.&#34;&#34;&#34;
         return self._ca.popL()
 
     def peak_last_in(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Return last element pushed to the `FIFOQueue` without consuming it&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
             return None
 
     def peak_next_out(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Return next element ready to `pop` from the `FIFOQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
@@ -346,14 +335,14 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return self._ca.foldL(f)
 
-    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce with f.
 
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
         &#34;&#34;&#34;
-        return self._ca.foldL1(f, init)</code></pre>
+        return self._ca.foldL1(f, s)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -362,12 +351,6 @@ hljs.highlightAll();
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queues.FIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
-</dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold"><code class="name flex">
 <span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
@@ -380,7 +363,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -394,33 +377,195 @@ hljs.highlightAll();
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the FIFO queue's contents.</p></div>
+<div class="desc"><p>Apply function over the contents of the FIFOQueue subtype.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peak_last_in"><code class="name flex">
 <span>def <span class="ident">peak_last_in</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> without consuming it</p></div>
+<div class="desc"><p>Return last element pushed to the FIFOQueue without consuming it</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.peak_next_out"><code class="name flex">
 <span>def <span class="ident">peak_next_out</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return next element ready to <code>pop</code> from the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
+<div class="desc"><p>Return next element ready to pop from the FIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
+<div class="desc"><p>Pop data off front of the FIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data onto the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code>.</p></div>
+<div class="desc"><p>Push data onto the FIFOQueue.</p></div>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB"><code class="flex name class">
+<span>class <span class="ident">FIFOQueueMB</span></span>
+<span>(</span><span>*ds: _T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stateful First In First Out (FIFO) functional data structure.</p>
+<ul>
+<li>will resize itself larger as needed</li>
+<li>initial data pushed on in natural FIFO order</li>
+</ul>
+<p>Construct a queue data structure.</p>
+<ul>
+<li>data always internally stored in the same order as ds</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FIFOQueueMB(QueueBase[_T]):
+    &#34;&#34;&#34;Stateful First In First Out (FIFO) functional data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in natural FIFO order
+    &#34;&#34;&#34;
+    __slots__ = ()
+
+    def __iter__(self) -&gt; Iterator[_T]:
+        &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
+
+        * data yielded in natural FIFO order.
+        &#34;&#34;&#34;
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
+
+    def __str__(self) -&gt; str:
+        return &#34;||| &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
+
+    def map(self, f: Callable[[_T], _S]) -&gt; FIFOQueueMB[_S]:
+        &#34;&#34;&#34;Apply function over the contents of the FIFOQueueMB.&#34;&#34;&#34;
+        return FIFOQueueMB(*map(f, self._ca))
+
+    def push(self, *ds: _T) -&gt; None:
+        &#34;&#34;&#34;Push data onto the FIFOQueueMB.&#34;&#34;&#34;
+        self._ca.pushR(*ds)
+
+    def pop(self) -&gt; MB[_T]:
+        &#34;&#34;&#34;Pop data off front of the FIFOQueueMB.&#34;&#34;&#34;
+        if self._ca:
+            return MB(self._ca.popL())
+        else:
+            return MB()
+
+    def peak_last_in(self) -&gt; MB[_T]:
+        &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
+        if self._ca:
+            return MB(self._ca[-1])
+        else:
+            return MB()
+
+    def peak_next_out(self) -&gt; MB[_T]:
+        &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
+        if self._ca:
+            return MB(self._ca[0])
+        else:
+            return MB()
+
+    def fold(self, f:Callable[[_T, _T], _T]) -&gt; MB[_T]:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in natural FIFO Order
+        &#34;&#34;&#34;
+        return MB(self._ca.foldL(f))
+
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural FIFO Order
+        &#34;&#34;&#34;
+        return self._ca.foldL1(f, s)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.fold"><code class="name flex">
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
+<li>folds in natural FIFO Order</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.fold1"><code class="name flex">
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in natural FIFO Order</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.FIFOQueueMB" href="#grscheller.datastructures.queues.FIFOQueueMB">FIFOQueueMB</a>[_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the contents of the FIFOQueueMB.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.peak_last_in"><code class="name flex">
+<span>def <span class="ident">peak_last_in</span></span>(<span>self) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return last element pushed to the FIFOQueue without consuming it</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.peak_next_out"><code class="name flex">
+<span>def <span class="ident">peak_next_out</span></span>(<span>self) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return next element ready to pop from the FIFOQueue.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.pop"><code class="name flex">
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pop data off front of the FIFOQueueMB.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.FIFOQueueMB.push"><code class="name flex">
+<span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Push data onto the FIFOQueueMB.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue"><code class="flex name class">
 <span>class <span class="ident">LIFOQueue</span></span>
@@ -434,7 +579,7 @@ hljs.highlightAll();
 </ul>
 <p>Construct a queue data structure.</p>
 <ul>
-<li>data always internally stored in the same order as <code>ds</code></li>
+<li>data always internally stored in the same order as ds</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -457,30 +602,23 @@ hljs.highlightAll();
         for pos in range(len(ca)-1, -1, -1):
             yield ca[pos]
 
-    def __repr__(self) -&gt; str:
-        return &#39;LIFOQueue(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;)&#39;
-
     def __str__(self) -&gt; str:
         return &#34;|| &#34; + &#34; &gt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
-    def copy(self) -&gt; LIFOQueue[_T]:
-        &#34;&#34;&#34;Return shallow copy of the `FIFOQueue` in O(n) time &amp; space complexity.&#34;&#34;&#34;
-        return LIFOQueue(*self._ca)
-
     def map(self, f: Callable[[_T], _S]) -&gt; LIFOQueue[_S]:
-        &#34;&#34;&#34;Apply function over the LIFO queue&#39;s contents.&#34;&#34;&#34;
+        &#34;&#34;&#34;Apply function over the contents of the LIFOQueue.&#34;&#34;&#34;
         return LIFOQueue(*map(f, self._ca))
 
     def push(self, *ds: _T) -&gt; None:
-        &#34;&#34;&#34;Push data onto the `LIFOQueue` &amp; no return value.&#34;&#34;&#34;
+        &#34;&#34;&#34;Push data onto the LIFOQueue &amp; no return value.&#34;&#34;&#34;
         self._ca.pushR(*ds)
 
     def pop(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Pop data off rear of the `LIFOQueue`.&#34;&#34;&#34;
+        &#34;&#34;&#34;Pop data off rear of the LIFOQueue.&#34;&#34;&#34;
         return self._ca.popR()
 
     def peak(self) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Return last element pushed to the `LIFOQueue` without consuming it.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
@@ -495,14 +633,14 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return self._ca.foldR(f)
 
-    def fold1(self, f:Callable[[_S, _T], _S], init: _S) -&gt; _S:
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Reduce with f.
 
         * always returns a value of type _S
         * type _S can be the same type as _T
         * folds in natural LIFO Order
         &#34;&#34;&#34;
-        return self._ca.foldR1(lambda s, t: f(t, s), init)</code></pre>
+        return self._ca.foldR1(lambda s, t: f(t, s), s)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -511,12 +649,6 @@ hljs.highlightAll();
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="grscheller.datastructures.queues.LIFOQueue.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return shallow copy of the <code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code> in O(n) time &amp; space complexity.</p></div>
-</dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold"><code class="name flex">
 <span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
 </code></dt>
@@ -529,7 +661,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], init: _S) ‑> _S</span>
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -543,27 +675,176 @@ hljs.highlightAll();
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Apply function over the LIFO queue's contents.</p></div>
+<div class="desc"><p>Apply function over the contents of the LIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.peak"><code class="name flex">
 <span>def <span class="ident">peak</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return last element pushed to the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> without consuming it.</p></div>
+<div class="desc"><p>Return last element pushed to the LIFOQueue without consuming it.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.pop"><code class="name flex">
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Optional[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code>.</p></div>
+<div class="desc"><p>Pop data off rear of the LIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data onto the <code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code> &amp; no return value.</p></div>
+<div class="desc"><p>Push data onto the LIFOQueue &amp; no return value.</p></div>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB"><code class="flex name class">
+<span>class <span class="ident">LIFOQueueMB</span></span>
+<span>(</span><span>*ds: _T)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stateful First In First Out (LIFO) functional data structure.</p>
+<ul>
+<li>will resize itself larger as needed</li>
+<li>initial data pushed on in natural LIFO order</li>
+</ul>
+<p>Construct a queue data structure.</p>
+<ul>
+<li>data always internally stored in the same order as ds</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LIFOQueueMB(QueueBase[_T]):
+    &#34;&#34;&#34;Stateful First In First Out (LIFO) functional data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in natural LIFO order
+    &#34;&#34;&#34;
+    __slots__ = ()
+
+    def __iter__(self) -&gt; Iterator[_T]:
+        &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
+
+        * data yielded in natural LIFO order.
+        &#34;&#34;&#34;
+        ca = self._ca.copy()
+        for pos in range(len(ca)-1, -1, -1):
+            yield ca[pos]
+
+    def __str__(self) -&gt; str:
+        return &#34;||| &#34; + &#34; &lt; &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
+
+    def map(self, f: Callable[[_T], _S]) -&gt; LIFOQueueMB[_S]:
+        &#34;&#34;&#34;Apply function over the contents of the LIFOQueueMB.&#34;&#34;&#34;
+        return LIFOQueueMB(*map(f, self._ca))
+
+    def push(self, *ds: _T) -&gt; None:
+        &#34;&#34;&#34;Push data onto the LIFOQueueMB.&#34;&#34;&#34;
+        self._ca.pushR(*ds)
+
+    def pop(self) -&gt; MB[_T]:
+        &#34;&#34;&#34;Pop data off front of the LIFOQueueMB.&#34;&#34;&#34;
+        if self._ca:
+            return MB(self._ca.popR())
+        else:
+            return MB()
+
+    def peak(self) -&gt; MB[_T]:
+        &#34;&#34;&#34;Return last element pushed to the LIFOQueueMB without consuming it.&#34;&#34;&#34;
+        if self._ca:
+            return MB(self._ca[-1])
+        else:
+            return MB()
+
+    def fold(self, f:Callable[[_T, _T], _T]) -&gt; MB[_T]:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in natural LIFO Order
+        &#34;&#34;&#34;
+        return MB(self._ca.foldL(f))
+
+    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
+        &#34;&#34;&#34;Reduce with f.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in natural LIFO Order
+        &#34;&#34;&#34;
+        return self._ca.foldL1(f, s)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></li>
+<li>typing.Generic</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.fold"><code class="name flex">
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _T if self is not empty</li>
+<li>returns None if self is empty</li>
+<li>folds in natural LIFO Order</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.fold1"><code class="name flex">
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Reduce with f.</p>
+<ul>
+<li>returns a value of the of type _S</li>
+<li>type _S can be same type as _T</li>
+<li>folds in natural LIFO Order</li>
+</ul></div>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.map"><code class="name flex">
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.queues.LIFOQueueMB" href="#grscheller.datastructures.queues.LIFOQueueMB">LIFOQueueMB</a>[_S]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Apply function over the contents of the LIFOQueueMB.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.peak"><code class="name flex">
+<span>def <span class="ident">peak</span></span>(<span>self) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return last element pushed to the LIFOQueueMB without consuming it.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.pop"><code class="name flex">
+<span>def <span class="ident">pop</span></span>(<span>self) ‑> grscheller.fp.wo_exception.MB[_T]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pop data off front of the LIFOQueueMB.</p></div>
+</dd>
+<dt id="grscheller.datastructures.queues.LIFOQueueMB.push"><code class="name flex">
+<span>def <span class="ident">push</span></span>(<span>self, *ds: _T) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Push data onto the LIFOQueueMB.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 <dt id="grscheller.datastructures.queues.QueueBase"><code class="flex name class">
 <span>class <span class="ident">QueueBase</span></span>
@@ -576,11 +857,11 @@ hljs.highlightAll();
 <li>primarily for DRY implementation inheritance and generics</li>
 <li>each queue object "has-a" (contains) a circular array to store its data</li>
 <li>initial data to initializer stored in same order as provided</li>
-<li>some care is needed if storing <code>None</code> as a value in these data structures</li>
+<li>some care is needed if storing None as a value in these data structures</li>
 </ul>
 <p>Construct a queue data structure.</p>
 <ul>
-<li>data always internally stored in the same order as <code>ds</code></li>
+<li>data always internally stored in the same order as ds</li>
 </ul></div>
 <details class="source">
 <summary>
@@ -593,19 +874,27 @@ hljs.highlightAll();
     * primarily for DRY implementation inheritance and generics
     * each queue object &#34;has-a&#34; (contains) a circular array to store its data
     * initial data to initializer stored in same order as provided
-    * some care is needed if storing `None` as a value in these data structures
+    * some care is needed if storing None as a value in these data structures
+
     &#34;&#34;&#34;
     __slots__ = &#39;_ca&#39;
 
     def __init__(self, *ds: _T):
         &#34;&#34;&#34;Construct a queue data structure.
 
-        * data always internally stored in the same order as `ds`
+        * data always internally stored in the same order as ds
         &#34;&#34;&#34;
         self._ca: CircularArray[_T] = CircularArray(*ds)
 
+    def __repr__(self) -&gt; str:
+        return type(self).__name__ + &#39;(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;)&#39;
+
+    def copy(self) -&gt; Self:
+        &#34;&#34;&#34;Return shallow copy of a QueueBase[_T] subtype.&#34;&#34;&#34;
+        return type(self)(*self._ca)
+
     def __bool__(self) -&gt; bool:
-        &#34;&#34;&#34;Returns `True` if queue is not empty.&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns True if queue is not empty.&#34;&#34;&#34;
         return len(self._ca) &gt; 0
 
     def __len__(self) -&gt; int:
@@ -613,7 +902,7 @@ hljs.highlightAll();
         return len(self._ca)
 
     def __eq__(self, other: object) -&gt; bool:
-        &#34;&#34;&#34;Returns `True` if all the data stored in both compare as equal.
+        &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case.
         &#34;&#34;&#34;
@@ -629,8 +918,19 @@ hljs.highlightAll();
 <ul class="hlist">
 <li><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></li>
 <li><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></li>
+<li><a title="grscheller.datastructures.queues.FIFOQueueMB" href="#grscheller.datastructures.queues.FIFOQueueMB">FIFOQueueMB</a></li>
 <li><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></li>
+<li><a title="grscheller.datastructures.queues.LIFOQueueMB" href="#grscheller.datastructures.queues.LIFOQueueMB">LIFOQueueMB</a></li>
 </ul>
+<h3>Methods</h3>
+<dl>
+<dt id="grscheller.datastructures.queues.QueueBase.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> Self</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return shallow copy of a QueueBase[_T] subtype.</p></div>
+</dd>
+</dl>
 </dd>
 </dl>
 </section>
@@ -650,7 +950,6 @@ hljs.highlightAll();
 <li>
 <h4><code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queues.DoubleQueue.copy" href="#grscheller.datastructures.queues.DoubleQueue.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldL" href="#grscheller.datastructures.queues.DoubleQueue.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldL1" href="#grscheller.datastructures.queues.DoubleQueue.foldL1">foldL1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldR" href="#grscheller.datastructures.queues.DoubleQueue.foldR">foldR</a></code></li>
@@ -667,7 +966,6 @@ hljs.highlightAll();
 <li>
 <h4><code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queues.FIFOQueue.copy" href="#grscheller.datastructures.queues.FIFOQueue.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.fold" href="#grscheller.datastructures.queues.FIFOQueue.fold">fold</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.fold1" href="#grscheller.datastructures.queues.FIFOQueue.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.map" href="#grscheller.datastructures.queues.FIFOQueue.map">map</a></code></li>
@@ -678,9 +976,20 @@ hljs.highlightAll();
 </ul>
 </li>
 <li>
+<h4><code><a title="grscheller.datastructures.queues.FIFOQueueMB" href="#grscheller.datastructures.queues.FIFOQueueMB">FIFOQueueMB</a></code></h4>
+<ul class="two-column">
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.fold" href="#grscheller.datastructures.queues.FIFOQueueMB.fold">fold</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.fold1" href="#grscheller.datastructures.queues.FIFOQueueMB.fold1">fold1</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.map" href="#grscheller.datastructures.queues.FIFOQueueMB.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.peak_last_in" href="#grscheller.datastructures.queues.FIFOQueueMB.peak_last_in">peak_last_in</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.peak_next_out" href="#grscheller.datastructures.queues.FIFOQueueMB.peak_next_out">peak_next_out</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.pop" href="#grscheller.datastructures.queues.FIFOQueueMB.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.FIFOQueueMB.push" href="#grscheller.datastructures.queues.FIFOQueueMB.push">push</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code></h4>
 <ul class="two-column">
-<li><code><a title="grscheller.datastructures.queues.LIFOQueue.copy" href="#grscheller.datastructures.queues.LIFOQueue.copy">copy</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.fold" href="#grscheller.datastructures.queues.LIFOQueue.fold">fold</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.fold1" href="#grscheller.datastructures.queues.LIFOQueue.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.map" href="#grscheller.datastructures.queues.LIFOQueue.map">map</a></code></li>
@@ -690,7 +999,21 @@ hljs.highlightAll();
 </ul>
 </li>
 <li>
+<h4><code><a title="grscheller.datastructures.queues.LIFOQueueMB" href="#grscheller.datastructures.queues.LIFOQueueMB">LIFOQueueMB</a></code></h4>
+<ul class="two-column">
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.fold" href="#grscheller.datastructures.queues.LIFOQueueMB.fold">fold</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.fold1" href="#grscheller.datastructures.queues.LIFOQueueMB.fold1">fold1</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.map" href="#grscheller.datastructures.queues.LIFOQueueMB.map">map</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.peak" href="#grscheller.datastructures.queues.LIFOQueueMB.peak">peak</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.pop" href="#grscheller.datastructures.queues.LIFOQueueMB.pop">pop</a></code></li>
+<li><code><a title="grscheller.datastructures.queues.LIFOQueueMB.push" href="#grscheller.datastructures.queues.LIFOQueueMB.push">push</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="grscheller.datastructures.queues.QueueBase" href="#grscheller.datastructures.queues.QueueBase">QueueBase</a></code></h4>
+<ul class="">
+<li><code><a title="grscheller.datastructures.queues.QueueBase.copy" href="#grscheller.datastructures.queues.QueueBase.copy">copy</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
