@@ -65,7 +65,7 @@ class SplitEnd(Generic[_T]):
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
-        """Display the data in the `Stack,` left to right starting at bottom."""
+        """Display the data in the Stack, left to right starting at bottom."""
         return '>< ' + ' <- '.join(CircularArray(*self).map(str)) + ' ||'
 
     def __bool__(self) -> bool:
@@ -98,7 +98,7 @@ class SplitEnd(Generic[_T]):
         return True
 
     def copy(self) -> SplitEnd[_T]:
-        """Return a copy of a `Stack` in O(1) space & time complexity."""
+        """Return a copy of a Stack in O(1) space & time complexity."""
         stack: SplitEnd[_T] = SplitEnd()
         stack._head, stack._count = self._head, self._count
         return stack
@@ -106,7 +106,7 @@ class SplitEnd(Generic[_T]):
     def reverse(self) -> SplitEnd[_T]:
         """Return shallow reversed copy of a SplitEnd.
 
-        * Returns a new `Stack` object with shallow copied new data
+        * Returns a new Stack object with shallow copied new data
         * creates all new nodes
         * O(1) space & time complexity
 
@@ -166,10 +166,10 @@ class SplitEnd(Generic[_T]):
             return SplitEnd()
 
     def cons(self, d: _T) -> SplitEnd[_T]:
-        """Return a new `FStack` with data as head and self as tail.
+        """Return a new FStack with data as head and self as tail.
 
-        Constructing an `FStack` using a non-existent value as head results in
-        a non-existent `FStack`. In that case, return a copy of the `FStack`.
+        Constructing an FStack using a non-existent value as head results in
+        a non-existent FStack. In that case, return a copy of the FStack.
 
         """
         if d is not None:
@@ -214,23 +214,23 @@ class SplitEnd(Generic[_T]):
         return acc
 
     def map(self, f: Callable[[_T], _S]) -> SplitEnd[_S]:
-        """Maps a function (or callable object) over the values on the `Stack`.
+        """Maps a function (or callable object) over the values on the Stack.
 
         * TODO: Redo in "natural" order?
-        * Returns a new `Stack` object with shallow copied new data
+        * Returns a new Stack object with shallow copied new data
         * O(n) complexity
 
         """
         return SplitEnd(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind `f` to the `FStack` sequentially"""
+        """Monadically bind function f to the FStack sequentially"""
         return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind f to the `FStack` sequentially until first exhausted"""
+        """Monadically bind function f to the FStack alternately merging until first exhausted"""
         return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind f to the `FStack` merging until all exhausted"""
+        """Monadically bind function f to the FStack alternately merging until all exhausted"""
         return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))

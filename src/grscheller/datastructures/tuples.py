@@ -14,9 +14,6 @@
 
 """Immutable Tuple-like data structure with a functional interfaces.
 
-Types of Tuples:
-
-* class **FTuple**: extend builtin tuple with functional interface
 """
 
 from __future__ import annotations
@@ -76,8 +73,8 @@ class FTuple(Generic[_T]):
     def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold (reduce) left.
 
-        * first argument of `f` is for the accumulated value
-        * if FTuple is empty, return `None`
+        * first argument of function f is for the accumulated value
+        * if FTuple is empty, return None
 
         """
         if len(self._tuple) == 0:
@@ -94,8 +91,8 @@ class FTuple(Generic[_T]):
     def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
         """Fold (reduce) right.
 
-        * second argument of `f` is for the accumulated value
-        * if FTuple is empty, return `None`
+        * second argument of function f is for the accumulated value
+        * if FTuple is empty, return None
 
         """
         if len(self._tuple) == 0:
@@ -111,7 +108,7 @@ class FTuple(Generic[_T]):
     def foldL1(self, f: Callable[[_S, _T], _S], s: _S) -> _S:
         """Fold left with an initial value.
 
-        * first argument of `f` is for the accumulated value
+        * first argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         """
@@ -123,7 +120,7 @@ class FTuple(Generic[_T]):
     def foldR1(self, f: Callable[[_T, _S], _S], s: _S) -> _S:
         """Fold right with an initial value.
 
-        * second argument of f is for the accumulated value
+        * second argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         """
@@ -144,7 +141,7 @@ class FTuple(Generic[_T]):
         return FTuple(*concat(iter(self), other))
 
     def __mul__(self, num: int) -> FTuple[_T]:
-        """Return an `FTuple` which repeats another `FTuple` `num` times."""
+        """Return an FTuple which repeats another FTuple num times."""
         return FTuple(*self._tuple.__mul__(num if num > 0 else 0))
 
     def accummulate(self, f: Callable[[_T, _T], _T]) -> FTuple[_T]:
@@ -156,13 +153,13 @@ class FTuple(Generic[_T]):
     #     return FTuple(*accumulate(chain((s,), self), f))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind `f` to the data structure sequentially."""
+        """Monadically bind function f to the data structure sequentially."""
         return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind `f` to the data structure, merge until one exhausted."""
+        """Monadically bind function f to the data structure, merge until one exhausted."""
         return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
 
     def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind `f` to the data structure, merge until all are exhausted."""
+        """Monadically bind function f to the data structure, merge until all are exhausted."""
         return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))

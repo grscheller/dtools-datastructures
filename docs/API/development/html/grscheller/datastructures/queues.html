@@ -32,15 +32,6 @@ hljs.highlightAll();
 <li>implemented with Python List based circular array in a "has-a" relationship</li>
 <li>these data structures will resize themselves as needed</li>
 </ul>
-<p>Types of Queues:</p>
-<ul>
-<li>class <strong>FIFOQueue</strong>: First In, First Out Queue</li>
-<li>class <strong>LIFOQueue</strong>: Last In, First Out Queue</li>
-<li>class <strong>DoubleQueue</strong>: Double Ended Queue</li>
-<li>class <strong>FIFOQueueMB</strong>: First In, First Out Functional Queue</li>
-<li>class <strong>LIFOQueueMB</strong>: Last In, First Out Functional Queue</li>
-<li>class <strong>DoubleQueueMB</strong>: Double Ended Functional Queue</li>
-</ul>
 </section>
 <section>
 </section>
@@ -74,6 +65,7 @@ hljs.highlightAll();
 
     * will resize itself larger as needed
     * initial data pushed on in FIFO order
+
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -81,6 +73,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
 
         * data yielded in FIFO (left to right) order.
+
         &#34;&#34;&#34;
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -129,6 +122,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in FIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL(f)
 
@@ -138,6 +132,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in LIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldR(f)
 
@@ -147,6 +142,7 @@ hljs.highlightAll();
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in FIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL1(f, s)
 
@@ -156,6 +152,7 @@ hljs.highlightAll();
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in LIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldR1(lambda t, s: f(s, t), s)</code></pre>
 </details>
@@ -285,6 +282,7 @@ hljs.highlightAll();
 
     * will resize itself larger as needed
     * initial data pushed on in natural FIFO order
+
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -292,6 +290,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
 
         * data yielded in natural FIFO order.
+
         &#34;&#34;&#34;
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -332,6 +331,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural FIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL(f)
 
@@ -341,6 +341,7 @@ hljs.highlightAll();
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL1(f, s)</code></pre>
 </details>
@@ -436,6 +437,7 @@ hljs.highlightAll();
 
     * will resize itself larger as needed
     * initial data pushed on in natural FIFO order
+
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -443,6 +445,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
 
         * data yielded in natural FIFO order.
+
         &#34;&#34;&#34;
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -486,6 +489,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural FIFO Order
+
         &#34;&#34;&#34;
         return MB(self._ca.foldL(f))
 
@@ -495,6 +499,7 @@ hljs.highlightAll();
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL1(f, s)</code></pre>
 </details>
@@ -590,6 +595,7 @@ hljs.highlightAll();
 
     * will resize itself larger as needed
     * initial data pushed on in natural LIFO order
+
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -597,6 +603,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
 
         * data yielded in natural LIFO order.
+
         &#34;&#34;&#34;
         ca = self._ca.copy()
         for pos in range(len(ca)-1, -1, -1):
@@ -630,6 +637,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural LIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldR(f)
 
@@ -639,6 +647,7 @@ hljs.highlightAll();
         * always returns a value of type _S
         * type _S can be the same type as _T
         * folds in natural LIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldR1(lambda s, t: f(t, s), s)</code></pre>
 </details>
@@ -728,6 +737,7 @@ hljs.highlightAll();
 
     * will resize itself larger as needed
     * initial data pushed on in natural LIFO order
+
     &#34;&#34;&#34;
     __slots__ = ()
 
@@ -735,6 +745,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Iterator yielding data currently stored in the queue.
 
         * data yielded in natural LIFO order.
+
         &#34;&#34;&#34;
         ca = self._ca.copy()
         for pos in range(len(ca)-1, -1, -1):
@@ -771,6 +782,7 @@ hljs.highlightAll();
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural LIFO Order
+
         &#34;&#34;&#34;
         return MB(self._ca.foldL(f))
 
@@ -780,6 +792,7 @@ hljs.highlightAll();
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural LIFO Order
+
         &#34;&#34;&#34;
         return self._ca.foldL1(f, s)</code></pre>
 </details>
@@ -883,6 +896,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Construct a queue data structure.
 
         * data always internally stored in the same order as ds
+
         &#34;&#34;&#34;
         self._ca: CircularArray[_T] = CircularArray(*ds)
 
@@ -905,6 +919,7 @@ hljs.highlightAll();
         &#34;&#34;&#34;Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case.
+
         &#34;&#34;&#34;
         if not isinstance(other, type(self)):
             return False

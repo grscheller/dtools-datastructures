@@ -19,14 +19,6 @@
 * implemented with Python List based circular array in a "has-a" relationship
 * these data structures will resize themselves as needed
 
-Types of Queues:
-
-* class **FIFOQueue**: First In, First Out Queue
-* class **LIFOQueue**: Last In, First Out Queue
-* class **DoubleQueue**: Double Ended Queue
-* class **FIFOQueueMB**: First In, First Out Functional Queue
-* class **LIFOQueueMB**: Last In, First Out Functional Queue
-* class **DoubleQueueMB**: Double Ended Functional Queue
 """
 
 from __future__ import annotations
@@ -63,6 +55,7 @@ class QueueBase(Generic[_T]):
         """Construct a queue data structure.
 
         * data always internally stored in the same order as ds
+
         """
         self._ca: CircularArray[_T] = CircularArray(*ds)
 
@@ -85,6 +78,7 @@ class QueueBase(Generic[_T]):
         """Returns True if all the data stored in both compare as equal.
 
         * worst case is O(n) behavior for the true case.
+
         """
         if not isinstance(other, type(self)):
             return False
@@ -95,6 +89,7 @@ class FIFOQueue(QueueBase[_T]):
 
     * will resize itself larger as needed
     * initial data pushed on in natural FIFO order
+
     """
     __slots__ = ()
 
@@ -102,6 +97,7 @@ class FIFOQueue(QueueBase[_T]):
         """Iterator yielding data currently stored in the queue.
 
         * data yielded in natural FIFO order.
+
         """
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -142,6 +138,7 @@ class FIFOQueue(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural FIFO Order
+
         """
         return self._ca.foldL(f)
 
@@ -151,6 +148,7 @@ class FIFOQueue(QueueBase[_T]):
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
+
         """
         return self._ca.foldL1(f, s)
 
@@ -159,6 +157,7 @@ class LIFOQueue(QueueBase[_T]):
 
     * will resize itself larger as needed
     * initial data pushed on in natural LIFO order
+
     """
     __slots__ = ()
 
@@ -166,6 +165,7 @@ class LIFOQueue(QueueBase[_T]):
         """Iterator yielding data currently stored in the queue.
 
         * data yielded in natural LIFO order.
+
         """
         ca = self._ca.copy()
         for pos in range(len(ca)-1, -1, -1):
@@ -199,6 +199,7 @@ class LIFOQueue(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural LIFO Order
+
         """
         return self._ca.foldR(f)
 
@@ -208,6 +209,7 @@ class LIFOQueue(QueueBase[_T]):
         * always returns a value of type _S
         * type _S can be the same type as _T
         * folds in natural LIFO Order
+
         """
         return self._ca.foldR1(lambda s, t: f(t, s), s)
 
@@ -216,6 +218,7 @@ class DoubleQueue(QueueBase[_T]):
 
     * will resize itself larger as needed
     * initial data pushed on in FIFO order
+
     """
     __slots__ = ()
 
@@ -223,6 +226,7 @@ class DoubleQueue(QueueBase[_T]):
         """Iterator yielding data currently stored in the queue.
 
         * data yielded in FIFO (left to right) order.
+
         """
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -271,6 +275,7 @@ class DoubleQueue(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in FIFO Order
+
         """
         return self._ca.foldL(f)
 
@@ -280,6 +285,7 @@ class DoubleQueue(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in LIFO Order
+
         """
         return self._ca.foldR(f)
 
@@ -289,6 +295,7 @@ class DoubleQueue(QueueBase[_T]):
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in FIFO Order
+
         """
         return self._ca.foldL1(f, s)
 
@@ -298,6 +305,7 @@ class DoubleQueue(QueueBase[_T]):
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in LIFO Order
+
         """
         return self._ca.foldR1(lambda t, s: f(s, t), s)
 
@@ -306,6 +314,7 @@ class FIFOQueueMB(QueueBase[_T]):
 
     * will resize itself larger as needed
     * initial data pushed on in natural FIFO order
+
     """
     __slots__ = ()
 
@@ -313,6 +322,7 @@ class FIFOQueueMB(QueueBase[_T]):
         """Iterator yielding data currently stored in the queue.
 
         * data yielded in natural FIFO order.
+
         """
         ca = self._ca.copy()
         for pos in range(len(ca)):
@@ -356,6 +366,7 @@ class FIFOQueueMB(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural FIFO Order
+
         """
         return MB(self._ca.foldL(f))
 
@@ -365,6 +376,7 @@ class FIFOQueueMB(QueueBase[_T]):
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural FIFO Order
+
         """
         return self._ca.foldL1(f, s)
 
@@ -373,6 +385,7 @@ class LIFOQueueMB(QueueBase[_T]):
 
     * will resize itself larger as needed
     * initial data pushed on in natural LIFO order
+
     """
     __slots__ = ()
 
@@ -380,6 +393,7 @@ class LIFOQueueMB(QueueBase[_T]):
         """Iterator yielding data currently stored in the queue.
 
         * data yielded in natural LIFO order.
+
         """
         ca = self._ca.copy()
         for pos in range(len(ca)-1, -1, -1):
@@ -416,6 +430,7 @@ class LIFOQueueMB(QueueBase[_T]):
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural LIFO Order
+
         """
         return MB(self._ca.foldL(f))
 
@@ -425,6 +440,7 @@ class LIFOQueueMB(QueueBase[_T]):
         * returns a value of the of type _S
         * type _S can be same type as _T
         * folds in natural LIFO Order
+
         """
         return self._ca.foldL1(f, s)
 

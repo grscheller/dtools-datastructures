@@ -33,6 +33,7 @@ class DL_Node(Generic[_T]):
     * circular graphs are possible
     * doubly link lists possible
     * recursive binary trees possible
+
     """
     __slots__ = '_data', '_left', '_right'
 
@@ -46,5 +47,6 @@ class DL_Node(Generic[_T]):
 
         * always returns true
         * this type of node always contain data, even if that data is None
+
         """
         return True

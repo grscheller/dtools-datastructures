@@ -90,7 +90,7 @@ hljs.highlightAll();
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
 
     def __str__(self) -&gt; str:
-        &#34;&#34;&#34;Display the data in the `Stack,` left to right starting at bottom.&#34;&#34;&#34;
+        &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom.&#34;&#34;&#34;
         return &#39;&gt;&lt; &#39; + &#39; &lt;- &#39;.join(CircularArray(*self).map(str)) + &#39; ||&#39;
 
     def __bool__(self) -&gt; bool:
@@ -123,7 +123,7 @@ hljs.highlightAll();
         return True
 
     def copy(self) -&gt; SplitEnd[_T]:
-        &#34;&#34;&#34;Return a copy of a `Stack` in O(1) space &amp; time complexity.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return a copy of a Stack in O(1) space &amp; time complexity.&#34;&#34;&#34;
         stack: SplitEnd[_T] = SplitEnd()
         stack._head, stack._count = self._head, self._count
         return stack
@@ -131,7 +131,7 @@ hljs.highlightAll();
     def reverse(self) -&gt; SplitEnd[_T]:
         &#34;&#34;&#34;Return shallow reversed copy of a SplitEnd.
 
-        * Returns a new `Stack` object with shallow copied new data
+        * Returns a new Stack object with shallow copied new data
         * creates all new nodes
         * O(1) space &amp; time complexity
 
@@ -191,10 +191,10 @@ hljs.highlightAll();
             return SplitEnd()
 
     def cons(self, d: _T) -&gt; SplitEnd[_T]:
-        &#34;&#34;&#34;Return a new `FStack` with data as head and self as tail.
+        &#34;&#34;&#34;Return a new FStack with data as head and self as tail.
 
-        Constructing an `FStack` using a non-existent value as head results in
-        a non-existent `FStack`. In that case, return a copy of the `FStack`.
+        Constructing an FStack using a non-existent value as head results in
+        a non-existent FStack. In that case, return a copy of the FStack.
 
         &#34;&#34;&#34;
         if d is not None:
@@ -239,25 +239,25 @@ hljs.highlightAll();
         return acc
 
     def map(self, f: Callable[[_T], _S]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the `Stack`.
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
 
         * TODO: Redo in &#34;natural&#34; order?
-        * Returns a new `Stack` object with shallow copied new data
+        * Returns a new Stack object with shallow copied new data
         * O(n) complexity
 
         &#34;&#34;&#34;
         return SplitEnd(*map(f, reversed(self)))
 
     def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind `f` to the `FStack` sequentially&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the FStack sequentially&#34;&#34;&#34;
         return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
 
     def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind f to the `FStack` sequentially until first exhausted&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the FStack alternately merging until first exhausted&#34;&#34;&#34;
         return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
 
     def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind f to the `FStack` merging until all exhausted&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the FStack alternately merging until all exhausted&#34;&#34;&#34;
         return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -270,27 +270,27 @@ hljs.highlightAll();
 <span>def <span class="ident">cons</span></span>(<span>self, d: _T) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a new <code>FStack</code> with data as head and self as tail.</p>
-<p>Constructing an <code>FStack</code> using a non-existent value as head results in
-a non-existent <code>FStack</code>. In that case, return a copy of the <code>FStack</code>.</p></div>
+<div class="desc"><p>Return a new FStack with data as head and self as tail.</p>
+<p>Constructing an FStack using a non-existent value as head results in
+a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a copy of a <code>Stack</code> in O(1) space &amp; time complexity.</p></div>
+<div class="desc"><p>Return a copy of a Stack in O(1) space &amp; time complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.exhaustMap"><code class="name flex">
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind f to the <code>FStack</code> merging until all exhausted</p></div>
+<div class="desc"><p>Monadically bind function f to the FStack alternately merging until all exhausted</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.flatMap"><code class="name flex">
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the <code>FStack</code> sequentially</p></div>
+<div class="desc"><p>Monadically bind function f to the FStack sequentially</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.fold"><code class="name flex">
 <span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
@@ -328,10 +328,10 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Maps a function (or callable object) over the values on the <code>Stack</code>.</p>
+<div class="desc"><p>Maps a function (or callable object) over the values on the Stack.</p>
 <ul>
 <li>TODO: Redo in "natural" order?</li>
-<li>Returns a new <code>Stack</code> object with shallow copied new data</li>
+<li>Returns a new Stack object with shallow copied new data</li>
 <li>O(n) complexity</li>
 </ul></div>
 </dd>
@@ -339,7 +339,7 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind f to the <code>FStack</code> sequentially until first exhausted</p></div>
+<div class="desc"><p>Monadically bind function f to the FStack alternately merging until first exhausted</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
 <span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[_T]</span>
@@ -369,7 +369,7 @@ a non-existent <code>FStack</code>. In that case, return a copy of the <code>FSt
 <dd>
 <div class="desc"><p>Return shallow reversed copy of a SplitEnd.</p>
 <ul>
-<li>Returns a new <code>Stack</code> object with shallow copied new data</li>
+<li>Returns a new Stack object with shallow copied new data</li>
 <li>creates all new nodes</li>
 <li>O(1) space &amp; time complexity</li>
 </ul></div>

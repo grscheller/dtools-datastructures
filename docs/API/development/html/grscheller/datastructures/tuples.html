@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
 <title>grscheller.datastructures.tuples API documentation</title>
-<meta name="description" content="Immutable Tuple-like data structure with a functional interfaces …">
+<meta name="description" content="Immutable Tuple-like data structure with a functional interfaces.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -26,10 +26,6 @@ hljs.highlightAll();
 </header>
 <section id="section-intro">
 <p>Immutable Tuple-like data structure with a functional interfaces.</p>
-<p>Types of Tuples:</p>
-<ul>
-<li>class <strong>FTuple</strong>: extend builtin tuple with functional interface</li>
-</ul>
 </section>
 <section>
 </section>
@@ -94,8 +90,8 @@ hljs.highlightAll();
     def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold (reduce) left.
 
-        * first argument of `f` is for the accumulated value
-        * if FTuple is empty, return `None`
+        * first argument of function f is for the accumulated value
+        * if FTuple is empty, return None
 
         &#34;&#34;&#34;
         if len(self._tuple) == 0:
@@ -112,8 +108,8 @@ hljs.highlightAll();
     def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
         &#34;&#34;&#34;Fold (reduce) right.
 
-        * second argument of `f` is for the accumulated value
-        * if FTuple is empty, return `None`
+        * second argument of function f is for the accumulated value
+        * if FTuple is empty, return None
 
         &#34;&#34;&#34;
         if len(self._tuple) == 0:
@@ -129,7 +125,7 @@ hljs.highlightAll();
     def foldL1(self, f: Callable[[_S, _T], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Fold left with an initial value.
 
-        * first argument of `f` is for the accumulated value
+        * first argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
@@ -141,7 +137,7 @@ hljs.highlightAll();
     def foldR1(self, f: Callable[[_T, _S], _S], s: _S) -&gt; _S:
         &#34;&#34;&#34;Fold right with an initial value.
 
-        * second argument of f is for the accumulated value
+        * second argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
@@ -162,7 +158,7 @@ hljs.highlightAll();
         return FTuple(*concat(iter(self), other))
 
     def __mul__(self, num: int) -&gt; FTuple[_T]:
-        &#34;&#34;&#34;Return an `FTuple` which repeats another `FTuple` `num` times.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return an FTuple which repeats another FTuple num times.&#34;&#34;&#34;
         return FTuple(*self._tuple.__mul__(num if num &gt; 0 else 0))
 
     def accummulate(self, f: Callable[[_T, _T], _T]) -&gt; FTuple[_T]:
@@ -174,15 +170,15 @@ hljs.highlightAll();
     #     return FTuple(*accumulate(chain((s,), self), f))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure sequentially.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the data structure sequentially.&#34;&#34;&#34;
         return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
 
     def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until one exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the data structure, merge until one exhausted.&#34;&#34;&#34;
         return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
 
     def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind `f` to the data structure, merge until all are exhausted.&#34;&#34;&#34;
+        &#34;&#34;&#34;Monadically bind function f to the data structure, merge until all are exhausted.&#34;&#34;&#34;
         return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -207,13 +203,13 @@ hljs.highlightAll();
 <span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until all are exhausted.</p></div>
+<div class="desc"><p>Monadically bind function f to the data structure, merge until all are exhausted.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.flatMap"><code class="name flex">
 <span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure sequentially.</p></div>
+<div class="desc"><p>Monadically bind function f to the data structure sequentially.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL"><code class="name flex">
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
@@ -221,8 +217,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold (reduce) left.</p>
 <ul>
-<li>first argument of <code>f</code> is for the accumulated value</li>
-<li>if FTuple is empty, return <code>None</code></li>
+<li>first argument of function f is for the accumulated value</li>
+<li>if FTuple is empty, return None</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
@@ -231,7 +227,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold left with an initial value.</p>
 <ul>
-<li>first argument of <code>f</code> is for the accumulated value</li>
+<li>first argument of function f is for the accumulated value</li>
 <li>if empty, return the initial value s</li>
 </ul></div>
 </dd>
@@ -241,8 +237,8 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold (reduce) right.</p>
 <ul>
-<li>second argument of <code>f</code> is for the accumulated value</li>
-<li>if FTuple is empty, return <code>None</code></li>
+<li>second argument of function f is for the accumulated value</li>
+<li>if FTuple is empty, return None</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">
@@ -251,7 +247,7 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Fold right with an initial value.</p>
 <ul>
-<li>second argument of f is for the accumulated value</li>
+<li>second argument of function f is for the accumulated value</li>
 <li>if empty, return the initial value s</li>
 </ul></div>
 </dd>
@@ -265,7 +261,7 @@ hljs.highlightAll();
 <span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind <code>f</code> to the data structure, merge until one exhausted.</p></div>
+<div class="desc"><p>Monadically bind function f to the data structure, merge until one exhausted.</p></div>
 </dd>
 </dl>
 </dd>

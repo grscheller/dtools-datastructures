@@ -31,6 +31,7 @@ class SL_Node(Generic[_T]):
     * this type of node always contain data, even if that data is None
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
+
     """
     __slots__ = '_data', '_next'
 
@@ -43,5 +44,6 @@ class SL_Node(Generic[_T]):
 
         * always returns true
         * this type of node always contain data, even if that data is None
+
         """
         return True
