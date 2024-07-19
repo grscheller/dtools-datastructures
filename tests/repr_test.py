@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
-from grscheller.fp.wo_exception import MB, XOR
+from grscheller.fp.woException import MB, XOR
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple

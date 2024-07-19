@@ -17,7 +17,7 @@ from __future__ import annotations
 from typing import Optional
 # from grscheller.datastructures.queues import DoubleQueueMB, FIFOQueueMB, LIFOQueueMB
 from grscheller.datastructures.queues import FIFOQueueMB, LIFOQueueMB
-from grscheller.fp.wo_exception import MB
+from grscheller.fp.woException import MB
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:
