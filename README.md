@@ -5,7 +5,7 @@ implementation of algorithms.
 
 * Functional & imperative programming styles supported
 * FP encouraged but project endeavors to remain Pythonic
-* Methods which mutate objects don't return anything
+* Methods which mutate objects don't return anything, like Python lists
 * [grscheller.datastructures][1] project on PyPI
 * [Detailed API documentation][2] on GH-Pages
 * [Source code][3] on GitHub
