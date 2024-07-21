@@ -87,62 +87,45 @@ hljs.highlightAll();
             item = None
         return item
 
-    def foldL(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Fold (reduce) left.
-
-        * first argument of function f is for the accumulated value
-        * if FTuple is empty, return None
-
-        &#34;&#34;&#34;
-        if len(self._tuple) == 0:
-            return None
-
-        iter_self = iter(self)
-        acc = next(iter_self)
-
-        for v in iter_self:
-            acc = f(acc, v)
-
-        return acc
-
-    def foldR(self, f: Callable[[_T, _T], _T]) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Fold (reduce) right.
-
-        * second argument of function f is for the accumulated value
-        * if FTuple is empty, return None
-
-        &#34;&#34;&#34;
-        if len(self._tuple) == 0:
-            return None
-
-        rev_self = reversed(self)
-        acc = next(rev_self)
-        for v in rev_self:
-            acc = f(v, acc)
-
-        return acc
-
-    def foldL1(self, f: Callable[[_S, _T], _S], s: _S) -&gt; _S:
+    def foldL(self, f: Callable[[_S, _T], _S], start: Optional[_S]=None, default: Optional[_S]=None) -&gt; _S:
         &#34;&#34;&#34;Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
-        acc = s
-        for v in self:
+        it = iter(self._tuple)
+        if start is not None:
+            acc = start
+        elif len(self._tuple) == 0:
+            if default is None:
+                msg = &#39;Both start and default cannot be None for an empty FTuple&#39;
+                raise ValueError(&#39;FTuple.foldL - &#39; + msg)
+            acc = default
+        else:
+            acc = next(it)                # type: ignore # in this case _S == _T
+        for v in it:
             acc = f(acc, v)
         return acc
 
-    def foldR1(self, f: Callable[[_T, _S], _S], s: _S) -&gt; _S:
+    def foldR(self, f: Callable[[_T, _S], _S], start: Optional[_S]=None, default: Optional[_S]=None) -&gt; _S:
         &#34;&#34;&#34;Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
-        acc = s
-        for v in reversed(self):
+        it = reversed(self._tuple)
+        if start is not None:
+            acc = start
+        elif len(self._tuple) == 0:
+            if default is None:
+                msg = &#39;Both start and default cannot be None for an empty FTuple&#39;
+                raise ValueError(&#39;FTuple.foldR - &#39; + msg)
+            acc = default
+        else:
+            acc = next(it)                # type: ignore # in this case _S == _T
+        for v in it:
             acc = f(v, acc)
         return acc
 
@@ -161,13 +144,12 @@ hljs.highlightAll();
         &#34;&#34;&#34;Return an FTuple which repeats another FTuple num times.&#34;&#34;&#34;
         return FTuple(*self._tuple.__mul__(num if num &gt; 0 else 0))
 
-    def accummulate(self, f: Callable[[_T, _T], _T]) -&gt; FTuple[_T]:
-        &#34;&#34;&#34;Accumulate partial fold results in an FTuple.&#34;&#34;&#34;
-        return FTuple(*accumulate(self, f))
-
-    # def accummulate1(self, f: Callable[[_S, _T], _S], s: _S) -&gt; FTuple[_S]:
-    #     &#34;&#34;&#34;Accumulate partial fold results in an FTuple with an initial value.&#34;&#34;&#34;
-    #     return FTuple(*accumulate(chain((s,), self), f))
+    def accummulate(self, f: Callable[[_S, _T], _S], s: Optional[_S]=None) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Accumulate partial fold results in an FTuple with an initial value.&#34;&#34;&#34;
+        if s is None:
+            return FTuple(*accumulate(self, f))
+        else:
+            return FTuple(*accumulate(self, f, s))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Monadically bind function f to the data structure sequentially.&#34;&#34;&#34;
@@ -188,10 +170,10 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.tuples.FTuple.accummulate"><code class="name flex">
-<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_T]</span>
+<span>def <span class="ident">accummulate</span></span>(<span>self, f: Callable[[_S, _T], _S], s: Optional[_S] = None) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Accumulate partial fold results in an FTuple.</p></div>
+<div class="desc"><p>Accumulate partial fold results in an FTuple with an initial value.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_T]</span>
@@ -212,17 +194,7 @@ hljs.highlightAll();
 <div class="desc"><p>Monadically bind function f to the data structure sequentially.</p></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Fold (reduce) left.</p>
-<ul>
-<li>first argument of function f is for the accumulated value</li>
-<li>if FTuple is empty, return None</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.tuples.FTuple.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_S, _T], _S], start: Optional[_S] = None, default: Optional[_S] = None) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold left with an initial value.</p>
@@ -232,17 +204,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Fold (reduce) right.</p>
-<ul>
-<li>second argument of function f is for the accumulated value</li>
-<li>if FTuple is empty, return None</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.tuples.FTuple.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_T, _S], _S], s: _S) ‑> _S</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_T, _S], _S], start: Optional[_S] = None, default: Optional[_S] = None) ‑> _S</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Fold right with an initial value.</p>
@@ -288,9 +250,7 @@ hljs.highlightAll();
 <li><code><a title="grscheller.datastructures.tuples.FTuple.exhaustMap" href="#grscheller.datastructures.tuples.FTuple.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.flatMap" href="#grscheller.datastructures.tuples.FTuple.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldL" href="#grscheller.datastructures.tuples.FTuple.foldL">foldL</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.foldL1" href="#grscheller.datastructures.tuples.FTuple.foldL1">foldL1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldR" href="#grscheller.datastructures.tuples.FTuple.foldR">foldR</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.foldR1" href="#grscheller.datastructures.tuples.FTuple.foldR1">foldR1</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.map" href="#grscheller.datastructures.tuples.FTuple.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.mergeMap" href="#grscheller.datastructures.tuples.FTuple.mergeMap">mergeMap</a></code></li>
 </ul>

@@ -70,62 +70,45 @@ class FTuple(Generic[_T]):
             item = None
         return item
 
-    def foldL(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold (reduce) left.
-
-        * first argument of function f is for the accumulated value
-        * if FTuple is empty, return None
-
-        """
-        if len(self._tuple) == 0:
-            return None
-
-        iter_self = iter(self)
-        acc = next(iter_self)
-
-        for v in iter_self:
-            acc = f(acc, v)
-
-        return acc
-
-    def foldR(self, f: Callable[[_T, _T], _T]) -> Optional[_T]:
-        """Fold (reduce) right.
-
-        * second argument of function f is for the accumulated value
-        * if FTuple is empty, return None
-
-        """
-        if len(self._tuple) == 0:
-            return None
-
-        rev_self = reversed(self)
-        acc = next(rev_self)
-        for v in rev_self:
-            acc = f(v, acc)
-
-        return acc
-
-    def foldL1(self, f: Callable[[_S, _T], _S], s: _S) -> _S:
+    def foldL(self, f: Callable[[_S, _T], _S], start: Optional[_S]=None, default: Optional[_S]=None) -> _S:
         """Fold left with an initial value.
 
         * first argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         """
-        acc = s
-        for v in self:
+        it = iter(self._tuple)
+        if start is not None:
+            acc = start
+        elif len(self._tuple) == 0:
+            if default is None:
+                msg = 'Both start and default cannot be None for an empty FTuple'
+                raise ValueError('FTuple.foldL - ' + msg)
+            acc = default
+        else:
+            acc = next(it)                # type: ignore # in this case _S == _T
+        for v in it:
             acc = f(acc, v)
         return acc
 
-    def foldR1(self, f: Callable[[_T, _S], _S], s: _S) -> _S:
+    def foldR(self, f: Callable[[_T, _S], _S], start: Optional[_S]=None, default: Optional[_S]=None) -> _S:
         """Fold right with an initial value.
 
         * second argument of function f is for the accumulated value
         * if empty, return the initial value s
 
         """
-        acc = s
-        for v in reversed(self):
+        it = reversed(self._tuple)
+        if start is not None:
+            acc = start
+        elif len(self._tuple) == 0:
+            if default is None:
+                msg = 'Both start and default cannot be None for an empty FTuple'
+                raise ValueError('FTuple.foldR - ' + msg)
+            acc = default
+        else:
+            acc = next(it)                # type: ignore # in this case _S == _T
+        for v in it:
             acc = f(v, acc)
         return acc
 
@@ -144,13 +127,12 @@ class FTuple(Generic[_T]):
         """Return an FTuple which repeats another FTuple num times."""
         return FTuple(*self._tuple.__mul__(num if num > 0 else 0))
 
-    def accummulate(self, f: Callable[[_T, _T], _T]) -> FTuple[_T]:
-        """Accumulate partial fold results in an FTuple."""
-        return FTuple(*accumulate(self, f))
-
-    # def accummulate1(self, f: Callable[[_S, _T], _S], s: _S) -> FTuple[_S]:
-    #     """Accumulate partial fold results in an FTuple with an initial value."""
-    #     return FTuple(*accumulate(chain((s,), self), f))
+    def accummulate(self, f: Callable[[_S, _T], _S], s: Optional[_S]=None) -> FTuple[_S]:
+        """Accumulate partial fold results in an FTuple with an initial value."""
+        if s is None:
+            return FTuple(*accumulate(self, f))
+        else:
+            return FTuple(*accumulate(self, f, s))
 
     def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
         """Monadically bind function f to the data structure sequentially."""

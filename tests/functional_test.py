@@ -41,13 +41,13 @@ class Test_FP:
 
         assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
         assert ft1.foldL(l1) == 15
-        assert ft1.foldL1(l1, 0) == 15
-        assert ft1.foldL1(l1, 10) == 25
-        assert ft1.foldL1(l2, 1) == 120
-        assert ft1.foldL1(l2, 10) == 1200
-        assert ft1.foldL1(pushFQ, FIFOQueue[int]()) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL1(l1, 42) == 42
-        assert ft0.foldL1(pushFQ, FIFOQueue[int]()) == FIFOQueue()
+        assert ft1.foldL(l1, 0) == 15
+        assert ft1.foldL(l1, 10) == 25
+        assert ft1.foldL(l2, 1) == 120
+        assert ft1.foldL(l2, 10) == 1200
+        assert ft1.foldL(pushFQ, FIFOQueue[int]()) == FIFOQueue(1,2,3,4,5)
+        assert ft0.foldL(l1, 42) == 42
+        assert ft0.foldL(pushFQ, FIFOQueue[int]()) == FIFOQueue()
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5)'
         assert se1.fold(l1) == 15

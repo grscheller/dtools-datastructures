@@ -84,14 +84,14 @@ hljs.highlightAll();
 
     def __reversed__(self) -&gt; Iterator[_T]:
         &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
-        return reversed(CircularArray(*self))
+        return reversed(CA(*self))
 
     def __repr__(self) -&gt; str:
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
 
     def __str__(self) -&gt; str:
-        &#34;&#34;&#34;Display the data in the Stack, left to right starting at bottom.&#34;&#34;&#34;
-        return &#39;&gt;&lt; &#39; + &#39; &lt;- &#39;.join(CircularArray(*self).map(str)) + &#39; ||&#39;
+        &#34;&#34;&#34;Display the data in the Stack, left to right.&#34;&#34;&#34;
+        return &#39;&gt;&lt; &#39; + &#39; &lt;- &#39;.join(CA(*self).map(str)) + &#39; ||&#39;
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;

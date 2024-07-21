@@ -33,7 +33,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
-from grscheller.circular_array.ca import CircularArray
+from grscheller.circular_array.ca import CA
 from grscheller.fp.woException import MB
 
 _T = TypeVar('_T')
@@ -57,7 +57,7 @@ class QueueBase(Generic[_T]):
         * data always internally stored in the same order as ds
 
         """
-        self._ca: CircularArray[_T] = CircularArray(*ds)
+        self._ca: CA[_T] = CA(*ds)
 
     def __repr__(self) -> str:
         return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ')'
@@ -413,7 +413,7 @@ class LIFOQueueMB(QueueBase[_T]):
     def pop(self) -> MB[_T]:
         """Pop data off front of the LIFOQueueMB."""
         if self._ca:
-            return MB(self._ca.popR())
+            return MB(self._ca.popR())   # type: ignore # checked that not empty
         else:
             return MB()
 

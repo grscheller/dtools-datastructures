@@ -72,28 +72,42 @@ class TestFTuple:
         ft1: FTuple[int]  = FTuple(*range(6))
         assert ft1 == FTuple(0, 1, 2, 3, 4, 5)
 
-        assert ft1.map(lambda x: x*x) == FTuple(0, 1, 4, 9, 16, 25)
-        assert ft0.map(lambda x: x*x) == FTuple()
+        assert ft1.map(lambda t: t*t) == FTuple(0, 1, 4, 9, 16, 25)
+        assert ft0.map(lambda t: t*t) == FTuple()
 
     def test_foldL(self) -> None:
         ft0: FTuple[int] = FTuple()
         ft1: FTuple[int]  = FTuple(*range(1, 6))
         assert ft1 == FTuple(1, 2, 3, 4, 5)
 
-        assert ft1.foldL(lambda x, y: x*y) == 120
-        assert ft0.foldL(lambda x, y: x*y) is None
-        assert ft1.foldL1(lambda x, y: x*y, s=10) == 1200
-        assert ft0.foldL1(lambda x, y: x*y, s=10) == 10
+        assert ft1.foldL(lambda s, t: s*t) == 120
+        assert ft0.foldL(lambda s, t: s*t, default=42) == 42
+        assert ft1.foldL(lambda s, t: s*t, 10) == 1200
+        assert ft0.foldL(lambda s, t: s*t, start=10) == 10
 
     def test_foldR(self) -> None:
         ft0: FTuple[int] = FTuple()
         ft1: FTuple[int]  = FTuple(*range(1, 4))
         assert ft1 == FTuple(1, 2, 3)
 
-        assert ft1.foldR(lambda x, y: y*y - x) == 48
-        assert ft0.foldR(lambda x, y: y*y - x) == None
-        assert ft1.foldR1(lambda x, y: y*y - x, s=5) == 232323
-        assert ft0.foldR1(lambda x, y: y*y - x, s=5) == 5
+        assert ft1.foldR(lambda t, s: s*s - t) == 48
+        assert ft0.foldR(lambda t, s: s*s - t, default = -1) == -1
+        assert ft1.foldR(lambda t, s: s*s - t, start=5) == 232323
+        assert ft0.foldR(lambda t, s: s*s - t, 5) == 5
+
+        try:
+            result = ft0.foldR(lambda t, s: 5*t + 6*s)
+        except ValueError:
+            assert True
+        else:
+            assert False
+
+        try:
+            result = ft0.foldL(lambda t, s: 5*t + 6*s)
+        except ValueError:
+            assert True
+        else:
+            assert False
 
     def test_accummulate(self) -> None:
         ft0: FTuple[int] = FTuple()
@@ -105,8 +119,8 @@ class TestFTuple:
 
         assert ft1.accummulate(add) == FTuple(1, 3, 6, 10, 15)
         assert ft0.accummulate(add) == FTuple()
-        # assert ft1.accummulate1(lambda x, y: x+y, s=1) == FTuple(1, 2, 4, 7, 11, 16)
-        # assert ft0.accummulate1(lambda x, y: x+y, s=1) == FTuple(1)
+        assert ft1.accummulate(lambda x, y: x+y, 1) == FTuple(1, 2, 4, 7, 11, 16)
+        assert ft0.accummulate(lambda x, y: x+y, 1) == FTuple(1)
 
     def test_flatmap(self) -> None:
         ft0: FTuple[int] = FTuple()

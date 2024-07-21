@@ -765,7 +765,7 @@ hljs.highlightAll();
     def pop(self) -&gt; MB[_T]:
         &#34;&#34;&#34;Pop data off front of the LIFOQueueMB.&#34;&#34;&#34;
         if self._ca:
-            return MB(self._ca.popR())
+            return MB(self._ca.popR())   # type: ignore # checked that not empty
         else:
             return MB()
 
@@ -898,7 +898,7 @@ hljs.highlightAll();
         * data always internally stored in the same order as ds
 
         &#34;&#34;&#34;
-        self._ca: CircularArray[_T] = CircularArray(*ds)
+        self._ca: CA[_T] = CA(*ds)
 
     def __repr__(self) -&gt; str:
         return type(self).__name__ + &#39;(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;)&#39;
