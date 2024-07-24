@@ -12,28 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.split_ends import SplitEnd
+from grscheller.datastructures.split_ends import SplitEnd as SE
 from itertools import chain
 
 class Test_FSplitEnds:
     def test_mutate_returns_none(self) -> None:
-        ps = SplitEnd(41)
+        ps = SE(41)
         ret = ps.push(1,2,3)        # type: ignore
         assert ret is None
 
     def test_pushThenPop(self) -> None:
-        s1: SplitEnd[int] = SplitEnd()
+        s1: SE[int] = SE()
         pushed = 42
         s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
     def test_popFromEmptySplitEnd(self) -> None:
-        s1: SplitEnd[int] = SplitEnd()
+        s1: SE[int] = SE()
         popped = s1.pop()
         assert popped is None
 
-        s2 = SplitEnd(1, 2, 3, 42)
+        s2 = SE(1, 2, 3, 42)
         while s2:
             assert s2.peak() is not None
             s2.pop()
@@ -45,8 +45,8 @@ class Test_FSplitEnds:
         assert s2.peak() is None
 
     def test_SplitEnd(self) -> None:
-        s0 = SplitEnd(101)
-        s1 = SplitEnd(*range(0,2000))
+        s0 = SE(101)
+        s1 = SE(*range(0,2000))
 
         assert len(s0) == 1
         assert len(s1) == 2000
@@ -57,7 +57,7 @@ class Test_FSplitEnds:
         assert len(s1) == 1998
 
     def test_consHeadTail(self) -> None:
-        s1: SplitEnd[int] = SplitEnd()
+        s1: SE[int] = SplitEnd()
         s2 = s1.cons(100)
         head = s2.head(21)
         assert head == 100
@@ -65,17 +65,17 @@ class Test_FSplitEnds:
         assert head == 42
         s3 = s2.cons(1).cons(2).cons(3)
         s4 = s3.tail()
-        assert s4 == SplitEnd(100, 1, 2)
-        assert s1 == SplitEnd()
+        assert s4 == SE(100, 1, 2)
+        assert s1 == SE()
         s5 = s1.cons(42).cons(0)
-        assert s5 == SplitEnd(42, 0)
-        assert s5.tail() == SplitEnd(100, 1)
+        assert s5 == SE(42, 0)
+        assert s5.tail() == SE(100, 1)
 
     def test_headOfEmptySplitEnd(self) -> None:
-        s1: SplitEnd[int] = SplitEnd()
+        s1: SE[int] = SE()
         assert s1.head() is None
 
-        s2: SplitEnd[int]|None = SplitEnd(1, 2, 3, 42)
+        s2: SE[int]|None = SE(1, 2, 3, 42)
         while s2:
             assert s2.head() is not None
             s2 = s2.tail()
@@ -89,22 +89,22 @@ class Test_FSplitEnds:
         assert s2.head() == 40+2
 
     def test_SplitEnd_len(self) -> None:
-        s0: SplitEnd[int] = SplitEnd()
-        s1: SplitEnd[int]|None = SplitEnd(*range(0,2000))
+        s0: SE[int] = SE()
+        s1: SE[int]|None = SE(*range(0,2000))
 
         assert len(s0) == 0
         if s1:
             assert len(s1) == 2000
-        s2: SplitEnd[int]|None = SplitEnd(42)
-        s0 = s0.tail(s2 if s2 is not None else SplitEnd(-1, -2, -3))    # type: ignore
-        s1 = s1.tail().tail()                                           # type: ignore
+        s2: SE[int]|None = SE(42)
+        s0 = s0.tail()
+        s1 = s1.tail().tail()
         assert len(s0) == 1
-        assert len(s1) == 1998        # type: ignore
-        s1.pop()                      # type: ignore
-        assert len(s1) == 1997        # type: ignore
+        assert len(s1) == 1998
+        s1.pop()
+        assert len(s1) == 1997
 
     def test_tailcons(self) -> None:
-        s1: SplitEnd[str] = SplitEnd()
+        s1: SE[str] = SE()
         s1 = s1.cons("fum").cons("fo").cons("fi").cons("fe")
         assert type(s1) == SplitEnd
         s2 = s1.tail()

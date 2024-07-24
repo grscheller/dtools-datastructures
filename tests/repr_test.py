@@ -18,7 +18,9 @@ from typing import Any, Optional
 from grscheller.fp.woException import MB, XOR
 from grscheller.fp.nothing import Nothing, nothing
 from grscheller.datastructures.split_ends import SplitEnd
-from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
+from grscheller.datastructures.queues import DoubleQueue
+from grscheller.datastructures.queues import FIFOQueue
+from grscheller.datastructures.queues import LIFOQueue
 from grscheller.datastructures.tuples import FTuple
 
 class Test_repr:

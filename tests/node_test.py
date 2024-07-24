@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.nodes.sl import SL_Node
-from grscheller.datastructures.nodes.dl import DL_Node
+from grscheller.datastructures.nodes.sl import SL_Node as SL
+from grscheller.datastructures.nodes.dl import DL_Node as DL
 
 class Test_SL_Node:
     def test_bool(self) -> None:
-        n1 = SL_Node(1, None)
-        n2 = SL_Node(2, n1)
+        n1 = SL(1, None)
+        n2 = SL(2, n1)
         assert n1
         assert n2
 
     def test_linking(self) -> None:
-        n1 = SL_Node(1, None)
-        n2 = SL_Node(2, n1)
-        n3 = SL_Node(3, n2)
+        n1 = SL(1, None)
+        n2 = SL(2, n1)
+        n3 = SL(3, n2)
         assert n3._data == 3
         assert n3._next is not None
         assert n3._next._next is not None
@@ -39,11 +39,11 @@ class Test_SL_Node:
 
 class Test_Tree_Node:
     def test_bool(self) -> None:
-        tn1 = DL_Node(None, 'spam', None)
-        tn2 = DL_Node(tn1, 'Monty', None)
-        tn3 = DL_Node(None, 'Python', tn2)
-        tn4 = DL_Node(tn1, 'Monty Python', tn2)
-        tn0 = DL_Node(None, None, None)
+        tn1 = DL(None, 'spam', None)
+        tn2 = DL(tn1, 'Monty', None)
+        tn3 = DL(None, 'Python', tn2)
+        tn4 = DL(tn1, 'Monty Python', tn2)
+        tn0 = DL(None, None, None)
         assert tn1
         assert tn2
         assert tn3

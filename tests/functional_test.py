@@ -15,9 +15,9 @@
 from __future__ import annotations
 
 from typing import TypeVar
-from grscheller.datastructures.tuples import FTuple
-from grscheller.datastructures.split_ends import SplitEnd
-from grscheller.datastructures.queues import FIFOQueue
+from grscheller.datastructures.tuples import FTuple, FTuple as FT
+from grscheller.datastructures.queues import FIFOQueue as FQ
+from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
 from grscheller.fp.nothing import Nothing, nothing
 
 _T = TypeVar('_T')
@@ -30,18 +30,18 @@ class Test_FP:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQ(x: FIFOQueue[_T, _S], y: _T) -> FIFOQueue[_T, _S]:
+        def pushFQ(x: FQ[_T, _S], y: _T) -> FQ[_T, _S]:
             x.push(y)
             return x
 
-        def pushSE(x: SplitEnd[_T], y: _T) -> SplitEnd[_T]:
+        def pushSE(x: SE[_T], y: _T) -> SE[_T]:
             x.push(y)
             return x
 
-        ft0: FTuple[int] = FTuple()
-        se0: SplitEnd[int] = SplitEnd()
-        ft1: FTuple[int] = FTuple(1,2,3,4,5)
-        se1: SplitEnd[int] = SplitEnd(1,2,3,4,5)
+        ft0: FT[int] = FT()
+        se0: SE[int] = SE()
+        ft1: FT[int] = FT(1,2,3,4,5)
+        se1: SE[int] = SE(1,2,3,4,5)
 
         assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
         assert ft1.foldL(l1) == 15
@@ -49,54 +49,54 @@ class Test_FP:
         assert ft1.foldL(l1, 10) == 25
         assert ft1.foldL(l2, 1) == 120
         assert ft1.foldL(l2, 10) == 1200
-        # test with explicit FIFOQueue sentinel
-        fq1: FIFOQueue[int, tuple[int, ...]] = FIFOQueue(sentinel=())
-        fq2: FIFOQueue[int, tuple[()]] = FIFOQueue(sentinel=())
-        fq3: FIFOQueue[int, tuple[int, ...]] = FIFOQueue(sentinel=())
-        fq4: FIFOQueue[int, tuple[()]] = FIFOQueue(sentinel=())
-        assert ft1.foldL(pushFQ, FIFOQueue[int, tuple[int, ...]](sentinel=())) == FIFOQueue(1,2,3,4,5, sentinel=())
-        assert ft1.foldL(pushFQ, FIFOQueue[int, tuple[()]](sentinel=())) == FIFOQueue(1,2,3,4,5, sentinel=())
-        assert ft1.foldL(pushFQ, fq1) == FIFOQueue(1,2,3,4,5, sentinel=())
-        assert ft1.foldL(pushFQ, fq2) == FIFOQueue(1,2,3,4,5, sentinel=())
+        # test with explicit FQ sentinel
+        fq1: FQ[int, tuple[int, ...]] = FQ(sentinel=())
+        fq2: FQ[int, tuple[()]] = FQ(sentinel=())
+        fq3: FQ[int, tuple[int, ...]] = FQ(sentinel=())
+        fq4: FQ[int, tuple[()]] = FQ(sentinel=())
+        assert ft1.foldL(pushFQ, FQ[int, tuple[int, ...]](sentinel=())) == FQ(1,2,3,4,5, sentinel=())
+        assert ft1.foldL(pushFQ, FQ[int, tuple[()]](sentinel=())) == FQ(1,2,3,4,5, sentinel=())
+        assert ft1.foldL(pushFQ, fq1) == FQ(1,2,3,4,5, sentinel=())
+        assert ft1.foldL(pushFQ, fq2) == FQ(1,2,3,4,5, sentinel=())
         assert ft0.foldL(l1, 42) == 42
-        assert ft0.foldL(pushFQ, FIFOQueue[int, tuple[int, ...]](sentinel=())) == FIFOQueue(sentinel=())
-        assert ft0.foldL(pushFQ, FIFOQueue[int, tuple[()]](sentinel=())) == FIFOQueue(sentinel=())
-        assert ft0.foldL(pushFQ, fq3) == FIFOQueue(sentinel=())
-        assert ft0.foldL(pushFQ, fq4) == FIFOQueue(sentinel=())
+        assert ft0.foldL(pushFQ, FQ[int, tuple[int, ...]](sentinel=())) == FQ(sentinel=())
+        assert ft0.foldL(pushFQ, FQ[int, tuple[()]](sentinel=())) == FQ(sentinel=())
+        assert ft0.foldL(pushFQ, fq3) == FQ(sentinel=())
+        assert ft0.foldL(pushFQ, fq4) == FQ(sentinel=())
         assert fq1 == fq2
         assert fq3 == fq4
-        # test with default FIFOQueue sentinel = Nothing() = nothing
-        fq5: FIFOQueue[int, Nothing] = FIFOQueue()
-        fq6 = FIFOQueue[int, Nothing]()
-        fq7: FIFOQueue[int, Nothing] = FIFOQueue()
-        fq8 = FIFOQueue[int, Nothing]()
-        assert ft1.foldL(pushFQ, fq5) == FIFOQueue(1,2,3,4,5)
-        assert ft1.foldL(pushFQ, fq6) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL(pushFQ, fq7) == FIFOQueue()
-        assert ft0.foldL(pushFQ, fq8) == FIFOQueue()
-        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5)
-        assert fq7 == fq8 == FIFOQueue()
+        # test with default FQ sentinel = Nothing() = none
+        fq5: FQ[int, Nothing] = FQ()
+        fq6 = FQ[int, Nothing]()
+        fq7: FQ[int, Nothing] = FQ()
+        fq8 = FQ[int, Nothing]()
+        assert ft1.foldL(pushFQ, fq5) == FQ(1,2,3,4,5)
+        assert ft1.foldL(pushFQ, fq6) == FQ(1,2,3,4,5)
+        assert ft0.foldL(pushFQ, fq7) == FQ()
+        assert ft0.foldL(pushFQ, fq8) == FQ()
+        assert fq5 == fq6 == FQ(1,2,3,4,5)
+        assert fq7 == fq8 == FQ()
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5)'
         assert se1.fold(l1) == 15
         assert se1.fold1(l1, 10) == 25
         assert se1.fold(l2) == 120
         assert se1.fold1(l2, 10) == 1200
-        assert se1.fold1(pushSE, SplitEnd[int]()) == SplitEnd(5,4,3,2,1)
+        assert se1.fold1(pushSE, SE[int]()) == SE(5,4,3,2,1)
         assert se0.fold(l1) == None
         assert se0.fold1(l1, 10) == 10
-        assert se0.fold1(pushSE, SplitEnd[int]()) == SplitEnd()
+        assert se0.fold1(pushSE, SE[int]()) == SE()
 
-        assert ft1.accummulate(l1) == FTuple(1,3,6,10,15)
-        # assert ft1.accummulate1(l1, 10) == FTuple(10,11,13,16,20,25)
-        assert ft1.accummulate(l2) == FTuple(1,2,6,24,120)
-        assert ft0.accummulate(l1) == FTuple()
-        assert ft0.accummulate(l2) == FTuple()
+        assert ft1.accummulate(l1) == FT(1,3,6,10,15)
+        assert ft1.accummulate(l1, 10) == FT(10,11,13,16,20,25)
+        assert ft1.accummulate(l2) == FT(1,2,6,24,120)
+        assert ft0.accummulate(l1) == FT()
+        assert ft0.accummulate(l2) == FT()
 
     def test_ftuple_flatMap(self) -> None:
-        ft:FTuple[int] = FTuple(*range(3, 101))
+        ft:FT[int] = FT(*range(3, 101))
         l1 = lambda x: 2*x + 1
-        l2 = lambda x: FTuple(*range(2, x+1)).accummulate(lambda x, y: x+y)
+        l2 = lambda x: FT(*range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
         ft2 = ft.flatMap(l2)
         ft3 = ft.mergeMap(l2)

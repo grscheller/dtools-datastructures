@@ -16,14 +16,16 @@ from __future__ import annotations
 
 from typing import Optional
 from grscheller.circular_array.ca import CA
-from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
+from grscheller.datastructures.queues import DoubleQueue as DQ
+from grscheller.datastructures.queues import FIFOQueue as FQ
+from grscheller.datastructures.queues import LIFOQueue as LQ
 from grscheller.fp.nothing import Nothing, nothing
-from grscheller.datastructures.tuples import FTuple
+from grscheller.datastructures.tuples import FTuple as FT
 from grscheller.fp.woException import MB
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:
-        dq1: DoubleQueue[int, Nothing] = DoubleQueue()
+        dq1: DQ[int, Nothing] = DQ()
         dq1.pushL(1,2,3)
         dq1.pushR(1,2,3)
         dq2 = dq1.map(lambda x: x-1)
@@ -35,17 +37,17 @@ class TestQueueTypes:
             else:
                 return x
 
-        fq1: FIFOQueue[int, MB[int]] = FIFOQueue(sentinel=MB())
+        fq1: FQ[int, MB[int]] = FQ(sentinel=MB())
         fq1.push(1,2,3)
         fq1.push(4,5,6)
         fq2 = fq1.map(lambda x: x+1)
-        not_nothing = fq2.pop()
-        assert not_nothing != MB()
-        assert not_nothing == 2
+        not_none = fq2.pop()
+        assert not_none != MB()
+        assert not_none == 2
         assert fq2.peak_last_in() == 7 != MB()
         assert fq2.peak_next_out() == 3
 
-        lq1: LIFOQueue[MB[int], MB[int]] = LIFOQueue(sentinel=MB())
+        lq1: LQ[MB[int], MB[int]] = LQ(sentinel=MB())
         lq1.push(MB(1), MB(2), MB(3))
         lq1.push(MB(4), MB(), MB(5))
         lq2 = lq1.map(lambda x: x.map(lambda n: 2*n))
@@ -58,7 +60,7 @@ class TestQueueTypes:
         assert lq2.peak().get(42) == 8
 
     def test_push_then_pop(self) -> None:
-        dq1 = DoubleQueue[int, Nothing]()
+        dq1 = DQ[int, Nothing]()
         pushed_1 = 42
         dq1.pushL(pushed_1)
         popped_1 = dq1.popL()
@@ -76,7 +78,7 @@ class TestQueueTypes:
         assert pushed_1 == popped_1
         assert len(dq1) == 0
 
-        dq2: DoubleQueue[str, Nothing] = DoubleQueue()
+        dq2: DQ[str, Nothing] = DQ()
         pushed_2 = ''
         dq2.pushR(pushed_2)
         popped_2 = dq2.popR()
@@ -91,7 +93,7 @@ class TestQueueTypes:
         dq2.popL()
         assert len(dq2) == 0
 
-        fq: FIFOQueue[MB[int|str], MB[int|str]] = FIFOQueue(sentinel=MB())
+        fq: FQ[MB[int|str], MB[int|str]] = FQ(sentinel=MB())
         pushed: MB[int|str] = MB(42)
         fq.push(pushed)
         popped = fq.pop()
@@ -127,7 +129,7 @@ class TestQueueTypes:
         assert len(fq) == 0
         assert not fq
 
-        lq: LIFOQueue[object, Nothing] = LIFOQueue()
+        lq: LQ[object, Nothing] = LQ()
         pushed2: int|str = 42
         lq.push(pushed2)
         popped2 = lq.pop()
@@ -141,7 +143,7 @@ class TestQueueTypes:
         pushed2 = 0
         lq.push(pushed2)
         popped2 = lq.pop()
-        assert popped2 is not nothing
+        assert popped2 != nothing
         assert pushed2 == popped2
         assert len(lq) == 0
         pushed2 = ''
@@ -161,8 +163,8 @@ class TestQueueTypes:
         def is42(ii: int) -> Optional[int]:
             return None if ii == 42 else ii
 
-        fq1: FIFOQueue[object, Nothing] = FIFOQueue(sentinel=nothing)
-        fq2: FIFOQueue[object, Nothing] = FIFOQueue(sentinel=nothing)
+        fq1: FQ[object, Nothing] = FQ(sentinel=nothing)
+        fq2: FQ[object, Nothing] = FQ(sentinel=nothing)
         fq1.push(None)
         fq2.push(None)
         assert fq1 == fq2
@@ -170,14 +172,12 @@ class TestQueueTypes:
 
         barNone: tuple[int|None, ...] = (None, 1, 2, 3, None)
         bar42 = (42, 1, 2, 3, 42)
-        fq3: FIFOQueue[object, Nothing] = FIFOQueue(*barNone,
-                                                    sentinel=nothing)
-        fq4: FIFOQueue[object, Nothing] = FIFOQueue(*map(is42, bar42),
-                                                    sentinel=nothing)
+        fq3: FQ[object, Nothing] = FQ(*barNone, sentinel=nothing)
+        fq4: FQ[object, Nothing] = FQ(*map(is42, bar42), sentinel=nothing)
         assert fq3 == fq4
 
-        lq1: LIFOQueue[Optional[int], Nothing] = LIFOQueue(sentinel=nothing)
-        lq2: LIFOQueue[Optional[int], Nothing] = LIFOQueue()
+        lq1: LQ[Optional[int], Nothing] = LQ(sentinel=nothing)
+        lq2: LQ[Optional[int], Nothing] = LQ()
         lq1.push(None, 1, 2, None)
         lq2.push(None, 1, 2, None)
         assert lq1 == lq2
@@ -185,14 +185,14 @@ class TestQueueTypes:
 
         barNone = (None, 1, 2, None, 3)
         bar42 = (42, 1, 2, 42, 3)
-        lq3: LIFOQueue[Optional[int], Nothing] = LIFOQueue(*barNone, sentinel=nothing)
-        lq4: LIFOQueue[Optional[int], Nothing] = LIFOQueue(*map(is42, bar42), sentinel=nothing)
+        lq3: LQ[Optional[int], Nothing] = LQ(*barNone, sentinel=nothing)
+        lq4: LQ[Optional[int], Nothing] = LQ(*map(is42, bar42), sentinel=nothing)
         assert lq3 == lq4
 
 
     def test_pushing_None(self) -> None:
-        dq1: DoubleQueue[Optional[int], Nothing] = DoubleQueue()
-        dq2: DoubleQueue[Optional[int], Nothing] = DoubleQueue()
+        dq1: DQ[Optional[int], Nothing] = DQ()
+        dq2: DQ[Optional[int], Nothing] = DQ()
         dq1.pushR(None)
         dq2.pushL(None)
         assert dq1 == dq2
@@ -202,12 +202,12 @@ class TestQueueTypes:
 
         barNone = (1, 2, None, 3, None, 4)
         bar42 = (1, 2, 42, 3, 42, 4)
-        dq3 = DoubleQueue[Optional[int], Nothing](*barNone)
-        dq4 = DoubleQueue[Optional[int], Nothing](*map(is42, bar42))
+        dq3 = DQ[Optional[int], Nothing](*barNone)
+        dq4 = DQ[Optional[int], Nothing](*map(is42, bar42))
         assert dq3 == dq4
 
     def test_bool_len_peak(self) -> None:
-        dq: DoubleQueue[int, None] = DoubleQueue(sentinel=None)
+        dq: DQ[int, None] = DQ(sentinel=None)
         assert not dq
         dq.pushL(2,1)
         dq.pushR(3)
@@ -240,7 +240,7 @@ class TestQueueTypes:
         assert dq.peakL() is None
         assert dq.peakR() is None
 
-        fq: FIFOQueue[int, int] = FIFOQueue(sentinel=-42)
+        fq: FQ[int, int] = FQ(sentinel=-42)
         assert not fq
         fq.push(1,2,3)
         assert fq
@@ -270,7 +270,7 @@ class TestQueueTypes:
         assert fq.peak_next_out() == -42
         assert fq.peak_last_in() == -42
 
-        lq: LIFOQueue[int, Nothing] = LIFOQueue(sentinel=nothing)
+        lq: LQ[int, Nothing] = LQ(sentinel=nothing)
         assert not lq
         lq.push(1,2,3)
         assert lq
@@ -285,7 +285,7 @@ class TestQueueTypes:
         assert lq.pop() == 1
         assert len(lq) == 0
         assert not lq
-        assert lq.pop() is Nothing()
+        assert lq.pop() is nothing()
         assert len(lq) == 0
         assert not lq
         lq.push(42)
@@ -305,21 +305,21 @@ class TestQueueTypes:
         assert lq.pop() is nothing
 
     def test_iterators(self) -> None:
-        data_d = FTuple(1, 2, 3, 4, 5)
+        data_d = FT(1, 2, 3, 4, 5)
         data_mb = data_d.map(lambda d: MB(d))
-        dq: DoubleQueue[MB[int], MB[int]] = DoubleQueue(*data_mb, sentinel=MB())
+        dq: DQ[MB[int], MB[int]] = DQ(*data_mb, sentinel=MB())
         ii = 0
         for item in dq:
             assert data_mb[ii] == item
             ii += 1
         assert ii == 5
 
-        dq0: DoubleQueue[bool, Nothing] = DoubleQueue()
+        dq0: DQ[bool, Nothing] = DQ()
         for _ in dq0:
             assert False
 
         data_bool_mb: tuple[MB[bool], ...] = ()
-        dq1: DoubleQueue[MB[bool], MB[bool]] = DoubleQueue(*data_bool_mb, sentinel=MB())
+        dq1: DQ[MB[bool], MB[bool]] = DQ(*data_bool_mb, sentinel=MB())
         for _ in dq1:
             assert False
         dq1.pushR(MB(True))
@@ -335,7 +335,7 @@ class TestQueueTypes:
             return MB(x)
 
         data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, sentinel=0)
-        fq: FIFOQueue[MB[int], MB[int]] = FIFOQueue(*data_ca.map(wrapMB), sentinel=MB())
+        fq: FQ[MB[int], MB[int]] = FQ(*data_ca.map(wrapMB), sentinel=MB())
         assert data_ca[0] == 1
         assert data_ca[-1] == 9
         ii = 0
@@ -344,38 +344,38 @@ class TestQueueTypes:
             ii += 1
         assert ii == 9
 
-        fq0: FIFOQueue[MB[int], MB[int]] = FIFOQueue(sentinel=MB())
+        fq0: FQ[MB[int], MB[int]] = FQ(sentinel=MB())
         for _ in fq0:
             assert False
 
-        fq00: FIFOQueue[int, int] = FIFOQueue(*(), sentinel=0)
+        fq00: FQ[int, int] = FQ(*(), sentinel=0)
         for _ in fq00:
             assert False
         assert not fq00
 
         data_list: list[int] = list(range(1,1001))
-        lq: LIFOQueue[int, Nothing] = LIFOQueue(*data_list)
+        lq: LQ[int, Nothing] = LQ(*data_list)
         ii = len(data_list) - 1
         for item_int in lq:
             assert data_list[ii] == item_int
             ii -= 1
         assert ii == -1
 
-        lq0: LIFOQueue[int, int] = LIFOQueue(sentinel=0)
+        lq0: LQ[int, int] = LQ(sentinel=0)
         for _ in lq0:
             assert False
         assert not lq0
         assert lq0.pop() == 0
 
-        lq00: LIFOQueue[int, int] = LIFOQueue(*(), sentinel=-1)
+        lq00: LQ[int, int] = LQ(*(), sentinel=-1)
         for _ in lq00:
             assert False
         assert not lq00
         assert lq00.pop() == -1
 
     def test_equality(self) -> None:
-        dq1: DoubleQueue[object, Nothing] = DoubleQueue(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        dq2: DoubleQueue[object, Nothing] = DoubleQueue(2, 3, 'Forty-Two')
+        dq1: DQ[object, Nothing] = DQ(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        dq2: DQ[object, Nothing] = DQ(2, 3, 'Forty-Two')
         dq2.pushL(1)
         dq2.pushR((7, 11, 'foobar'))
         assert dq1 == dq2
@@ -405,8 +405,8 @@ class TestQueueTypes:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
 
-        fq1 = FIFOQueue(1, 2, 3, 'Forty-Two', tup1, sentinel=())
-        fq2 = FIFOQueue(2, 3, 'Forty-Two', sentinel=())
+        fq1 = FQ(1, 2, 3, 'Forty-Two', tup1, sentinel=())
+        fq2 = FQ(2, 3, 'Forty-Two', sentinel=())
         fq2.push((7, 11, 'foobar'))
         popped = fq1.pop()
         assert popped == 1
@@ -430,8 +430,8 @@ class TestQueueTypes:
         l1 = ['foofoo', 7, 11]
         l2 = ['foofoo', 42]
 
-        lq1: LIFOQueue[object, Nothing] = LIFOQueue(3, 'Forty-Two', l1, 1, sentinel=nothing)
-        lq2 = LIFOQueue[object, Nothing](3, 'Forty-Two', 2, sentinel=nothing)
+        lq1: LQ[object, Nothing] = LQ(3, 'Forty-Two', l1, 1, sentinel=nothing)
+        lq2 = LQ[object, Nothing](3, 'Forty-Two', 2, sentinel=Nothing())
         assert lq1.pop() == 1
         peak = lq1.peak()
         assert peak == l1
@@ -446,8 +446,8 @@ class TestQueueTypes:
         lq2.push(42)
         assert lq1 != lq2
 
-        lq3: LIFOQueue[str|Nothing, Nothing] = LIFOQueue(*map(lambda i: str(i), range(43)), sentinel=nothing)
-        lq4: LIFOQueue[int|Nothing, Nothing] = LIFOQueue(*range(-1, 39), 41, 40, 39, sentinel=nothing)
+        lq3: LQ[str|Nothing, Nothing] = LQ(*map(lambda i: str(i), range(43)), sentinel=nothing)
+        lq4: LQ[int|Nothing, Nothing] = LQ(*range(-1, 39), 41, 40, 39, sentinel=nothing)
 
         lq3.push(lq3.pop(), lq3.pop(), lq3.pop())
         lq5 = lq4.map(lambda i: str(i+1))
@@ -460,49 +460,50 @@ class TestQueueTypes:
         def f2(ii: int) -> str:
             return str(ii)
 
-        dq: DoubleQueue[int, Nothing] = DoubleQueue(5, 2, 3, 1, 42)
-        dq0: DoubleQueue[int, Nothing] = DoubleQueue()
+        dq: DQ[int, Nothing] = DQ(5, 2, 3, 1, 42)
+        dq0: DQ[int, Nothing] = DQ()
         dq1 = dq.copy()
         assert dq1 == dq
         assert dq1 is not dq
         dq0m = dq0.map(f1)
         dq1m = dq1.map(f1)
-        assert dq == DoubleQueue(5, 2, 3, 1, 42)
-        assert dq0m == DoubleQueue()
-        assert dq1m == DoubleQueue(24, 3, 8, 0, 1763)
-        assert dq0m.map(f2) == DoubleQueue()
-        assert dq1m.map(f2) == DoubleQueue('24', '3', '8', '0', '1763')
+        assert dq == DQ(5, 2, 3, 1, 42)
+        assert dq0m == DQ()
+        assert dq1m == DQ(24, 3, 8, 0, 1763)
+        assert dq0m.map(f2) == DQ()
+        assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763')
 
-        fq0: FIFOQueue[int, Nothing] = FIFOQueue(sentinel=nothing)
-        fq1: FIFOQueue[int, Nothing] = FIFOQueue(5, 42, 3, 1, 2, sentinel=nothing)
+        fq0: FQ[int, Nothing] = FQ(sentinel=nothing)
+        fq1: FQ[int, Nothing] = FQ(5, 42, 3, 1, 2, sentinel=nothing)
         q0m = fq0.map(f1)
         q1m = fq1.map(f1)
-        assert q0m == FIFOQueue(sentinel=nothing)
-        assert q1m == FIFOQueue(24, 1763, 8, 0, 3, sentinel=nothing)
+        assert q0m == FQ(sentinel=nothing)
+        assert q1m == FQ(24, 1763, 8, 0, 3, sentinel=nothing)
 
         fq0.push(8, 9, 10)
         assert fq0.pop() == 8
         assert fq0.pop() == 9
         fq2 = fq0.map(f1)
-        assert fq2 == FIFOQueue(99, sentinel=nothing)
+        assert fq2 == FQ(99, sentinel=nothing)
+        assert fq2 == FQ(99)
 
         fq2.push(100)
         fq3 = fq2.map(f2)
-        assert fq3 == FIFOQueue('99', '100', sentinel=nothing)
+        assert fq3 == FQ('99', '100')
 
-        lq0: LIFOQueue[int, MB[int]] = LIFOQueue(sentinel=MB(42))
-        lq1 = LIFOQueue(5, 42, 3, 1, 2, sentinel=MB(42))
+        lq0: LQ[int, MB[int]] = LQ(sentinel=MB(42))
+        lq1 = LQ(5, 42, 3, 1, 2, sentinel=MB(42))
         lq0m = lq0.map(f1)
         lq1m = lq1.map(f1)
-        assert lq0m == LIFOQueue(sentinel=MB(42))
-        assert lq1m == LIFOQueue(24, 1763, 8, 0, 3, sentinel=MB(42))
+        assert lq0m == LQ(sentinel=MB(42))
+        assert lq1m == LQ(24, 1763, 8, 0, 3, sentinel=MB(42))
 
         lq0.push(8, 9, 10)
         assert lq0.pop() == 10
         assert lq0.pop() == 9
         lq2 = lq0.map(f1)
-        assert lq2 == LIFOQueue(63, sentinel=MB(42))
+        assert lq2 == LQ(63, sentinel=MB(42))
 
         lq2.push(42)
         lq3 = lq2.map(f2)
-        assert lq3 == LIFOQueue('63', '42', sentinel=MB(42))
+        assert lq3 == LQ('63', '42', sentinel=MB(42))
