@@ -22,32 +22,32 @@ from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple
 
 class Test_repr:
-#    def test_DoubleQueue(self) -> None:
-#        ca1: DoubleQueue[object, Nothing] = DoubleQueue(sentinel=nothing)
-#        assert repr(ca1) == 'DoubleQueue(sentinel=Nothing())'
-#        dq2 = eval(repr(ca1))
-#        assert dq2 == ca1
-#        assert dq2 is not ca1
-#
-#        ca1.pushR(1)
-#        ca1.pushL('foo')
-#        assert repr(ca1) == "DoubleQueue('foo', 1, sentinel=Nothing())"
-#        dq2 = eval(repr(ca1))
-#        assert dq2 == ca1
-#        assert dq2 is not ca1
-#
-#        assert ca1.popL() == 'foo'
-#        ca1.pushR(2)
-#        ca1.pushR(3)
-#        ca1.pushR(4)
-#        ca1.pushR(5)
-#        assert ca1.popL() == 1
-#        ca1.pushL(42)
-#        ca1.popR()
-#        assert repr(ca1) == 'DoubleQueue(42, 2, 3, 4, sentinel=Nothing()'
-#        dq2 = eval(repr(ca1))
-#        assert dq2 == ca1
-#        assert dq2 is not ca1
+    def test_DoubleQueue(self) -> None:
+        ca1: DoubleQueue[object, Nothing] = DoubleQueue(sentinel=nothing)
+        assert repr(ca1) == 'DoubleQueue(sentinel=Nothing())'
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
+
+        ca1.pushR(1)
+        ca1.pushL('foo')
+        assert repr(ca1) == "DoubleQueue('foo', 1, sentinel=Nothing())"
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
+
+        assert ca1.popL() == 'foo'
+        ca1.pushR(2)
+        ca1.pushR(3)
+        ca1.pushR(4)
+        ca1.pushR(5)
+        assert ca1.popL() == 1
+        ca1.pushL(42)
+        ca1.popR()
+        assert repr(ca1) == 'DoubleQueue(42, 2, 3, 4, sentinel=Nothing())'
+        dq2 = eval(repr(ca1))
+        assert dq2 == ca1
+        assert dq2 is not ca1
 
     def test_FIFOQueue(self) -> None:
         sq1: FIFOQueue[object, Nothing] = FIFOQueue(sentinel=nothing)

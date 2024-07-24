@@ -18,6 +18,7 @@ from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
+from grscheller.fp.nothing import Nothing, nothing
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -51,22 +52,22 @@ class Test_str:
         assert foo is not baz
 
     def test_FIFOQueue(self) -> None:
-        q1: FIFOQueue[int] = FIFOQueue()
+        q1: FIFOQueue[int, Nothing] = FIFOQueue()
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
     def test_LIFOQueue(self) -> None:
-        q1: LIFOQueue[int] = LIFOQueue()
+        q1 = LIFOQueue[int, Nothing]()
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '|| 3 > 2 > 1 ><'
 
     def test_DQueue(self) -> None:
-        dq1: DoubleQueue[int] = DoubleQueue()
-        dq2: DoubleQueue[int] = DoubleQueue()
+        dq1 = DoubleQueue[int, Nothing]()
+        dq2: DoubleQueue[int, Nothing] = DoubleQueue()
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)
