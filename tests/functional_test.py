@@ -20,8 +20,11 @@ from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import FIFOQueue
 
 _T = TypeVar('_T')
+_S = TypeVar('_S')
+_R = TypeVar('_R')
+_L = TypeVar('_L')
 
-def pushFQ(x: FIFOQueue[_T], y: _T) -> FIFOQueue[_T]:
+def pushFQ(x: FIFOQueue[_T, _S], y: _T) -> FIFOQueue[_T, _S]:
     x.push(y)
     return x
 
@@ -45,9 +48,10 @@ class Test_FP:
         assert ft1.foldL(l1, 10) == 25
         assert ft1.foldL(l2, 1) == 120
         assert ft1.foldL(l2, 10) == 1200
-        assert ft1.foldL(pushFQ, FIFOQueue[int]()) == FIFOQueue(1,2,3,4,5)
+        empty: FIFOQueue[int, tuple[int, ...]] = FIFOQueue(sentinel=())
+        assert ft1.foldL(pushFQ, empty) == FIFOQueue(1,2,3,4,5, sentinel=())
         assert ft0.foldL(l1, 42) == 42
-        assert ft0.foldL(pushFQ, FIFOQueue[int]()) == FIFOQueue()
+        assert ft0.foldL(pushFQ, empty) == FIFOQueue(sentinel=())
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5)'
         assert se1.fold(l1) == 15

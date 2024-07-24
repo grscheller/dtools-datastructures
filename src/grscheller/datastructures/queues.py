@@ -56,13 +56,20 @@ class QueueBase(Generic[_D, _S]):
     """
     __slots__ = '_ca'
 
-    def __init__(self, *ds: _D, sentinel: _S):
+    def __init__(self, *ds: _D, sentinel: _S|Nothing=nothing):
         """Construct a queue data structure.
 
         * data always internally stored in the same order as ds
 
         """
-        self._ca: CA[_D, _S] = CA(*ds, sentinel=sentinel)
+        if sentinel is nothing:
+            sent1: _S = sentinel             # type: ignore # _S is Nothing
+            self._ca = CA(*ds, sentinel=sent1)
+        else:
+            sent2: _S = sentinel             # type: ignore # is _S, not Nothing
+            self._ca = CA(*ds, sentinel=sent2)
+
+
 
     def __repr__(self) -> str:
         return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', sentinel=' + repr(self._ca._s)+ ')'
@@ -178,9 +185,9 @@ class LIFOQueue(QueueBase[_D, _S]):
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
-    def map(self, f: Callable[[_D], _U]) -> LIFOQueue[_U]:
+    def map(self, f: Callable[[_D], _U]) -> LIFOQueue[_U, _S]:
         """Apply function over the contents of the LIFOQueue."""
-        return LIFOQueue(*map(f, self._ca))
+        return LIFOQueue(*map(f, self._ca), sentinel=self._ca._s)
 
     def push(self, *ds: _D) -> None:
         """Push data onto the LIFOQueue & no return value."""
@@ -195,7 +202,7 @@ class LIFOQueue(QueueBase[_D, _S]):
         if self._ca:
             return self._ca[-1]
         else:
-            return None
+            return self._ca._s
 
     def fold(self, f:Callable[[_D, _D], _D]) -> _D|_S:
         """Reduce with f.
@@ -217,102 +224,102 @@ class LIFOQueue(QueueBase[_D, _S]):
         """
         return self._ca.foldR1(lambda s, t: f(t, s), s)
 
-# class DoubleQueue(QueueBase[_D, _S]):
-#     """Stateful Double Sided Queue data structure.
-# 
-#     * will resize itself larger as needed
-#     * initial data pushed on in FIFO order
-# 
-#     """
-#     __slots__ = ()
-# 
-#     def __iter__(self) -> Iterator[_D]:
-#         """Iterator yielding data currently stored in the queue.
-# 
-#         * data yielded in FIFO (left to right) order.
-# 
-#         """
-#         ca = self._ca.copy()
-#         for pos in range(len(ca)):
-#             yield ca[pos]
-# 
-#     def __str__(self) -> str:
-#         return ">< " + " | ".join(map(str, self)) + " ><"
-# 
-#     def map(self, f: Callable[[_D], _U]) -> DoubleQueue[_U]:
-#         """Apply function over the contents of the FIFOQueue subtype."""
-#         return DoubleQueue(*map(f, self._ca))
-# 
-#     def pushR(self, *ds: _D) -> None:
-#         """Push data left to right onto rear of the DoubleQueue."""
-#         self._ca.pushR(*ds)
-# 
-#     def pushL(self, *ds: _D) -> None:
-#         """Push data left to right onto front of DoubleQueue."""
-#         self._ca.pushL(*ds)
-# 
-#     def popR(self) -> Optional[_D]:
-#         """Pop data off rear of the DoubleQueue."""
-#         return self._ca.popR()
-# 
-#     def popL(self) -> Optional[_D]:
-#         """Pop data off front of the DoubleQueue."""
-#         return self._ca.popL()
-# 
-#     def peakR(self) -> Optional[_D]:
-#         """Return rightmost element of the DoubleQueue if it exists."""
-#         if self._ca:
-#             return self._ca[-1]
-#         else:
-#             return None
-# 
-#     def peakL(self) -> Optional[_D]:
-#         """Return leftmost element of the DoubleQueue if it exists."""
-#         if self._ca:
-#             return self._ca[0]
-#         else:
-#             return None
-# 
-#     def foldL(self, f:Callable[[_D, _D], _D]) -> Optional[_D]:
-#         """Reduce Left with f.
-# 
-#         * returns a value of the of type _T if self is not empty
-#         * returns None if self is empty
-#         * folds in FIFO Order
-# 
-#         """
-#         return self._ca.foldL(f)
-# 
-#     def foldR(self, f:Callable[[_D, _D], _D]) -> Optional[_D]:
-#         """Reduce right with f.
-# 
-#         * returns a value of the of type _T if self is not empty
-#         * returns None if self is empty
-#         * folds in LIFO Order
-# 
-#         """
-#         return self._ca.foldR(f)
-# 
-#     def foldL1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-#         """Reduce Left with f starting with an initial value.
-# 
-#         * returns a value of the of type _S
-#         * type _S can be same type as _T
-#         * folds in FIFO Order
-# 
-#         """
-#         return self._ca.foldL1(f, s)
-# 
-#     def foldR1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-#         """Reduce Right with f starting with an initial value.
-# 
-#         * returns a value of the of type _S
-#         * type _S can be same type as _T
-#         * folds in LIFO Order
-# 
-#         """
-#         return self._ca.foldR1(lambda t, s: f(s, t), s)
-# 
+class DoubleQueue(QueueBase[_D, _S]):
+    """Stateful Double Sided Queue data structure.
+
+    * will resize itself larger as needed
+    * initial data pushed on in FIFO order
+
+    """
+    __slots__ = ()
+
+    def __iter__(self) -> Iterator[_D]:
+        """Iterator yielding data currently stored in the queue.
+
+        * data yielded in FIFO (left to right) order.
+
+        """
+        ca = self._ca.copy()
+        for pos in range(len(ca)):
+            yield ca[pos]
+
+    def __str__(self) -> str:
+        return ">< " + " | ".join(map(str, self)) + " ><"
+
+    def map(self, f: Callable[[_D], _U]) -> DoubleQueue[_U]:
+        """Apply function over the contents of the FIFOQueue subtype."""
+        return DoubleQueue(*map(f, self._ca), sentinel=self._ca._s)
+
+    def pushR(self, *ds: _D) -> None:
+        """Push data left to right onto rear of the DoubleQueue."""
+        self._ca.pushR(*ds)
+
+    def pushL(self, *ds: _D) -> None:
+        """Push data left to right onto front of DoubleQueue."""
+        self._ca.pushL(*ds)
+
+    def popR(self) -> _D|_S:
+        """Pop data off rear of the DoubleQueue."""
+        return self._ca.popR()
+
+    def popL(self) -> _D|_S:
+        """Pop data off front of the DoubleQueue."""
+        return self._ca.popL()
+
+    def peakR(self) -> _D|_S:
+        """Return rightmost element of the DoubleQueue if it exists."""
+        if self._ca:
+            return self._ca[-1]
+        else:
+            return self._ca._s
+
+    def peakL(self) -> Optional[_D]:
+        """Return leftmost element of the DoubleQueue if it exists."""
+        if self._ca:
+            return self._ca[0]
+        else:
+            return None
+
+    def foldL(self, f:Callable[[_D, _D], _D]) -> _D|_S:
+        """Reduce Left with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in FIFO Order
+
+        """
+        return self._ca.foldL(f)
+
+    def foldR(self, f:Callable[[_D, _D], _D]) -> _D|_S:
+        """Reduce right with f.
+
+        * returns a value of the of type _T if self is not empty
+        * returns None if self is empty
+        * folds in LIFO Order
+
+        """
+        return self._ca.foldR(f)
+
+    def foldL1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
+        """Reduce Left with f starting with an initial value.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in FIFO Order
+
+        """
+        return self._ca.foldL1(f, s)
+
+    def foldR1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
+        """Reduce Right with f starting with an initial value.
+
+        * returns a value of the of type _S
+        * type _S can be same type as _T
+        * folds in LIFO Order
+
+        """
+        return self._ca.foldR1(lambda t, s: f(s, t), s)
+
 # class FIFOQueueMB(QueueBase[_D]):
 #     """Stateful First In First Out (FIFO) functional data structure.
 # 
