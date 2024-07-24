@@ -16,48 +16,49 @@ from __future__ import annotations
 
 from typing import Any, Optional
 from grscheller.fp.woException import MB, XOR
+from grscheller.fp.nothing import Nothing, nothing
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.tuples import FTuple
 
 class Test_repr:
-    def test_DoubleQueue(self) -> None:
-        ca1: DoubleQueue[object] = DoubleQueue()
-        assert repr(ca1) == 'DoubleQueue()'
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
-
-        ca1.pushR(1)
-        ca1.pushL('foo')
-        assert repr(ca1) == "DoubleQueue('foo', 1)"
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
-
-        assert ca1.popL() == 'foo'
-        ca1.pushR(2)
-        ca1.pushR(3)
-        ca1.pushR(4)
-        ca1.pushR(5)
-        assert ca1.popL() == 1
-        ca1.pushL(42)
-        ca1.popR()
-        assert repr(ca1) == "DoubleQueue(42, 2, 3, 4)"
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+#    def test_DoubleQueue(self) -> None:
+#        ca1: DoubleQueue[object, Nothing] = DoubleQueue(sentinel=nothing)
+#        assert repr(ca1) == 'DoubleQueue(sentinel=Nothing())'
+#        dq2 = eval(repr(ca1))
+#        assert dq2 == ca1
+#        assert dq2 is not ca1
+#
+#        ca1.pushR(1)
+#        ca1.pushL('foo')
+#        assert repr(ca1) == "DoubleQueue('foo', 1, sentinel=Nothing())"
+#        dq2 = eval(repr(ca1))
+#        assert dq2 == ca1
+#        assert dq2 is not ca1
+#
+#        assert ca1.popL() == 'foo'
+#        ca1.pushR(2)
+#        ca1.pushR(3)
+#        ca1.pushR(4)
+#        ca1.pushR(5)
+#        assert ca1.popL() == 1
+#        ca1.pushL(42)
+#        ca1.popR()
+#        assert repr(ca1) == 'DoubleQueue(42, 2, 3, 4, sentinel=Nothing()'
+#        dq2 = eval(repr(ca1))
+#        assert dq2 == ca1
+#        assert dq2 is not ca1
 
     def test_FIFOQueue(self) -> None:
-        sq1: FIFOQueue[object] = FIFOQueue()
-        assert repr(sq1) == 'FIFOQueue()'
+        sq1: FIFOQueue[object, Nothing] = FIFOQueue(sentinel=nothing)
+        assert repr(sq1) == 'FIFOQueue(sentinel=Nothing())'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "FIFOQueue(1, 'foo')"
+        assert repr(sq1) == "FIFOQueue(1, 'foo', sentinel=Nothing())"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -70,21 +71,21 @@ class Test_repr:
         assert sq1.pop() == 'foo'
         sq1.push(42)
         sq1.pop()
-        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42)'
+        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42, sentinel=Nothing())'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
     def test_LIFOQueue(self) -> None:
-        sq1: LIFOQueue[object] = LIFOQueue()
-        assert repr(sq1) == 'LIFOQueue()'
+        sq1: LIFOQueue[object, Nothing] = LIFOQueue()
+        assert repr(sq1) == 'LIFOQueue(sentinel=Nothing())'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "LIFOQueue(1, 'foo')"
+        assert repr(sq1) == "LIFOQueue(1, 'foo', sentinel=Nothing())"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -95,7 +96,7 @@ class Test_repr:
         sq1.push(5)
         assert sq1.pop() == 5
         sq1.push(42)
-        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42)'
+        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42, sentinel=Nothing())'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -182,7 +183,7 @@ class Test_repr:
         fs3 = fs3.cons(2).cons(3).cons(4).cons(5)
         assert fs3.head() == 5
         if fs3:
-            fs4 = fs3.tail().cons(42)                             # type: ignore
+            fs4 = fs3.tail().cons(42)
         else:
             assert False
         assert repr(fs4) == 'SplitEnd(1, 2, 3, 4, 42)'

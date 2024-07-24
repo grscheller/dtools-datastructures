@@ -42,17 +42,20 @@ class TestQueueTypes:
         not_nothing = fq2.pop()
         assert not_nothing != MB()
         assert not_nothing == 2
-        assert fq2.peak_last_in() == 5 != MB()
+        assert fq2.peak_last_in() == 7 != MB()
         assert fq2.peak_next_out() == 3
 
-        lq1: LIFOQueue[int, MB[int]] = LIFOQueue(sentinel=MB())
-        lq1.push(1,2,3)
-        lq1.push(4,5,6)
-        lq2 = lq1.map(lambda x: 2*x)
+        lq1: LIFOQueue[MB[int], MB[int]] = LIFOQueue(sentinel=MB())
+        lq1.push(MB(1), MB(2), MB(3))
+        lq1.push(MB(4), MB(), MB(5))
+        lq2 = lq1.map(lambda x: x.map(lambda n: 2*n))
         last = lq2.pop()
-        assert last != MB()
-        assert last - 1 == lq1.pop() == 12
-        assert lq2.peak() == 10
+        assert last == MB(10)
+        next_out = lq2.pop()
+        assert next_out == MB()
+        assert next_out.get(42) == 42
+        assert lq2.peak() == MB(8)
+        assert lq2.peak().get(42) == 8
 
     def test_push_then_pop(self) -> None:
     #   dq1: DoubleQueueMB[int] = DoubleQueueMB()
@@ -97,7 +100,7 @@ class TestQueueTypes:
         pushed = MB(0)
         fq.push(pushed)
         popped = fq.pop()
-        assert MB(pushed) == popped == MB(0)
+        assert MB(pushed).get(MB()) == popped == MB(0)
         assert not fq
         pushed = MB(0)
         fq.push(pushed)
@@ -253,7 +256,7 @@ class TestQueueTypes:
         assert fq.pop() == 3
         assert len(fq) == 0
         assert not fq
-        assert fq.pop() == 0
+        assert fq.pop() == -42
         assert len(fq) == 0
         assert not fq
         fq.push(42)
@@ -330,17 +333,15 @@ class TestQueueTypes:
         def wrapMB(x: int) -> MB[int]:
             return MB(x)
 
-        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 5, 6, 7, 8, 9, sentinel=0)
+        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, sentinel=0)
         fq: FIFOQueue[MB[int], MB[int]] = FIFOQueue(*data_ca.map(wrapMB), sentinel=MB())
         assert data_ca[0] == 1
         assert data_ca[-1] == 9
         ii = 0
         for item in fq:
-            assert data_ca[ii] == item
+            assert data_ca[ii] == item.get()
             ii += 1
         assert ii == 9
-        assert data_ca[0] == 0
-        assert data_ca[-1] == 0
 
         fq0: FIFOQueue[MB[int], MB[int]] = FIFOQueue(sentinel=MB())
         for _ in fq0:
@@ -351,8 +352,8 @@ class TestQueueTypes:
             assert False
         assert not fq00
 
-        data_list: list[int] = list(*range(1,1001))
-        lq = LIFOQueue(*data_list, sentinel=nothing)
+        data_list: list[int] = list(range(1,1001))
+        lq: LIFOQueue[int, Nothing] = LIFOQueue(*data_list)
         ii = len(data_list) - 1
         for item in lq:
             assert data_list[ii] == item

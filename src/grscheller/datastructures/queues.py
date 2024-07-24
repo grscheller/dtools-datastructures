@@ -23,11 +23,7 @@
 
 from __future__ import annotations
 
-__all__ = [
-    'DoubleQueue', 'FIFOQueue','LIFOQueue',
-    'FIFOQueueMB', 'LIFOQueueMB',
-    'QueueBase'
-]
+__all__ = [ 'DoubleQueue', 'FIFOQueue','LIFOQueue', 'QueueBase' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -72,7 +68,10 @@ class QueueBase(Generic[_D, _S]):
 
 
     def __repr__(self) -> str:
-        return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', sentinel=' + repr(self._ca._s)+ ')'
+        if len(self) == 0:
+            return type(self).__name__ + '(sentinel=' + repr(self._ca._s)+ ')'
+        else:
+            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', sentinel=' + repr(self._ca._s)+ ')'
 
     def copy(self) -> Self:
         """Return shallow copy of a QueueBase[_T] subtype."""
@@ -319,139 +318,3 @@ class DoubleQueue(QueueBase[_D, _S]):
 
         """
         return self._ca.foldR1(lambda t, s: f(s, t), s)
-
-# class FIFOQueueMB(QueueBase[_D]):
-#     """Stateful First In First Out (FIFO) functional data structure.
-# 
-#     * will resize itself larger as needed
-#     * initial data pushed on in natural FIFO order
-# 
-#     """
-#     __slots__ = ()
-# 
-#     def __iter__(self) -> Iterator[_D]:
-#         """Iterator yielding data currently stored in the queue.
-# 
-#         * data yielded in natural FIFO order.
-# 
-#         """
-#         ca = self._ca.copy()
-#         for pos in range(len(ca)):
-#             yield ca[pos]
-# 
-#     def __str__(self) -> str:
-#         return "||| " + " < ".join(map(str, self)) + " ><"
-# 
-#     def map(self, f: Callable[[_D], _U]) -> FIFOQueueMB[_U]:
-#         """Apply function over the contents of the FIFOQueueMB."""
-#         return FIFOQueueMB(*map(f, self._ca))
-# 
-#     def push(self, *ds: _D) -> None:
-#         """Push data onto the FIFOQueueMB."""
-#         self._ca.pushR(*ds)
-# 
-#     def pop(self) -> MB[_D]:
-#         """Pop data off front of the FIFOQueueMB."""
-#         if self._ca:
-#             return MB(self._ca.popL())
-#         else:
-#             return MB()
-# 
-#     def peak_last_in(self) -> MB[_D]:
-#         """Return last element pushed to the FIFOQueue without consuming it"""
-#         if self._ca:
-#             return MB(self._ca[-1])
-#         else:
-#             return MB()
-# 
-#     def peak_next_out(self) -> MB[_D]:
-#         """Return next element ready to pop from the FIFOQueue."""
-#         if self._ca:
-#             return MB(self._ca[0])
-#         else:
-#             return MB()
-# 
-#     def fold(self, f:Callable[[_D, _D], _D]) -> MB[_D]:
-#         """Reduce with f.
-# 
-#         * returns a value of the of type _T if self is not empty
-#         * returns None if self is empty
-#         * folds in natural FIFO Order
-# 
-#         """
-#         return MB(self._ca.foldL(f))
-# 
-#     def fold1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-#         """Reduce with f.
-# 
-#         * returns a value of the of type _S
-#         * type _S can be same type as _T
-#         * folds in natural FIFO Order
-# 
-#         """
-#         return self._ca.foldL1(f, s)
-# 
-# class LIFOQueueMB(QueueBase[_D]):
-#     """Stateful First In First Out (LIFO) functional data structure.
-# 
-#     * will resize itself larger as needed
-#     * initial data pushed on in natural LIFO order
-# 
-#     """
-#     __slots__ = ()
-# 
-#     def __iter__(self) -> Iterator[_D]:
-#         """Iterator yielding data currently stored in the queue.
-# 
-#         * data yielded in natural LIFO order.
-# 
-#         """
-#         ca = self._ca.copy()
-#         for pos in range(len(ca)-1, -1, -1):
-#             yield ca[pos]
-# 
-#     def __str__(self) -> str:
-#         return "||| " + " < ".join(map(str, self)) + " ><"
-# 
-#     def map(self, f: Callable[[_D], _U]) -> LIFOQueueMB[_U]:
-#         """Apply function over the contents of the LIFOQueueMB."""
-#         return LIFOQueueMB(*map(f, self._ca))
-# 
-#     def push(self, *ds: _D) -> None:
-#         """Push data onto the LIFOQueueMB."""
-#         self._ca.pushR(*ds)
-# 
-#     def pop(self) -> MB[_D]:
-#         """Pop data off front of the LIFOQueueMB."""
-#         if self._ca:
-#             return MB(self._ca.popR())   # type: ignore # checked that not empty
-#         else:
-#             return MB()
-# 
-#     def peak(self) -> MB[_D]:
-#         """Return last element pushed to the LIFOQueueMB without consuming it."""
-#         if self._ca:
-#             return MB(self._ca[-1])
-#         else:
-#             return MB()
-# 
-#     def fold(self, f:Callable[[_D, _D], _D]) -> MB[_D]:
-#         """Reduce with f.
-# 
-#         * returns a value of the of type _T if self is not empty
-#         * returns None if self is empty
-#         * folds in natural LIFO Order
-# 
-#         """
-#         return MB(self._ca.foldL(f))
-# 
-#     def fold1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-#         """Reduce with f.
-# 
-#         * returns a value of the of type _S
-#         * type _S can be same type as _T
-#         * folds in natural LIFO Order
-# 
-#         """
-#         return self._ca.foldL1(f, s)
-# 

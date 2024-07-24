@@ -24,6 +24,7 @@ __license__ = "Apache License 2.0"
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.ca import CA
 from grscheller.fp.iterators import concat, exhaust, merge
+from grscheller.fp.nothing import Nothing, nothing
 from .nodes.sl import SL_Node as Node
 
 _T = TypeVar('_T')
@@ -59,14 +60,14 @@ class SplitEnd(Generic[_T]):
 
     def __reversed__(self) -> Iterator[_T]:
         """Reverse iterate over the contents of the stack"""
-        return reversed(CA(*self))
+        return reversed(CA(*self, sentinel=nothing))
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
         """Display the data in the Stack, left to right."""
-        return '>< ' + ' <- '.join(CA(*self).map(str)) + ' ||'
+        return '>< ' + ' <- '.join(CA(*self, sentinel=nothing).map(str)) + ' ||'
 
     def __bool__(self) -> bool:
         """Returns true if stack is not empty"""

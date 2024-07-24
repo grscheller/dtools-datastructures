@@ -67,8 +67,9 @@ class Test_FSplitEnds:
         s4 = s3.tail()
         assert s4 == SplitEnd(100, 1, 2)
         assert s1 == SplitEnd()
-        s0 = s1.tail(s1.cons(42).cons(0))
-        assert s0 == SplitEnd(42, 0)
+        s5 = s1.cons(42).cons(0)
+        assert s5 == SplitEnd(42, 0)
+        assert s5.tail() == SplitEnd(100, 1)
 
     def test_headOfEmptySplitEnd(self) -> None:
         s1: SplitEnd[int] = SplitEnd()
