@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.nodes.sl import SL_Node as SL
-from grscheller.datastructures.nodes.dl import DL_Node as DL
+from grscheller.datastructures.core.nodes import SL_Node as SL
+from grscheller.datastructures.core.nodes import DL_Node as DL
 
 class Test_SL_Node:
     def test_bool(self) -> None:

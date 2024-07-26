@@ -23,7 +23,7 @@
 
 from __future__ import annotations
 
-__all__ = [ 'DoubleQueue', 'FIFOQueue','LIFOQueue', 'QueueBase' ]
+__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -245,7 +245,7 @@ class DoubleQueue(QueueBase[_D, _S]):
     def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
 
-    def map(self, f: Callable[[_D], _U]) -> DoubleQueue[_U]:
+    def map(self, f: Callable[[_D], _U]) -> DoubleQueue[_U, _S]:
         """Apply function over the contents of the FIFOQueue subtype."""
         return DoubleQueue(*map(f, self._ca), sentinel=self._ca._s)
 

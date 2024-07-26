@@ -23,8 +23,10 @@ __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
+from enum import auto, Enum
 from typing import Callable, Iterator, Generic, Optional, TypeVar
 from grscheller.fp.iterators import concat, exhaust, merge, accumulate
+from .core.enums import FM
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -134,14 +136,18 @@ class FTuple(Generic[_T]):
         else:
             return FTuple(*accumulate(self, f, s))
 
-    def flatMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind function f to the data structure sequentially."""
-        return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
+    def flatMap(self, f: Callable[[_T], FTuple[_S]], type: FM=FM.CONCAT) -> FTuple[_S]:
+        """Bind function f to the FTuple:
 
-    def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind function f to the data structure, merge until one exhausted."""
-        return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
+        * sequentially one after the other
+        * merging together until first one exhausted
+        * merging together until all are exhausted
 
-    def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -> FTuple[_S]:
-        """Monadically bind function f to the data structure, merge until all are exhausted."""
-        return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))
+        """
+        match type:
+            case FM.CONCAT:
+                return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
+            case FM.MERGE:
+                return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
+            case FM.EXHAUST:
+                return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))

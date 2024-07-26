@@ -25,7 +25,8 @@ from typing import Callable, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.ca import CA
 from grscheller.fp.iterators import concat, exhaust, merge
 from grscheller.fp.nothing import Nothing, nothing
-from .nodes.sl import SL_Node as Node
+from .core.nodes import SL_Node as Node
+from .core.enums import FM
 
 _T = TypeVar('_T')
 _S = TypeVar('_S')
@@ -224,14 +225,18 @@ class SplitEnd(Generic[_T]):
         """
         return SplitEnd(*map(f, reversed(self)))
 
-    def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind function f to the FStack sequentially"""
-        return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
+    def flatMap(self, f: Callable[[_T], SplitEnd[_S]], type: FM=FM.CONCAT) -> SplitEnd[_S]:
+        """Bind function f to the FTuple:
 
-    def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind function f to the FStack alternately merging until first exhausted"""
-        return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
+        * sequentially one after the other
+        * merging together until first one exhausted
+        * merging together until all are exhausted
 
-    def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -> SplitEnd[_S]:
-        """Monadically bind function f to the FStack alternately merging until all exhausted"""
-        return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))
+        """
+        match type:
+            case FM.CONCAT:
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))))
+            case FM.MERGE:
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))))
+            case FM.EXHAUST:
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))))

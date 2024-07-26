@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.tuples import FTuple as FT
+from grscheller.datastructures.tuples import FTuple as FT, FM
 
 class TestFT:
     def test_method_returns_copy(self) -> None:
@@ -131,24 +131,24 @@ class TestFT:
             return FT(*range(n))
 
         fm = ft1.flatMap(ff)
-        mm = ft1.mergeMap(ff)
-        em = ft1.exhaustMap(ff)
+        mm = ft1.flatMap(ff, type=FM.MERGE)
+        em = ft1.flatMap(ff, type=FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2, 0, 1, 2, 3, 4)
         assert mm == FT(0, 0, 0, 0, 1, 1, 1, 1)
         assert em == FT(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4)
 
-        fm = ft2.flatMap(ff)
-        mm = ft2.mergeMap(ff)
-        em = ft2.exhaustMap(ff)
+        fm = ft2.flatMap(ff, type=FM.CONCAT)
+        mm = ft2.flatMap(ff, type=FM.MERGE)
+        em = ft2.flatMap(ff, type=FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2)
         assert mm == FT()
         assert em == FT(0, 0, 0, 1, 1, 1, 2, 2, 3)
 
-        fm = ft0.flatMap(ff)
-        mm = ft0.mergeMap(ff)
-        em = ft0.exhaustMap(ff)
+        fm = ft0.flatMap(ff, FM.CONCAT)
+        mm = ft0.flatMap(ff, FM.MERGE)
+        em = ft0.flatMap(ff, FM.EXHAUST)
 
         assert fm == FT()
         assert mm == FT()
