@@ -33,22 +33,22 @@ _S = TypeVar('_S')
 
 class FTuple(Generic[_T]):
     """Class implementing a Tuple-like object with FP behaviors."""
-    __slots__ = '_tuple'
+    __slots__ = '_ds'
 
     def __init__(self, *ds: _T):
-        self._tuple = tuple(ds)
+        self._ds = ds
 
     def __iter__(self) -> Iterator[_T]:
-        return iter(self._tuple)
+        return iter(self._ds)
 
     def __reversed__(self) -> Iterator[_T]:
-        return reversed(self._tuple)
+        return reversed(self._ds)
 
     def __bool__(self) -> bool:
-        return bool(len(self._tuple))
+        return bool(len(self._ds))
 
     def __len__(self) -> int:
-        return len(self._tuple)
+        return len(self._ds)
 
     def __repr__(self) -> str:
         return 'FTuple(' + ', '.join(map(repr, self)) + ')'
@@ -59,15 +59,14 @@ class FTuple(Generic[_T]):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
-        return self._tuple == other._tuple
+        return self._ds == other._ds
 
     def __getitem__(self, sl: slice|int) -> FTuple[_T]|Optional[_T]:
         """Supports both indexing and slicing."""
         if isinstance(sl, slice):
-            tup = self._tuple[sl]
-            return FTuple(*tup)
+            return FTuple(*self._ds[sl])
         try:
-            item = self._tuple[sl]
+            item = self._ds[sl]
         except IndexError:
             item = None
         return item
@@ -79,10 +78,10 @@ class FTuple(Generic[_T]):
         * if empty, return the initial value s
 
         """
-        it = iter(self._tuple)
+        it = iter(self._ds)
         if start is not None:
             acc = start
-        elif len(self._tuple) == 0:
+        elif not self:
             if default is None:
                 msg = 'Both start and default cannot be None for an empty FTuple'
                 raise ValueError('FTuple.foldL - ' + msg)
@@ -100,10 +99,10 @@ class FTuple(Generic[_T]):
         * if empty, return the initial value s
 
         """
-        it = reversed(self._tuple)
+        it = reversed(self._ds)
         if start is not None:
             acc = start
-        elif len(self._tuple) == 0:
+        elif not self:
             if default is None:
                 msg = 'Both start and default cannot be None for an empty FTuple'
                 raise ValueError('FTuple.foldR - ' + msg)
@@ -127,7 +126,7 @@ class FTuple(Generic[_T]):
 
     def __mul__(self, num: int) -> FTuple[_T]:
         """Return an FTuple which repeats another FTuple num times."""
-        return FTuple(*self._tuple.__mul__(num if num > 0 else 0))
+        return FTuple(*self._ds.__mul__(num if num > 0 else 0))
 
     def accummulate(self, f: Callable[[_S, _T], _S], s: Optional[_S]=None) -> FTuple[_S]:
         """Accumulate partial fold results in an FTuple with an initial value."""

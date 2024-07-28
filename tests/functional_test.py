@@ -52,6 +52,8 @@ class Test_FP:
         se1: SE[int] = SE(1,2,3,4,5)
 
         assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
+        assert ft0.foldL(l1, 42) == 42
+        assert ft0.foldR(l1, 42) == 42
         assert ft1.foldL(l1) == 15
         assert ft1.foldL(l1, 0) == 15
         assert ft1.foldL(l1, 10) == 25
@@ -62,17 +64,17 @@ class Test_FP:
         assert ft1.foldR(l1, 10) == 25
         assert ft1.foldR(l2, 1) == 120
         assert ft1.foldR(l2, 10) == 1200
-        assert ft0.foldL(l1, 42) == 42
-        assert ft0.foldR(l1, 42) == 42
 
-        fq_unit: FIFOQueue[int, tuple[()]] = FIFOQueue(sentinel=())
-        fq_none: FIFOQueue[int, None] = FIFOQueue(sentinel=None)
-        assert ft1.foldL(pushFQfromL, fq_unit) == FIFOQueue(1,2,3,4,5, sentinel=())
-        assert ft0.foldL(pushFQfromL, fq_none) == FIFOQueue(sentinel=None)
-        assert ft1.foldR(pushFQfromR, fq_unit).pop() == 5
-        assert ft1.foldR(pushFQfromR, fq_unit) == FIFOQueue(5,4,3,2,1, sentinel=())
-        assert ft0.foldR(pushFQfromR, fq_none) == FIFOQueue(sentinel=None)
-        # test with default FQ sentinel = Nothing() = none
+        assert ft0 == FT()
+        assert ft1 == FT(1,2,3,4,5)
+
+        fq1: FIFOQueue[int, tuple[()]] = FIFOQueue(sentinel=())
+        fq2: FIFOQueue[int, None] = FIFOQueue(sentinel=None)
+        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5, sentinel=())
+        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue(sentinel=None)
+        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, sentinel=())
+        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(sentinel=None)
+
         fq5: FIFOQueue[int, Nothing] = FIFOQueue()
         fq6 = FIFOQueue[int, Nothing]()
         fq7: FIFOQueue[int, Nothing] = FIFOQueue()

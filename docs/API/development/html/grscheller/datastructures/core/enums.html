@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>grscheller.datastructures.nodes API documentation</title>
-<meta name="description" content="Module supporting nodes for graph based datastructures …">
+<title>grscheller.datastructures.core.enums API documentation</title>
+<meta name="description" content="Immutable Tuple-like data structure with a functional interfaces.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -22,33 +22,105 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.nodes</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.core.enums</code></h1>
 </header>
 <section id="section-intro">
-<p>Module supporting nodes for graph based datastructures.</p>
-<ul>
-<li>data structures should make nodes inaccessible to client code</li>
-<li>making nodes inaccessible promotes data sharing between data structures</li>
-</ul>
+<p>Immutable Tuple-like data structure with a functional interfaces.</p>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="grscheller.datastructures.nodes.dl" href="dl.html">grscheller.datastructures.nodes.dl</a></code></dt>
+<dt id="grscheller.datastructures.core.enums.FM"><code class="flex name class">
+<span>class <span class="ident">FM</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Doubly link nodes for graph-based data structures.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color.RED
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>value lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color(1)
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>name lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color['RED']
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FM(Enum):
+    CONCAT = auto()
+    MERGE = auto()
+    EXHAUST = auto()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="grscheller.datastructures.core.enums.FM.CONCAT"><code class="name">var <span class="ident">CONCAT</span></code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
-<dt><code class="name"><a title="grscheller.datastructures.nodes.sl" href="sl.html">grscheller.datastructures.nodes.sl</a></code></dt>
+<dt id="grscheller.datastructures.core.enums.FM.EXHAUST"><code class="name">var <span class="ident">EXHAUST</span></code></dt>
 <dd>
-<div class="desc"><p>Singularly link nodes for graph-like data structures.</p></div>
+<div class="desc"></div>
+</dd>
+<dt id="grscheller.datastructures.core.enums.FM.MERGE"><code class="name">var <span class="ident">MERGE</span></code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -58,13 +130,19 @@ hljs.highlightAll();
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="grscheller.datastructures" href="../index.html">grscheller.datastructures</a></code></li>
+<li><code><a title="grscheller.datastructures.core" href="index.html">grscheller.datastructures.core</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="grscheller.datastructures.nodes.dl" href="dl.html">grscheller.datastructures.nodes.dl</a></code></li>
-<li><code><a title="grscheller.datastructures.nodes.sl" href="sl.html">grscheller.datastructures.nodes.sl</a></code></li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.enums.FM" href="#grscheller.datastructures.core.enums.FM">FM</a></code></h4>
+<ul class="">
+<li><code><a title="grscheller.datastructures.core.enums.FM.CONCAT" href="#grscheller.datastructures.core.enums.FM.CONCAT">CONCAT</a></code></li>
+<li><code><a title="grscheller.datastructures.core.enums.FM.EXHAUST" href="#grscheller.datastructures.core.enums.FM.EXHAUST">EXHAUST</a></code></li>
+<li><code><a title="grscheller.datastructures.core.enums.FM.MERGE" href="#grscheller.datastructures.core.enums.FM.MERGE">MERGE</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

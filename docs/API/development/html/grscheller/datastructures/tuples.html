@@ -48,22 +48,22 @@ hljs.highlightAll();
 </summary>
 <pre><code class="python">class FTuple(Generic[_T]):
     &#34;&#34;&#34;Class implementing a Tuple-like object with FP behaviors.&#34;&#34;&#34;
-    __slots__ = &#39;_tuple&#39;
+    __slots__ = &#39;_ds&#39;
 
     def __init__(self, *ds: _T):
-        self._tuple = tuple(ds)
+        self._ds = ds
 
     def __iter__(self) -&gt; Iterator[_T]:
-        return iter(self._tuple)
+        return iter(self._ds)
 
     def __reversed__(self) -&gt; Iterator[_T]:
-        return reversed(self._tuple)
+        return reversed(self._ds)
 
     def __bool__(self) -&gt; bool:
-        return bool(len(self._tuple))
+        return bool(len(self._ds))
 
     def __len__(self) -&gt; int:
-        return len(self._tuple)
+        return len(self._ds)
 
     def __repr__(self) -&gt; str:
         return &#39;FTuple(&#39; + &#39;, &#39;.join(map(repr, self)) + &#39;)&#39;
@@ -74,15 +74,14 @@ hljs.highlightAll();
     def __eq__(self, other: object) -&gt; bool:
         if not isinstance(other, type(self)):
             return False
-        return self._tuple == other._tuple
+        return self._ds == other._ds
 
     def __getitem__(self, sl: slice|int) -&gt; FTuple[_T]|Optional[_T]:
         &#34;&#34;&#34;Supports both indexing and slicing.&#34;&#34;&#34;
         if isinstance(sl, slice):
-            tup = self._tuple[sl]
-            return FTuple(*tup)
+            return FTuple(*self._ds[sl])
         try:
-            item = self._tuple[sl]
+            item = self._ds[sl]
         except IndexError:
             item = None
         return item
@@ -94,10 +93,10 @@ hljs.highlightAll();
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
-        it = iter(self._tuple)
+        it = iter(self._ds)
         if start is not None:
             acc = start
-        elif len(self._tuple) == 0:
+        elif not self:
             if default is None:
                 msg = &#39;Both start and default cannot be None for an empty FTuple&#39;
                 raise ValueError(&#39;FTuple.foldL - &#39; + msg)
@@ -115,10 +114,10 @@ hljs.highlightAll();
         * if empty, return the initial value s
 
         &#34;&#34;&#34;
-        it = reversed(self._tuple)
+        it = reversed(self._ds)
         if start is not None:
             acc = start
-        elif len(self._tuple) == 0:
+        elif not self:
             if default is None:
                 msg = &#39;Both start and default cannot be None for an empty FTuple&#39;
                 raise ValueError(&#39;FTuple.foldR - &#39; + msg)
@@ -142,7 +141,7 @@ hljs.highlightAll();
 
     def __mul__(self, num: int) -&gt; FTuple[_T]:
         &#34;&#34;&#34;Return an FTuple which repeats another FTuple num times.&#34;&#34;&#34;
-        return FTuple(*self._tuple.__mul__(num if num &gt; 0 else 0))
+        return FTuple(*self._ds.__mul__(num if num &gt; 0 else 0))
 
     def accummulate(self, f: Callable[[_S, _T], _S], s: Optional[_S]=None) -&gt; FTuple[_S]:
         &#34;&#34;&#34;Accumulate partial fold results in an FTuple with an initial value.&#34;&#34;&#34;
@@ -151,17 +150,21 @@ hljs.highlightAll();
         else:
             return FTuple(*accumulate(self, f, s))
 
-    def flatMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the data structure sequentially.&#34;&#34;&#34;
-        return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
+    def flatMap(self, f: Callable[[_T], FTuple[_S]], type: FM=FM.CONCAT) -&gt; FTuple[_S]:
+        &#34;&#34;&#34;Bind function f to the FTuple:
 
-    def mergeMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the data structure, merge until one exhausted.&#34;&#34;&#34;
-        return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
+        * sequentially one after the other
+        * merging together until first one exhausted
+        * merging together until all are exhausted
 
-    def exhaustMap(self, f: Callable[[_T], FTuple[_S]]) -&gt; FTuple[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the data structure, merge until all are exhausted.&#34;&#34;&#34;
-        return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
+        &#34;&#34;&#34;
+        match type:
+            case FM.CONCAT:
+                return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
+            case FM.MERGE:
+                return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
+            case FM.EXHAUST:
+                return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -181,17 +184,16 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Return shallow copy of the FTuple in O(1) time &amp; space complexity.</p></div>
 </dd>
-<dt id="grscheller.datastructures.tuples.FTuple.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind function f to the data structure, merge until all are exhausted.</p></div>
-</dd>
 <dt id="grscheller.datastructures.tuples.FTuple.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]], type: FM = FM.CONCAT) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind function f to the data structure sequentially.</p></div>
+<div class="desc"><p>Bind function f to the FTuple:</p>
+<ul>
+<li>sequentially one after the other</li>
+<li>merging together until first one exhausted</li>
+<li>merging together until all are exhausted</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.tuples.FTuple.foldL"><code class="name flex">
 <span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_S, _T], _S], start: Optional[_S] = None, default: Optional[_S] = None) ‑> _S</span>
@@ -219,12 +221,6 @@ hljs.highlightAll();
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="grscheller.datastructures.tuples.FTuple.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]]) ‑> <a title="grscheller.datastructures.tuples.FTuple" href="#grscheller.datastructures.tuples.FTuple">FTuple</a>[_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind function f to the data structure, merge until one exhausted.</p></div>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -247,12 +243,10 @@ hljs.highlightAll();
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.tuples.FTuple.accummulate" href="#grscheller.datastructures.tuples.FTuple.accummulate">accummulate</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.copy" href="#grscheller.datastructures.tuples.FTuple.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.exhaustMap" href="#grscheller.datastructures.tuples.FTuple.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.flatMap" href="#grscheller.datastructures.tuples.FTuple.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldL" href="#grscheller.datastructures.tuples.FTuple.foldL">foldL</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.foldR" href="#grscheller.datastructures.tuples.FTuple.foldR">foldR</a></code></li>
 <li><code><a title="grscheller.datastructures.tuples.FTuple.map" href="#grscheller.datastructures.tuples.FTuple.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.tuples.FTuple.mergeMap" href="#grscheller.datastructures.tuples.FTuple.mergeMap">mergeMap</a></code></li>
 </ul>
 </li>
 </ul>

@@ -248,17 +248,21 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         return SplitEnd(*map(f, reversed(self)))
 
-    def flatMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the FStack sequentially&#34;&#34;&#34;
-        return SplitEnd(*concat(*map(reversed, map(f, reversed(self)))))
+    def flatMap(self, f: Callable[[_T], SplitEnd[_S]], type: FM=FM.CONCAT) -&gt; SplitEnd[_S]:
+        &#34;&#34;&#34;Bind function f to the FTuple:
 
-    def mergeMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the FStack alternately merging until first exhausted&#34;&#34;&#34;
-        return SplitEnd(*merge(*map(reversed, map(f, reversed(self)))))
+        * sequentially one after the other
+        * merging together until first one exhausted
+        * merging together until all are exhausted
 
-    def exhaustMap(self, f: Callable[[_T], SplitEnd[_S]]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Monadically bind function f to the FStack alternately merging until all exhausted&#34;&#34;&#34;
-        return SplitEnd(*exhaust(*map(reversed, map(f, reversed(self)))))</code></pre>
+        &#34;&#34;&#34;
+        match type:
+            case FM.CONCAT:
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))))
+            case FM.MERGE:
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))))
+            case FM.EXHAUST:
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -280,17 +284,16 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 <dd>
 <div class="desc"><p>Return a copy of a Stack in O(1) space &amp; time complexity.</p></div>
 </dd>
-<dt id="grscheller.datastructures.split_ends.SplitEnd.exhaustMap"><code class="name flex">
-<span>def <span class="ident">exhaustMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind function f to the FStack alternately merging until all exhausted</p></div>
-</dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]], type: FM = FM.CONCAT) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Monadically bind function f to the FStack sequentially</p></div>
+<div class="desc"><p>Bind function f to the FTuple:</p>
+<ul>
+<li>sequentially one after the other</li>
+<li>merging together until first one exhausted</li>
+<li>merging together until all are exhausted</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.fold"><code class="name flex">
 <span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
@@ -334,12 +337,6 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 <li>Returns a new Stack object with shallow copied new data</li>
 <li>O(n) complexity</li>
 </ul></div>
-</dd>
-<dt id="grscheller.datastructures.split_ends.SplitEnd.mergeMap"><code class="name flex">
-<span>def <span class="ident">mergeMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Monadically bind function f to the FStack alternately merging until first exhausted</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
 <span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[_T]</span>
@@ -405,13 +402,11 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.cons" href="#grscheller.datastructures.split_ends.SplitEnd.cons">cons</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.copy" href="#grscheller.datastructures.split_ends.SplitEnd.copy">copy</a></code></li>
-<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.exhaustMap" href="#grscheller.datastructures.split_ends.SplitEnd.exhaustMap">exhaustMap</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.flatMap" href="#grscheller.datastructures.split_ends.SplitEnd.flatMap">flatMap</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.fold" href="#grscheller.datastructures.split_ends.SplitEnd.fold">fold</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.fold1" href="#grscheller.datastructures.split_ends.SplitEnd.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.head" href="#grscheller.datastructures.split_ends.SplitEnd.head">head</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.map" href="#grscheller.datastructures.split_ends.SplitEnd.map">map</a></code></li>
-<li><code><a title="grscheller.datastructures.split_ends.SplitEnd.mergeMap" href="#grscheller.datastructures.split_ends.SplitEnd.mergeMap">mergeMap</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.peak" href="#grscheller.datastructures.split_ends.SplitEnd.peak">peak</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.pop" href="#grscheller.datastructures.split_ends.SplitEnd.pop">pop</a></code></li>
 <li><code><a title="grscheller.datastructures.split_ends.SplitEnd.push" href="#grscheller.datastructures.split_ends.SplitEnd.push">push</a></code></li>

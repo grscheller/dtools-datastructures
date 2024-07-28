@@ -82,7 +82,7 @@ hljs.highlightAll();
     def __str__(self) -&gt; str:
         return &#34;&gt;&lt; &#34; + &#34; | &#34;.join(map(str, self)) + &#34; &gt;&lt;&#34;
 
-    def map(self, f: Callable[[_D], _U]) -&gt; DoubleQueue[_U]:
+    def map(self, f: Callable[[_D], _U]) -&gt; DoubleQueue[_U, _S]:
         &#34;&#34;&#34;Apply function over the contents of the FIFOQueue subtype.&#34;&#34;&#34;
         return DoubleQueue(*map(f, self._ca), sentinel=self._ca._s)
 
@@ -208,7 +208,7 @@ hljs.highlightAll();
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_D], _U])</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_D], _U]) ‑> <a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a>[_U, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Apply function over the contents of the FIFOQueue subtype.</p></div>

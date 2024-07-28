@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>grscheller.datastructures.nodes.sl API documentation</title>
-<meta name="description" content="Singularly link nodes for graph-like data structures.">
+<title>grscheller.datastructures.core.nodes API documentation</title>
+<meta name="description" content="Node classes used with graph-like data structures.">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
@@ -22,10 +22,10 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>grscheller.datastructures.nodes.sl</code></h1>
+<h1 class="title">Module <code>grscheller.datastructures.core.nodes</code></h1>
 </header>
 <section id="section-intro">
-<p>Singularly link nodes for graph-like data structures.</p>
+<p>Node classes used with graph-like data structures.</p>
 </section>
 <section>
 </section>
@@ -36,9 +36,57 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="grscheller.datastructures.nodes.sl.SL_Node"><code class="flex name class">
+<dt id="grscheller.datastructures.core.nodes.DL_Node"><code class="flex name class">
+<span>class <span class="ident">DL_Node</span></span>
+<span>(</span><span>left: Optional[<a title="grscheller.datastructures.core.nodes.DL_Node" href="#grscheller.datastructures.core.nodes.DL_Node">DL_Node</a>[_T]], data: _T, right: Optional[<a title="grscheller.datastructures.core.nodes.DL_Node" href="#grscheller.datastructures.core.nodes.DL_Node">DL_Node</a>[_T]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class for doubly link nodes for graph-like data structures.</p>
+<ul>
+<li>this type of node always contain data, even if that data is None</li>
+<li>more than one node can point to the same node forming bush like graphs</li>
+<li>circular graphs are possible</li>
+<li>doubly link lists possible</li>
+<li>recursive binary trees possible</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DL_Node(Generic[_T]):
+    &#34;&#34;&#34;Class for doubly link nodes for graph-like data structures.
+
+    * this type of node always contain data, even if that data is None
+    * more than one node can point to the same node forming bush like graphs
+    * circular graphs are possible
+    * doubly link lists possible
+    * recursive binary trees possible
+
+    &#34;&#34;&#34;
+    __slots__ = &#39;_data&#39;, &#39;_left&#39;, &#39;_right&#39;
+
+    def __init__(self, left: Optional[DL_Node[_T]], data: _T, right: Optional[DL_Node[_T]]):
+        self._data = data
+        self._left = left
+        self._right = right
+
+    def __bool__(self) -&gt; bool:
+        &#34;&#34;&#34;Doubly linked nodes always contain data.
+
+        * always returns true
+        * this type of node always contain data, even if that data is None
+
+        &#34;&#34;&#34;
+        return True</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Generic</li>
+</ul>
+</dd>
+<dt id="grscheller.datastructures.core.nodes.SL_Node"><code class="flex name class">
 <span>class <span class="ident">SL_Node</span></span>
-<span>(</span><span>data: _T, next: Optional[<a title="grscheller.datastructures.nodes.sl.SL_Node" href="#grscheller.datastructures.nodes.sl.SL_Node">SL_Node</a>[_T]])</span>
+<span>(</span><span>data: _T, next: Optional[<a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a>[_T]])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class for singularly link nodes for graph-like data structures.</p>
@@ -89,13 +137,16 @@ hljs.highlightAll();
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="grscheller.datastructures.nodes" href="index.html">grscheller.datastructures.nodes</a></code></li>
+<li><code><a title="grscheller.datastructures.core" href="index.html">grscheller.datastructures.core</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="grscheller.datastructures.nodes.sl.SL_Node" href="#grscheller.datastructures.nodes.sl.SL_Node">SL_Node</a></code></h4>
+<h4><code><a title="grscheller.datastructures.core.nodes.DL_Node" href="#grscheller.datastructures.core.nodes.DL_Node">DL_Node</a></code></h4>
+</li>
+<li>
+<h4><code><a title="grscheller.datastructures.core.nodes.SL_Node" href="#grscheller.datastructures.core.nodes.SL_Node">SL_Node</a></code></h4>
 </li>
 </ul>
 </li>
