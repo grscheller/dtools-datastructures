@@ -30,8 +30,8 @@ __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
 from grscheller.circular_array.ca import CA
-from grscheller.fp.woException import MB
 from grscheller.fp.nothing import Nothing, nothing
+from grscheller.fp.woException import MB
 
 _D = TypeVar('_D')
 _S = TypeVar('_S')
@@ -58,14 +58,7 @@ class QueueBase(Generic[_D, _S]):
         * data always internally stored in the same order as ds
 
         """
-        if sentinel is nothing:
-            sent1: _S = sentinel             # type: ignore # _S is Nothing
-            self._ca = CA(*ds, sentinel=sent1)
-        else:
-            sent2: _S = sentinel             # type: ignore # is _S, not Nothing
-            self._ca = CA(*ds, sentinel=sent2)
-
-
+        self._ca = CA(*ds, sentinel=sentinel)
 
     def __repr__(self) -> str:
         if len(self) == 0:
@@ -126,41 +119,34 @@ class FIFOQueue(QueueBase[_D, _S]):
         self._ca.pushR(*ds)
 
     def pop(self) -> _D|_S:
-        """Pop data off front of the FIFOQueue."""
-        return self._ca.popL()
+        """Pop data off the FIFOQueue."""
+        return self._ca.popL()   # type: ignore # nothing only when _S = Nothing
 
     def peak_last_in(self) -> _D|_S:
         """Return last element pushed to the FIFOQueue without consuming it"""
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
     def peak_next_out(self) -> _D|_S:
         """Return next element ready to pop from the FIFOQueue."""
         if self._ca:
             return self._ca[0]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f:Callable[[_D, _D], _D]) -> _D|_S:
-        """Reduce with f.
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
+        """Reduce with f using an optional initial value.
 
-        * returns a value of the of type _D if self is not empty
-        * otherwise returns the sentinel value of type _S
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty & no initial value given, return sentinel value
+        * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         """
-        return self._ca.foldL(f)
-
-    def fold1(self, f:Callable[[_L, _D], _L], start: _L) -> _L:
-        """Reduce with f using a starting value.
-
-        * returns the reduced value with an initial value
-        * folds in natural FIFO Order
-
-        """
-        return self._ca.foldL1(f, init=start)
+        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
 
 class LIFOQueue(QueueBase[_D, _S]):
     """Stateful Last In First Out (LIFO) data structure.
@@ -193,35 +179,28 @@ class LIFOQueue(QueueBase[_D, _S]):
         self._ca.pushR(*ds)
 
     def pop(self) -> _D|_S:
-        """Pop data off rear of the LIFOQueue."""
-        return self._ca.popR()
+        """Pop data off the LIFOQueue."""
+        return self._ca.popR()   # type: ignore # nothing only when _S = Nothing
 
     def peak(self) -> _D|_S:
         """Return last element pushed to the LIFOQueue without consuming it."""
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f:Callable[[_D, _D], _D]) -> _D|_S:
-        """Reduce with f.
+    def fold(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -> _R|_S:
+        """Reduce with f using an optional initial value.
 
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in natural LIFO Order
-
-        """
-        return self._ca.foldR(f)
-
-    def fold1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-        """Reduce with f.
-
-        * always returns a value of type _S
-        * type _S can be the same type as _T
-        * folds in natural LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty & no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         """
-        return self._ca.foldR1(lambda s, t: f(t, s), s)
+        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S
+
 
 class DoubleQueue(QueueBase[_D, _S]):
     """Stateful Double Sided Queue data structure.
@@ -259,62 +238,46 @@ class DoubleQueue(QueueBase[_D, _S]):
 
     def popR(self) -> _D|_S:
         """Pop data off rear of the DoubleQueue."""
-        return self._ca.popR()
+        return self._ca.popR()   # type: ignore # nothing only when _S = Nothing
 
     def popL(self) -> _D|_S:
         """Pop data off front of the DoubleQueue."""
-        return self._ca.popL()
+        return self._ca.popL()   # type: ignore # nothing only when _S = Nothing
 
     def peakR(self) -> _D|_S:
         """Return rightmost element of the DoubleQueue if it exists."""
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def peakL(self) -> Optional[_D]:
+    def peakL(self) -> _D|_S:
         """Return leftmost element of the DoubleQueue if it exists."""
         if self._ca:
             return self._ca[0]
         else:
-            return None
+            return self._ca._s                # type: ignore # will always be _S
 
-    def foldL(self, f:Callable[[_D, _D], _D]) -> _D|_S:
-        """Reduce Left with f.
+    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
+        """Reduce with f using an optional initial value.
 
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in FIFO Order
-
-        """
-        return self._ca.foldL(f)
-
-    def foldR(self, f:Callable[[_D, _D], _D]) -> _D|_S:
-        """Reduce right with f.
-
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty & no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         """
-        return self._ca.foldR(f)
+        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
 
-    def foldL1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-        """Reduce Left with f starting with an initial value.
+    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R|_S:
+        """Reduce with f using an optional initial value.
 
-        * returns a value of the of type _S
-        * type _S can be same type as _T
-        * folds in FIFO Order
-
-        """
-        return self._ca.foldL1(f, s)
-
-    def foldR1(self, f:Callable[[_U, _D], _U], s: _U) -> _U:
-        """Reduce Right with f starting with an initial value.
-
-        * returns a value of the of type _S
-        * type _S can be same type as _T
-        * folds in LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty & no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         """
-        return self._ca.foldR1(lambda t, s: f(s, t), s)
+        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S
