@@ -18,7 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "grscheller.circular-array >= 3.2.2, < 3.3",
-    "grscheller.fp >= 0.2.2, < 0.3"
+    "grscheller.fp >= 0.3.0, < 0.4"
 ]
 dynamic = ["version", "description"]
 keywords = [
