@@ -18,14 +18,14 @@
 
 from __future__ import annotations
 
-__all__ = ['FTuple']
+__all__ = ['FTuple', 'FM']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from enum import auto, Enum
 from typing import Callable, Iterator, Generic, Optional, TypeVar
-from grscheller.fp.iterators import concat, exhaust, merge, accumulate
+from grscheller.fp.iterables import concat, exhaust, merge, accumulate
 from .core.enums import FM
 
 _T = TypeVar('_T')

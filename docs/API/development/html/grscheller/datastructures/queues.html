@@ -96,65 +96,49 @@ hljs.highlightAll();
 
     def popR(self) -&gt; _D|_S:
         &#34;&#34;&#34;Pop data off rear of the DoubleQueue.&#34;&#34;&#34;
-        return self._ca.popR()
+        return self._ca.popR()   # type: ignore # nothing only when _S = Nothing
 
     def popL(self) -&gt; _D|_S:
         &#34;&#34;&#34;Pop data off front of the DoubleQueue.&#34;&#34;&#34;
-        return self._ca.popL()
+        return self._ca.popL()   # type: ignore # nothing only when _S = Nothing
 
     def peakR(self) -&gt; _D|_S:
         &#34;&#34;&#34;Return rightmost element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def peakL(self) -&gt; Optional[_D]:
+    def peakL(self) -&gt; _D|_S:
         &#34;&#34;&#34;Return leftmost element of the DoubleQueue if it exists.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
-            return None
+            return self._ca._s                # type: ignore # will always be _S
 
-    def foldL(self, f:Callable[[_D, _D], _D]) -&gt; _D|_S:
-        &#34;&#34;&#34;Reduce Left with f.
+    def foldL(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -&gt; _L|_S:
+        &#34;&#34;&#34;Reduce with f using an optional initial value.
 
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in FIFO Order
-
-        &#34;&#34;&#34;
-        return self._ca.foldL(f)
-
-    def foldR(self, f:Callable[[_D, _D], _D]) -&gt; _D|_S:
-        &#34;&#34;&#34;Reduce right with f.
-
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty &amp; no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldR(f)
+        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
 
-    def foldL1(self, f:Callable[[_U, _D], _U], s: _U) -&gt; _U:
-        &#34;&#34;&#34;Reduce Left with f starting with an initial value.
+    def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -&gt; _R|_S:
+        &#34;&#34;&#34;Reduce with f using an optional initial value.
 
-        * returns a value of the of type _S
-        * type _S can be same type as _T
-        * folds in FIFO Order
-
-        &#34;&#34;&#34;
-        return self._ca.foldL1(f, s)
-
-    def foldR1(self, f:Callable[[_U, _D], _U], s: _U) -&gt; _U:
-        &#34;&#34;&#34;Reduce Right with f starting with an initial value.
-
-        * returns a value of the of type _S
-        * type _S can be same type as _T
-        * folds in LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty &amp; no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldR1(lambda t, s: f(s, t), s)</code></pre>
+        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -164,47 +148,29 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldL"><code class="name flex">
-<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_D, _D], _D]) ‑> Union[_D, _S]</span>
+<span>def <span class="ident">foldL</span></span>(<span>self, f: Callable[[_L, _D], _L], initial: Optional[_L] = None) ‑> Union[_L, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reduce Left with f.</p>
+<div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
-<li>returns a value of the of type _T if self is not empty</li>
-<li>returns None if self is empty</li>
-<li>folds in FIFO Order</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.queues.DoubleQueue.foldL1"><code class="name flex">
-<span>def <span class="ident">foldL1</span></span>(<span>self, f: Callable[[_U, _D], _U], s: _U) ‑> _U</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Reduce Left with f starting with an initial value.</p>
-<ul>
-<li>returns a value of the of type _S</li>
-<li>type _S can be same type as _T</li>
-<li>folds in FIFO Order</li>
+<li>note that _S can be the same type as _L</li>
+<li>note that when an initial value is not given then _L = _D</li>
+<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>traditional FP type order given for function f</li>
+<li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.foldR"><code class="name flex">
-<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_D, _D], _D]) ‑> Union[_D, _S]</span>
+<span>def <span class="ident">foldR</span></span>(<span>self, f: Callable[[_D, _R], _R], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reduce right with f.</p>
+<div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
-<li>returns a value of the of type _T if self is not empty</li>
-<li>returns None if self is empty</li>
-<li>folds in LIFO Order</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.queues.DoubleQueue.foldR1"><code class="name flex">
-<span>def <span class="ident">foldR1</span></span>(<span>self, f: Callable[[_U, _D], _U], s: _U) ‑> _U</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Reduce Right with f starting with an initial value.</p>
-<ul>
-<li>returns a value of the of type _S</li>
-<li>type _S can be same type as _T</li>
-<li>folds in LIFO Order</li>
+<li>note that _S can be the same type as _L</li>
+<li>note that when an initial value is not given then _L = _D</li>
+<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>traditional FP type order given for function f</li>
+<li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.map"><code class="name flex">
@@ -214,7 +180,7 @@ hljs.highlightAll();
 <div class="desc"><p>Apply function over the contents of the FIFOQueue subtype.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.DoubleQueue.peakL"><code class="name flex">
-<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Optional[_D]</span>
+<span>def <span class="ident">peakL</span></span>(<span>self) ‑> Union[_D, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return leftmost element of the DoubleQueue if it exists.</p></div>
@@ -308,41 +274,34 @@ hljs.highlightAll();
         self._ca.pushR(*ds)
 
     def pop(self) -&gt; _D|_S:
-        &#34;&#34;&#34;Pop data off front of the FIFOQueue.&#34;&#34;&#34;
-        return self._ca.popL()
+        &#34;&#34;&#34;Pop data off the FIFOQueue.&#34;&#34;&#34;
+        return self._ca.popL()   # type: ignore # nothing only when _S = Nothing
 
     def peak_last_in(self) -&gt; _D|_S:
         &#34;&#34;&#34;Return last element pushed to the FIFOQueue without consuming it&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
     def peak_next_out(self) -&gt; _D|_S:
         &#34;&#34;&#34;Return next element ready to pop from the FIFOQueue.&#34;&#34;&#34;
         if self._ca:
             return self._ca[0]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f:Callable[[_D, _D], _D]) -&gt; _D|_S:
-        &#34;&#34;&#34;Reduce with f.
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -&gt; _L|_S:
+        &#34;&#34;&#34;Reduce with f using an optional initial value.
 
-        * returns a value of the of type _D if self is not empty
-        * otherwise returns the sentinel value of type _S
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty &amp; no initial value given, return sentinel value
+        * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldL(f)
-
-    def fold1(self, f:Callable[[_L, _D], _L], start: _L) -&gt; _L:
-        &#34;&#34;&#34;Reduce with f using a starting value.
-
-        * returns the reduced value with an initial value
-        * folds in natural FIFO Order
-
-        &#34;&#34;&#34;
-        return self._ca.foldL1(f, init=start)</code></pre>
+        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -352,23 +311,15 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _D], _D]) ‑> Union[_D, _S]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_L, _D], _L], initial: Optional[_L] = None) ‑> Union[_L, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reduce with f.</p>
+<div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
-<li>returns a value of the of type _D if self is not empty</li>
-<li>otherwise returns the sentinel value of type _S</li>
-<li>folds in natural FIFO Order</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.queues.FIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_L, _D], _L], start: _L) ‑> _L</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Reduce with f using a starting value.</p>
-<ul>
-<li>returns the reduced value with an initial value</li>
+<li>note that _S can be the same type as _L</li>
+<li>note that when an initial value is not given then _L = _D</li>
+<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>traditional FP type order given for function f</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
@@ -394,7 +345,7 @@ hljs.highlightAll();
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Union[_D, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off front of the FIFOQueue.</p></div>
+<div class="desc"><p>Pop data off the FIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: _D) ‑> None</span>
@@ -461,35 +412,27 @@ hljs.highlightAll();
         self._ca.pushR(*ds)
 
     def pop(self) -&gt; _D|_S:
-        &#34;&#34;&#34;Pop data off rear of the LIFOQueue.&#34;&#34;&#34;
-        return self._ca.popR()
+        &#34;&#34;&#34;Pop data off the LIFOQueue.&#34;&#34;&#34;
+        return self._ca.popR()   # type: ignore # nothing only when _S = Nothing
 
     def peak(self) -&gt; _D|_S:
         &#34;&#34;&#34;Return last element pushed to the LIFOQueue without consuming it.&#34;&#34;&#34;
         if self._ca:
             return self._ca[-1]
         else:
-            return self._ca._s
+            return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f:Callable[[_D, _D], _D]) -&gt; _D|_S:
-        &#34;&#34;&#34;Reduce with f.
+    def fold(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -&gt; _R|_S:
+        &#34;&#34;&#34;Reduce with f using an optional initial value.
 
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
-        * folds in natural LIFO Order
-
-        &#34;&#34;&#34;
-        return self._ca.foldR(f)
-
-    def fold1(self, f:Callable[[_U, _D], _U], s: _U) -&gt; _U:
-        &#34;&#34;&#34;Reduce with f.
-
-        * always returns a value of type _S
-        * type _S can be the same type as _T
-        * folds in natural LIFO Order
+        * note that _S can be the same type as _L
+        * note that when an initial value is not given then _L = _D
+        * if iterable empty &amp; no initial value given, return sentinel value
+        * traditional FP type order given for function f
+        * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldR1(lambda s, t: f(t, s), s)</code></pre>
+        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -499,25 +442,16 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _D], _D]) ‑> Union[_D, _S]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _R | _S], _R], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Reduce with f.</p>
+<div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
-<li>returns a value of the of type _T if self is not empty</li>
-<li>returns None if self is empty</li>
-<li>folds in natural LIFO Order</li>
-</ul></div>
-</dd>
-<dt id="grscheller.datastructures.queues.LIFOQueue.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_U, _D], _U], s: _U) ‑> _U</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Reduce with f.</p>
-<ul>
-<li>always returns a value of type _S</li>
-<li>type _S can be the same type as _T</li>
-<li>folds in natural LIFO Order</li>
+<li>note that _S can be the same type as _L</li>
+<li>note that when an initial value is not given then _L = _D</li>
+<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>traditional FP type order given for function f</li>
+<li>folds in natural FIFO Order</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.map"><code class="name flex">
@@ -536,7 +470,7 @@ hljs.highlightAll();
 <span>def <span class="ident">pop</span></span>(<span>self) ‑> Union[_D, _S]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off rear of the LIFOQueue.</p></div>
+<div class="desc"><p>Pop data off the LIFOQueue.</p></div>
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue.push"><code class="name flex">
 <span>def <span class="ident">push</span></span>(<span>self, *ds: _D) ‑> None</span>
@@ -593,14 +527,7 @@ hljs.highlightAll();
         * data always internally stored in the same order as ds
 
         &#34;&#34;&#34;
-        if sentinel is nothing:
-            sent1: _S = sentinel             # type: ignore # _S is Nothing
-            self._ca = CA(*ds, sentinel=sent1)
-        else:
-            sent2: _S = sentinel             # type: ignore # is _S, not Nothing
-            self._ca = CA(*ds, sentinel=sent2)
-
-
+        self._ca = CA(*ds, sentinel=sentinel)
 
     def __repr__(self) -&gt; str:
         if len(self) == 0:
@@ -669,9 +596,7 @@ hljs.highlightAll();
 <h4><code><a title="grscheller.datastructures.queues.DoubleQueue" href="#grscheller.datastructures.queues.DoubleQueue">DoubleQueue</a></code></h4>
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldL" href="#grscheller.datastructures.queues.DoubleQueue.foldL">foldL</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldL1" href="#grscheller.datastructures.queues.DoubleQueue.foldL1">foldL1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldR" href="#grscheller.datastructures.queues.DoubleQueue.foldR">foldR</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.DoubleQueue.foldR1" href="#grscheller.datastructures.queues.DoubleQueue.foldR1">foldR1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.map" href="#grscheller.datastructures.queues.DoubleQueue.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.peakL" href="#grscheller.datastructures.queues.DoubleQueue.peakL">peakL</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.DoubleQueue.peakR" href="#grscheller.datastructures.queues.DoubleQueue.peakR">peakR</a></code></li>
@@ -685,7 +610,6 @@ hljs.highlightAll();
 <h4><code><a title="grscheller.datastructures.queues.FIFOQueue" href="#grscheller.datastructures.queues.FIFOQueue">FIFOQueue</a></code></h4>
 <ul class="two-column">
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.fold" href="#grscheller.datastructures.queues.FIFOQueue.fold">fold</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.FIFOQueue.fold1" href="#grscheller.datastructures.queues.FIFOQueue.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.map" href="#grscheller.datastructures.queues.FIFOQueue.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.peak_last_in" href="#grscheller.datastructures.queues.FIFOQueue.peak_last_in">peak_last_in</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.FIFOQueue.peak_next_out" href="#grscheller.datastructures.queues.FIFOQueue.peak_next_out">peak_next_out</a></code></li>
@@ -695,9 +619,8 @@ hljs.highlightAll();
 </li>
 <li>
 <h4><code><a title="grscheller.datastructures.queues.LIFOQueue" href="#grscheller.datastructures.queues.LIFOQueue">LIFOQueue</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.fold" href="#grscheller.datastructures.queues.LIFOQueue.fold">fold</a></code></li>
-<li><code><a title="grscheller.datastructures.queues.LIFOQueue.fold1" href="#grscheller.datastructures.queues.LIFOQueue.fold1">fold1</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.map" href="#grscheller.datastructures.queues.LIFOQueue.map">map</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.peak" href="#grscheller.datastructures.queues.LIFOQueue.peak">peak</a></code></li>
 <li><code><a title="grscheller.datastructures.queues.LIFOQueue.pop" href="#grscheller.datastructures.queues.LIFOQueue.pop">pop</a></code></li>

@@ -23,7 +23,7 @@ __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.ca import CA
-from grscheller.fp.iterators import concat, exhaust, merge
+from grscheller.fp.iterables import concat, exhaust, merge
 from grscheller.fp.nothing import Nothing, nothing
 from .core.nodes import SL_Node as Node
 from .core.enums import FM

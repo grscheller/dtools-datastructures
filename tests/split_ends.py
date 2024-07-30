@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from grscheller.datastructures.split_ends import SplitEnd as SE
+from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
+from grscheller.fp.core import FM
 from itertools import chain
 
 class Test_FSplitEnds:
@@ -113,7 +114,7 @@ class Test_FSplitEnds:
         s3 = s2.cons("fe")
         assert s3 == s1
         while s1:
-            s1 = s1.tail()                # type: ignore
+            s1 = s1.tail()
         assert s1.head() is None
         assert s1.tail() == SplitEnd()
 
@@ -137,7 +138,7 @@ class Test_FSplitEnds:
     def test_stackIter(self) -> None:
         giantSplitEnd = SplitEnd(*[" Fum", " Fo", " Fi", "Fe"])
         giantTalk = giantSplitEnd.head()
-        giantSplitEnd = giantSplitEnd.tail()     # type: ignore   # make total or throw exception?
+        giantSplitEnd = giantSplitEnd.tail()
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
             giantTalk += giantWord
@@ -167,12 +168,12 @@ class Test_FSplitEnds:
         
         s3 = s3.cons(s4.head(42))
         s3.peak(0) is not 42
-        s4 = s4.tail()                   # type: ignore
+        s4 = s4.tail()
         assert type(s4) is SplitEnd[int]
         assert s3 is not s4
         assert s3 != s4
         assert s3 is not None
-        s3 = s3.tail().tail()    # type: ignore  # I'd like to do this without jumping through hoops
+        s3 = s3.tail().tail()
         assert s3 == s4
         assert s3 is not None
         assert s4 is not None
@@ -287,13 +288,13 @@ class Test_FSplitEnds:
         c1 = SplitEnd(2, 1, 3)
         c2 = c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)))
         assert c2 == SplitEnd(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
-        c3 = SplitEnd()
+        c3: SE[int] = SplitEnd()
         c4 = c3.flatMap(lambda x: SplitEnd(x, x+1))
         assert c3 == c4 == SplitEnd()
         assert c3 is not c4
 
     def test_flatMap2(self) -> None:
-        c0 = SplitEnd()
+        c0: SE[int] = SplitEnd()
         c1 = SplitEnd(2, 1, 3)
         assert c1.flatMap(lambda x: SplitEnd(*range(x, 3*x))) == SplitEnd(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
         assert c1.flatMap(lambda x: SplitEnd(x, x+1)) == SplitEnd(2, 3, 1, 2, 3, 4)
@@ -301,10 +302,10 @@ class Test_FSplitEnds:
 
     def test_mergeMap1(self) -> None:
         c1 = SplitEnd(2, 1, 3)
-        c2 = c1.mergeMap(lambda x: SplitEnd(*range(x, 3*x)))
+        c2 = c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)))
         assert c2 == SplitEnd(2, 1, 3, 3, 2, 4)
-        c3 = SplitEnd()
-        c4 = c3.mergeMap(lambda x: SplitEnd(x, x+1))
+        c3: SE[int] = SplitEnd()
+        c4 = c3.flatMap(lambda x: SplitEnd(x, x+1), FM.MERGE)
         assert c3 == c4 == SplitEnd()
         assert c3 is not c4
 
