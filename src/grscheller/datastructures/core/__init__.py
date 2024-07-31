@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module supporting enumerations for used by datastructures."""
+"""Sub-package supporting core infrastructure for grscheller.datastructures."""
 
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2024 Geoffrey R. Scheller"

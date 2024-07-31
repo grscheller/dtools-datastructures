@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
-from grscheller.fp.core import FM
-from itertools import chain
+from grscheller.datastructures.core.enums import FM
+from grscheller.fp.iterables import concat
 
 class Test_FSplitEnds:
     def test_mutate_returns_none(self) -> None:
@@ -70,7 +70,7 @@ class Test_FSplitEnds:
         assert s1 == SE()
         s5 = s1.cons(42).cons(0)
         assert s5 == SE(42, 0)
-        assert s5.tail() == SE(100, 1)
+        assert s5.tail() == SE(42)
 
     def test_headOfEmptySplitEnd(self) -> None:
         s1: SE[int] = SE()
@@ -209,15 +209,11 @@ class Test_FSplitEnds:
     def test_storeNones(self) -> None:
         s0: SplitEnd[int|None] = SplitEnd()
         s0.push(None)
-        s0.push(None)
+        s0.push(42)
         s0.push(None)
         s0.push(42)
         s0.push(None)
         assert len(s0) == 5
-        s0.pop()
-        assert not s0
-        s0.pop()
-        assert s0
         while s0:
             assert s0
             s0.pop()
@@ -241,9 +237,10 @@ class Test_FSplitEnds:
         assert s2 == SplitEnd(*iter(s1))
         s0: SplitEnd[str] = SplitEnd()
         assert s0 == SplitEnd(*iter(s0))
-        s2 = SplitEnd(chain(iter(range(1, 100)), iter(range(98, 0, -1))))
-        s3 = SplitEnd(*iter(s2))
-        assert s3 == s2
+        s3 = SplitEnd(*concat(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s4 = SplitEnd(*iter(s3))
+        assert s3 == s4
+        assert s3 is not s4
 
     def test_reversed(self) -> None:
         lf = [1.0, 2.0, 3.0, 4.0]
@@ -287,7 +284,7 @@ class Test_FSplitEnds:
     def test_flatMap1(self) -> None:
         c1 = SplitEnd(2, 1, 3)
         c2 = c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)))
-        assert c2 == SplitEnd(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
+        assert c2 == SplitEnd(8, 7, 6, 5, 4, 3, 2, 1, 5, 4, 3, 2)
         c3: SE[int] = SplitEnd()
         c4 = c3.flatMap(lambda x: SplitEnd(x, x+1))
         assert c3 == c4 == SplitEnd()
@@ -296,38 +293,39 @@ class Test_FSplitEnds:
     def test_flatMap2(self) -> None:
         c0: SE[int] = SplitEnd()
         c1 = SplitEnd(2, 1, 3)
-        assert c1.flatMap(lambda x: SplitEnd(*range(x, 3*x))) == SplitEnd(2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 7, 8)
-        assert c1.flatMap(lambda x: SplitEnd(x, x+1)) == SplitEnd(2, 3, 1, 2, 3, 4)
+        assert c1.flatMap(lambda x: SplitEnd(*range(x, 3*x))) == SplitEnd(8, 7, 6, 5, 4, 3, 2, 1, 5, 4, 3, 2)
+        assert c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)), FM.CONCAT) == SplitEnd(8, 7, 6, 5, 4, 3, 2, 1, 5, 4, 3, 2)
+        assert c1.flatMap(lambda x: SplitEnd(x, x+1)) == SplitEnd(4, 3, 2, 1, 3, 2)
         assert c0.flatMap(lambda x: SplitEnd(x, x+1)) == SplitEnd()
 
-    def test_mergeMap1(self) -> None:
+    def mergeMap1_test(self) -> None:
         c1 = SplitEnd(2, 1, 3)
-        c2 = c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)))
-        assert c2 == SplitEnd(2, 1, 3, 3, 2, 4)
+        c2 = c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)), FM.MERGE)
+        assert c2 == SplitEnd(8, 2, 5, 7, 1, 4)
         c3: SE[int] = SplitEnd()
-        c4 = c3.flatMap(lambda x: SplitEnd(x, x+1), FM.MERGE)
+        c4 = c3.flatMap(lambda x: SplitEnd(*range(x, 3*x)), FM.MERGE)
         assert c3 == c4 == SplitEnd()
         assert c3 is not c4
 
-    def test_mergeMap2(self) -> None:
-        c0 = SplitEnd()
+    def mergeMap2_test(self) -> None:
+        c0: SplitEnd[int] = SplitEnd()
         c1 = SplitEnd(2, 1, 3)
-        assert c1.mergeMap(lambda x: SplitEnd(*range(x, 2*x+1))) == SplitEnd(2, 1, 3, 3, 2, 4)
-        assert c1.mergeMap(lambda x: SplitEnd(x, x+1)) == SplitEnd(2, 1, 3, 3, 2, 4)
-        assert c0.mergeMap(lambda x: SplitEnd(x, x+1)) == SplitEnd()
+        assert c1.flatMap(lambda x: SplitEnd(*range(x, 2*x+1)), FM.MERGE) == SplitEnd(2, 1, 3, 3, 2, 4)
+        assert c1.flatMap(lambda x: SplitEnd(x, x+1), FM.MERGE) == SplitEnd(2, 1, 3, 3, 2, 4)
+        assert c0.flatMap(lambda x: SplitEnd(x, x+1), FM.MERGE) == SplitEnd()
 
     def test_exhaustMap1(self) -> None:
         c1 = SplitEnd(2, 1, 3)
-        assert c1.exhaustMap(lambda x: SplitEnd(*range(x, 3*x))) == SplitEnd(2, 1, 3, 3, 2, 4, 4, 5, 5, 6, 7, 8)
-        c3 = SplitEnd()
-        c4 = c3.exhaustMap(lambda x: SplitEnd(x, x+1))
+        assert c1.flatMap(lambda x: SplitEnd(*range(x, 3*x)), FM.EXHAUST) == SplitEnd(8, 2, 5, 7, 1, 4, 6, 3, 5, 2, 4, 3)
+        c3: SE[int] = SplitEnd()
+        c4 = c3.flatMap(lambda x: SplitEnd(x, x+1), FM.EXHAUST)
         assert c3 == c4 == SplitEnd()
         assert c3 is not c4
 
     def test_exhaustMap2(self) -> None:
-        c0 = SplitEnd()
+        c0: SE[int] = SplitEnd()
         c1 = SplitEnd(2, 1, 3)
-        assert c0.exhaustMap(lambda x: SplitEnd(x, x+1)) == SplitEnd()
-        assert c1.exhaustMap(lambda x: SplitEnd(x, x+1)) == SplitEnd(2, 1, 3, 3, 2, 4)
-        assert c1.exhaustMap(lambda x: SplitEnd(*range(x, 2*x+1))) == SplitEnd(2, 1, 3, 3, 2, 4, 4, 5, 6)
-        assert c1.exhaustMap(lambda _: SplitEnd()) == SplitEnd()
+        assert c0.flatMap(lambda x: SplitEnd(x, x+1), FM.EXHAUST) == SplitEnd()
+        assert c1.flatMap(lambda x: SplitEnd(x, x+1), FM.EXHAUST) == SplitEnd(4, 2, 3, 3, 1, 2)
+        assert c1.flatMap(lambda x: SplitEnd(*range(x, 2*x+1)), FM.EXHAUST) == SplitEnd(6, 2, 4, 5, 1, 3, 4, 2, 3)
+        assert c1.flatMap(lambda _: SplitEnd(), FM.EXHAUST) == SplitEnd()

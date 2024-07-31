@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Containers supporting the use & implementation of various algorithms.
-Both functional and imperative programming styles supported.
-"""
+"""Containers supporting the use & implementation of various algorithms."""
 
 __version__ = "0.20.0.1"
 __author__ = "Geoffrey R. Scheller"
