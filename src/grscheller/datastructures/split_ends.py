@@ -28,14 +28,15 @@ from grscheller.fp.nothing import Nothing, nothing
 from .core.nodes import SL_Node as Node
 from .core.enums import FM
 
-_T = TypeVar('_T')
+_D = TypeVar('_D')
 _S = TypeVar('_S')
+_T = TypeVar('_T')
 
 CONCAT = FM.CONCAT
 MERGE = FM.MERGE
 EXHAUST = FM.EXHAUST
 
-class SplitEnd(Generic[_T]):
+class SplitEnd(Generic[_D, _S]):
     """Class implementing a stack type data structures called a "split end".
 
     * each "split end" is a very simple LIFO stateful data structure
@@ -45,34 +46,35 @@ class SplitEnd(Generic[_T]):
     * bush-like datastructures can be formed using multiple "split ends"
 
     """
-    __slots__ = '_head', '_count'
+    __slots__ = '_head', '_count', '_s'
 
-    def __init__(self, *ds: _T):
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing):
         """Construct a LIFO Stack"""
-        self._head: Optional[Node[_T]] = None
+        self._head: Optional[Node[_D]] = None
         self._count: int = 0
+        self._s = s
         for d in ds:
-            node: Node[_T] = Node(d, self._head)
+            node: Node[_D] = Node(d, self._head)
             self._head = node
             self._count += 1
 
-    def __iter__(self) -> Iterator[_T]:
+    def __iter__(self) -> Iterator[_D]:
         """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
             node = node._next
 
-    def __reversed__(self) -> Iterator[_T]:
+    def __reversed__(self) -> Iterator[_D]:
         """Reverse iterate over the contents of the stack"""
-        return reversed(CA(*self, sentinel=nothing))
+        return reversed(CA(*self, s=nothing))
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
         """Display the data in the Stack, left to right."""
-        return '>< ' + ' <- '.join(CA(*self, sentinel=nothing).map(str)) + ' ||'
+        return '>< ' + ' -> '.join(CA(*self, s=nothing).map(str)) + ' ||'
 
     def __bool__(self) -> bool:
         """Returns true if stack is not empty"""
@@ -86,6 +88,8 @@ class SplitEnd(Generic[_T]):
             return False
 
         if self._count != other._count:
+            return False
+        if self._s != other._s:
             return False
 
         left = self._head
@@ -103,13 +107,13 @@ class SplitEnd(Generic[_T]):
             nn -= 1
         return True
 
-    def copy(self) -> SplitEnd[_T]:
+    def copy(self) -> SplitEnd[_D, _S]:
         """Return a copy of a Stack in O(1) space & time complexity."""
-        stack: SplitEnd[_T] = SplitEnd()
+        stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -> SplitEnd[_T]:
+    def reverse(self) -> SplitEnd[_D, _S]:
         """Return shallow reversed copy of a SplitEnd.
 
         * Returns a new Stack object with shallow copied new data
@@ -117,9 +121,9 @@ class SplitEnd(Generic[_T]):
         * O(1) space & time complexity
 
         """
-        return SplitEnd(*self)
+        return SplitEnd(*self, s=self._s)
 
-    def push(self, *ds: _T) -> None:
+    def push(self, *ds: _D) -> None:
         """Push data onto top of the SplitEnd.
 
         * ignore "non-existent" Nothing() values pushed on SplitEnd
@@ -130,7 +134,7 @@ class SplitEnd(Generic[_T]):
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
-    def pop(self, default: Optional[_T]=None) -> _T|Nothing:
+    def pop(self, default: Optional[_D]=None) -> _D|Nothing:
         """Pop data off of top of the SplitEnd.
 
         * if empty, return a default value
@@ -144,7 +148,7 @@ class SplitEnd(Generic[_T]):
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Optional[_T]=None) -> _T|Nothing:
+    def peak(self, default: Optional[_D]=None) -> _D|Nothing:
         """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -156,7 +160,7 @@ class SplitEnd(Generic[_T]):
             return nothing if default is None else default
         return self._head._data
 
-    def head(self, default: Optional[_T]=None) -> _T|Nothing:
+    def head(self, default: Optional[_D]=None) -> _D|Nothing:
         """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -167,21 +171,21 @@ class SplitEnd(Generic[_T]):
             return nothing if default is None else default
         return self._head._data
 
-    def tail(self) -> SplitEnd[_T]|Nothing:
+    def tail(self) -> SplitEnd[_D, _S]|Nothing:
         """Return tail of the SplitEnd.
 
         * if SplitEnd is empty, tail does not exist, so return nothing: Nothing
 
         """
         if self._head:
-            fstack: SplitEnd[_T] = SplitEnd()
+            fstack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
             fstack._head = self._head._next
             fstack._count = self._count - 1
             return fstack
         else:
             return nothing
 
-    def cons(self, d: _T) -> SplitEnd[_T]|Nothing:
+    def cons(self, d: _D) -> SplitEnd[_D, _S]|Nothing:
         """Return a new SplitEnd with data as head and self as tail.
 
         Constructing a SplitEnd using a non-existent value as head results in
@@ -189,14 +193,14 @@ class SplitEnd(Generic[_T]):
 
         """
         if d is not nothing:
-            stack: SplitEnd[_T] = SplitEnd()
+            stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
             stack._head = Node(d, self._head)
             stack._count = self._count + 1
             return stack
         else:
             return nothing
 
-    def fold(self, f:Callable[[_T, _T], _T]) -> Optional[_T]:
+    def fold(self, f:Callable[[_D, _D], _D]) -> Optional[_D]:
         """Reduce with f.
 
         * returns a value of the of type _T if self is not empty
@@ -205,35 +209,35 @@ class SplitEnd(Generic[_T]):
         * TODO: consolidate fold & fold1
 
         """
-        node: Optional[Node[_T]] = self._head
+        node: Optional[Node[_D]] = self._head
         if not node:
             return None
-        acc: _T = node._data
+        acc: _D = node._data
         while node:
             if (node := node._next) is None:
                 break
             acc = f(acc, node._data)
         return acc
 
-    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -> _S:
+    def fold1(self, f:Callable[[_T, _D], _T], s: _T) -> _T:
         """Reduce with f.
 
-        * returns a value of type _S
-        * type _S can be same type as _T
+        * returns a value of type _T
+        * type _T can be same type as _D
         * folds in natural LIFO Order
         * TODO: consolidate fold & fold1
 
         """
-        node: Optional[Node[_T]] = self._head
+        node: Optional[Node[_D]] = self._head
         if not node:
             return s
-        acc: _S = s
+        acc: _T = s
         while node:
             acc = f(acc, node._data)
             node = node._next
         return acc
 
-    def flatMap(self, f: Callable[[_T], SplitEnd[_S]], type: FM=FM.CONCAT) -> SplitEnd[_S]:
+    def flatMap(self, f: Callable[[_D], SplitEnd[_T, _S]], type: FM=FM.CONCAT) -> SplitEnd[_T, _S]:
         """Bind function f to the FTuple:
 
         * sequentially one after the other
@@ -243,13 +247,13 @@ class SplitEnd(Generic[_T]):
         """
         match type:
             case FM.CONCAT:
-                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))))
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))), s=self._s)
             case FM.MERGE:
-                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))))
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))), s=self._s)
             case FM.EXHAUST:
-                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))))
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._s)
 
-    def map(self, f: Callable[[_T], _S]) -> SplitEnd[_S]:
+    def map(self, f: Callable[[_D], _T]) -> SplitEnd[_T, _S]:
         """Maps a function (or callable object) over the values on the Stack.
 
         * TODO: Redo in "natural" order?

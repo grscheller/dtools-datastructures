@@ -28,26 +28,27 @@ def addLt42(x: int, y: int) -> int|None:
 
 class Test_str:
     def test_SplitEnd(self) -> None:
-        s1: SplitEnd[Optional[object]] = SplitEnd()
+        s1: SplitEnd[int|str, Nothing] = SplitEnd()
         assert str(s1) == '><  ||'
         s2 = s1.cons(42)
         assert str(s1) == '><  ||'
         assert str(s2) == '>< 42 ||'
-        del s1
-        s1 = s2.cons(None)
-        assert s1 == s2
-        s1 = s2.cons(0)
-        assert str(s1) == '>< 0 <- 42 ||'
-        s3 = s1.cons('wins!').cons('Buggy the clown')
-        assert str(s3) == ">< Buggy the clown <- wins! <- 0 <- 42 ||"
+        assert s1 != s2
+        s3 = s2.cons('Buggy the clown')
+        s2.push('Buggy the clown')
+        assert s2 == s3
+        s4 = s2.cons(0)
+        assert str(s4) == '>< 0 -> Buggy the clown -> 42 ||'
+        s5 = s3.tail().cons('wins!').cons('Buggy the clown')
+        assert str(s5) == ">< Buggy the clown -> wins! -> 42 ||"
 
-        foo = SplitEnd(1, 2)
+        foo: SplitEnd[int, Nothing] = SplitEnd(1, 2)
         bar = foo.copy()
         assert bar.head() == 2
         foo = foo.cons(3).cons(4).cons(5)
         baz = bar.cons(3).cons(4).cons(5)
-        assert str(foo) == '>< 5 <- 4 <- 3 <- 2 <- 1 ||'
-        assert str(baz) == '>< 5 <- 4 <- 3 <- 2 <- 1 ||'
+        assert str(foo) == '>< 5 -> 4 -> 3 -> 2 -> 1 ||'
+        assert str(baz) == '>< 5 -> 4 -> 3 -> 2 -> 1 ||'
         assert foo == baz
         assert foo is not baz
 

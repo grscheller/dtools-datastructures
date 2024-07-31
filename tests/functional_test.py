@@ -25,8 +25,8 @@ concat = FM.CONCAT
 merge = FM.MERGE
 exhaust = FM.EXHAUST
 
+_D = TypeVar('_D')
 _T = TypeVar('_T')
-_S = TypeVar('_S')
 _R = TypeVar('_R')
 _L = TypeVar('_L')
 
@@ -35,22 +35,22 @@ class Test_FP:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FIFOQueue[_T, _S], t: _T) -> FIFOQueue[_T, _S]:
-            q.push(t)
+        def pushFQfromL(q: FIFOQueue[_D, _T], d: _D) -> FIFOQueue[_D, _T]:
+            q.push(d)
             return q
 
-        def pushFQfromR(t: _T, q: FIFOQueue[_T, _S]) -> FIFOQueue[_T, _S]:
-            q.push(t)
+        def pushFQfromR(d: _D, q: FIFOQueue[_D, _T]) -> FIFOQueue[_D, _T]:
+            q.push(d)
             return q
 
-        def pushSE(x: SE[_T], y: _T) -> SE[_T]:
+        def pushSE(x: SE[_D, Nothing], y: _D) -> SE[_D, Nothing]:
             x.push(y)
             return x
 
         ft0: FT[int] = FT()
-        se0: SE[int] = SE()
+        se0: SE[int, Nothing] = SE()
         ft1: FT[int] = FT(1,2,3,4,5)
-        se1: SE[int] = SE(1,2,3,4,5)
+        se1: SE[int, Nothing] = SE(1,2,3,4,5)
 
         assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
         assert ft0.foldL(l1, 42) == 42
@@ -69,12 +69,12 @@ class Test_FP:
         assert ft0 == FT()
         assert ft1 == FT(1,2,3,4,5)
 
-        fq1: FIFOQueue[int, tuple[()]] = FIFOQueue(sentinel=())
-        fq2: FIFOQueue[int, None] = FIFOQueue(sentinel=None)
-        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5, sentinel=())
-        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue(sentinel=None)
-        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, sentinel=())
-        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(sentinel=None)
+        fq1: FIFOQueue[int, tuple[()]] = FIFOQueue(s=())
+        fq2: FIFOQueue[int, None] = FIFOQueue(s=None)
+        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5, s=())
+        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue(s=None)
+        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, s=())
+        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(s=None)
 
         fq5: FIFOQueue[int, Nothing] = FIFOQueue()
         fq6 = FIFOQueue[int, Nothing]()
@@ -92,10 +92,10 @@ class Test_FP:
         assert se1.fold1(l1, 10) == 25
         assert se1.fold(l2) == 120
         assert se1.fold1(l2, 10) == 1200
-        assert se1.fold1(pushSE, SE[int]()) == SE(5,4,3,2,1)
+        assert se1.fold1(pushSE, SE[int, tuple[int, ...]]()) == SE(5,4,3,2,1)
         assert se0.fold(l1) == None
         assert se0.fold1(l1, 10) == 10
-        assert se0.fold1(pushSE, SE[int]()) == SE()
+        assert se0.fold1(pushSE, SE[int, tuple[int, ...]]()) == SE()
 
         assert ft1.accummulate(l1) == FT(1,3,6,10,15)
         assert ft1.accummulate(l1, 10) == FT(10,11,13,16,20,25)

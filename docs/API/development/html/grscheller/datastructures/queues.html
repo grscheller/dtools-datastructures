@@ -44,7 +44,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue"><code class="flex name class">
 <span>class <span class="ident">DoubleQueue</span></span>
-<span>(</span><span>*ds: _D, sentinel: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful Double Sided Queue data structure.</p>
@@ -84,7 +84,7 @@ hljs.highlightAll();
 
     def map(self, f: Callable[[_D], _U]) -&gt; DoubleQueue[_U, _S]:
         &#34;&#34;&#34;Apply function over the contents of the FIFOQueue subtype.&#34;&#34;&#34;
-        return DoubleQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return DoubleQueue(*map(f, self._ca), s=self._ca._s)
 
     def pushR(self, *ds: _D) -&gt; None:
         &#34;&#34;&#34;Push data left to right onto rear of the DoubleQueue.&#34;&#34;&#34;
@@ -121,19 +121,19 @@ hljs.highlightAll();
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty &amp; no initial value given, return sentinel value
+        * if iterable empty &amp; no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
+        return self._ca.foldL(f, initial=initial)
 
     def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -&gt; _R|_S:
         &#34;&#34;&#34;Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty &amp; no initial value given, return sentinel value
+        * if iterable empty &amp; no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
@@ -155,7 +155,7 @@ hljs.highlightAll();
 <ul>
 <li>note that _S can be the same type as _L</li>
 <li>note that when an initial value is not given then _L = _D</li>
-<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>if iterable empty &amp; no initial value given, return a sentinel value of type _S</li>
 <li>traditional FP type order given for function f</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
@@ -168,7 +168,7 @@ hljs.highlightAll();
 <ul>
 <li>note that _S can be the same type as _L</li>
 <li>note that when an initial value is not given then _L = _D</li>
-<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>if iterable empty &amp; no initial value given, return a sentinel value of type _S</li>
 <li>traditional FP type order given for function f</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
@@ -227,7 +227,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue"><code class="flex name class">
 <span>class <span class="ident">FIFOQueue</span></span>
-<span>(</span><span>*ds: _D, sentinel: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful First In First Out (FIFO) data structure.</p>
@@ -267,7 +267,7 @@ hljs.highlightAll();
 
     def map(self, f: Callable[[_D], _U]) -&gt; FIFOQueue[_U, _S]:
         &#34;&#34;&#34;Apply function over the contents of the FIFOQueue subtype.&#34;&#34;&#34;
-        return FIFOQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return FIFOQueue(*map(f, self._ca), s=self._ca._s)
 
     def push(self, *ds: _D) -&gt; None:
         &#34;&#34;&#34;Push data onto the FIFOQueue.&#34;&#34;&#34;
@@ -291,17 +291,30 @@ hljs.highlightAll();
         else:
             return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -&gt; _L|_S:
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L], default: _S) -&gt; _L|_S:
+        ...
+    @overload
+    def fold(self, f: Callable[[_D, _D], _D]) -&gt; _D|Nothing:
+        ...
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: _L) -&gt; _L:
+        ...
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]) -&gt; _L|Nothing:
+        ...
+
+    def fold(self, f: Callable[[_L, _D], _L], initial: _L) -&gt; _L|_S:
         &#34;&#34;&#34;Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty &amp; no initial value given, return sentinel value
+        * if iterable empty &amp; no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S</code></pre>
+        return self._ca.foldL(f, initial=initial)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -311,14 +324,14 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.FIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_L, _D], _L], initial: Optional[_L] = None) ‑> Union[_L, _S]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_L, _D], _L], initial: _L) ‑> Union[_L, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
 <li>note that _S can be the same type as _L</li>
 <li>note that when an initial value is not given then _L = _D</li>
-<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>if iterable empty &amp; no initial value given, return a sentinel value of type _S</li>
 <li>traditional FP type order given for function f</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
@@ -365,7 +378,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue"><code class="flex name class">
 <span>class <span class="ident">LIFOQueue</span></span>
-<span>(</span><span>*ds: _D, sentinel: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful Last In First Out (LIFO) data structure.</p>
@@ -405,7 +418,7 @@ hljs.highlightAll();
 
     def map(self, f: Callable[[_D], _U]) -&gt; LIFOQueue[_U, _S]:
         &#34;&#34;&#34;Apply function over the contents of the LIFOQueue.&#34;&#34;&#34;
-        return LIFOQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return LIFOQueue(*map(f, self._ca), s=self._ca._s)
 
     def push(self, *ds: _D) -&gt; None:
         &#34;&#34;&#34;Push data onto the LIFOQueue &amp; no return value.&#34;&#34;&#34;
@@ -422,17 +435,22 @@ hljs.highlightAll();
         else:
             return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -&gt; _R|_S:
+    def fold(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -&gt; _R|_S:
         &#34;&#34;&#34;Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty &amp; no initial value given, return sentinel value
+        * if iterable empty &amp; no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         &#34;&#34;&#34;
-        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S</code></pre>
+        if initial is None:
+            if self._ca:
+                init = next
+                return self._ca.foldR(f)
+        else:
+            return self._ca.foldR(f, initial=initial)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -442,14 +460,14 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.queues.LIFOQueue.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _R | _S], _R], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _R], _R], initial: Optional[_R] = None) ‑> Union[_R, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f using an optional initial value.</p>
 <ul>
 <li>note that _S can be the same type as _L</li>
 <li>note that when an initial value is not given then _L = _D</li>
-<li>if iterable empty &amp; no initial value given, return sentinel value</li>
+<li>if iterable empty &amp; no initial value given, return a sentinel value of type _S</li>
 <li>traditional FP type order given for function f</li>
 <li>folds in natural FIFO Order</li>
 </ul></div>
@@ -490,7 +508,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.QueueBase"><code class="flex name class">
 <span>class <span class="ident">QueueBase</span></span>
-<span>(</span><span>*ds: _D, sentinel: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for stateful queue-based data structures</p>
@@ -521,23 +539,23 @@ hljs.highlightAll();
     &#34;&#34;&#34;
     __slots__ = &#39;_ca&#39;
 
-    def __init__(self, *ds: _D, sentinel: _S|Nothing=nothing):
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing):
         &#34;&#34;&#34;Construct a queue data structure.
 
         * data always internally stored in the same order as ds
 
         &#34;&#34;&#34;
-        self._ca = CA(*ds, sentinel=sentinel)
+        self._ca = CA(*ds, s=s)
 
     def __repr__(self) -&gt; str:
         if len(self) == 0:
-            return type(self).__name__ + &#39;(sentinel=&#39; + repr(self._ca._s)+ &#39;)&#39;
+            return type(self).__name__ + &#39;(s=&#39; + repr(self._ca._s)+ &#39;)&#39;
         else:
-            return type(self).__name__ + &#39;(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;, sentinel=&#39; + repr(self._ca._s)+ &#39;)&#39;
+            return type(self).__name__ + &#39;(&#39; + &#39;, &#39;.join(map(repr, self._ca)) + &#39;, s=&#39; + repr(self._ca._s)+ &#39;)&#39;
 
     def copy(self) -&gt; Self:
         &#34;&#34;&#34;Return shallow copy of a QueueBase[_T] subtype.&#34;&#34;&#34;
-        return type(self)(*self._ca, sentinel=self._ca._s)
+        return type(self)(*self._ca, s=self._ca._s)
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Returns True if queue is not empty.&#34;&#34;&#34;

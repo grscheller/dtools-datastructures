@@ -38,7 +38,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.split_ends.SplitEnd"><code class="flex name class">
 <span>class <span class="ident">SplitEnd</span></span>
-<span>(</span><span>*ds: _T)</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a stack type data structures called a "split end".</p>
@@ -54,7 +54,7 @@ hljs.highlightAll();
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SplitEnd(Generic[_T]):
+<pre><code class="python">class SplitEnd(Generic[_D, _S]):
     &#34;&#34;&#34;Class implementing a stack type data structures called a &#34;split end&#34;.
 
     * each &#34;split end&#34; is a very simple LIFO stateful data structure
@@ -64,34 +64,35 @@ hljs.highlightAll();
     * bush-like datastructures can be formed using multiple &#34;split ends&#34;
 
     &#34;&#34;&#34;
-    __slots__ = &#39;_head&#39;, &#39;_count&#39;
+    __slots__ = &#39;_head&#39;, &#39;_count&#39;, &#39;_s&#39;
 
-    def __init__(self, *ds: _T):
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing):
         &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
-        self._head: Optional[Node[_T]] = None
+        self._head: Optional[Node[_D]] = None
         self._count: int = 0
+        self._s = s
         for d in ds:
-            node: Node[_T] = Node(d, self._head)
+            node: Node[_D] = Node(d, self._head)
             self._head = node
             self._count += 1
 
-    def __iter__(self) -&gt; Iterator[_T]:
+    def __iter__(self) -&gt; Iterator[_D]:
         &#34;&#34;&#34;Iterator yielding data stored on the stack, starting at the head&#34;&#34;&#34;
         node = self._head
         while node:
             yield node._data
             node = node._next
 
-    def __reversed__(self) -&gt; Iterator[_T]:
+    def __reversed__(self) -&gt; Iterator[_D]:
         &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
-        return reversed(CA(*self, sentinel=nothing))
+        return reversed(CA(*self, s=nothing))
 
     def __repr__(self) -&gt; str:
         return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
 
     def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display the data in the Stack, left to right.&#34;&#34;&#34;
-        return &#39;&gt;&lt; &#39; + &#39; &lt;- &#39;.join(CA(*self, sentinel=nothing).map(str)) + &#39; ||&#39;
+        return &#39;&gt;&lt; &#39; + &#39; -&gt; &#39;.join(CA(*self, s=nothing).map(str)) + &#39; ||&#39;
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
@@ -105,6 +106,8 @@ hljs.highlightAll();
             return False
 
         if self._count != other._count:
+            return False
+        if self._s != other._s:
             return False
 
         left = self._head
@@ -122,13 +125,13 @@ hljs.highlightAll();
             nn -= 1
         return True
 
-    def copy(self) -&gt; SplitEnd[_T]:
+    def copy(self) -&gt; SplitEnd[_D, _S]:
         &#34;&#34;&#34;Return a copy of a Stack in O(1) space &amp; time complexity.&#34;&#34;&#34;
-        stack: SplitEnd[_T] = SplitEnd()
+        stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -&gt; SplitEnd[_T]:
+    def reverse(self) -&gt; SplitEnd[_D, _S]:
         &#34;&#34;&#34;Return shallow reversed copy of a SplitEnd.
 
         * Returns a new Stack object with shallow copied new data
@@ -136,36 +139,46 @@ hljs.highlightAll();
         * O(1) space &amp; time complexity
 
         &#34;&#34;&#34;
-        return SplitEnd(*self)
+        return SplitEnd(*self, s=self._s)
 
-    def push(self, *ds: Optional[_T]) -&gt; None:
-        &#34;&#34;&#34;Push data onto top of the SplitEnd.&#34;&#34;&#34;
+    def push(self, *ds: _D) -&gt; None:
+        &#34;&#34;&#34;Push data onto top of the SplitEnd.
+
+        * ignore &#34;non-existent&#34; Nothing() values pushed on SplitEnd
+
+        &#34;&#34;&#34;
         for d in ds:
-            if d is not None:
+            if d is not nothing:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
-    def pop(self, default: Optional[_T]=None) -&gt; Optional[_T]:
-        &#34;&#34;&#34;Pop data off of top of the SplitEnd.&#34;&#34;&#34;
+    def pop(self, default: Optional[_D]=None) -&gt; _D|Nothing:
+        &#34;&#34;&#34;Pop data off of top of the SplitEnd.
+
+        * if empty, return a default value
+        * if empty and a default value not given, return nothing: Nothing
+
+        &#34;&#34;&#34;
         if self._head is None:
-            return None
+            return nothing
         else:
             data = self._head._data
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: Optional[_T]=None) -&gt; Optional[_T]:
+    def peak(self, default: Optional[_D]=None) -&gt; _D|Nothing:
         &#34;&#34;&#34;Returns the data at the top of the SplitEnd.
 
         * does not consume the data
-        * if Stack empty, data does not exist, so in that case return default
+        * if empty, data does not exist, so in that case return default
+        * if empty and no default given, return nothing: Nothing
 
         &#34;&#34;&#34;
         if self._head is None:
-            return default
+            return nothing if default is None else default
         return self._head._data
 
-    def head(self, default: Optional[_T]=None) -&gt; Optional[_T]:
+    def head(self, default: Optional[_D]=None) -&gt; _D|Nothing:
         &#34;&#34;&#34;Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -173,82 +186,76 @@ hljs.highlightAll();
 
         &#34;&#34;&#34;
         if self._head is None:
-            return default
+            return nothing if default is None else default
         return self._head._data
 
-    def tail(self) -&gt; SplitEnd[_T]:
+    def tail(self) -&gt; SplitEnd[_D, _S]|Nothing:
         &#34;&#34;&#34;Return tail of the SplitEnd.
 
-        * if SplitEnd is empty, tail does not exist, so return an empty SplitEnd
+        * if SplitEnd is empty, tail does not exist, so return nothing: Nothing
 
         &#34;&#34;&#34;
         if self._head:
-            fstack: SplitEnd[_T] = SplitEnd()
+            fstack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
             fstack._head = self._head._next
             fstack._count = self._count - 1
             return fstack
         else:
-            return SplitEnd()
+            return nothing
 
-    def cons(self, d: _T) -&gt; SplitEnd[_T]:
-        &#34;&#34;&#34;Return a new FStack with data as head and self as tail.
+    def cons(self, d: _D) -&gt; SplitEnd[_D, _S]|Nothing:
+        &#34;&#34;&#34;Return a new SplitEnd with data as head and self as tail.
 
-        Constructing an FStack using a non-existent value as head results in
-        a non-existent FStack. In that case, return a copy of the FStack.
+        Constructing a SplitEnd using a non-existent value as head results in
+        a non-existent SplitEnd. In that case, return a nothing: Nothing.
 
         &#34;&#34;&#34;
-        if d is not None:
-            stack: SplitEnd[_T] = SplitEnd()
+        if d is not nothing:
+            stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
             stack._head = Node(d, self._head)
             stack._count = self._count + 1
             return stack
         else:
-            return self.copy()
+            return nothing
 
-    def fold(self, f:Callable[[_T, _T], _T]) -&gt; Optional[_T]:
+    def fold(self, f:Callable[[_D, _D], _D]) -&gt; Optional[_D]:
         &#34;&#34;&#34;Reduce with f.
 
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
         * folds in natural LIFO Order
+        * TODO: consolidate fold &amp; fold1
+
         &#34;&#34;&#34;
-        node: Optional[Node[_T]] = self._head
+        node: Optional[Node[_D]] = self._head
         if not node:
             return None
-        acc: _T = node._data
+        acc: _D = node._data
         while node:
             if (node := node._next) is None:
                 break
             acc = f(acc, node._data)
         return acc
 
-    def fold1(self, f:Callable[[_S, _T], _S], s: _S) -&gt; _S:
+    def fold1(self, f:Callable[[_T, _D], _T], s: _T) -&gt; _T:
         &#34;&#34;&#34;Reduce with f.
 
-        * returns a value of the of type _S
-        * type _S can be same type as _T
+        * returns a value of type _T
+        * type _T can be same type as _D
         * folds in natural LIFO Order
+        * TODO: consolidate fold &amp; fold1
+
         &#34;&#34;&#34;
-        node: Optional[Node[_T]] = self._head
+        node: Optional[Node[_D]] = self._head
         if not node:
             return s
-        acc: _S = s
+        acc: _T = s
         while node:
             acc = f(acc, node._data)
             node = node._next
         return acc
 
-    def map(self, f: Callable[[_T], _S]) -&gt; SplitEnd[_S]:
-        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
-
-        * TODO: Redo in &#34;natural&#34; order?
-        * Returns a new Stack object with shallow copied new data
-        * O(n) complexity
-
-        &#34;&#34;&#34;
-        return SplitEnd(*map(f, reversed(self)))
-
-    def flatMap(self, f: Callable[[_T], SplitEnd[_S]], type: FM=FM.CONCAT) -&gt; SplitEnd[_S]:
+    def flatMap(self, f: Callable[[_D], SplitEnd[_T, _S]], type: FM=FM.CONCAT) -&gt; SplitEnd[_T, _S]:
         &#34;&#34;&#34;Bind function f to the FTuple:
 
         * sequentially one after the other
@@ -258,11 +265,22 @@ hljs.highlightAll();
         &#34;&#34;&#34;
         match type:
             case FM.CONCAT:
-                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))))
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))), s=self._s)
             case FM.MERGE:
-                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))))
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))), s=self._s)
             case FM.EXHAUST:
-                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))))</code></pre>
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._s)
+
+    def map(self, f: Callable[[_D], _T]) -&gt; SplitEnd[_T, _S]:
+        &#34;&#34;&#34;Maps a function (or callable object) over the values on the Stack.
+
+        * TODO: Redo in &#34;natural&#34; order?
+        * Returns a new Stack object with shallow copied new data
+        * O(n) complexity
+
+        &#34;&#34;&#34;
+#       return SplitEnd(*map(f, reversed(self)))
+        return self.flatMap(lambda a: SplitEnd(f(a)))</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -271,21 +289,21 @@ hljs.highlightAll();
 <h3>Methods</h3>
 <dl>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.cons"><code class="name flex">
-<span>def <span class="ident">cons</span></span>(<span>self, d: _T) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
+<span>def <span class="ident">cons</span></span>(<span>self, d: _D) ‑> Union[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S], grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return a new FStack with data as head and self as tail.</p>
-<p>Constructing an FStack using a non-existent value as head results in
-a non-existent FStack. In that case, return a copy of the FStack.</p></div>
+<div class="desc"><p>Return a new SplitEnd with data as head and self as tail.</p>
+<p>Constructing a SplitEnd using a non-existent value as head results in
+a non-existent SplitEnd. In that case, return a nothing: Nothing.</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.copy"><code class="name flex">
-<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return a copy of a Stack in O(1) space &amp; time complexity.</p></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.flatMap"><code class="name flex">
-<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_T], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]], type: FM = FM.CONCAT) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
+<span>def <span class="ident">flatMap</span></span>(<span>self, f: Callable[[_D], <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T, _S]], type: FM = FM.CONCAT) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Bind function f to the FTuple:</p>
@@ -296,7 +314,7 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.fold"><code class="name flex">
-<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_T, _T], _T]) ‑> Optional[_T]</span>
+<span>def <span class="ident">fold</span></span>(<span>self, f: Callable[[_D, _D], _D]) ‑> Optional[_D]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
@@ -304,21 +322,23 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 <li>returns a value of the of type _T if self is not empty</li>
 <li>returns None if self is empty</li>
 <li>folds in natural LIFO Order</li>
+<li>TODO: consolidate fold &amp; fold1</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.fold1"><code class="name flex">
-<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_S, _T], _S], s: _S) ‑> _S</span>
+<span>def <span class="ident">fold1</span></span>(<span>self, f: Callable[[_T, _D], _T], s: _T) ‑> _T</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Reduce with f.</p>
 <ul>
-<li>returns a value of the of type _S</li>
-<li>type _S can be same type as _T</li>
+<li>returns a value of type _T</li>
+<li>type _T can be same type as _D</li>
 <li>folds in natural LIFO Order</li>
+<li>TODO: consolidate fold &amp; fold1</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.head"><code class="name flex">
-<span>def <span class="ident">head</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[_T]</span>
+<span>def <span class="ident">head</span></span>(<span>self, default: Optional[_D] = None) ‑> Union[_D, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the SplitEnd.</p>
@@ -328,7 +348,7 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.map"><code class="name flex">
-<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_T], _S]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_S]</span>
+<span>def <span class="ident">map</span></span>(<span>self, f: Callable[[_D], _T]) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Maps a function (or callable object) over the values on the Stack.</p>
@@ -339,29 +359,37 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[_T]</span>
+<span>def <span class="ident">peak</span></span>(<span>self, default: Optional[_D] = None) ‑> Union[_D, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the SplitEnd.</p>
 <ul>
 <li>does not consume the data</li>
-<li>if Stack empty, data does not exist, so in that case return default</li>
+<li>if empty, data does not exist, so in that case return default</li>
+<li>if empty and no default given, return nothing: Nothing</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self, default: Optional[_T] = None) ‑> Optional[_T]</span>
+<span>def <span class="ident">pop</span></span>(<span>self, default: Optional[_D] = None) ‑> Union[_D, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Pop data off of top of the SplitEnd.</p></div>
+<div class="desc"><p>Pop data off of top of the SplitEnd.</p>
+<ul>
+<li>if empty, return a default value</li>
+<li>if empty and a default value not given, return nothing: Nothing</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.push"><code class="name flex">
-<span>def <span class="ident">push</span></span>(<span>self, *ds: Optional[_T]) ‑> None</span>
+<span>def <span class="ident">push</span></span>(<span>self, *ds: _D) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Push data onto top of the SplitEnd.</p></div>
+<div class="desc"><p>Push data onto top of the SplitEnd.</p>
+<ul>
+<li>ignore "non-existent" Nothing() values pushed on SplitEnd</li>
+</ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.reverse"><code class="name flex">
-<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
+<span>def <span class="ident">reverse</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return shallow reversed copy of a SplitEnd.</p>
@@ -372,12 +400,12 @@ a non-existent FStack. In that case, return a copy of the FStack.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.tail"><code class="name flex">
-<span>def <span class="ident">tail</span></span>(<span>self) ‑> <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_T]</span>
+<span>def <span class="ident">tail</span></span>(<span>self) ‑> Union[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S], grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return tail of the SplitEnd.</p>
 <ul>
-<li>if SplitEnd is empty, tail does not exist, so return an empty SplitEnd</li>
+<li>if SplitEnd is empty, tail does not exist, so return nothing: Nothing</li>
 </ul></div>
 </dd>
 </dl>

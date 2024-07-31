@@ -15,11 +15,12 @@
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
 from grscheller.datastructures.core.enums import FM
 from grscheller.fp.iterables import concat
+from grscheller.fp.nothing import nothing, Nothing
 
 class Test_FSplitEnds:
     def test_mutate_returns_none(self) -> None:
         ps = SE(41)
-        ret = ps.push(1,2,3)        # type: ignore
+        ret = ps.push(1,2,3) # type: ignore # my[py] warning what is being tested
         assert ret is None
 
     def test_pushThenPop(self) -> None:
@@ -32,18 +33,18 @@ class Test_FSplitEnds:
     def test_popFromEmptySplitEnd(self) -> None:
         s1: SE[int] = SE()
         popped = s1.pop()
-        assert popped is None
+        assert popped is nothing
 
         s2 = SE(1, 2, 3, 42)
         while s2:
-            assert s2.peak() is not None
+            assert s2.peak() is not nothing
             s2.pop()
         assert not s2
-        assert s2.peak() is None
+        assert s2.peak() is nothing
         s2.push(42)
         assert s2.peak() == 40+2
         assert s2.pop() == 42
-        assert s2.peak() is None
+        assert s2.peak() is nothing
 
     def test_SplitEnd(self) -> None:
         s0 = SE(101)

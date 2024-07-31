@@ -29,6 +29,7 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
+from typing import overload, cast
 from grscheller.circular_array.ca import CA
 from grscheller.fp.nothing import Nothing, nothing
 from grscheller.fp.woException import MB
@@ -52,23 +53,23 @@ class QueueBase(Generic[_D, _S]):
     """
     __slots__ = '_ca'
 
-    def __init__(self, *ds: _D, sentinel: _S|Nothing=nothing):
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing):
         """Construct a queue data structure.
 
         * data always internally stored in the same order as ds
 
         """
-        self._ca = CA(*ds, sentinel=sentinel)
+        self._ca = CA(*ds, s=s)
 
     def __repr__(self) -> str:
         if len(self) == 0:
-            return type(self).__name__ + '(sentinel=' + repr(self._ca._s)+ ')'
+            return type(self).__name__ + '(s=' + repr(self._ca._s)+ ')'
         else:
-            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', sentinel=' + repr(self._ca._s)+ ')'
+            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', s=' + repr(self._ca._s)+ ')'
 
     def copy(self) -> Self:
         """Return shallow copy of a QueueBase[_T] subtype."""
-        return type(self)(*self._ca, sentinel=self._ca._s)
+        return type(self)(*self._ca, s=self._ca._s)
 
     def __bool__(self) -> bool:
         """Returns True if queue is not empty."""
@@ -112,7 +113,7 @@ class FIFOQueue(QueueBase[_D, _S]):
 
     def map(self, f: Callable[[_D], _U]) -> FIFOQueue[_U, _S]:
         """Apply function over the contents of the FIFOQueue subtype."""
-        return FIFOQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return FIFOQueue(*map(f, self._ca), s=self._ca._s)
 
     def push(self, *ds: _D) -> None:
         """Push data onto the FIFOQueue."""
@@ -136,17 +137,30 @@ class FIFOQueue(QueueBase[_D, _S]):
         else:
             return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]=None) -> _L|_S:
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L], default: _S) -> _L|_S:
+        ...
+    @overload
+    def fold(self, f: Callable[[_D, _D], _D]) -> _D|Nothing:
+        ...
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: _L) -> _L:
+        ...
+    @overload
+    def fold(self, f: Callable[[_L, _D], _L], initial: Optional[_L]) -> _L|Nothing:
+        ...
+
+    def fold(self, f: Callable[[_L, _D], _L], initial: _L) -> _L|_S:
         """Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty & no initial value given, return sentinel value
+        * if iterable empty & no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         """
-        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
+        return self._ca.foldL(f, initial=initial)
 
 class LIFOQueue(QueueBase[_D, _S]):
     """Stateful Last In First Out (LIFO) data structure.
@@ -172,7 +186,7 @@ class LIFOQueue(QueueBase[_D, _S]):
 
     def map(self, f: Callable[[_D], _U]) -> LIFOQueue[_U, _S]:
         """Apply function over the contents of the LIFOQueue."""
-        return LIFOQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return LIFOQueue(*map(f, self._ca), s=self._ca._s)
 
     def push(self, *ds: _D) -> None:
         """Push data onto the LIFOQueue & no return value."""
@@ -189,17 +203,22 @@ class LIFOQueue(QueueBase[_D, _S]):
         else:
             return self._ca._s                # type: ignore # will always be _S
 
-    def fold(self, f: Callable[[_D, _R|_S], _R], initial: Optional[_R]=None) -> _R|_S:
+    def fold(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R|_S:
         """Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty & no initial value given, return sentinel value
+        * if iterable empty & no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         """
-        return self._ca.foldR(f, initial=initial)  # type: ignore # will always be _R|_S
+        if initial is None:
+            if self._ca:
+                init = next
+                return self._ca.foldR(f)
+        else:
+            return self._ca.foldR(f, initial=initial)
 
 
 class DoubleQueue(QueueBase[_D, _S]):
@@ -226,7 +245,7 @@ class DoubleQueue(QueueBase[_D, _S]):
 
     def map(self, f: Callable[[_D], _U]) -> DoubleQueue[_U, _S]:
         """Apply function over the contents of the FIFOQueue subtype."""
-        return DoubleQueue(*map(f, self._ca), sentinel=self._ca._s)
+        return DoubleQueue(*map(f, self._ca), s=self._ca._s)
 
     def pushR(self, *ds: _D) -> None:
         """Push data left to right onto rear of the DoubleQueue."""
@@ -263,19 +282,19 @@ class DoubleQueue(QueueBase[_D, _S]):
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty & no initial value given, return sentinel value
+        * if iterable empty & no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 
         """
-        return self._ca.foldL(f, initial=initial)  # type: ignore # will always be _L|_S
+        return self._ca.foldL(f, initial=initial)
 
     def foldR(self, f: Callable[[_D, _R], _R], initial: Optional[_R]=None) -> _R|_S:
         """Reduce with f using an optional initial value.
 
         * note that _S can be the same type as _L
         * note that when an initial value is not given then _L = _D
-        * if iterable empty & no initial value given, return sentinel value
+        * if iterable empty & no initial value given, return a sentinel value of type _S
         * traditional FP type order given for function f
         * folds in natural FIFO Order
 

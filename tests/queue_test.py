@@ -37,7 +37,7 @@ class TestQueueTypes:
             else:
                 return x
 
-        fq1: FQ[int, MB[int]] = FQ(sentinel=MB())
+        fq1: FQ[int, MB[int]] = FQ(s=MB())
         fq1.push(1,2,3)
         fq1.push(4,5,6)
         fq2 = fq1.map(lambda x: x+1)
@@ -47,7 +47,7 @@ class TestQueueTypes:
         assert fq2.peak_last_in() == 7 != MB()
         assert fq2.peak_next_out() == 3
 
-        lq1: LQ[MB[int], MB[int]] = LQ(sentinel=MB())
+        lq1: LQ[MB[int], MB[int]] = LQ(s=MB())
         lq1.push(MB(1), MB(2), MB(3))
         lq1.push(MB(4), MB(), MB(5))
         lq2 = lq1.map(lambda x: x.map(lambda n: 2*n))
@@ -93,7 +93,7 @@ class TestQueueTypes:
         dq2.popL()
         assert len(dq2) == 0
 
-        fq: FQ[MB[int|str], MB[int|str]] = FQ(sentinel=MB())
+        fq: FQ[MB[int|str], MB[int|str]] = FQ(s=MB())
         pushed: MB[int|str] = MB(42)
         fq.push(pushed)
         popped = fq.pop()
@@ -163,8 +163,8 @@ class TestQueueTypes:
         def is42(ii: int) -> Optional[int]:
             return None if ii == 42 else ii
 
-        fq1: FQ[object, Nothing] = FQ(sentinel=nothing)
-        fq2: FQ[object, Nothing] = FQ(sentinel=nothing)
+        fq1: FQ[object, Nothing] = FQ(s=nothing)
+        fq2: FQ[object, Nothing] = FQ(s=nothing)
         fq1.push(None)
         fq2.push(None)
         assert fq1 == fq2
@@ -172,11 +172,11 @@ class TestQueueTypes:
 
         barNone: tuple[int|None, ...] = (None, 1, 2, 3, None)
         bar42 = (42, 1, 2, 3, 42)
-        fq3: FQ[object, Nothing] = FQ(*barNone, sentinel=nothing)
-        fq4: FQ[object, Nothing] = FQ(*map(is42, bar42), sentinel=nothing)
+        fq3: FQ[object, Nothing] = FQ(*barNone, s=nothing)
+        fq4: FQ[object, Nothing] = FQ(*map(is42, bar42), s=nothing)
         assert fq3 == fq4
 
-        lq1: LQ[Optional[int], Nothing] = LQ(sentinel=nothing)
+        lq1: LQ[Optional[int], Nothing] = LQ(s=nothing)
         lq2: LQ[Optional[int], Nothing] = LQ()
         lq1.push(None, 1, 2, None)
         lq2.push(None, 1, 2, None)
@@ -185,8 +185,8 @@ class TestQueueTypes:
 
         barNone = (None, 1, 2, None, 3)
         bar42 = (42, 1, 2, 42, 3)
-        lq3: LQ[Optional[int], Nothing] = LQ(*barNone, sentinel=nothing)
-        lq4: LQ[Optional[int], Nothing] = LQ(*map(is42, bar42), sentinel=nothing)
+        lq3: LQ[Optional[int], Nothing] = LQ(*barNone, s=nothing)
+        lq4: LQ[Optional[int], Nothing] = LQ(*map(is42, bar42), s=nothing)
         assert lq3 == lq4
 
 
@@ -207,7 +207,7 @@ class TestQueueTypes:
         assert dq3 == dq4
 
     def test_bool_len_peak(self) -> None:
-        dq: DQ[int, None] = DQ(sentinel=None)
+        dq: DQ[int, None] = DQ(s=None)
         assert not dq
         dq.pushL(2,1)
         dq.pushR(3)
@@ -240,7 +240,7 @@ class TestQueueTypes:
         assert dq.peakL() is None
         assert dq.peakR() is None
 
-        fq: FQ[int, int] = FQ(sentinel=-42)
+        fq: FQ[int, int] = FQ(s=-42)
         assert not fq
         fq.push(1,2,3)
         assert fq
@@ -270,7 +270,7 @@ class TestQueueTypes:
         assert fq.peak_next_out() == -42
         assert fq.peak_last_in() == -42
 
-        lq: LQ[int, Nothing] = LQ(sentinel=nothing)
+        lq: LQ[int, Nothing] = LQ(s=nothing)
         assert not lq
         lq.push(1,2,3)
         assert lq
@@ -307,7 +307,7 @@ class TestQueueTypes:
     def test_iterators(self) -> None:
         data_d = FT(1, 2, 3, 4, 5)
         data_mb = data_d.map(lambda d: MB(d))
-        dq: DQ[MB[int], MB[int]] = DQ(*data_mb, sentinel=MB())
+        dq: DQ[MB[int], MB[int]] = DQ(*data_mb, s=MB())
         ii = 0
         for item in dq:
             assert data_mb[ii] == item
@@ -319,7 +319,7 @@ class TestQueueTypes:
             assert False
 
         data_bool_mb: tuple[MB[bool], ...] = ()
-        dq1: DQ[MB[bool], MB[bool]] = DQ(*data_bool_mb, sentinel=MB())
+        dq1: DQ[MB[bool], MB[bool]] = DQ(*data_bool_mb, s=MB())
         for _ in dq1:
             assert False
         dq1.pushR(MB(True))
@@ -334,8 +334,8 @@ class TestQueueTypes:
         def wrapMB(x: int) -> MB[int]:
             return MB(x)
 
-        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, sentinel=0)
-        fq: FQ[MB[int], MB[int]] = FQ(*data_ca.map(wrapMB), sentinel=MB())
+        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, s=0)
+        fq: FQ[MB[int], MB[int]] = FQ(*data_ca.map(wrapMB), s=MB())
         assert data_ca[0] == 1
         assert data_ca[-1] == 9
         ii = 0
@@ -344,11 +344,11 @@ class TestQueueTypes:
             ii += 1
         assert ii == 9
 
-        fq0: FQ[MB[int], MB[int]] = FQ(sentinel=MB())
+        fq0: FQ[MB[int], MB[int]] = FQ(s=MB())
         for _ in fq0:
             assert False
 
-        fq00: FQ[int, int] = FQ(*(), sentinel=0)
+        fq00: FQ[int, int] = FQ(*(), s=0)
         for _ in fq00:
             assert False
         assert not fq00
@@ -361,13 +361,13 @@ class TestQueueTypes:
             ii -= 1
         assert ii == -1
 
-        lq0: LQ[int, int] = LQ(sentinel=0)
+        lq0: LQ[int, int] = LQ(s=0)
         for _ in lq0:
             assert False
         assert not lq0
         assert lq0.pop() == 0
 
-        lq00: LQ[int, int] = LQ(*(), sentinel=-1)
+        lq00: LQ[int, int] = LQ(*(), s=-1)
         for _ in lq00:
             assert False
         assert not lq00
@@ -405,8 +405,8 @@ class TestQueueTypes:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
 
-        fq1 = FQ(1, 2, 3, 'Forty-Two', tup1, sentinel=())
-        fq2 = FQ(2, 3, 'Forty-Two', sentinel=())
+        fq1 = FQ(1, 2, 3, 'Forty-Two', tup1, s=())
+        fq2 = FQ(2, 3, 'Forty-Two', s=())
         fq2.push((7, 11, 'foobar'))
         popped = fq1.pop()
         assert popped == 1
@@ -430,8 +430,8 @@ class TestQueueTypes:
         l1 = ['foofoo', 7, 11]
         l2 = ['foofoo', 42]
 
-        lq1: LQ[object, Nothing] = LQ(3, 'Forty-Two', l1, 1, sentinel=nothing)
-        lq2 = LQ[object, Nothing](3, 'Forty-Two', 2, sentinel=Nothing())
+        lq1: LQ[object, Nothing] = LQ(3, 'Forty-Two', l1, 1, s=nothing)
+        lq2 = LQ[object, Nothing](3, 'Forty-Two', 2, s=Nothing())
         assert lq1.pop() == 1
         peak = lq1.peak()
         assert peak == l1
@@ -446,8 +446,8 @@ class TestQueueTypes:
         lq2.push(42)
         assert lq1 != lq2
 
-        lq3: LQ[str|Nothing, Nothing] = LQ(*map(lambda i: str(i), range(43)), sentinel=nothing)
-        lq4: LQ[int|Nothing, Nothing] = LQ(*range(-1, 39), 41, 40, 39, sentinel=nothing)
+        lq3: LQ[str|Nothing, Nothing] = LQ(*map(lambda i: str(i), range(43)), s=nothing)
+        lq4: LQ[int|Nothing, Nothing] = LQ(*range(-1, 39), 41, 40, 39, s=nothing)
 
         lq3.push(lq3.pop(), lq3.pop(), lq3.pop())
         lq5 = lq4.map(lambda i: str(i+1))
@@ -473,37 +473,37 @@ class TestQueueTypes:
         assert dq0m.map(f2) == DQ()
         assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763')
 
-        fq0: FQ[int, Nothing] = FQ(sentinel=nothing)
-        fq1: FQ[int, Nothing] = FQ(5, 42, 3, 1, 2, sentinel=nothing)
+        fq0: FQ[int, Nothing] = FQ(s=nothing)
+        fq1: FQ[int, Nothing] = FQ(5, 42, 3, 1, 2, s=nothing)
         q0m = fq0.map(f1)
         q1m = fq1.map(f1)
-        assert q0m == FQ(sentinel=nothing)
-        assert q1m == FQ(24, 1763, 8, 0, 3, sentinel=nothing)
+        assert q0m == FQ(s=nothing)
+        assert q1m == FQ(24, 1763, 8, 0, 3, s=nothing)
 
         fq0.push(8, 9, 10)
         assert fq0.pop() == 8
         assert fq0.pop() == 9
         fq2 = fq0.map(f1)
-        assert fq2 == FQ(99, sentinel=nothing)
+        assert fq2 == FQ(99, s=nothing)
         assert fq2 == FQ(99)
 
         fq2.push(100)
         fq3 = fq2.map(f2)
         assert fq3 == FQ('99', '100')
 
-        lq0: LQ[int, MB[int]] = LQ(sentinel=MB(42))
-        lq1 = LQ(5, 42, 3, 1, 2, sentinel=MB(42))
+        lq0: LQ[int, MB[int]] = LQ(s=MB(42))
+        lq1 = LQ(5, 42, 3, 1, 2, s=MB(42))
         lq0m = lq0.map(f1)
         lq1m = lq1.map(f1)
-        assert lq0m == LQ(sentinel=MB(42))
-        assert lq1m == LQ(24, 1763, 8, 0, 3, sentinel=MB(42))
+        assert lq0m == LQ(s=MB(42))
+        assert lq1m == LQ(24, 1763, 8, 0, 3, s=MB(42))
 
         lq0.push(8, 9, 10)
         assert lq0.pop() == 10
         assert lq0.pop() == 9
         lq2 = lq0.map(f1)
-        assert lq2 == LQ(63, sentinel=MB(42))
+        assert lq2 == LQ(63, s=MB(42))
 
         lq2.push(42)
         lq3 = lq2.map(f2)
-        assert lq3 == LQ('63', '42', sentinel=MB(42))
+        assert lq3 == LQ('63', '42', s=MB(42))
