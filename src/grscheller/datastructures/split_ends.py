@@ -38,6 +38,7 @@ class SplitEnd(Generic[_D, _S]):
     * each "split end" is a very simple LIFO stateful data structure
     * contains a count of nodes & reference to first node of a linked list
     * different "split ends" can safely share the same "tail"
+    thing
     * each "split end" sees itself as a singularly linked list
     * bush-like datastructures can be formed using multiple "split ends"
 
@@ -48,10 +49,10 @@ class SplitEnd(Generic[_D, _S]):
     def __init__(self, *ds: _D) -> None: ...
 
     @overload
-    def __init__(self, *ds: _D, s: _S) -> None: ...
+    def __init__(self, *ds: _D, s: Nothing) -> None: ...
 
     @overload
-    def __init__(self, *ds: _D, s: Nothing) -> None: ...
+    def __init__(self, *ds: _D, s: _S) -> None: ...
 
     def __init__(self, *ds: _D, s: _S|Nothing=nothing) -> None:
         """Construct a LIFO Stack"""
@@ -168,7 +169,13 @@ class SplitEnd(Generic[_D, _S]):
             return default
         return self._head._data
 
-    def head(self, default: _D|Nothing=nothing) -> _D|Nothing:
+    @overload
+    def head(self) -> _D|_S: ...
+
+    @overload
+    def head(self, default: _D) -> _D|_S: ...
+
+    def head(self, default: _D|Nothing=nothing) -> _D|_S:
         """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -177,28 +184,31 @@ class SplitEnd(Generic[_D, _S]):
 
         """
         if self._head is None:
-            return default
+            if default is nothing:
+                return cast(_S, self._s)
+            else:
+                return cast(_D, default)
         return self._head._data
 
-    def tail(self) -> SplitEnd[_D, _S]|Nothing:
+    def tail(self) -> SplitEnd[_D, _S]|_S:
         """Return tail of the SplitEnd.
 
-        * if SplitEnd is empty, tail does not exist, so return nothing: Nothing
+        * if SplitEnd is empty, tail does not exist, so return sentinel: _S
 
         """
         if self._head:
-            fstack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
-            fstack._head = self._head._next
-            fstack._count = self._count - 1
-            return fstack
+            se: SplitEnd[_D, _S] = SplitEnd(s=self._s)
+            se._head = self._head._next
+            se._count = self._count - 1
+            return se
         else:
-            return nothing
+            return cast(_S, self._s)
 
     def cons(self, d: _D|Nothing) -> SplitEnd[_D, _S]|Nothing:
         """Return a new SplitEnd with data as head and self as tail.
 
         Constructing a SplitEnd using a non-existent value as head results in
-        a non-existent SplitEnd. In that case, return a nothing: Nothing.
+        a non-existent SplitEnd. In that case, return sentinel: _S.
 
         """
         if d is nothing:

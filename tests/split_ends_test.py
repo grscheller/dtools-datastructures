@@ -79,40 +79,53 @@ class Test_FSplitEnds:
         assert s5 == SE(42, 0)
         assert s5.tail() == SE(42)
 
-    def test_headOfEmptySplitEnd(self) -> None:
-        s1: SE[int] = SE()
-        assert s1.head() is None
+    def test_EmptySplitEnd(self) -> None:
+        s1 = SE(0, s=nothing)
+        assert s1.pop() == 0
+        assert s1.head() is nothing
+        assert s1.tail() is nothing
 
-        s2: SE[int]|None = SE(1, 2, 3, 42)
+        s2: SE[int, Nothing]|Nothing = SE(1, 2, 3, 42)
+        assert len(s2) == 4
         while s2:
-            assert s2.head() is not None
+            assert s2.head() is not nothing
             s2 = s2.tail()
-            if not s2:
-                break
-        assert not s2
-        assert s2 is not None
         assert len(s2) == 0
-        assert s2.head() is None
-        s2 = s2.cons(42)
-        assert s2.head() == 40+2
+        assert not s2
+        assert s2.head() is nothing
+        assert s2.head(-1) is -1
+        s2.push(42)
+        assert s2.pop() == 42
+        s2 = s2.tail()
+        assert s2 is nothing
+        assert s2.head() is nothing
+        s3 = s2.cons(42)
+        assert s3 is nothing
+        assert s2.head(-1) is nothing
+        assert s2 is s3 is nothing is Nothing()
 
     def test_SplitEnd_len(self) -> None:
-        s0: SE[int] = SE()
-        s1: SE[int]|None = SE(*range(0,2000))
+        s0: SE[int, None]|None = SE()
+        s1: SE[int, None]|None = SE(42, s=None)
+        s2: SE[int, None]|None = SE(*range(0,2000), s=None)
 
         assert len(s0) == 0
-        if s1:
-            assert len(s1) == 2000
-        s2: SE[int]|None = SE(42)
-        s0 = s0.tail()
-        s1 = s1.tail().tail()
-        assert len(s0) == 1
-        assert len(s1) == 1998
-        s1.pop()
-        assert len(s1) == 1997
+        if s2:
+            assert len(s2) == 2000
+        if s0:
+            assert False
+        s3 = s0.tail()
+        s4: SE[int, None]|None = s3 if s3 else None
+        s2 = s2.tail()
+        s2 = s2.tail()
+        assert len(s0) == 0
+        assert len(s1) == 1
+        assert len(s2) == 1998
+        s2.pop()
+        assert len(s2) == 1997
 
     def test_tailcons(self) -> None:
-        s1: SE[str] = SE()
+        s1: SE[str, Nothing] = SE()
         s1 = s1.cons("fum").cons("fo").cons("fi").cons("fe")
         assert type(s1) == SplitEnd
         s2 = s1.tail()
@@ -122,8 +135,8 @@ class Test_FSplitEnds:
         assert s3 == s1
         while s1:
             s1 = s1.tail()
-        assert s1.head() is None
-        assert s1.tail() == SplitEnd()
+        assert s1.head() is nothing
+        assert s1.tail() is nothing
 
     def test_tailConsNot(self) -> None:
         s1: SplitEnd[str, Nothing] = SplitEnd()
@@ -155,7 +168,7 @@ class Test_FSplitEnds:
         se2 = SplitEnd(38, 24, 36, s=nothing)
         assert se2.pop(100) == 36
         assert se2.pop(100) == 24
-        assert se2.pop(100) == 36
+        assert se2.pop(100) == 38
         assert se2.pop(100) == 100
         assert se2.pop() is nothing
         assert se2.pop() is nothing
@@ -197,9 +210,8 @@ class Test_FSplitEnds:
         assert s3 == s4
 
         s3 = s3.cons(s4.head(42))
-        s3.peak(0) is not 42
+        s3.peak(0) != 42
         s4 = s4.tail()
-        assert type(s4) is SplitEnd[int]
         assert s3 is not s4
         assert s3 != s4
         assert s3 is not None
