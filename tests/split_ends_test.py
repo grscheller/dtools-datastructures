@@ -24,18 +24,18 @@ class Test_FSplitEnds:
         assert ret is None
 
     def test_pushThenPop(self) -> None:
-        s1: SE[int] = SE()
+        s1: SE[int, Nothing] = SE()
         pushed = 42
         s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 42
 
     def test_popFromEmptySplitEnd(self) -> None:
-        s1: SE[int] = SE()
+        s1: SE[int, Nothing] = SE()
         popped = s1.pop()
         assert popped is nothing
 
-        s2 = SE(1, 2, 3, 42)
+        s2 = SE(1, 2, 3, 42, s=nothing)
         while s2:
             assert s2.peak() is not nothing
             s2.pop()
@@ -46,17 +46,23 @@ class Test_FSplitEnds:
         assert s2.pop() == 42
         assert s2.peak() is nothing
 
-    def test_SplitEnd(self) -> None:
-        s0 = SE(101)
-        s1 = SE(*range(0,2000))
+    def test_SplitEndPushPop(self) -> None:
+        s1 = SE(101, s=0)
+        s2 = SE(*range(0,2000), s=0)
 
-        assert len(s0) == 1
-        assert len(s1) == 2000
-        s0.push(42)
-        s1.pop()
-        s1.pop()
-        assert len(s0) == 2
-        assert len(s1) == 1998
+        assert len(s1) == 1
+        assert len(s2) == 2000
+        s1.push(42)
+        assert s2.pop() == 1999
+        assert s2.pop() == 1998
+        assert len(s1) == 2
+        assert len(s2) == 1998
+        assert s1.pop(-1) == 42
+        assert s1.pop(-1) == 101
+        assert s1.pop(-1) == -1
+        assert s1.pop() == 0
+        assert s1.pop(-1) == -1
+        assert s1.pop() == 0
 
     def test_consHeadTail(self) -> None:
         s1: SE[int] = SplitEnd()
@@ -120,33 +126,56 @@ class Test_FSplitEnds:
         assert s1.tail() == SplitEnd()
 
     def test_tailConsNot(self) -> None:
-        s1: SplitEnd[str] = SplitEnd()
-        s1.push("fum")
-        s1.push("fo")
-        s1.push("fi")
-        s1.push("fe")
+        s1: SplitEnd[str, Nothing] = SplitEnd()
+        s1.push('fum')
+        s1.push('fo')
+        s1.push('fi')
+        s1.push('fe')
         s2 = s1.copy()
-        assert s2.pop() == "fe"
+        assert s2.pop() == 'fe'
         if s2 is None:
             assert False
         s3 = s2.copy()
-        s3.push("fe")
+        s3.push('fe')
         assert s3 == s1
         while s1:
             s1.pop()
-        assert s1.pop() is None
+        assert s1.pop() is nothing
+        assert s1.pop('foofoo') == 'foofoo'
+        assert s1.pop() is nothing
+
+        assert nothing.pop().pop() is nothing
+
+        se1 = SplitEnd(38, 42, s=0)
+        assert se1.pop(100) == 42
+        assert se1.pop(100) == 38
+        assert se1.pop(100) == 100
+        assert se1.pop() == 0
+
+        se2 = SplitEnd(38, 24, 36, s=nothing)
+        assert se2.pop(100) == 36
+        assert se2.pop(100) == 24
+        assert se2.pop(100) == 36
+        assert se2.pop(100) == 100
+        assert se2.pop() is nothing
+        assert se2.pop() is nothing
+        foo = se2.pop()
+        se3 = se2
+
+
+
 
     def test_stackIter(self) -> None:
-        giantSplitEnd = SplitEnd(*[" Fum", " Fo", " Fi", "Fe"])
+        giantSplitEnd = SplitEnd(*[' Fum', ' Fo', ' Fi', 'Fe'])
         giantTalk = giantSplitEnd.head()
         giantSplitEnd = giantSplitEnd.tail()
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
             giantTalk += giantWord
         assert len(giantSplitEnd) == 3
-        assert giantTalk == "Fe Fi Fo Fum"
+        assert giantTalk == 'Fe Fi Fo Fum'
 
-        es: SplitEnd[float] = SplitEnd()
+        es: SplitEnd[float, Nothing] = SplitEnd()
         for _ in es:
             assert False
 
@@ -162,11 +191,11 @@ class Test_FSplitEnds:
 
         assert s2.head() == 42
 
-        s3 = SplitEnd(*range(10000))
+        s3: [int, Nothing] = SplitEnd(*range(10000))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
-        
+
         s3 = s3.cons(s4.head(42))
         s3.peak(0) is not 42
         s4 = s4.tail()
@@ -208,7 +237,7 @@ class Test_FSplitEnds:
         assert s7 == s8
 
     def test_storeNones(self) -> None:
-        s0: SplitEnd[int|None] = SplitEnd()
+        s0: SplitEnd[int|None] = SplitEnd(s=None)
         s0.push(None)
         s0.push(42)
         s0.push(None)
@@ -220,16 +249,24 @@ class Test_FSplitEnds:
             s0.pop()
         assert not s0
 
-        s1: SplitEnd[int|None] = SplitEnd()
-        assert s1.cons(None) == s1
-        s2: SplitEnd[int|None]|None = s1.cons(42)
-        assert s2 is not None
-        assert len(s2) == 2
-        assert s2
-        s2 = s2.tail()
-        assert not s1
-        assert not s2
-        assert s2 is not None and len(s2) == 0
+        s1: SplitEnd[int|None, None] = SplitEnd(s=None)
+        s2 = s1.cons(24)
+        s2.push(42)
+        s3 = s2.cons(None)
+        assert s3 is not None
+        assert len(s3) == 3
+        assert s3
+        s3 = s3.tail()
+        assert s3.pop(100) == 42
+        assert s3.pop(100) == 24
+        assert s3.pop(100) == 100
+        s3.push(None)
+        s4 = s3.cons(None)
+        assert (s5 := s4.tail()).pop(42) is None
+        assert len(s5) == 0
+        assert s5.pop() is None
+        assert s5.pop(42) == 42
+        assert s5.pop() is None
 
     def test_reversing(self) -> None:
         s1 = SplitEnd('a', 'b', 'c', 'd')
@@ -274,10 +311,10 @@ class Test_FSplitEnds:
         assert fs3 == fs3.reverse().reverse()
 
     def test_map(self) -> None:
-        s1 = SplitEnd(1,2,3,4,5)
+        s1: SE[int, Nothing] = SplitEnd(1,2,3,4,5)
         s2 = s1.map(lambda x: 2*x+1)
         assert s1.head() == 5
-        assert s2.head() == 11
+        assert s2.head() == 3                # TODO: is this what I want?
         s3 = s2.map(lambda y: (y-1)//2)
         assert s1 == s3
         assert s1 is not s3

@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-__all__ = ['FM']
+__all__ = ['FM', 'CONCAT', 'MERGE', 'EXHAUST']
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
@@ -28,3 +28,7 @@ class FM(Enum):
     CONCAT = auto()
     MERGE = auto()
     EXHAUST = auto()
+
+CONCAT = FM.CONCAT
+MERGE = FM.MERGE
+EXHAUST = FM.EXHAUST
