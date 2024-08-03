@@ -334,7 +334,7 @@ class TestQueueTypes:
         def wrapMB(x: int) -> MB[int]:
             return MB(x)
 
-        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, s=0)
+        data_ca: CA[int, int]  = CA(1, 2, 3, 4, 0, 6, 7, 8, 9, sentinel=0)
         fq: FQ[MB[int], MB[int]] = FQ(*data_ca.map(wrapMB), s=MB())
         assert data_ca[0] == 1
         assert data_ca[-1] == 9

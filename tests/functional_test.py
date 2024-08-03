@@ -50,7 +50,7 @@ class Test_FP:
         ft0: FT[int] = FT()
         se0: SE[int, Nothing] = SE()
         ft1: FT[int] = FT(1,2,3,4,5)
-        se1: SE[int, Nothing] = SE(1,2,3,4,5)
+        se1 = SE(1,2,3,4,5, s=())
 
         assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
         assert ft0.foldL(l1, 42) == 42
@@ -87,7 +87,7 @@ class Test_FP:
         assert fq5 == fq6 == FIFOQueue(1,2,3,4,5)
         assert fq7 == fq8 == FIFOQueue()
 
-        assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5)'
+        assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5, s=())'
         assert se1.fold(l1) == 15
         assert se1.fold1(l1, 10) == 25
         assert se1.fold(l2) == 120

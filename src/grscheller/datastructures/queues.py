@@ -59,7 +59,7 @@ class QueueBase(Generic[_D, _S]):
         * data always internally stored in the same order as ds
 
         """
-        self._ca = CA(*ds, s=s)
+        self._ca = CA(*ds, sentinel=s)
 
     def __repr__(self) -> str:
         if len(self) == 0:

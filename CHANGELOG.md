@@ -19,6 +19,17 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.20.2.0 - Down a typing rabbit hole 2024-08-03
+
+* updated to use grscheller.circular-array version 3.3.0 (3.2.3.0)
+* updated to use grscheller.fp version 0.3.0 (0.2.3.0)
+* removed grscheller.circular-array dependency from datastructures.SplitEnd 
+* still preparing for the 1.0.0 datastructures release
+  * as I tighten up typing, I find I must do so for dependencies too
+  * using `# type: ignore` is a band-aid, used `@overload` and `cast` instead
+  * using `@overload` to "untype" optional parameters is the way to go
+  * use `cast` only when you have knowledge beyond what the typechecker can know
+
 ### Version 0.19.0 - PyPI release date 2024-07-15
 
 * continuing to prepare for PyPI release 1.0.0
@@ -69,13 +80,13 @@ PyPI grscheller.datastructures project.
 
 * overhauled docstrings with Markdown markup
 * updated pyproject.py to drop project back to an Alpha release
-  * allows more renaming flexibilty
+  * allows more renaming flexibility
   * intending to develop more graph based data structures
 * renamed class core.nodes.Tree_Node to core.node.BT_Node
   * BT for Binary Tree (data in each node of tree)
 * created class core.nodes.LT_Node
   * LT for Leaf Tree (data are the leaves of the tree)
-* removed depricated reduce method from various classes
+* removed deprecated reduce method from various classes
   * use foldL instead
 
 ### Version 0.13.2 - PyPI release date 2024-02-20
@@ -148,7 +159,7 @@ PyPI grscheller.datastructures project.
 * Second release candidate - probably will become next PyPI release
   * main now development branch, release will be release branch
   * decided to drop it back to Alpha
-    * making datastrucutes a Beta release was premature
+    * making datastructures a Beta release was premature
     * classifier "Development Status :: 3 - Alpha"
   * will cut next PyPI release with Flit from release branch
   * will need to regenerate docs on release & move to main
@@ -164,7 +175,7 @@ PyPI grscheller.datastructures project.
 
 * First release candidate - unlikely this will be the next PyPI release
   * will cut next PyPI release with Flit from main branch
-  * removed docs direrctory before merge (docs/ will be main only)
+  * removed docs directory before merge (docs/ will be main only)
   * things to add in main before next release
     * make Maybe Nothing a singleton (use __new__)
     * derive FTuple from Tuple (use __new__) for performance boost
@@ -172,7 +183,7 @@ PyPI grscheller.datastructures project.
     * start using __slots__ for performance boost to data structures
       * efficiency trumps extensibility
       * prevents client code adding arbitrary attributes & methods
-      * smalled size & quicker method/attribute lookups
+      * smaller size & quicker method/attribute lookups
       * big difference when dealing with huge number of data structures
 
 ### Version 0.10.14.0 - commit date 2023-12-09
@@ -190,13 +201,13 @@ PyPI grscheller.datastructures project.
     * stack
       * Stack (formerly PStack)
       * FStack
-    * tuplelike
+    * tuple-like
       * FTuple
 
 ### Version 0.10.11.0 - commit date 2023-11-27
 
 * Created new datastructures class CLArray
-  * more imperitive version of FCLArray
+  * more imperative version of FCLArray
     * has an iterator to swap None values instead of a default value
       * when iterator is exhausted, will swap in () for None
     * no flatMap type methods
@@ -213,7 +224,7 @@ PyPI grscheller.datastructures project.
   * need mergeMap & exhaustMap versions of unit tests
   * found this data structure very interesting
     * hopefully find a use for it
-  * considering a simplier CLArray version
+  * considering a simpler CLArray version
 
 ### Version 0.10.9 - PyPI release date 2023-11-21
 
@@ -224,12 +235,12 @@ PyPI grscheller.datastructures project.
   * 0.10.7.X will be used on the GitHub pypy3 branch
     * Pypy3 (7.3.13) using Python (3.10.13)
     * tests pass but are 4X slower
-    * LSP almost useless due to more primative typing module
+    * LSP almost useless due to more primitive typing module
 
 ### Version 0.10.7.0 - commit date 2023-11-18
 
 * Overhauled __repr__ & __str__ methods for all classes
-  * tests that ds == eval(repr(ds)) fo all data structures ds in package
+  * tests that ds == eval(repr(ds)) for all data structures ds in package
 * CLArray API is in a state of flux
   * no longer stores None as a value
   * __add__ concatenates, no longer component adds
@@ -242,7 +253,7 @@ PyPI grscheller.datastructures project.
 
 * Removed flatMap methods from stateful objects
   * FLArray, DQueue, SQueue, PStack
-  * kepted the map method for each
+  * kept the map method for each
 * some restructuring so package will scale better in the future
 
 ### Version 0.9.1 - PyPI release date: 2023-11-09
@@ -251,7 +262,7 @@ PyPI grscheller.datastructures project.
 * Infrastructure stable
 * Existing datastructures only should need API additions
 * Type annotations working extremely well
-* Using Pdoc3 to generate documentaton on GitHub
+* Using Pdoc3 to generate documentation on GitHub
   * see https://grscheller.github.io/datastructures/
 * All iterators conform to Python language "iterator protocol"
 * Improved docstrings
@@ -297,10 +308,10 @@ PyPI grscheller.datastructures project.
 
 ### Version 0.7.5.0 - commit date 2023-10-26
 
-* moved pytest testsuite to root of the repo
-  * src/grscheller/datastrucures/tests -> tests/
-  * seems to be the canonical location of a testsuite
-* instructions to run testsuite in tests/__init__.py
+* moved pytest test suite to root of the repo
+  * src/grscheller/datastructures/tests -> tests/
+  * seems to be the canonical location of a test suite
+* instructions to run test suite in tests/__init__.py
 
 ### Version 0.7.4.0 - PyPI release date: 2023-10-25
 
@@ -318,7 +329,7 @@ PyPI grscheller.datastructures project.
 
 ### Version 0.7.0.0 - commit date 2023-10-16
 
-* added Queue data structure repreenting a FIFO queue
+* added Queue data structure representing a FIFO queue
 * renamed two Dqueue methods
   * headR -> peakLastIn
   * headL -> peakNextOut
@@ -336,7 +347,7 @@ PyPI grscheller.datastructures project.
 * deprecated Stack head() method
   * replaced with peak() method
 * renamed core module to iterlib module
-  * library just contained functions for manimulating iterators
+  * library just contained functions for manipulating iterators
   * TODO: use mergeIters as a guide for an iterator "zip" function
 * class Stack better in alignment with:
   * Python lists
@@ -438,7 +449,7 @@ PyPI grscheller.datastructures project.
   * some Python library probably already implemented this
     * without looking, these probably throw tons of exceptions
     * more fun implementing it myself
-      * then being dissatified with someone else's design
+      * then being dissatisfied with someone else's design
 
 ### Version 0.4.0.0 - commit date: 2023-09-11
 
@@ -484,7 +495,7 @@ PyPI grscheller.datastructures project.
 * Install from GitHub
   * $ pip install git+https://github.com/grscheller/datastructures@v0.2.1.0
 * pytest made a dependency
-  * useful & less confusing to developers and endusers
+  * useful & less confusing to developers and end users
     * good for systems I have not tested on
     * prevents another pytest from being picked up from shell $PATH
       * using a different python version

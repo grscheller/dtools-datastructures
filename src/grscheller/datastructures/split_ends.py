@@ -22,7 +22,6 @@ __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
 
 from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
-from grscheller.circular_array.ca import CA
 from grscheller.fp.iterables import concat, exhaust, merge
 from grscheller.fp.nothing import Nothing, nothing
 from .core.nodes import SL_Node as Node
@@ -38,7 +37,6 @@ class SplitEnd(Generic[_D, _S]):
     * each "split end" is a very simple LIFO stateful data structure
     * contains a count of nodes & reference to first node of a linked list
     * different "split ends" can safely share the same "tail"
-    thing
     * each "split end" sees itself as a singularly linked list
     * bush-like datastructures can be formed using multiple "split ends"
 
@@ -46,15 +44,15 @@ class SplitEnd(Generic[_D, _S]):
     __slots__ = '_head', '_count', '_s'
 
     @overload
-    def __init__(self, *ds: _D) -> None: ...
-
+    def __init__(self, *ds: _D, s: _S) -> None:
+        ...
     @overload
-    def __init__(self, *ds: _D, s: Nothing) -> None: ...
-
+    def __init__(self, *ds: _D, s: Nothing) -> None:
+        ...
     @overload
-    def __init__(self, *ds: _D, s: _S) -> None: ...
-
-    def __init__(self, *ds: _D, s: _S|Nothing=nothing) -> None:
+    def __init__(self, *ds: _D) -> None:
+        ...
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing, storable:bool=True) -> None:
         """Construct a LIFO Stack"""
         self._head: Optional[Node[_D]] = None
         self._count: int = 0
@@ -71,16 +69,38 @@ class SplitEnd(Generic[_D, _S]):
             yield node._data
             node = node._next
 
+    def reverse(self) -> SplitEnd[_D, _S]:
+        """Return shallow reversed copy of a SplitEnd.
+
+        * Returns a new Stack object with shallow copied new data
+        * creates all new nodes
+        * O(1) space & time complexity
+
+        """
+        return SplitEnd(*self, s=self._s)
+
     def __reversed__(self) -> Iterator[_D]:
         """Reverse iterate over the contents of the stack"""
-        return reversed(CA(*self, s=nothing))
+        return iter(self.reverse())
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(' + ', '.join(map(repr, reversed(self))) + ')'
+        if self._s == nothing:
+            return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
+        else:
+            return ('SplitEnd('
+                    + ', '.join(map(repr, reversed(self)))
+                    + ', s=' + repr(self._s) + ')')
 
     def __str__(self) -> str:
         """Display the data in the Stack, left to right."""
-        return '>< ' + ' -> '.join(CA(*self, s=nothing).map(str)) + ' ||'
+        if self._s == nothing:
+            return ('>< '
+                    + ' -> '.join(map(str, self))
+                    + ' ||')
+        else:
+            return ('>< '
+                    + ' -> '.join(map(str, self))
+                    + ' |' + repr(self._s) + '|')
 
     def __bool__(self) -> bool:
         """Returns true if stack is not empty"""
@@ -119,16 +139,6 @@ class SplitEnd(Generic[_D, _S]):
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -> SplitEnd[_D, _S]:
-        """Return shallow reversed copy of a SplitEnd.
-
-        * Returns a new Stack object with shallow copied new data
-        * creates all new nodes
-        * O(1) space & time complexity
-
-        """
-        return SplitEnd(*self, s=self._s)
-
     def push(self, *ds: _D) -> None:
         """Push data onto top of the SplitEnd.
 
@@ -140,11 +150,17 @@ class SplitEnd(Generic[_D, _S]):
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
+    @overload
+    def pop(self, default: _D) -> _D|_S:
+        ...
+    @overload
+    def pop(self) -> _D|_S:
+        ...
     def pop(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
         """Pop data off of top of the SplitEnd.
 
         * if empty, return a default value
-        * if empty and a default value not given, return nothing: Nothing
+        * if empty and a default value not given, return the sentinel value
 
         """
         if self._head is None:
@@ -157,7 +173,13 @@ class SplitEnd(Generic[_D, _S]):
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: _D|Nothing=nothing) -> _D|Nothing:
+    @overload
+    def peak(self, default: _D) -> _D:
+        ...
+    @overload
+    def peak(self) -> _D|_S:
+        ...
+    def peak(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
         """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -170,12 +192,12 @@ class SplitEnd(Generic[_D, _S]):
         return self._head._data
 
     @overload
-    def head(self) -> _D|_S: ...
-
+    def head(self, default: _D) -> _D|_S:
+        ...
     @overload
-    def head(self, default: _D) -> _D|_S: ...
-
-    def head(self, default: _D|Nothing=nothing) -> _D|_S:
+    def head(self) -> _D|_S:
+        ...
+    def head(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
         """Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -185,12 +207,18 @@ class SplitEnd(Generic[_D, _S]):
         """
         if self._head is None:
             if default is nothing:
-                return cast(_S, self._s)
+                return self._s
             else:
-                return cast(_D, default)
+                return default
         return self._head._data
 
-    def tail(self) -> SplitEnd[_D, _S]|_S:
+    @overload
+    def tail(self, default: SplitEnd[_D, _S]) -> SplitEnd[_D, _S]:
+        ...
+    @overload
+    def tail(self) -> SplitEnd[_D, _S]:
+        ...
+    def tail(self, default: SplitEnd[_D, _S]|Nothing=nothing) -> SplitEnd[_D, _S]|Nothing:
         """Return tail of the SplitEnd.
 
         * if SplitEnd is empty, tail does not exist, so return sentinel: _S
@@ -202,8 +230,14 @@ class SplitEnd(Generic[_D, _S]):
             se._count = self._count - 1
             return se
         else:
-            return cast(_S, self._s)
+            return default
 
+    @overload
+    def cons(self, d: _D) -> SplitEnd[_D, _S]: 
+        ...
+    @overload
+    def cons(self, d: Nothing) -> SplitEnd[_D, nothing]: 
+        ...
     def cons(self, d: _D|Nothing) -> SplitEnd[_D, _S]|Nothing:
         """Return a new SplitEnd with data as head and self as tail.
 

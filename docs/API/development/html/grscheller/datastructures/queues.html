@@ -44,7 +44,7 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.queues.DoubleQueue"><code class="flex name class">
 <span>class <span class="ident">DoubleQueue</span></span>
-<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = nothing)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful Double Sided Queue data structure.</p>
@@ -227,7 +227,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.FIFOQueue"><code class="flex name class">
 <span>class <span class="ident">FIFOQueue</span></span>
-<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = nothing)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful First In First Out (FIFO) data structure.</p>
@@ -378,7 +378,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.LIFOQueue"><code class="flex name class">
 <span>class <span class="ident">LIFOQueue</span></span>
-<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = nothing)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Stateful Last In First Out (LIFO) data structure.</p>
@@ -508,7 +508,7 @@ hljs.highlightAll();
 </dd>
 <dt id="grscheller.datastructures.queues.QueueBase"><code class="flex name class">
 <span>class <span class="ident">QueueBase</span></span>
-<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = nothing)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for stateful queue-based data structures</p>
@@ -545,7 +545,7 @@ hljs.highlightAll();
         * data always internally stored in the same order as ds
 
         &#34;&#34;&#34;
-        self._ca = CA(*ds, s=s)
+        self._ca = CA(*ds, sentinel=s)
 
     def __repr__(self) -&gt; str:
         if len(self) == 0:

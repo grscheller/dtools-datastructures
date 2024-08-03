@@ -38,15 +38,14 @@ hljs.highlightAll();
 <dl>
 <dt id="grscheller.datastructures.split_ends.SplitEnd"><code class="flex name class">
 <span>class <span class="ident">SplitEnd</span></span>
-<span>(</span><span>*ds: _D, s: _S | Nothing = Nothing())</span>
+<span>(</span><span>*ds: _D, s: _S | Nothing = nothing, storable: bool = True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Class implementing a stack type data structures called a "split end".</p>
 <ul>
 <li>each "split end" is a very simple LIFO stateful data structure</li>
 <li>contains a count of nodes &amp; reference to first node of a linked list</li>
-<li>different "split ends" can safely share the same "tail"
-thing</li>
+<li>different "split ends" can safely share the same "tail"</li>
 <li>each "split end" sees itself as a singularly linked list</li>
 <li>bush-like datastructures can be formed using multiple "split ends"</li>
 </ul>
@@ -61,7 +60,6 @@ thing</li>
     * each &#34;split end&#34; is a very simple LIFO stateful data structure
     * contains a count of nodes &amp; reference to first node of a linked list
     * different &#34;split ends&#34; can safely share the same &#34;tail&#34;
-    thing
     * each &#34;split end&#34; sees itself as a singularly linked list
     * bush-like datastructures can be formed using multiple &#34;split ends&#34;
 
@@ -69,15 +67,15 @@ thing</li>
     __slots__ = &#39;_head&#39;, &#39;_count&#39;, &#39;_s&#39;
 
     @overload
-    def __init__(self, *ds: _D) -&gt; None: ...
-
+    def __init__(self, *ds: _D, s: _S) -&gt; None:
+        ...
     @overload
-    def __init__(self, *ds: _D, s: Nothing) -&gt; None: ...
-
+    def __init__(self, *ds: _D, s: Nothing) -&gt; None:
+        ...
     @overload
-    def __init__(self, *ds: _D, s: _S) -&gt; None: ...
-
-    def __init__(self, *ds: _D, s: _S|Nothing=nothing) -&gt; None:
+    def __init__(self, *ds: _D) -&gt; None:
+        ...
+    def __init__(self, *ds: _D, s: _S|Nothing=nothing, storable:bool=True) -&gt; None:
         &#34;&#34;&#34;Construct a LIFO Stack&#34;&#34;&#34;
         self._head: Optional[Node[_D]] = None
         self._count: int = 0
@@ -94,16 +92,38 @@ thing</li>
             yield node._data
             node = node._next
 
+    def reverse(self) -&gt; SplitEnd[_D, _S]:
+        &#34;&#34;&#34;Return shallow reversed copy of a SplitEnd.
+
+        * Returns a new Stack object with shallow copied new data
+        * creates all new nodes
+        * O(1) space &amp; time complexity
+
+        &#34;&#34;&#34;
+        return SplitEnd(*self, s=self._s)
+
     def __reversed__(self) -&gt; Iterator[_D]:
         &#34;&#34;&#34;Reverse iterate over the contents of the stack&#34;&#34;&#34;
-        return reversed(CA(*self, s=nothing))
+        return iter(self.reverse())
 
     def __repr__(self) -&gt; str:
-        return f&#39;{self.__class__.__name__}(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
+        if self._s == nothing:
+            return &#39;SplitEnd(&#39; + &#39;, &#39;.join(map(repr, reversed(self))) + &#39;)&#39;
+        else:
+            return (&#39;SplitEnd(&#39;
+                    + &#39;, &#39;.join(map(repr, reversed(self)))
+                    + &#39;, s=&#39; + repr(self._s) + &#39;)&#39;)
 
     def __str__(self) -&gt; str:
         &#34;&#34;&#34;Display the data in the Stack, left to right.&#34;&#34;&#34;
-        return &#39;&gt;&lt; &#39; + &#39; -&gt; &#39;.join(CA(*self, s=nothing).map(str)) + &#39; ||&#39;
+        if self._s == nothing:
+            return (&#39;&gt;&lt; &#39;
+                    + &#39; -&gt; &#39;.join(map(str, self))
+                    + &#39; ||&#39;)
+        else:
+            return (&#39;&gt;&lt; &#39;
+                    + &#39; -&gt; &#39;.join(map(str, self))
+                    + &#39; |&#39; + repr(self._s) + &#39;|&#39;)
 
     def __bool__(self) -&gt; bool:
         &#34;&#34;&#34;Returns true if stack is not empty&#34;&#34;&#34;
@@ -142,16 +162,6 @@ thing</li>
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def reverse(self) -&gt; SplitEnd[_D, _S]:
-        &#34;&#34;&#34;Return shallow reversed copy of a SplitEnd.
-
-        * Returns a new Stack object with shallow copied new data
-        * creates all new nodes
-        * O(1) space &amp; time complexity
-
-        &#34;&#34;&#34;
-        return SplitEnd(*self, s=self._s)
-
     def push(self, *ds: _D) -&gt; None:
         &#34;&#34;&#34;Push data onto top of the SplitEnd.
 
@@ -163,11 +173,17 @@ thing</li>
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
+    @overload
+    def pop(self, default: _D) -&gt; _D|_S:
+        ...
+    @overload
+    def pop(self) -&gt; _D|_S:
+        ...
     def pop(self, default: _D|Nothing=nothing) -&gt; _D|_S|Nothing:
         &#34;&#34;&#34;Pop data off of top of the SplitEnd.
 
         * if empty, return a default value
-        * if empty and a default value not given, return nothing: Nothing
+        * if empty and a default value not given, return the sentinel value
 
         &#34;&#34;&#34;
         if self._head is None:
@@ -180,7 +196,13 @@ thing</li>
             self._head, self._count = self._head._next, self._count-1
             return data
 
-    def peak(self, default: _D|Nothing=nothing) -&gt; _D|Nothing:
+    @overload
+    def peak(self, default: _D) -&gt; _D:
+        ...
+    @overload
+    def peak(self) -&gt; _D|_S:
+        ...
+    def peak(self, default: _D|Nothing=nothing) -&gt; _D|_S|Nothing:
         &#34;&#34;&#34;Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -193,12 +215,12 @@ thing</li>
         return self._head._data
 
     @overload
-    def head(self) -&gt; _D|_S: ...
-
+    def head(self, default: _D) -&gt; _D|_S:
+        ...
     @overload
-    def head(self, default: _D) -&gt; _D|_S: ...
-
-    def head(self, default: _D|Nothing=nothing) -&gt; _D|_S:
+    def head(self) -&gt; _D|_S:
+        ...
+    def head(self, default: _D|Nothing=nothing) -&gt; _D|_S|Nothing:
         &#34;&#34;&#34;Returns the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -208,12 +230,18 @@ thing</li>
         &#34;&#34;&#34;
         if self._head is None:
             if default is nothing:
-                return cast(_S, self._s)
+                return self._s
             else:
-                return cast(_D, default)
+                return default
         return self._head._data
 
-    def tail(self) -&gt; SplitEnd[_D, _S]|_S:
+    @overload
+    def tail(self, default: SplitEnd[_D, _S]) -&gt; SplitEnd[_D, _S]:
+        ...
+    @overload
+    def tail(self) -&gt; SplitEnd[_D, _S]:
+        ...
+    def tail(self, default: SplitEnd[_D, _S]|Nothing=nothing) -&gt; SplitEnd[_D, _S]|Nothing:
         &#34;&#34;&#34;Return tail of the SplitEnd.
 
         * if SplitEnd is empty, tail does not exist, so return sentinel: _S
@@ -225,8 +253,14 @@ thing</li>
             se._count = self._count - 1
             return se
         else:
-            return cast(_S, self._s)
+            return default
 
+    @overload
+    def cons(self, d: _D) -&gt; SplitEnd[_D, _S]: 
+        ...
+    @overload
+    def cons(self, d: Nothing) -&gt; SplitEnd[_D, nothing]: 
+        ...
     def cons(self, d: _D|Nothing) -&gt; SplitEnd[_D, _S]|Nothing:
         &#34;&#34;&#34;Return a new SplitEnd with data as head and self as tail.
 
@@ -361,7 +395,7 @@ a non-existent SplitEnd. In that case, return sentinel: _S.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.head"><code class="name flex">
-<span>def <span class="ident">head</span></span>(<span>self, default: _D | Nothing = Nothing()) ‑> Union[_D, _S]</span>
+<span>def <span class="ident">head</span></span>(<span>self, default: _D | Nothing = nothing) ‑> Union[_D, _S, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the SplitEnd.</p>
@@ -383,7 +417,7 @@ a non-existent SplitEnd. In that case, return sentinel: _S.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.peak"><code class="name flex">
-<span>def <span class="ident">peak</span></span>(<span>self, default: _D | Nothing = Nothing()) ‑> Union[_D, grscheller.fp.nothing.Nothing]</span>
+<span>def <span class="ident">peak</span></span>(<span>self, default: _D | Nothing = nothing) ‑> Union[_D, _S, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns the data at the top of the SplitEnd.</p>
@@ -394,13 +428,13 @@ a non-existent SplitEnd. In that case, return sentinel: _S.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.pop"><code class="name flex">
-<span>def <span class="ident">pop</span></span>(<span>self, default: _D | Nothing = Nothing()) ‑> Union[_D, _S, grscheller.fp.nothing.Nothing]</span>
+<span>def <span class="ident">pop</span></span>(<span>self, default: _D | Nothing = nothing) ‑> Union[_D, _S, grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Pop data off of top of the SplitEnd.</p>
 <ul>
 <li>if empty, return a default value</li>
-<li>if empty and a default value not given, return nothing: Nothing</li>
+<li>if empty and a default value not given, return the sentinel value</li>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.push"><code class="name flex">
@@ -424,7 +458,7 @@ a non-existent SplitEnd. In that case, return sentinel: _S.</p></div>
 </ul></div>
 </dd>
 <dt id="grscheller.datastructures.split_ends.SplitEnd.tail"><code class="name flex">
-<span>def <span class="ident">tail</span></span>(<span>self) ‑> Union[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S], _S]</span>
+<span>def <span class="ident">tail</span></span>(<span>self, default: <a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S] | Nothing = nothing) ‑> Union[<a title="grscheller.datastructures.split_ends.SplitEnd" href="#grscheller.datastructures.split_ends.SplitEnd">SplitEnd</a>[_D, _S], grscheller.fp.nothing.Nothing]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Return tail of the SplitEnd.</p>
