@@ -17,7 +17,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License"
 ]
 dependencies = [
-    "grscheller.circular-array >= 3.2.2, < 3.3",
+    "grscheller.circular-array >= 3.4.0, < 3.5",
     "grscheller.fp >= 0.3.0, < 0.4"
 ]
 dynamic = ["version", "description"]
