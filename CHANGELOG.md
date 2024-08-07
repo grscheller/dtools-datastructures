@@ -4,29 +4,28 @@ PyPI grscheller.datastructures project.
 
 ## Semantic versioning
 
-* first digit:
+* first digit
   * major event, epoch, or paradigm shift
-* second digit:
+* second digit
   * breaking API changes
   * major changes
-* third digit:
+* third digit
   * API additions
   * bug fixes
   * minor changes
   * significant documentation updates
-* forth digit (development environment only):
-  * not to be taken too seriously
+* forth digit (development environment only)
 
 ## Releases and other important milestones
 
-### Version 0.20.2.0 - Down a typing rabbit hole 2024-08-03
+### Version 0.20.2.0 - Going down a typing rabbit hole 2024-08-03
 
 * updated to use grscheller.circular-array version 3.3.0 (3.2.3.0)
 * updated to use grscheller.fp version 0.3.0 (0.2.3.0)
 * removed grscheller.circular-array dependency from datastructures.SplitEnd 
 * still preparing for the 1.0.0 datastructures release
   * as I tighten up typing, I find I must do so for dependencies too
-  * using `# type: ignore` is a band-aid, used `@overload` and `cast` instead
+  * using `# type: ignore` is a band-aid, use `@overload` and `cast` instead
   * using `@overload` to "untype" optional parameters is the way to go
   * use `cast` only when you have knowledge beyond what the typechecker can know
 
