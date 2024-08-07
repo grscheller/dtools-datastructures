@@ -23,9 +23,9 @@ __license__ = "Apache License 2.0"
 
 from typing import Generic, Optional, TypeVar
 
-_T = TypeVar('_T')
+T = TypeVar('T')
 
-class SL_Node(Generic[_T]):
+class SL_Node(Generic[T]):
     """Class for singularly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
@@ -35,7 +35,7 @@ class SL_Node(Generic[_T]):
     """
     __slots__ = '_data', '_next'
 
-    def __init__(self, data: _T, next: Optional[SL_Node[_T]]):
+    def __init__(self, data: T, next: Optional[SL_Node[T]]):
         self._data = data
         self._next = next
 
@@ -48,7 +48,7 @@ class SL_Node(Generic[_T]):
         """
         return True
 
-class DL_Node(Generic[_T]):
+class DL_Node(Generic[T]):
     """Class for doubly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
@@ -60,7 +60,7 @@ class DL_Node(Generic[_T]):
     """
     __slots__ = '_data', '_left', '_right'
 
-    def __init__(self, left: Optional[DL_Node[_T]], data: _T, right: Optional[DL_Node[_T]]):
+    def __init__(self, left: Optional[DL_Node[T]], data: T, right: Optional[DL_Node[T]]):
         self._data = data
         self._left = left
         self._right = right
