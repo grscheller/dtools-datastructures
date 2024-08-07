@@ -23,8 +23,7 @@ dependencies = [
 dynamic = ["version", "description"]
 keywords = [
     "datastructures", "data structures",
-    "fifo", "lifo", "stack", "queue", "split_ends",
-    "functional", "fp", "maybe", "either"
+    "fifo", "lifo", "stack", "queue", "split_ends"
 ] 
 
 [project.optional-dependencies]
