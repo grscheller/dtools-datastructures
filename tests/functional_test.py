@@ -25,25 +25,25 @@ concat = FM.CONCAT
 merge = FM.MERGE
 exhaust = FM.EXHAUST
 
-_D = TypeVar('_D')
-_T = TypeVar('_T')
-_R = TypeVar('_R')
-_L = TypeVar('_L')
+D = TypeVar('D')
+T = TypeVar('T')
+R = TypeVar('R')
+L = TypeVar('L')
 
 class Test_FP:
     def test_fold(self) -> None:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FIFOQueue[_D, _T], d: _D) -> FIFOQueue[_D, _T]:
+        def pushFQfromL(q: FIFOQueue[D, T], d: D) -> FIFOQueue[D, T]:
             q.push(d)
             return q
 
-        def pushFQfromR(d: _D, q: FIFOQueue[_D, _T]) -> FIFOQueue[_D, _T]:
+        def pushFQfromR(d: D, q: FIFOQueue[D, T]) -> FIFOQueue[D, T]:
             q.push(d)
             return q
 
-        def pushSE(x: SE[_D, Nothing], y: _D) -> SE[_D, Nothing]:
+        def pushSE(x: SE[D, Nothing], y: D) -> SE[D, Nothing]:
             x.push(y)
             return x
 
@@ -76,16 +76,16 @@ class Test_FP:
         assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, s=())
         assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(s=None)
 
-        fq5: FIFOQueue[int, Nothing] = FIFOQueue()
-        fq6 = FIFOQueue[int, Nothing]()
-        fq7: FIFOQueue[int, Nothing] = FIFOQueue()
-        fq8 = FIFOQueue[int, Nothing]()
-        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5)
-        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue()
-        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue()
-        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5)
-        assert fq7 == fq8 == FIFOQueue()
+        fq5: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
+        fq6 = FIFOQueue[int, Nothing](s=nothing)
+        fq7: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
+        fq8 = FIFOQueue[int, Nothing](s=nothing)
+        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5, s=nothing)
+        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5, s=nothing)
+        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue(s=nothing)
+        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue(s=nothing)
+        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5, s=nothing)
+        assert fq7 == fq8 == FIFOQueue(s=nothing)
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5, s=())'
         assert se1.fold(l1) == 15

@@ -53,22 +53,22 @@ class Test_str:
         assert foo is not baz
 
     def test_FIFOQueue(self) -> None:
-        q1: FIFOQueue[int, Nothing] = FIFOQueue()
+        q1: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
     def test_LIFOQueue(self) -> None:
-        q1 = LIFOQueue[int, Nothing]()
+        q1 = LIFOQueue[int, Nothing](s=nothing)    # TODO: ?????
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '|| 3 > 2 > 1 ><'
 
     def test_DQueue(self) -> None:
-        dq1 = DoubleQueue[int, Nothing]()
-        dq2: DoubleQueue[int, Nothing] = DoubleQueue()
+        dq1: DoubleQueue[int, Nothing] = DoubleQueue(s=nothing)
+        dq2 = DoubleQueue[int, Nothing](s=nothing)
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)

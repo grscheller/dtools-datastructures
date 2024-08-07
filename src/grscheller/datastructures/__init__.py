@@ -14,7 +14,7 @@
 
 """Containers supporting the use & implementation of various algorithms."""
 
-__version__ = "0.20.2.0"
+__version__ = "0.20.3.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

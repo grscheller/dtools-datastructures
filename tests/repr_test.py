@@ -78,7 +78,7 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_LIFOQueue(self) -> None:
-        sq1: LIFOQueue[object, Nothing] = LIFOQueue()
+        sq1: LIFOQueue[object, Nothing] = LIFOQueue(s=nothing)
         assert repr(sq1) == 'LIFOQueue(s=nothing)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
@@ -195,10 +195,37 @@ class Test_repr:
 
 class Test_repr_mix:
     def test_mix1(self) -> None:
-        thing1: XOR[object, str] = XOR(FIFOQueue(
-            FTuple(42, MB(42), XOR(None, 'nobody home')),
-            SplitEnd([1, 2, 3, MB()], 42, XOR(LIFOQueue('foo', 'bar'), 42), XOR(None, [42, 16]))
-        ), "That's All Folks!")
+        thing1: XOR[object, str] = \
+            XOR(
+                FIFOQueue(
+                    FTuple(
+                        42,
+                        MB(42),
+                        XOR(
+                            None,
+                            'nobody home'
+                        )
+                    ),
+                    SplitEnd(
+                        [1, 2, 3, MB()],
+                        42,
+                        XOR(
+                            LIFOQueue(
+                                'foo',
+                                'bar',
+                                s=nothing
+                            ),
+                            42
+                        ),
+                        XOR(
+                            None,
+                            [42, 16]
+                        )
+                    ),
+                    s=nothing
+                ),
+                "That's All Folks!"
+            )
 
         repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR('nobody home')), SplitEnd([1, 2, 3, MB()], 42, XOR(LIFOQueue('foo', 'bar')))))"
         # assert repr(thing1) == repr_str
