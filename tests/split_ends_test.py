@@ -15,7 +15,7 @@
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
 from grscheller.datastructures.core.enums import FM
 from grscheller.fp.iterables import concat
-from grscheller.fp.nothing import nothing, Nothing
+from grscheller.untyped.nothing import nothing, Nothing
 
 class Test_FSplitEnds:
     def test_mutate_returns_none(self) -> None:

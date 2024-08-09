@@ -15,12 +15,12 @@
 from __future__ import annotations
 
 from grscheller.fp.woException import MB, XOR
-from grscheller.fp.nothing import Nothing, nothing
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.queues import DoubleQueue
 from grscheller.datastructures.queues import FIFOQueue
 from grscheller.datastructures.queues import LIFOQueue
 from grscheller.datastructures.tuples import FTuple
+from grscheller.untyped.nothing import Nothing, nothing
 
 class Test_repr:
     def test_DoubleQueue(self) -> None:

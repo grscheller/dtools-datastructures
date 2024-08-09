@@ -31,8 +31,8 @@ __license__ = "Apache License 2.0"
 from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
 from typing import overload, cast
 from grscheller.circular_array.ca import CA
-from grscheller.fp.nothing import Nothing, nothing
 from grscheller.fp.woException import MB
+from grscheller.untyped.nothing import Nothing, nothing
 
 D = TypeVar('D')
 S = TypeVar('S')

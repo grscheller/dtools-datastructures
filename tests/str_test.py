@@ -18,7 +18,7 @@ from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
-from grscheller.fp.nothing import Nothing, nothing
+from grscheller.untyped.nothing import Nothing, nothing
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y

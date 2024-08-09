@@ -19,7 +19,7 @@ from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.core.enums import FM
 from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
-from grscheller.fp.nothing import Nothing, nothing
+from grscheller.untyped.nothing import Nothing, nothing
 
 concat = FM.CONCAT
 merge = FM.MERGE

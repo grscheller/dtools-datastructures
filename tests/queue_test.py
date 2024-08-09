@@ -19,9 +19,9 @@ from grscheller.circular_array.ca import CA
 from grscheller.datastructures.queues import DoubleQueue as DQ
 from grscheller.datastructures.queues import FIFOQueue as FQ
 from grscheller.datastructures.queues import LIFOQueue as LQ
-from grscheller.fp.nothing import Nothing, nothing
 from grscheller.datastructures.tuples import FTuple as FT
 from grscheller.fp.woException import MB
+from grscheller.untyped.nothing import Nothing, nothing
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:
