@@ -12,8 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Sub-package supporting core infrastructure for grscheller.datastructures."""
-
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
+"""
+### Core infrastructure package for datastructures."""

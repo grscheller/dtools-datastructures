@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 from grscheller.datastructures.core.nodes import SL_Node as SL
 from grscheller.datastructures.core.nodes import DL_Node as DL
 

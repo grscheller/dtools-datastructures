@@ -15,14 +15,9 @@
 """Immutable Tuple-like data structure with a functional interfaces."""
 
 from __future__ import annotations
+from enum import auto, Enum
 
 __all__ = ['FM', 'CONCAT', 'MERGE', 'EXHAUST']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
-
-from typing import Generic
-from enum import auto, Enum
 
 class FM(Enum):
     CONCAT = auto()

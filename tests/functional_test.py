@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from __future__ import annotations
-
 from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.core.enums import FM

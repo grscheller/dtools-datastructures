@@ -12,8 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Containers supporting the use & implementation of various algorithms."""
+"""
+### Data structures
 
+* to support the use of various algorithms
+* useful for the implementation of algorithms
+"""
 __version__ = "0.20.4.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"

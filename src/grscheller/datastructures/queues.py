@@ -23,16 +23,12 @@
 
 from __future__ import annotations
 
-__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
-
 from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
 from typing import overload, cast
 from grscheller.circular_array.ca import CA
 from grscheller.fp.woException import MB
-from grscheller.untyped.nothing import Nothing, nothing
+
+__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
 
 D = TypeVar('D')
 S = TypeVar('S')

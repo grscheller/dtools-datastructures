@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
 from grscheller.datastructures.core.enums import FM
 from grscheller.fp.iterables import concat

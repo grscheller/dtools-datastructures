@@ -15,13 +15,9 @@
 """Node classes used with graph-like data structures."""
 
 from __future__ import annotations
+from typing import Generic, Optional, TypeVar
 
 __all__ = ['SL_Node', 'DL_Node']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
-
-from typing import Generic, Optional, TypeVar
 
 T = TypeVar('T')
 

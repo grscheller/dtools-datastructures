@@ -16,16 +16,13 @@
 
 from __future__ import annotations
 
-__all__ = ['SplitEnd']
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
-
 from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
 from grscheller.fp.iterables import concat, exhaust, merge
 from grscheller.untyped.nothing import Nothing, nothing
 from .core.nodes import SL_Node as Node
 from .core.enums import FM
+
+__all__ = ['SplitEnd']
 
 _D = TypeVar('_D')
 _S = TypeVar('_S')
