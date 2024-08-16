@@ -3,14 +3,14 @@
 Python package of data structures which support the use and
 implementation of algorithms.
 
-* Functional & imperative programming styles supported
-* FP encouraged but project endeavors to remain Pythonic
-* Methods which mutate objects don't return anything, like Python lists
-* [grscheller.datastructures][1] project on PyPI
-* [Detailed API documentation][2] on GH-Pages
-* [Source code][3] on GitHub
+* **Repositories**
+  * [grscheller.datastructures][1] project on *PyPI*
+  * [Source code][2] on *GitHub*
+* **Detailed documentation**
+  * [Detailed API documentation][3] on *GH-Pages*
 
-## Overview
+
+### Overview
 
 Data structures allowing developers to focus on the algorithms they are
 using instead of all the "bit fiddling" required to implement behaviors,
@@ -22,6 +22,14 @@ introducing inordinate complexity. Some of these data structures allow
 data to be safely shared between multiple data structure instances by
 making shared data immutable and inaccessible to client code.
 
+* functional & imperative programming styles supported
+  * functional programming encouraged
+  * project endeavors to remain Pythonic
+    * methods which mutate objects don't return anything
+      * like Python lists
+    * in caparisons identity is considered before equality
+      * like Python builtins
+
 Sometimes the real power of a data structure comes not from what it
 empowers you to do, but from what it prevents you from doing to
 yourself.
@@ -29,5 +37,5 @@ yourself.
 ---
 
 [1]: https://pypi.org/project/grscheller.datastructures/
-[2]: https://grscheller.github.io/datastructures/
-[3]: https://github.com/grscheller/datastructures/
+[2]: https://github.com/grscheller/datastructures/
+[3]: https://grscheller.github.io/datastructures/
