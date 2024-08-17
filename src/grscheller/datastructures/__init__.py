@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-### Data structures
+"""### Data structures
 
-* to support the use of various algorithms
-* useful for the implementation of algorithms
+Helpful when using various algorithms, also in the implementation
+of algorithms.
 """
-__version__ = "0.20.4.1"
+__version__ = "0.20.4.2"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
