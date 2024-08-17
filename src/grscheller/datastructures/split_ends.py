@@ -12,7 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module of LIFO stacks that can safely share immutable data between themselves."""
+"""
+### Stack type Data Structures
+
+##### SplitEnd
+
+LIFO stacks which can safely share immutable data between themselves.
+
+---
+
+"""
 
 from __future__ import annotations
 
@@ -29,13 +38,18 @@ _S = TypeVar('_S')
 _T = TypeVar('_T')
 
 class SplitEnd(Generic[_D, _S]):
-    """Class implementing a stack type data structures called a "split end".
+    """
+    #### SplitEnd
+    
+    Class implementing a stack type data structures called a *split end*.
 
-    * each "split end" is a very simple LIFO stateful data structure
+    * each *split end* is a very simple stateful LIFO stack
     * contains a count of nodes & reference to first node of a linked list
-    * different "split ends" can safely share the same "tail"
-    * each "split end" sees itself as a singularly linked list
-    * bush-like datastructures can be formed using multiple "split ends"
+    * different *split ends* can safely share the same *tail*
+    * each *split end* sees itself as a singularly linked list
+    * bush-like datastructures can be formed using multiple *split ends*
+    * len() returns the number of elements on the stack
+    * in a boolean context, return `True` if SplitEnd is not empty
 
     """
     __slots__ = '_head', '_count', '_s'
@@ -50,7 +64,6 @@ class SplitEnd(Generic[_D, _S]):
     def __init__(self, *ds: _D) -> None:
         ...
     def __init__(self, *ds: _D, s: _S|Nothing=nothing, storable:bool=True) -> None:
-        """Construct a LIFO Stack"""
         self._head: Optional[Node[_D]] = None
         self._count: int = 0
         self._s = s
@@ -60,14 +73,16 @@ class SplitEnd(Generic[_D, _S]):
             self._count += 1
 
     def __iter__(self) -> Iterator[_D]:
-        """Iterator yielding data stored on the stack, starting at the head"""
         node = self._head
         while node:
             yield node._data
             node = node._next
 
     def reverse(self) -> SplitEnd[_D, _S]:
-        """Return shallow reversed copy of a SplitEnd.
+        """
+        ##### Return a Reversed SplitEnd
+
+        Return shallow reversed copy of a SplitEnd.
 
         * Returns a new Stack object with shallow copied new data
         * creates all new nodes
@@ -77,7 +92,6 @@ class SplitEnd(Generic[_D, _S]):
         return SplitEnd(*self, s=self._s)
 
     def __reversed__(self) -> Iterator[_D]:
-        """Reverse iterate over the contents of the stack"""
         return iter(self.reverse())
 
     def __repr__(self) -> str:
@@ -100,7 +114,6 @@ class SplitEnd(Generic[_D, _S]):
                     + ' |' + repr(self._s) + '|')
 
     def __bool__(self) -> bool:
-        """Returns true if stack is not empty"""
         return self._count > 0
 
     def __len__(self) -> int:
@@ -131,15 +144,23 @@ class SplitEnd(Generic[_D, _S]):
         return True
 
     def copy(self) -> SplitEnd[_D, _S]:
-        """Return a copy of a Stack in O(1) space & time complexity."""
+        """
+        ##### Shallow Copy
+
+        Return a swallow copy of the SplitEnd in O(1) space & time complexity.
+
+        """
         stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
         stack._head, stack._count = self._head, self._count
         return stack
 
     def push(self, *ds: _D) -> None:
-        """Push data onto top of the SplitEnd.
+        """
+        ##### Push Data
 
-        * ignore "non-existent" Nothing() values pushed on SplitEnd
+        Push data onto top of the SplitEnd.
+
+        * ignore "non-existent" Nothing() values pushed on the SplitEnd
 
         """
         for d in ds:
@@ -154,7 +175,10 @@ class SplitEnd(Generic[_D, _S]):
     def pop(self) -> _D|_S:
         ...
     def pop(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
-        """Pop data off of top of the SplitEnd.
+        """
+        ##### Pop Data
+
+        Pop data off of the top of the SplitEnd.
 
         * if empty, return a default value
         * if empty and a default value not given, return the sentinel value
@@ -177,7 +201,10 @@ class SplitEnd(Generic[_D, _S]):
     def peak(self) -> _D|_S:
         ...
     def peak(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
-        """Returns the data at the top of the SplitEnd.
+        """
+        ##### Peak at top of SplitEnd
+
+        Returns the data at the top of the SplitEnd.
 
         * does not consume the data
         * if empty, data does not exist, so in that case return default
@@ -195,7 +222,10 @@ class SplitEnd(Generic[_D, _S]):
     def head(self) -> _D|_S:
         ...
     def head(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
-        """Returns the data at the top of the SplitEnd.
+        """
+        ##### Head of SplitEnd
+
+        Returns the data at the top of the SplitEnd.
 
         * does not consume the data
         * for an empty SplitEnd, head does not exist, so return default
@@ -216,7 +246,10 @@ class SplitEnd(Generic[_D, _S]):
     def tail(self) -> SplitEnd[_D, _S]:
         ...
     def tail(self, default: SplitEnd[_D, _S]|Nothing=nothing) -> SplitEnd[_D, _S]|Nothing:
-        """Return tail of the SplitEnd.
+        """
+        ##### Tail of SplitEnd
+        
+        Return tail of the SplitEnd.
 
         * if SplitEnd is empty, tail does not exist, so return sentinel: _S
 
@@ -236,7 +269,10 @@ class SplitEnd(Generic[_D, _S]):
     def cons(self, d: Nothing) -> SplitEnd[_D, nothing]: 
         ...
     def cons(self, d: _D|Nothing) -> SplitEnd[_D, _S]|Nothing:
-        """Return a new SplitEnd with data as head and self as tail.
+        """
+        ##### Cons SplitEnd with a Head
+
+        Return a new SplitEnd with data as head and self as tail.
 
         Constructing a SplitEnd using a non-existent value as head results in
         a non-existent SplitEnd. In that case, return sentinel: _S.
@@ -251,7 +287,8 @@ class SplitEnd(Generic[_D, _S]):
             return stack
 
     def fold(self, f:Callable[[_D, _D], _D]) -> Optional[_D]:
-        """Reduce with f.
+        """
+        ##### Reduce with `f`
 
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
@@ -288,11 +325,14 @@ class SplitEnd(Generic[_D, _S]):
         return acc
 
     def flatMap(self, f: Callable[[_D], SplitEnd[_T, _S]], type: FM=FM.CONCAT) -> SplitEnd[_T, _S]:
-        """Bind function f to the FTuple:
+        """
+        ##### Flat Map with `f`
 
-        * sequentially one after the other
-        * merging together until first one exhausted
-        * merging together until all are exhausted
+        Bind function `f` to the SplitEnd.
+
+        * FM = FM.CONCAT: sequentially one after the other
+        * FM = FM.MERGE: merging together until first one exhausted
+        * FM = FM.EXHAUST: merging together until all are exhausted
 
         """
         match type:
@@ -304,7 +344,10 @@ class SplitEnd(Generic[_D, _S]):
                 return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._s)
 
     def map(self, f: Callable[[_D], _T]) -> SplitEnd[_T, _S]:
-        """Maps a function (or callable object) over the values on the Stack.
+        """
+        ##### Map `f` over the SplitEnd
+
+        Maps a function (or callable object) over the values on the SplitEnd Stack.
 
         * TODO: Redo in "natural" order?
         * Returns a new Stack object with shallow copied new data
