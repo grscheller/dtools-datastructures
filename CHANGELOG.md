@@ -20,6 +20,19 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.20.5.0 - datastructures coming back together 2024-08-17
+
+* updated to use grscheller.fp.nada instead of grscheller.untyped.nothing
+  * made debugging tons easier
+* updated to use all latest PyPI versions of dependencies
+* three failed tests involving class SplitEnd
+* putting off PyPI v1.0.0 release indefinitely
+  * all dependencies need to be at v1.0+
+  * need to work out SplitEnd bugs
+  * still need to finalize design (need to use it!)
+  * need to find good SplitEnd use case
+  * other Stack variants like SplintEnd??? (shared data/node variants?)
+
 ### Version 0.20.2.0 - Going down a typing rabbit hole 2024-08-03
 
 * updated to use grscheller.circular-array version 3.3.0 (3.2.3.0)

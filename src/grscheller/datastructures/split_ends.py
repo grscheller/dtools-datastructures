@@ -27,7 +27,7 @@ from __future__ import annotations
 
 from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
 from grscheller.fp.iterables import concat, exhaust, merge
-from grscheller.untyped.nothing import Nothing, nothing
+from grscheller.fp.nada import Nada, nada
 from .core.nodes import SL_Node as Node
 from .core.enums import FM
 
@@ -58,12 +58,12 @@ class SplitEnd(Generic[_D, _S]):
     def __init__(self, *ds: _D, s: _S) -> None:
         ...
     @overload
-    def __init__(self, *ds: _D, s: Nothing) -> None:
+    def __init__(self, *ds: _D, s: Nada) -> None:
         ...
     @overload
     def __init__(self, *ds: _D) -> None:
         ...
-    def __init__(self, *ds: _D, s: _S|Nothing=nothing, storable:bool=True) -> None:
+    def __init__(self, *ds: _D, s: _S|Nada=nada) -> None:
         self._head: Optional[Node[_D]] = None
         self._count: int = 0
         self._s = s
@@ -95,7 +95,7 @@ class SplitEnd(Generic[_D, _S]):
         return iter(self.reverse())
 
     def __repr__(self) -> str:
-        if self._s == nothing:
+        if self._s == nada:
             return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
         else:
             return ('SplitEnd('
@@ -104,7 +104,7 @@ class SplitEnd(Generic[_D, _S]):
 
     def __str__(self) -> str:
         """Display the data in the Stack, left to right."""
-        if self._s == nothing:
+        if self._s is nada:
             return ('>< '
                     + ' -> '.join(map(str, self))
                     + ' ||')
@@ -125,8 +125,9 @@ class SplitEnd(Generic[_D, _S]):
 
         if self._count != other._count:
             return False
-        if self._s != other._s:
-            return False
+        if self._s is not other._s:
+            if self._s != other._s:
+                return False
 
         left = self._head
         right = other._head
@@ -164,7 +165,7 @@ class SplitEnd(Generic[_D, _S]):
 
         """
         for d in ds:
-            if d is not nothing:
+            if d is not nada:
                 node = Node(d, self._head)
                 self._head, self._count = node, self._count+1
 
@@ -174,7 +175,7 @@ class SplitEnd(Generic[_D, _S]):
     @overload
     def pop(self) -> _D|_S:
         ...
-    def pop(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
+    def pop(self, default: _D|Nada=nada) -> _D|_S|Nada:
         """
         ##### Pop Data
 
@@ -185,7 +186,7 @@ class SplitEnd(Generic[_D, _S]):
 
         """
         if self._head is None:
-            if default is nothing:
+            if default is nada:
                 return self._s
             else:
                 return default
@@ -200,7 +201,7 @@ class SplitEnd(Generic[_D, _S]):
     @overload
     def peak(self) -> _D|_S:
         ...
-    def peak(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
+    def peak(self, default: _D|Nada=nada) -> _D|_S|Nada:
         """
         ##### Peak at top of SplitEnd
 
@@ -221,7 +222,7 @@ class SplitEnd(Generic[_D, _S]):
     @overload
     def head(self) -> _D|_S:
         ...
-    def head(self, default: _D|Nothing=nothing) -> _D|_S|Nothing:
+    def head(self, default: _D|Nada=nada) -> _D|_S|Nada:
         """
         ##### Head of SplitEnd
 
@@ -233,7 +234,7 @@ class SplitEnd(Generic[_D, _S]):
 
         """
         if self._head is None:
-            if default is nothing:
+            if default is nada:
                 return self._s
             else:
                 return default
@@ -245,7 +246,7 @@ class SplitEnd(Generic[_D, _S]):
     @overload
     def tail(self) -> SplitEnd[_D, _S]:
         ...
-    def tail(self, default: SplitEnd[_D, _S]|Nothing=nothing) -> SplitEnd[_D, _S]|Nothing:
+    def tail(self, default: SplitEnd[_D, _S]|Nada=nada) -> SplitEnd[_D, _S]|Nada:
         """
         ##### Tail of SplitEnd
         
@@ -266,9 +267,9 @@ class SplitEnd(Generic[_D, _S]):
     def cons(self, d: _D) -> SplitEnd[_D, _S]: 
         ...
     @overload
-    def cons(self, d: Nothing) -> SplitEnd[_D, nothing]: 
+    def cons(self, d: Nada) -> SplitEnd[_D, nada]: 
         ...
-    def cons(self, d: _D|Nothing) -> SplitEnd[_D, _S]|Nothing:
+    def cons(self, d: _D|Nada) -> SplitEnd[_D, _S]|Nada:
         """
         ##### Cons SplitEnd with a Head
 
@@ -278,8 +279,8 @@ class SplitEnd(Generic[_D, _S]):
         a non-existent SplitEnd. In that case, return sentinel: _S.
 
         """
-        if d is nothing:
-            return nothing
+        if d is nada:
+            return nada
         else:
             stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
             stack._head = Node(cast(_D, d), self._head)

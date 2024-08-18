@@ -20,11 +20,11 @@ from grscheller.datastructures.queues import FIFOQueue as FQ
 from grscheller.datastructures.queues import LIFOQueue as LQ
 from grscheller.datastructures.tuples import FTuple as FT
 from grscheller.fp.woException import MB
-from grscheller.untyped.nothing import Nothing, nothing
+from grscheller.fp.nada import Nada, nada
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:
-        dq1: DQ[int, Nothing] = DQ(s=nothing)
+        dq1: DQ[int, Nada] = DQ(s=nada)
         dq1.pushL(1,2,3)
         dq1.pushR(1,2,3)
         dq2 = dq1.map(lambda x: x-1)
@@ -59,7 +59,7 @@ class TestQueueTypes:
         assert lq2.peak().get(42) == 8
 
     def test_push_then_pop(self) -> None:
-        dq1 = DQ[int, Nothing](s=nothing)   # TODO: fix this redundancy! 
+        dq1 = DQ[int, Nada](s=nada)   # TODO: fix this redundancy! 
         pushed_1 = 42
         dq1.pushL(pushed_1)
         popped_1 = dq1.popL()
@@ -77,7 +77,7 @@ class TestQueueTypes:
         assert pushed_1 == popped_1
         assert len(dq1) == 0
 
-        dq2: DQ[str, Nothing] = DQ(s=nothing)
+        dq2: DQ[str, Nada] = DQ(s=nada)
         pushed_2 = ''
         dq2.pushR(pushed_2)
         popped_2 = dq2.popR()
@@ -128,7 +128,7 @@ class TestQueueTypes:
         assert len(fq) == 0
         assert not fq
 
-        lq: LQ[object, Nothing] = LQ(s=nothing)
+        lq: LQ[object, Nada] = LQ(s=nada)
         pushed2: int|str = 42
         lq.push(pushed2)
         popped2 = lq.pop()
@@ -142,7 +142,7 @@ class TestQueueTypes:
         pushed2 = 0
         lq.push(pushed2)
         popped2 = lq.pop()
-        assert popped2 != nothing
+        assert popped2 != nada
         assert pushed2 == popped2
         assert len(lq) == 0
         pushed2 = ''
@@ -162,8 +162,8 @@ class TestQueueTypes:
         def is42(ii: int) -> Optional[int]:
             return None if ii == 42 else ii
 
-        fq1: FQ[object, Nothing] = FQ(s=nothing)
-        fq2: FQ[object, Nothing] = FQ(s=nothing)
+        fq1: FQ[object, Nada] = FQ(s=nada)
+        fq2: FQ[object, Nada] = FQ(s=nada)
         fq1.push(None)
         fq2.push(None)
         assert fq1 == fq2
@@ -171,12 +171,12 @@ class TestQueueTypes:
 
         barNone: tuple[int|None, ...] = (None, 1, 2, 3, None)
         bar42 = (42, 1, 2, 3, 42)
-        fq3: FQ[object, Nothing] = FQ(*barNone, s=nothing)
-        fq4: FQ[object, Nothing] = FQ(*map(is42, bar42), s=nothing)
+        fq3: FQ[object, Nada] = FQ(*barNone, s=nada)
+        fq4: FQ[object, Nada] = FQ(*map(is42, bar42), s=nada)
         assert fq3 == fq4
 
-        lq1: LQ[Optional[int], Nothing] = LQ(s=nothing)
-        lq2: LQ[Optional[int], Nothing] = LQ(s=nothing)
+        lq1: LQ[Optional[int], Nada] = LQ(s=nada)
+        lq2: LQ[Optional[int], Nada] = LQ(s=nada)
         lq1.push(None, 1, 2, None)
         lq2.push(None, 1, 2, None)
         assert lq1 == lq2
@@ -184,14 +184,14 @@ class TestQueueTypes:
 
         barNone = (None, 1, 2, None, 3)
         bar42 = (42, 1, 2, 42, 3)
-        lq3: LQ[Optional[int], Nothing] = LQ(*barNone, s=nothing)
-        lq4: LQ[Optional[int], Nothing] = LQ(*map(is42, bar42), s=nothing)
+        lq3: LQ[Optional[int], Nada] = LQ(*barNone, s=nada)
+        lq4: LQ[Optional[int], Nada] = LQ(*map(is42, bar42), s=nada)
         assert lq3 == lq4
 
 
     def test_pushing_None(self) -> None:
-        dq1: DQ[Optional[int], Nothing] = DQ(s=nothing)
-        dq2: DQ[Optional[int], Nothing] = DQ(s=nothing)
+        dq1: DQ[Optional[int], Nada] = DQ(s=nada)
+        dq2: DQ[Optional[int], Nada] = DQ(s=nada)
         dq1.pushR(None)
         dq2.pushL(None)
         assert dq1 == dq2
@@ -201,8 +201,8 @@ class TestQueueTypes:
 
         barNone = (1, 2, None, 3, None, 4)
         bar42 = (1, 2, 42, 3, 42, 4)
-        dq3 = DQ[Optional[int], Nothing](*barNone, s=nothing)
-        dq4 = DQ[Optional[int], Nothing](*map(is42, bar42), s=nothing)
+        dq3 = DQ[Optional[int], Nada](*barNone, s=nada)
+        dq4 = DQ[Optional[int], Nada](*map(is42, bar42), s=nada)
         assert dq3 == dq4
 
     def test_bool_len_peak(self) -> None:
@@ -265,7 +265,7 @@ class TestQueueTypes:
         assert fq.peak_next_out() == -42
         assert fq.peak_last_in() == -42
 
-        lq: LQ[int, Nothing] = LQ(s=nothing)
+        lq: LQ[int, Nada] = LQ(s=nada)
         assert not lq
         lq.push(1,2,3)
         assert lq
@@ -280,7 +280,7 @@ class TestQueueTypes:
         assert lq.pop() == 1
         assert len(lq) == 0
         assert not lq
-        assert lq.pop() is nothing()
+        assert lq.pop() is nada()
         assert len(lq) == 0
         assert not lq
         lq.push(42)
@@ -296,8 +296,8 @@ class TestQueueTypes:
         popped = lq.pop()
         assert popped == 42
         assert not lq
-        assert lq.peak() is Nothing()
-        assert lq.pop() is nothing
+        assert lq.peak() is Nada()
+        assert lq.pop() is nada
 
     def test_iterators(self) -> None:
         data_d = FT(1, 2, 3, 4, 5)
@@ -309,7 +309,7 @@ class TestQueueTypes:
             ii += 1
         assert ii == 5
 
-        dq0: DQ[bool, Nothing] = DQ(s=nothing)
+        dq0: DQ[bool, Nada] = DQ(s=nada)
         for _ in dq0:
             assert False
 
@@ -349,7 +349,7 @@ class TestQueueTypes:
         assert not fq00
 
         data_list: list[int] = list(range(1,1001))
-        lq: LQ[int, Nothing] = LQ(*data_list, s=nothing)
+        lq: LQ[int, Nada] = LQ(*data_list, s=nada)
         ii = len(data_list) - 1
         for item_int in lq:
             assert data_list[ii] == item_int
@@ -369,8 +369,8 @@ class TestQueueTypes:
         assert lq00.pop() == -1
 
     def test_equality(self) -> None:
-        dq1: DQ[object, Nothing] = DQ(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'), s = nothing)
-        dq2: DQ[object, Nothing] = DQ(2, 3, 'Forty-Two', s = nothing)
+        dq1: DQ[object, Nada] = DQ(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'), s = nada)
+        dq2: DQ[object, Nada] = DQ(2, 3, 'Forty-Two', s = nada)
         dq2.pushL(1)
         dq2.pushR((7, 11, 'foobar'))
         assert dq1 == dq2
@@ -425,8 +425,8 @@ class TestQueueTypes:
         l1 = ['foofoo', 7, 11]
         l2 = ['foofoo', 42]
 
-        lq1: LQ[object, Nothing] = LQ(3, 'Forty-Two', l1, 1, s=nothing)
-        lq2 = LQ[object, Nothing](3, 'Forty-Two', 2, s=Nothing())
+        lq1: LQ[object, Nada] = LQ(3, 'Forty-Two', l1, 1, s=nada)
+        lq2 = LQ[object, Nada](3, 'Forty-Two', 2, s=Nada())
         assert lq1.pop() == 1
         peak = lq1.peak()
         assert peak == l1
@@ -441,8 +441,8 @@ class TestQueueTypes:
         lq2.push(42)
         assert lq1 != lq2
 
-        lq3: LQ[str|Nothing, Nothing] = LQ(*map(lambda i: str(i), range(43)), s=nothing)
-        lq4: LQ[int|Nothing, Nothing] = LQ(*range(-1, 39), 41, 40, 39, s=nothing)
+        lq3: LQ[str|Nada, Nada] = LQ(*map(lambda i: str(i), range(43)), s=nada)
+        lq4: LQ[int|Nada, Nada] = LQ(*range(-1, 39), 41, 40, 39, s=nada)
 
         lq3.push(lq3.pop(), lq3.pop(), lq3.pop())
         lq5 = lq4.map(lambda i: str(i+1))
@@ -455,36 +455,36 @@ class TestQueueTypes:
         def f2(ii: int) -> str:
             return str(ii)
 
-        dq = DQ(5, 2, 3, 1, 42, s=Nothing)
-        dq0: DQ[int, Nothing] = DQ(s=nothing)  # TODO: a it redundant (reminds me of Java)
+        dq = DQ(5, 2, 3, 1, 42, s=Nada)
+        dq0: DQ[int, Nada] = DQ(s=nada)  # TODO: a it redundant (reminds me of Java)
         dq1 = dq.copy()
         assert dq1 == dq
         assert dq1 is not dq
         dq0m = dq0.map(f1)
         dq1m = dq1.map(f1)
-        assert dq == DQ(5, 2, 3, 1, 42, s=nothing)
-        assert dq0m == DQ(s=nothing)
-        assert dq1m == DQ(24, 3, 8, 0, 1763, s=nothing)
-        assert dq0m.map(f2) == DQ(s=nothing)
-        assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763', s=nothing)
+        assert dq == DQ(5, 2, 3, 1, 42, s=nada)
+        assert dq0m == DQ(s=nada)
+        assert dq1m == DQ(24, 3, 8, 0, 1763, s=nada)
+        assert dq0m.map(f2) == DQ(s=nada)
+        assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763', s=nada)
 
-        fq0: FQ[int, Nothing] = FQ(s=nothing)
-        fq1: FQ[int, Nothing] = FQ(5, 42, 3, 1, 2, s=nothing)
+        fq0: FQ[int, Nada] = FQ(s=nada)
+        fq1: FQ[int, Nada] = FQ(5, 42, 3, 1, 2, s=nada)
         q0m = fq0.map(f1)
         q1m = fq1.map(f1)
-        assert q0m == FQ(s=nothing)
-        assert q1m == FQ(24, 1763, 8, 0, 3, s=nothing)
+        assert q0m == FQ(s=nada)
+        assert q1m == FQ(24, 1763, 8, 0, 3, s=nada)
 
         fq0.push(8, 9, 10)
         assert fq0.pop() == 8
         assert fq0.pop() == 9
         fq2 = fq0.map(f1)
-        assert fq2 == FQ(99, s=nothing)
-        assert fq2 == FQ(99, s=nothing)
+        assert fq2 == FQ(99, s=nada)
+        assert fq2 == FQ(99, s=nada)
 
         fq2.push(100)
         fq3 = fq2.map(f2)
-        assert fq3 == FQ('99', '100', s=nothing)
+        assert fq3 == FQ('99', '100', s=nada)
 
         lq0: LQ[int, MB[int]] = LQ(s=MB(42))
         lq1 = LQ(5, 42, 3, 1, 2, s=MB(42))

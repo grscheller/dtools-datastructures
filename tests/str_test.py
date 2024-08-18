@@ -17,7 +17,7 @@ from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd
 from grscheller.datastructures.tuples import FTuple
-from grscheller.untyped.nothing import Nothing, nothing
+from grscheller.fp.nada import Nada, nada
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -27,7 +27,7 @@ def addLt42(x: int, y: int) -> int|None:
 
 class Test_str:
     def test_SplitEnd(self) -> None:
-        s1: SplitEnd[int|str, Nothing] = SplitEnd()
+        s1: SplitEnd[int|str, Nada] = SplitEnd()
         assert str(s1) == '><  ||'
         s2 = s1.cons(42)
         assert str(s1) == '><  ||'
@@ -41,7 +41,7 @@ class Test_str:
         s5 = s3.tail().cons('wins!').cons('Buggy the clown')
         assert str(s5) == ">< Buggy the clown -> wins! -> 42 ||"
 
-        foo: SplitEnd[int, Nothing] = SplitEnd(1, 2)
+        foo: SplitEnd[int, Nada] = SplitEnd(1, 2)
         bar = foo.copy()
         assert bar.head() == 2
         foo = foo.cons(3).cons(4).cons(5)
@@ -52,22 +52,22 @@ class Test_str:
         assert foo is not baz
 
     def test_FIFOQueue(self) -> None:
-        q1: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
+        q1: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
     def test_LIFOQueue(self) -> None:
-        q1 = LIFOQueue[int, Nothing](s=nothing)    # TODO: ?????
+        q1 = LIFOQueue[int, Nada](s=nada)    # TODO: ?????
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '|| 3 > 2 > 1 ><'
 
     def test_DQueue(self) -> None:
-        dq1: DoubleQueue[int, Nothing] = DoubleQueue(s=nothing)
-        dq2 = DoubleQueue[int, Nothing](s=nothing)
+        dq1: DoubleQueue[int, Nada] = DoubleQueue(s=nada)
+        dq2 = DoubleQueue[int, Nada](s=nada)
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)

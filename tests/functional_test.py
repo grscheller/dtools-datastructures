@@ -18,7 +18,7 @@ from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.core.enums import FM
 from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
-from grscheller.untyped.nothing import Nothing, nothing
+from grscheller.fp.nada import Nada, nada
 
 concat = FM.CONCAT
 merge = FM.MERGE
@@ -42,12 +42,12 @@ class Test_FP:
             q.push(d)
             return q
 
-        def pushSE(x: SE[D, Nothing], y: D) -> SE[D, Nothing]:
+        def pushSE(x: SE[D, tuple[int, ...]], y: D) -> SE[D, tuple[int, ...]]:
             x.push(y)
             return x
 
         ft0: FT[int] = FT()
-        se0: SE[int, Nothing] = SE()
+        se0: SE[int, Nada] = SE()
         ft1: FT[int] = FT(1,2,3,4,5)
         se1 = SE(1,2,3,4,5, s=())
 
@@ -75,26 +75,26 @@ class Test_FP:
         assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, s=())
         assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(s=None)
 
-        fq5: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
-        fq6 = FIFOQueue[int, Nothing](s=nothing)
-        fq7: FIFOQueue[int, Nothing] = FIFOQueue(s=nothing)
-        fq8 = FIFOQueue[int, Nothing](s=nothing)
-        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5, s=nothing)
-        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5, s=nothing)
-        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue(s=nothing)
-        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue(s=nothing)
-        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5, s=nothing)
-        assert fq7 == fq8 == FIFOQueue(s=nothing)
+        fq5: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
+        fq6 = FIFOQueue[int, Nada](s=nada)
+        fq7: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
+        fq8 = FIFOQueue[int, Nada](s=nada)
+        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5, s=nada)
+        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5, s=nada)
+        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue(s=nada)
+        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue(s=nada)
+        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5, s=nada)
+        assert fq7 == fq8 == FIFOQueue(s=nada)
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5, s=())'
         assert se1.fold(l1) == 15
         assert se1.fold1(l1, 10) == 25
         assert se1.fold(l2) == 120
         assert se1.fold1(l2, 10) == 1200
-        assert se1.fold1(pushSE, SE[int, tuple[int, ...]]()) == SE(5,4,3,2,1)
+        assert se1.fold1(pushSE, SE[int, tuple[int, ...]](s=())) == SE(5,4,3,2,1,s=())
         assert se0.fold(l1) == None
         assert se0.fold1(l1, 10) == 10
-        assert se0.fold1(pushSE, SE[int, tuple[int, ...]]()) == SE()
+        assert se0.fold1(pushSE, SE[int, tuple[int, ...]](s=())) == SE(s=())
 
         assert ft1.accummulate(l1) == FT(1,3,6,10,15)
         assert ft1.accummulate(l1, 10) == FT(10,11,13,16,20,25)
