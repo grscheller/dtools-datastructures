@@ -86,24 +86,28 @@ class Test_FSplitEnds:
         assert s1.head() is nada
         assert s1.tail() is nada
 
-        s2: SE[int, Nada]|Nada = SE(1, 2, 3, 42)
-        assert len(s2) == 4
-        while s2:
-            assert s2.head(100) is not nada
-            s2 = s2.tail(SE[int, Nada]())
-        assert len(s2) == 0
-        assert not s2
-        assert s2.head(nada) is nada   # TODO: Not defaulting!!!!!!
-        assert s2.head(-1) is -1
-        s2.push(42)
-        assert s2.pop(10) == 42
-        s2 = s2.tail(SE[int, Nada]())
-        assert s2 is nada
-        assert s2.head() is nada
-        s3 = s2.cons(42)
-        assert s3 is nada
-        assert s2.head(-1) is nada
-        assert s2 is s3 is nada is Nada()
+        s3: SE[int, Nada]|Nada = SE(1, 2, 3, 42)
+        assert len(s3) == 4
+        while s3:
+            assert s3.head(100) is not nada
+            s3 = s3.tail(SE[int, Nada]())
+        assert len(s3) == 0
+        assert not s3
+        assert s3.head() is nada
+        assert s3.head(-1) is -1
+        s3.push(42)
+        assert s3.pop(10) == 42
+        assert s3 == SplitEnd()
+        assert s3.head() is nada
+        assert s3.tail() is nada
+        s4 = s3.tail()
+        assert s4 is nada
+        assert s4.head() is nada
+        assert s4.tail() is nada
+        s5 = s4.cons(42)
+        assert s5 is nada
+        assert s4.head(-1) is nada
+        assert s4 is s5 is nada is Nada()
 
     def test_SplitEnd_len(self) -> None:
         s0: SE[int, None] = SE()
@@ -279,7 +283,7 @@ class Test_FSplitEnds:
         s1 = SE('a', 'b', 'c', 'd', s=nada)
         s2: SE[str, Nada] = SE('d', 'c', 'b', 'a')
         assert s1 != s2
-        assert s2 == SE(*iter(s1), s=s1._s)
+        assert s2 == SE(*iter(s1))
         s0: SE[str, Nada] = SE()
         assert s0 == SE(*iter(s0))
         s3: SE[int, Nada] = SE(*concat(iter(range(1, 100)), iter(range(98, 0, -1))))

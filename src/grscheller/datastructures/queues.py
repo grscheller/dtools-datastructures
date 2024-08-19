@@ -48,17 +48,17 @@ class QueueBase(Generic[D, S]):
     * in a boolean context, returns true if not empty
 
     """
-    __slots__ = '_ca', '_s'
+    __slots__ = '_ca', '_sentinel'
 
     def __init__(self, *ds: D, s: S):
         self._ca = CA(*ds)
-        self._s = s
+        self._sentinel = s
 
     def __repr__(self) -> str:
         if len(self) == 0:
-            return type(self).__name__ + '(s=' + repr(self._s)+ ')'
+            return type(self).__name__ + '(s=' + repr(self._sentinel)+ ')'
         else:
-            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', s=' + repr(self._s)+ ')'
+            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', s=' + repr(self._sentinel)+ ')'
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -91,7 +91,7 @@ class FIFOQueue(QueueBase[D, S]):
         Return shallow copy of the FIFOQueue.
 
         """
-        return FIFOQueue(*self._ca, s=self._s)
+        return FIFOQueue(*self._ca, s=self._sentinel)
 
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
@@ -114,7 +114,7 @@ class FIFOQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca.popL()
         else:
-            return self._s
+            return self._sentinel
 
     def peak_last_in(self) -> D|S:
         """
@@ -126,7 +126,7 @@ class FIFOQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca[-1]
         else:
-            return self._s
+            return self._sentinel
 
     def peak_next_out(self) -> D|S:
         """
@@ -138,7 +138,7 @@ class FIFOQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca[0]
         else:
-            return self._s
+            return self._sentinel
 
     @overload
     def fold(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S:
@@ -167,7 +167,7 @@ class FIFOQueue(QueueBase[D, S]):
         """
         if initial is None:
             if not self:
-                return self._s
+                return self._sentinel
         return self._ca.foldL(f, initial=initial)
 
     def map(self, f: Callable[[D], U]) -> FIFOQueue[U, S]:
@@ -178,7 +178,7 @@ class FIFOQueue(QueueBase[D, S]):
         original order.
 
         """
-        return FIFOQueue(*map(f, self._ca), s=self._s)
+        return FIFOQueue(*map(f, self._ca), s=self._sentinel)
 
 class LIFOQueue(QueueBase[D, S]):
     """
@@ -200,7 +200,7 @@ class LIFOQueue(QueueBase[D, S]):
 
         Return shallow copy of the LIFOQueue.
         """
-        return LIFOQueue(*reversed(self._ca), s=self._s)
+        return LIFOQueue(*reversed(self._ca), s=self._sentinel)
 
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
@@ -223,7 +223,7 @@ class LIFOQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca.popR()
         else:
-            return self._s
+            return self._sentinel
 
     def peak(self) -> D|S:
         """
@@ -236,7 +236,7 @@ class LIFOQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca[-1]
         else:
-            return self._s
+            return self._sentinel
 
     @overload
     def fold(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S:
@@ -265,7 +265,7 @@ class LIFOQueue(QueueBase[D, S]):
         """
         if initial is None:
             if not self:
-                return self._s
+                return self._sentinel
         return self._ca.foldR(f, initial=initial)
 
     def map(self, f: Callable[[D], U]) -> LIFOQueue[U, S]:
@@ -276,7 +276,7 @@ class LIFOQueue(QueueBase[D, S]):
         original order.
 
         """
-        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))), s=self._s)
+        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))), s=self._sentinel)
 
 class DoubleQueue(QueueBase[D, S]):
     """
@@ -305,7 +305,7 @@ class DoubleQueue(QueueBase[D, S]):
         Return shallow copy of the DoubleQueue.
 
         """
-        return DoubleQueue(*self._ca, s=self._s)
+        return DoubleQueue(*self._ca, s=self._sentinel)
 
     def pushL(self, *ds: D) -> None:
         """
@@ -338,7 +338,7 @@ class DoubleQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca.popL()
         else:
-            return self._s
+            return self._sentinel
 
     def popR(self) -> D|S:
         """
@@ -351,7 +351,7 @@ class DoubleQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca.popR()
         else:
-            return self._s
+            return self._sentinel
 
     def peakL(self) -> D|S:
         """
@@ -364,7 +364,7 @@ class DoubleQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca[0]
         else:
-            return self._s
+            return self._sentinel
 
     def peakR(self) -> D|S:
         """
@@ -377,7 +377,7 @@ class DoubleQueue(QueueBase[D, S]):
         if self._ca:
             return self._ca[-1]
         else:
-            return self._s
+            return self._sentinel
 
     @overload
     def foldL(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S:
@@ -441,4 +441,4 @@ class DoubleQueue(QueueBase[D, S]):
         original order.
 
         """
-        return DoubleQueue(*map(f, self._ca), s=self._s)
+        return DoubleQueue(*map(f, self._ca), s=self._sentinel)

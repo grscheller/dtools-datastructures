@@ -52,7 +52,7 @@ class SplitEnd(Generic[_D, _S]):
     * in a boolean context, return `True` if SplitEnd is not empty
 
     """
-    __slots__ = '_head', '_count', '_s'
+    __slots__ = '_head', '_count', '_sentinel'
 
     @overload
     def __init__(self, *ds: _D, s: _S) -> None:
@@ -66,7 +66,7 @@ class SplitEnd(Generic[_D, _S]):
     def __init__(self, *ds: _D, s: _S|Nada=nada) -> None:
         self._head: Optional[Node[_D]] = None
         self._count: int = 0
-        self._s = s
+        self._sentinel = s
         for d in ds:
             node: Node[_D] = Node(d, self._head)
             self._head = node
@@ -89,29 +89,33 @@ class SplitEnd(Generic[_D, _S]):
         * O(1) space & time complexity
 
         """
-        return SplitEnd(*self, s=self._s)
+        return SplitEnd(*self, s=self._sentinel)
 
     def __reversed__(self) -> Iterator[_D]:
         return iter(self.reverse())
 
     def __repr__(self) -> str:
-        if self._s == nada:
+        if self._sentinel is nada:
             return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
-        else:
+        elif self:
             return ('SplitEnd('
                     + ', '.join(map(repr, reversed(self)))
-                    + ', s=' + repr(self._s) + ')')
+                    + ', s=' + repr(self._sentinel) + ')')
+        else:
+            return ('SplitEnd('
+                    + 's=' + repr(self._sentinel) + ')')
+
 
     def __str__(self) -> str:
         """Display the data in the Stack, left to right."""
-        if self._s is nada:
+        if self._sentinel is nada:
             return ('>< '
                     + ' -> '.join(map(str, self))
                     + ' ||')
         else:
             return ('>< '
                     + ' -> '.join(map(str, self))
-                    + ' |' + repr(self._s) + '|')
+                    + ' |' + repr(self._sentinel) + '|')
 
     def __bool__(self) -> bool:
         return self._count > 0
@@ -125,8 +129,8 @@ class SplitEnd(Generic[_D, _S]):
 
         if self._count != other._count:
             return False
-        if self._s is not other._s:
-            if self._s != other._s:
+        if self._sentinel is not other._sentinel:
+            if self._sentinel != other._sentinel:
                 return False
 
         left = self._head
@@ -151,7 +155,7 @@ class SplitEnd(Generic[_D, _S]):
         Return a swallow copy of the SplitEnd in O(1) space & time complexity.
 
         """
-        stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
+        stack: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
         stack._head, stack._count = self._head, self._count
         return stack
 
@@ -187,7 +191,7 @@ class SplitEnd(Generic[_D, _S]):
         """
         if self._head is None:
             if default is nada:
-                return self._s
+                return self._sentinel
             else:
                 return default
         else:
@@ -217,12 +221,12 @@ class SplitEnd(Generic[_D, _S]):
         return self._head._data
 
     @overload
-    def head(self, default: _D) -> _D|_S:
+    def head(self, default: _D|_S) -> _D|_S:
         ...
     @overload
     def head(self) -> _D|_S:
         ...
-    def head(self, default: _D|Nada=nada) -> _D|_S|Nada:
+    def head(self, default: _D|_S|Nada=nada) -> _D|_S|Nada:
         """
         ##### Head of SplitEnd
 
@@ -231,32 +235,45 @@ class SplitEnd(Generic[_D, _S]):
         * does not consume the data
         * for an empty SplitEnd, head does not exist, so return default
         * otherwise return the sentinel value
+        * the sentinel value cannot be overridden by nada
+          * of course self._sentinel can always be set to nada
 
         """
         if self._head is None:
             if default is nada:
-                return self._s
+                return self._sentinel
             else:
                 return default
         return self._head._data
 
     @overload
-    def tail(self, default: SplitEnd[_D, _S]) -> SplitEnd[_D, _S]:
+    def tail(self, default: _S) -> SplitEnd[_D, _S]|_S:
         ...
     @overload
-    def tail(self) -> SplitEnd[_D, _S]:
+    def tail(self) -> SplitEnd[_D, _S]|_S:
         ...
-    def tail(self, default: SplitEnd[_D, _S]|Nada=nada) -> SplitEnd[_D, _S]|Nada:
+    def tail(self, default: _S|Nada=nada) -> SplitEnd[_D, _S]|_S|Nada:
         """
         ##### Tail of SplitEnd
         
-        Return tail of the SplitEnd.
+        Returns the tail of the SplitEnd if it exists, otherwise returns the
+        sentinel value, or a default value of the same type as the sentinel
+        value.
 
-        * if SplitEnd is empty, tail does not exist, so return sentinel: _S
+        * optional default needs to be of the same type as the sentinel value
+          * example:
+            * sentinel: tuple(int) = (0,)
+            * default: tuple(int) = (42,)
+          * decided not to let default: SplitEnd[D, S] as a return option
+            * made end code more confusing to reason about
+              * not worth cognitive overload when used in client code
+              * tended to hide the occurrence of an unusual event occurring
+        * the sentinel value cannot be overridden by nada
+          * of course self._sentinel can always be set to nada
 
         """
         if self._head:
-            se: SplitEnd[_D, _S] = SplitEnd(s=self._s)
+            se: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
             se._head = self._head._next
             se._count = self._count - 1
             return se
@@ -267,7 +284,7 @@ class SplitEnd(Generic[_D, _S]):
     def cons(self, d: _D) -> SplitEnd[_D, _S]: 
         ...
     @overload
-    def cons(self, d: Nada) -> SplitEnd[_D, nada]: 
+    def cons(self, d: Nada) -> Nada: 
         ...
     def cons(self, d: _D|Nada) -> SplitEnd[_D, _S]|Nada:
         """
@@ -282,7 +299,7 @@ class SplitEnd(Generic[_D, _S]):
         if d is nada:
             return nada
         else:
-            stack: SplitEnd[_D, _S] = SplitEnd(s=self._s)
+            stack: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
             stack._head = Node(cast(_D, d), self._head)
             stack._count = self._count + 1
             return stack
@@ -338,11 +355,14 @@ class SplitEnd(Generic[_D, _S]):
         """
         match type:
             case FM.CONCAT:
-                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))), s=self._s)
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))),
+                                s=self._sentinel)
             case FM.MERGE:
-                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))), s=self._s)
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))),
+                                s=self._sentinel)
             case FM.EXHAUST:
-                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._s)
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))),
+                                s=self._sentinel)
 
     def map(self, f: Callable[[_D], _T]) -> SplitEnd[_T, _S]:
         """
