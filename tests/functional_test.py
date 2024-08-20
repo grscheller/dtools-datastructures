@@ -17,7 +17,7 @@ from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
 from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
-from grscheller.fp.iterables import CONCAT, MERGE, EXHAUST
+from grscheller.fp.iterables import FM
 from grscheller.fp.nada import Nada, nada
 
 D = TypeVar('D')
@@ -103,9 +103,9 @@ class Test_FP:
         l1 = lambda x: 2*x + 1
         l2 = lambda x: FT(*range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
-        ft2 = ft.flatMap(l2, type=CONCAT)
-        ft3 = ft.flatMap(l2, type=MERGE)
-        ft4 = ft.flatMap(l2, type=EXHAUST)
+        ft2 = ft.flatMap(l2, type=FM.CONCAT)
+        ft3 = ft.flatMap(l2, type=FM.MERGE)
+        ft4 = ft.flatMap(l2, type=FM.EXHAUST)
         assert (ft1[0], ft1[1], ft1[2], ft1[-1]) == (7, 9, 11, 201)
         assert (ft2[0], ft2[1]) == (2, 5)
         assert (ft2[2], ft2[3], ft2[4])  == (2, 5, 9)

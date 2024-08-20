@@ -20,6 +20,11 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.21.0 - PyPI release date 2024-08-20
+
+* got back to a state maintainer is happy with
+  * many dependencies needed updating first
+
 ### Version 0.20.5.1 - datastructures coming back together 2024-08-19
 
 * works with all the current versions of fp and circular-array
