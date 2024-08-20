@@ -27,10 +27,9 @@ from __future__ import annotations
 
 from enum import auto, Enum
 from typing import Callable, Iterator, Generic, Optional, TypeVar
-from grscheller.fp.iterables import concat, exhaust, merge, accumulate
-from .core.enums import FM
+from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
-__all__ = ['FTuple', 'FM']
+__all__ = ['FTuple']
 
 T = TypeVar('T')
 S = TypeVar('S')
@@ -168,12 +167,13 @@ class FTuple(Generic[T]):
 
     def flatMap(self, f: Callable[[T], FTuple[S]], type: FM=FM.CONCAT) -> FTuple[S]:
         """
-        ##### Flat Map with `f`
+        ##### Bind function to FTuple
 
-        * bind function f to the FTuple
-          * FM=FM.CONCAT: sequentially one after the other
-          * FM=FM.MERGE: merging together until first one exhausted
-          * FM=FM.Exhaust: merging together until all are exhausted
+        Bind function `f` to the FTuple.
+
+        * type = CONCAT: sequentially concatenate iterables one after the other
+        * type = MERGE: merge iterables together until one is exhausted
+        * type = Exhaust: merge iterables together until all are exhausted
 
         """
         match type:
@@ -183,3 +183,6 @@ class FTuple(Generic[T]):
                 return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
             case FM.EXHAUST:
                 return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))
+            case '*':
+                raise ValueError('Unknown FM type')
+

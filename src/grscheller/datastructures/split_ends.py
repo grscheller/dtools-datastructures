@@ -26,10 +26,9 @@ LIFO stacks which can safely share immutable data between themselves.
 from __future__ import annotations
 
 from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
-from grscheller.fp.iterables import concat, exhaust, merge
+from grscheller.fp.iterables import FM, concat, exhaust, merge
 from grscheller.fp.nada import Nada, nada
 from .core.nodes import SL_Node as Node
-from .core.enums import FM
 
 __all__ = ['SplitEnd']
 
@@ -344,25 +343,24 @@ class SplitEnd(Generic[_D, _S]):
 
     def flatMap(self, f: Callable[[_D], SplitEnd[_T, _S]], type: FM=FM.CONCAT) -> SplitEnd[_T, _S]:
         """
-        ##### Flat Map with `f`
+        ##### Bind function to SplitEnd
 
         Bind function `f` to the SplitEnd.
 
-        * FM = FM.CONCAT: sequentially one after the other
-        * FM = FM.MERGE: merging together until first one exhausted
-        * FM = FM.EXHAUST: merging together until all are exhausted
+        * type = CONCAT: sequentially concatenate iterables one after the other
+        * type = MERGE: merge iterables together until one is exhausted
+        * type = Exhaust: merge iterables together until all are exhausted
 
         """
         match type:
             case FM.CONCAT:
-                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))),
-                                s=self._sentinel)
+                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
             case FM.MERGE:
-                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))),
-                                s=self._sentinel)
+                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
             case FM.EXHAUST:
-                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))),
-                                s=self._sentinel)
+                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
+            case '*':
+                raise ValueError('Unknown FM type')
 
     def map(self, f: Callable[[_D], _T]) -> SplitEnd[_T, _S]:
         """
