@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.core.nodes import SL_Node as SL
-from grscheller.datastructures.core.nodes import DL_Node as DL
+from grscheller.datastructures.nodes import SL_Node as SL
+from grscheller.datastructures.nodes import DL_Node as DL
 
 class Test_SL_Node:
     def test_bool(self) -> None:

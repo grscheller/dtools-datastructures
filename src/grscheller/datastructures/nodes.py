@@ -12,8 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Node classes used with graph-like data structures."""
+"""
+### Nodes for Graphs
 
+Node classes used with graph-like data structures.
+
+* designed to be "tinker-toyed" together in a variety of ways
+* passive data structures manipulated by the classes containing them
+
+"""
 from __future__ import annotations
 from typing import Generic, Optional, TypeVar
 
@@ -22,9 +29,13 @@ __all__ = ['SL_Node', 'DL_Node']
 T = TypeVar('T')
 
 class SL_Node(Generic[T]):
-    """Class for singularly link nodes for graph-like data structures.
+    """
+    #### Singularly Linked Node
+
+    Class implements singularly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
+      * in a Boolean context always returns true
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
 
@@ -36,22 +47,19 @@ class SL_Node(Generic[T]):
         self._next = next
 
     def __bool__(self) -> bool:
-        """Singularly linked nodes always contain data.
-
-        * always returns true
-        * this type of node always contain data, even if that data is None
-
-        """
         return True
 
 class DL_Node(Generic[T]):
-    """Class for doubly link nodes for graph-like data structures.
+    """
+    #### Doubly Linked Node
+
+    Class implements doubly linked nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
-    * more than one node can point to the same node forming bush like graphs
-    * circular graphs are possible
-    * doubly link lists possible
+      * in a Boolean context always returns true
     * recursive binary trees possible
+    * doubly link lists possible
+    * circular graphs are possible
 
     """
     __slots__ = '_data', '_left', '_right'
@@ -62,10 +70,4 @@ class DL_Node(Generic[T]):
         self._right = right
 
     def __bool__(self) -> bool:
-        """Doubly linked nodes always contain data.
-
-        * always returns true
-        * this type of node always contain data, even if that data is None
-
-        """
         return True

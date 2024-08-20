@@ -28,15 +28,15 @@ from __future__ import annotations
 from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
 from grscheller.fp.iterables import FM, concat, exhaust, merge
 from grscheller.fp.nada import Nada, nada
-from .core.nodes import SL_Node as Node
+from .nodes import SL_Node as Node
 
 __all__ = ['SplitEnd']
 
-_D = TypeVar('_D')
-_S = TypeVar('_S')
-_T = TypeVar('_T')
+D = TypeVar('D')
+S = TypeVar('S')
+T = TypeVar('T')
 
-class SplitEnd(Generic[_D, _S]):
+class SplitEnd(Generic[D, S]):
     """
     #### SplitEnd
     
@@ -54,30 +54,30 @@ class SplitEnd(Generic[_D, _S]):
     __slots__ = '_head', '_count', '_sentinel'
 
     @overload
-    def __init__(self, *ds: _D, s: _S) -> None:
+    def __init__(self, *ds: D, s: S) -> None:
         ...
     @overload
-    def __init__(self, *ds: _D, s: Nada) -> None:
+    def __init__(self, *ds: D, s: Nada) -> None:
         ...
     @overload
-    def __init__(self, *ds: _D) -> None:
+    def __init__(self, *ds: D) -> None:
         ...
-    def __init__(self, *ds: _D, s: _S|Nada=nada) -> None:
-        self._head: Optional[Node[_D]] = None
+    def __init__(self, *ds: D, s: S|Nada=nada) -> None:
+        self._head: Optional[Node[D]] = None
         self._count: int = 0
         self._sentinel = s
         for d in ds:
-            node: Node[_D] = Node(d, self._head)
+            node: Node[D] = Node(d, self._head)
             self._head = node
             self._count += 1
 
-    def __iter__(self) -> Iterator[_D]:
+    def __iter__(self) -> Iterator[D]:
         node = self._head
         while node:
             yield node._data
             node = node._next
 
-    def reverse(self) -> SplitEnd[_D, _S]:
+    def reverse(self) -> SplitEnd[D, S]:
         """
         ##### Return a Reversed SplitEnd
 
@@ -90,7 +90,7 @@ class SplitEnd(Generic[_D, _S]):
         """
         return SplitEnd(*self, s=self._sentinel)
 
-    def __reversed__(self) -> Iterator[_D]:
+    def __reversed__(self) -> Iterator[D]:
         return iter(self.reverse())
 
     def __repr__(self) -> str:
@@ -147,18 +147,18 @@ class SplitEnd(Generic[_D, _S]):
             nn -= 1
         return True
 
-    def copy(self) -> SplitEnd[_D, _S]:
+    def copy(self) -> SplitEnd[D, S]:
         """
         ##### Shallow Copy
 
         Return a swallow copy of the SplitEnd in O(1) space & time complexity.
 
         """
-        stack: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
+        stack: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
         stack._head, stack._count = self._head, self._count
         return stack
 
-    def push(self, *ds: _D) -> None:
+    def push(self, *ds: D) -> None:
         """
         ##### Push Data
 
@@ -173,12 +173,12 @@ class SplitEnd(Generic[_D, _S]):
                 self._head, self._count = node, self._count+1
 
     @overload
-    def pop(self, default: _D) -> _D|_S:
+    def pop(self, default: D) -> D|S:
         ...
     @overload
-    def pop(self) -> _D|_S:
+    def pop(self) -> D|S:
         ...
-    def pop(self, default: _D|Nada=nada) -> _D|_S|Nada:
+    def pop(self, default: D|Nada=nada) -> D|S|Nada:
         """
         ##### Pop Data
 
@@ -199,12 +199,12 @@ class SplitEnd(Generic[_D, _S]):
             return data
 
     @overload
-    def peak(self, default: _D) -> _D:
+    def peak(self, default: D) -> D:
         ...
     @overload
-    def peak(self) -> _D|_S:
+    def peak(self) -> D|S:
         ...
-    def peak(self, default: _D|Nada=nada) -> _D|_S|Nada:
+    def peak(self, default: D|Nada=nada) -> D|S|Nada:
         """
         ##### Peak at top of SplitEnd
 
@@ -220,12 +220,12 @@ class SplitEnd(Generic[_D, _S]):
         return self._head._data
 
     @overload
-    def head(self, default: _D|_S) -> _D|_S:
+    def head(self, default: D|S) -> D|S:
         ...
     @overload
-    def head(self) -> _D|_S:
+    def head(self) -> D|S:
         ...
-    def head(self, default: _D|_S|Nada=nada) -> _D|_S|Nada:
+    def head(self, default: D|S|Nada=nada) -> D|S|Nada:
         """
         ##### Head of SplitEnd
 
@@ -246,12 +246,12 @@ class SplitEnd(Generic[_D, _S]):
         return self._head._data
 
     @overload
-    def tail(self, default: _S) -> SplitEnd[_D, _S]|_S:
+    def tail(self, default: S) -> SplitEnd[D, S]|S:
         ...
     @overload
-    def tail(self) -> SplitEnd[_D, _S]|_S:
+    def tail(self) -> SplitEnd[D, S]|S:
         ...
-    def tail(self, default: _S|Nada=nada) -> SplitEnd[_D, _S]|_S|Nada:
+    def tail(self, default: S|Nada=nada) -> SplitEnd[D, S]|S|Nada:
         """
         ##### Tail of SplitEnd
         
@@ -272,7 +272,7 @@ class SplitEnd(Generic[_D, _S]):
 
         """
         if self._head:
-            se: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
+            se: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
             se._head = self._head._next
             se._count = self._count - 1
             return se
@@ -280,12 +280,12 @@ class SplitEnd(Generic[_D, _S]):
             return default
 
     @overload
-    def cons(self, d: _D) -> SplitEnd[_D, _S]: 
+    def cons(self, d: D) -> SplitEnd[D, S]: 
         ...
     @overload
     def cons(self, d: Nada) -> Nada: 
         ...
-    def cons(self, d: _D|Nada) -> SplitEnd[_D, _S]|Nada:
+    def cons(self, d: D|Nada) -> SplitEnd[D, S]|Nada:
         """
         ##### Cons SplitEnd with a Head
 
@@ -298,12 +298,12 @@ class SplitEnd(Generic[_D, _S]):
         if d is nada:
             return nada
         else:
-            stack: SplitEnd[_D, _S] = SplitEnd(s=self._sentinel)
-            stack._head = Node(cast(_D, d), self._head)
+            stack: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
+            stack._head = Node(cast(D, d), self._head)
             stack._count = self._count + 1
             return stack
 
-    def fold(self, f:Callable[[_D, _D], _D]) -> Optional[_D]:
+    def fold(self, f:Callable[[D, D], D]) -> Optional[D]:
         """
         ##### Reduce with `f`
 
@@ -313,35 +313,35 @@ class SplitEnd(Generic[_D, _S]):
         * TODO: consolidate fold & fold1
 
         """
-        node: Optional[Node[_D]] = self._head
+        node: Optional[Node[D]] = self._head
         if not node:
             return None
-        acc: _D = node._data
+        acc: D = node._data
         while node:
             if (node := node._next) is None:
                 break
             acc = f(acc, node._data)
         return acc
 
-    def fold1(self, f:Callable[[_T, _D], _T], s: _T) -> _T:
+    def fold1(self, f:Callable[[T, D], T], s: T) -> T:
         """Reduce with f.
 
-        * returns a value of type _T
-        * type _T can be same type as _D
+        * returns a value of type ~T
+        * type ~T can be same type as ~D
         * folds in natural LIFO Order
         * TODO: consolidate fold & fold1
 
         """
-        node: Optional[Node[_D]] = self._head
+        node: Optional[Node[D]] = self._head
         if not node:
             return s
-        acc: _T = s
+        acc: T = s
         while node:
             acc = f(acc, node._data)
             node = node._next
         return acc
 
-    def flatMap(self, f: Callable[[_D], SplitEnd[_T, _S]], type: FM=FM.CONCAT) -> SplitEnd[_T, _S]:
+    def flatMap(self, f: Callable[[D], SplitEnd[T, S]], type: FM=FM.CONCAT) -> SplitEnd[T, S]:
         """
         ##### Bind function to SplitEnd
 
@@ -362,7 +362,7 @@ class SplitEnd(Generic[_D, _S]):
             case '*':
                 raise ValueError('Unknown FM type')
 
-    def map(self, f: Callable[[_D], _T]) -> SplitEnd[_T, _S]:
+    def map(self, f: Callable[[D], T]) -> SplitEnd[T, S]:
         """
         ##### Map `f` over the SplitEnd
 
