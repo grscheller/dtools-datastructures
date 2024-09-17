@@ -42,6 +42,14 @@ class QueueBase(Generic[D, S]):
     """
     #### Base class for queues
 
+    ##### Base class for queues
+
+    ###### Base class for queues
+
+    *Base class for queues*
+
+    **Base class for queues**
+
     * primarily for DRY implementation inheritance
     * each queue object "has-a" (contains) a circular array to store its data
     * len() returns the current number of elements in the queue
