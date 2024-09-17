@@ -150,6 +150,14 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.queue
 <li>implemented in a "has-a" relationship with a Python list based circular array</li>
 <li>these data structures will resize themselves larger as needed</li>
 </ul>
+
+<h5 id="queue-types">Queue types:</h5>
+
+<ul>
+<li><strong>FIFOQueue:</strong> First-In-First-Out Queue</li>
+<li><strong>LIFOQueue:</strong> Last-In-First-Out Queue</li>
+<li><strong>DoubleQueue:</strong> Double-Ended Queue</li>
+</ul>
 </div>
 
                         <input id="mod-queues-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -178,35 +186,35 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.queue
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">* implemented in a &quot;has-a&quot; relationship with a Python list based circular array</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">* these data structures will resize themselves larger as needed</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">##### Queue types:</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">TypeVar</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">overload</span><span class="p">,</span> <span class="n">cast</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="kn">from</span> <span class="nn">grscheller.circular_array.ca</span> <span class="kn">import</span> <span class="n">CA</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span> <span class="nn">grscheller.fp.woException</span> <span class="kn">import</span> <span class="n">MB</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;DoubleQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;FIFOQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;LIFOQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;QueueBase&#39;</span> <span class="p">]</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="n">D</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="n">S</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="n">U</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">)</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="n">V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="n">L</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="n">R</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="k">class</span> <span class="nc">QueueBase</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">]):</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    #### Base class</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    Primarily for DRY inheritance.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">* **FIFOQueue:** First-In-First-Out Queue</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">* **LIFOQueue:** Last-In-First-Out Queue</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">* **DoubleQueue:** Double-Ended Queue</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">overload</span><span class="p">,</span> <span class="n">cast</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="kn">from</span> <span class="nn">grscheller.circular_array.ca</span> <span class="kn">import</span> <span class="n">CA</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="kn">from</span> <span class="nn">grscheller.fp.woException</span> <span class="kn">import</span> <span class="n">MB</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;DoubleQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;FIFOQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;LIFOQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;QueueBase&#39;</span> <span class="p">]</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="n">D</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="n">S</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="n">U</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;U&#39;</span><span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="n">V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="n">L</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="n">R</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">)</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    * each type of queue contains (has-a) a circular array based data structure</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    * each queue type limits grscheller.circular_array.ca capability</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    * len() returns the current number of elements in the queue</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">    * in a boolean context, returns true if not empty</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    * resizes itself larger as needed</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="k">class</span> <span class="nc">QueueBase</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">]):</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">    #### Base class</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    Primarily for DRY inheritance.</span>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_ca&#39;</span><span class="p">,</span> <span class="s1">&#39;_sentinel&#39;</span>
@@ -1823,17 +1831,11 @@ original order.</p>
 
     </div>
     <a class="headerlink" href="#QueueBase"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="QueueBase-42"><a href="#QueueBase-42"><span class="linenos">42</span></a><span class="k">class</span> <span class="nc">QueueBase</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">]):</span>
-</span><span id="QueueBase-43"><a href="#QueueBase-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="QueueBase-44"><a href="#QueueBase-44"><span class="linenos">44</span></a><span class="sd">    #### Base class</span>
-</span><span id="QueueBase-45"><a href="#QueueBase-45"><span class="linenos">45</span></a>
-</span><span id="QueueBase-46"><a href="#QueueBase-46"><span class="linenos">46</span></a><span class="sd">    Primarily for DRY inheritance.</span>
-</span><span id="QueueBase-47"><a href="#QueueBase-47"><span class="linenos">47</span></a>
-</span><span id="QueueBase-48"><a href="#QueueBase-48"><span class="linenos">48</span></a><span class="sd">    * each type of queue contains (has-a) a circular array based data structure</span>
-</span><span id="QueueBase-49"><a href="#QueueBase-49"><span class="linenos">49</span></a><span class="sd">    * each queue type limits grscheller.circular_array.ca capability</span>
-</span><span id="QueueBase-50"><a href="#QueueBase-50"><span class="linenos">50</span></a><span class="sd">    * len() returns the current number of elements in the queue</span>
-</span><span id="QueueBase-51"><a href="#QueueBase-51"><span class="linenos">51</span></a><span class="sd">    * in a boolean context, returns true if not empty</span>
-</span><span id="QueueBase-52"><a href="#QueueBase-52"><span class="linenos">52</span></a><span class="sd">    * resizes itself larger as needed</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="QueueBase-48"><a href="#QueueBase-48"><span class="linenos">48</span></a><span class="k">class</span> <span class="nc">QueueBase</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">S</span><span class="p">]):</span>
+</span><span id="QueueBase-49"><a href="#QueueBase-49"><span class="linenos">49</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="QueueBase-50"><a href="#QueueBase-50"><span class="linenos">50</span></a><span class="sd">    #### Base class</span>
+</span><span id="QueueBase-51"><a href="#QueueBase-51"><span class="linenos">51</span></a>
+</span><span id="QueueBase-52"><a href="#QueueBase-52"><span class="linenos">52</span></a><span class="sd">    Primarily for DRY inheritance.</span>
 </span><span id="QueueBase-53"><a href="#QueueBase-53"><span class="linenos">53</span></a>
 </span><span id="QueueBase-54"><a href="#QueueBase-54"><span class="linenos">54</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="QueueBase-55"><a href="#QueueBase-55"><span class="linenos">55</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_ca&#39;</span><span class="p">,</span> <span class="s1">&#39;_sentinel&#39;</span>
@@ -1864,14 +1866,6 @@ original order.</p>
             <div class="docstring"><h4 id="base-class">Base class</h4>
 
 <p>Primarily for DRY inheritance.</p>
-
-<ul>
-<li>each type of queue contains (has-a) a circular array based data structure</li>
-<li>each queue type limits grscheller.circular_array.ca capability</li>
-<li>len() returns the current number of elements in the queue</li>
-<li>in a boolean context, returns true if not empty</li>
-<li>resizes itself larger as needed</li>
-</ul>
 </div>
 
 

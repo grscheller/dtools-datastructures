@@ -13,43 +13,48 @@
 # limitations under the License.
 
 """
-### Functional Tuple
+### Tuple based datastructures:
 
-##### FTuple
+Tuple-like object with FP behaviors.
 
-Immutable Tuple-like data structure with a functional interfaces.
+##### Tuple Types
 
----
+* **FTuple:** Tuple-like object with FP behaviors
 
 """
 
 from __future__ import annotations
 
-from enum import auto, Enum
-from typing import Callable, Iterator, Generic, Optional, TypeVar
+from typing import Callable, cast, Iterator, Generic, Optional, TypeVar
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple']
 
+D = TypeVar('D')
 T = TypeVar('T')
-S = TypeVar('S')
+R = TypeVar('R')
+L = TypeVar('L')
 
-class FTuple(Generic[T]):
+class FTuple(Generic[D]):
     """
-    #### Class FTuple
+    #### Functional Tuple
 
-    Implements a Tuple-like object with FP behaviors.
+    * immutable tuple-like data structure with a functional interface
+    * supports both indexing and slicing
+    * FTuple addition & int multiplication supported
+      * addition concatenates results, types must agree
+      * both left and right multiplication supported
 
     """
     __slots__ = '_ds'
 
-    def __init__(self, *ds: T):
+    def __init__(self, *ds: D):
         self._ds = ds
 
-    def __iter__(self) -> Iterator[T]:
+    def __iter__(self) -> Iterator[D]:
         return iter(self._ds)
 
-    def __reversed__(self) -> Iterator[T]:
+    def __reversed__(self) -> Iterator[D]:
         return reversed(self._ds)
 
     def __bool__(self) -> bool:
@@ -69,8 +74,7 @@ class FTuple(Generic[T]):
             return False
         return self._ds == other._ds
 
-    def __getitem__(self, sl: slice|int) -> FTuple[T]|Optional[T]:
-        """Supports both indexing and slicing."""
+    def __getitem__(self, sl: slice|int) -> FTuple[D]|Optional[D]:
         if isinstance(sl, slice):
             return FTuple(*self._ds[sl])
         try:
@@ -79,83 +83,82 @@ class FTuple(Generic[T]):
             item = None
         return item
 
-    def foldL(self, f: Callable[[S, T], S], start: Optional[S]=None, default: Optional[S]=None) -> S:
+    def foldL(self,
+              f: Callable[[L, D], L],
+              start: Optional[L]=None,
+              default: Optional[L]=None) -> Optional[L]:
         """
-        ##### Fold Left
+        **Fold Left**
 
         * fold left with an optional starting value
-        * first argument of function f is for the accumulated value
-        * if empty, return `start` if given, otherwise raise ValueError
+        * first argument of function `f` is for the accumulated value
+        * throws `ValueError` when FTuple empty and a start value not given
 
         """
         it = iter(self._ds)
         if start is not None:
             acc = start
-        elif not self:
+        elif self:
+            acc = cast(L, next(it))  # L = D in this case
+        else:
             if default is None:
                 msg = 'Both start and default cannot be None for an empty FTuple'
                 raise ValueError('FTuple.foldL - ' + msg)
             acc = default
-        else:
-            acc = next(it)                # type: ignore # in this case _S == _T
         for v in it:
             acc = f(acc, v)
         return acc
 
-    def foldR(self, f: Callable[[T, S], S], start: Optional[S]=None, default: Optional[S]=None) -> S:
+    def foldR(self,
+              f: Callable[[D, R], R],
+              start: Optional[R]=None,
+              default: Optional[R]=None) -> Optional[R]:
         """
-        ##### Fold Right
+        **Fold Right**
 
         * fold right with an optional starting value
-        * second argument of function f is for the accumulated value
-        * if empty, return `start` if given, otherwise raise ValueError
+        * second argument of function `f` is for the accumulated value
+        * throws `ValueError` when FTuple empty and a start value not given
 
         """
         it = reversed(self._ds)
         if start is not None:
             acc = start
-        elif not self:
+        elif self:
+            acc = cast(R, next(it))  # R = D in this case
+        else:
             if default is None:
                 msg = 'Both start and default cannot be None for an empty FTuple'
                 raise ValueError('FTuple.foldR - ' + msg)
             acc = default
-        else:
-            acc = next(it)                # type: ignore # in this case _S == _T
         for v in it:
             acc = f(v, acc)
         return acc
 
-    def copy(self) -> FTuple[T]:
+    def copy(self) -> FTuple[D]:
         """
-        ##### Shallow Copy
+        **Copy**
 
-        Return shallow copy of the FTuple in O(1) time & space complexity.
+        Return a shallow copy of the FTuple in O(1) time & space complexity.
 
         """
         return FTuple(*self)
 
-    def map(self, f: Callable[[T], S]) -> FTuple[S]:
+    def map(self, f: Callable[[D], T]) -> FTuple[T]:
         return FTuple(*map(f, self))
 
-    def __add__(self, other: FTuple[T]) -> FTuple[T]:
-        """
-        ##### Concatenate two FTuples
-
-        """
+    def __add__(self, other: FTuple[D]) -> FTuple[D]:
         return FTuple(*concat(iter(self), other))
 
-    def __mul__(self, num: int) -> FTuple[T]:
-        """
-        ##### Mult by int
-
-        Return an FTuple which repeats another FTuple num times.
-
-        """
+    def __mul__(self, num: int) -> FTuple[D]:
         return FTuple(*self._ds.__mul__(num if num > 0 else 0))
 
-    def accummulate(self, f: Callable[[S, T], S], s: Optional[S]=None) -> FTuple[S]:
+    def __rmul__(self, num: int) -> FTuple[D]:
+        return FTuple(*self._ds.__mul__(num if num > 0 else 0))
+
+    def accummulate(self, f: Callable[[L, D], L], s: Optional[L]=None) -> FTuple[L]:
         """
-        ##### Accumulate
+        **Accumulate partial folds**
 
         Accumulate partial fold results in an FTuple with an optional starting value.
 
@@ -165,9 +168,9 @@ class FTuple(Generic[T]):
         else:
             return FTuple(*accumulate(self, f, s))
 
-    def flatMap(self, f: Callable[[T], FTuple[S]], type: FM=FM.CONCAT) -> FTuple[S]:
+    def flatMap(self, f: Callable[[D], FTuple[T]], type: FM=FM.CONCAT) -> FTuple[T]:
         """
-        ##### Bind function to FTuple
+        **Bind function to FTuple**
 
         Bind function `f` to the FTuple.
 
@@ -185,4 +188,3 @@ class FTuple(Generic[T]):
                 return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))
             case '*':
                 raise ValueError('Unknown FM type')
-

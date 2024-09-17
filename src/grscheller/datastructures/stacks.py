@@ -15,9 +15,9 @@
 """
 ### Stack type Data Structures
 
-##### SplitEnd
+##### Stack types:
 
-LIFO stacks which can safely share immutable data between themselves.
+* **SplitEnd:** Singularly linked stack with shareable data nodes
 
 ---
 
@@ -39,8 +39,8 @@ T = TypeVar('T')
 class SplitEnd(Generic[D, S]):
     """
     #### SplitEnd
-    
-    Class implementing a stack type data structures called a *split end*.
+
+    LIFO stacks which can safely share immutable data between themselves.
 
     * each *split end* is a very simple stateful LIFO stack
     * contains a count of nodes & reference to first node of a linked list
@@ -79,13 +79,13 @@ class SplitEnd(Generic[D, S]):
 
     def reverse(self) -> SplitEnd[D, S]:
         """
-        ##### Return a Reversed SplitEnd
+        **Reversed SplitEnd**
 
         Return shallow reversed copy of a SplitEnd.
 
         * Returns a new Stack object with shallow copied new data
         * creates all new nodes
-        * O(1) space & time complexity
+        * O(n) space & time complexity
 
         """
         return SplitEnd(*self, s=self._sentinel)
@@ -106,7 +106,6 @@ class SplitEnd(Generic[D, S]):
 
 
     def __str__(self) -> str:
-        """Display the data in the Stack, left to right."""
         if self._sentinel is nada:
             return ('>< '
                     + ' -> '.join(map(str, self))
@@ -149,7 +148,7 @@ class SplitEnd(Generic[D, S]):
 
     def copy(self) -> SplitEnd[D, S]:
         """
-        ##### Shallow Copy
+        **Shallow Copy**
 
         Return a swallow copy of the SplitEnd in O(1) space & time complexity.
 
@@ -160,11 +159,10 @@ class SplitEnd(Generic[D, S]):
 
     def push(self, *ds: D) -> None:
         """
-        ##### Push Data
+        **Push Data**
 
-        Push data onto top of the SplitEnd.
-
-        * ignore "non-existent" Nothing() values pushed on the SplitEnd
+        Push data onto top of the SplitEnd. Ignores "non-existent" Nada()
+        values pushed on the stack.
 
         """
         for d in ds:
@@ -173,14 +171,12 @@ class SplitEnd(Generic[D, S]):
                 self._head, self._count = node, self._count+1
 
     @overload
-    def pop(self, default: D) -> D|S:
-        ...
+    def pop(self, default: D) -> D|S: ...
     @overload
-    def pop(self) -> D|S:
-        ...
+    def pop(self) -> D|S: ...
     def pop(self, default: D|Nada=nada) -> D|S|Nada:
         """
-        ##### Pop Data
+        **Pop Data**
 
         Pop data off of the top of the SplitEnd.
 
@@ -199,20 +195,18 @@ class SplitEnd(Generic[D, S]):
             return data
 
     @overload
-    def peak(self, default: D) -> D:
-        ...
+    def peak(self, default: D) -> D: ...
     @overload
-    def peak(self) -> D|S:
-        ...
+    def peak(self) -> D|S: ...
     def peak(self, default: D|Nada=nada) -> D|S|Nada:
         """
-        ##### Peak at top of SplitEnd
+        **Peak at top of stack**
 
         Returns the data at the top of the SplitEnd.
 
         * does not consume the data
         * if empty, data does not exist, so in that case return default
-        * if empty and no default given, return nothing: Nothing
+        * if empty and no default given, return nada: Nada
 
         """
         if self._head is None:
@@ -220,11 +214,9 @@ class SplitEnd(Generic[D, S]):
         return self._head._data
 
     @overload
-    def head(self, default: D|S) -> D|S:
-        ...
+    def head(self, default: D|S) -> D|S: ...
     @overload
-    def head(self) -> D|S:
-        ...
+    def head(self) -> D|S: ...
     def head(self, default: D|S|Nada=nada) -> D|S|Nada:
         """
         ##### Head of SplitEnd
@@ -246,15 +238,13 @@ class SplitEnd(Generic[D, S]):
         return self._head._data
 
     @overload
-    def tail(self, default: S) -> SplitEnd[D, S]|S:
-        ...
+    def tail(self, default: S) -> SplitEnd[D, S]|S: ...
     @overload
-    def tail(self) -> SplitEnd[D, S]|S:
-        ...
+    def tail(self) -> SplitEnd[D, S]|S: ...
     def tail(self, default: S|Nada=nada) -> SplitEnd[D, S]|S|Nada:
         """
-        ##### Tail of SplitEnd
-        
+        **Tail of SplitEnd**
+
         Returns the tail of the SplitEnd if it exists, otherwise returns the
         sentinel value, or a default value of the same type as the sentinel
         value.
@@ -280,14 +270,14 @@ class SplitEnd(Generic[D, S]):
             return default
 
     @overload
-    def cons(self, d: D) -> SplitEnd[D, S]: 
+    def cons(self, d: D) -> SplitEnd[D, S]:
         ...
     @overload
-    def cons(self, d: Nada) -> Nada: 
+    def cons(self, d: Nada) -> Nada:
         ...
     def cons(self, d: D|Nada) -> SplitEnd[D, S]|Nada:
         """
-        ##### Cons SplitEnd with a Head
+        **Cons SplitEnd with a Head**
 
         Return a new SplitEnd with data as head and self as tail.
 
@@ -305,7 +295,7 @@ class SplitEnd(Generic[D, S]):
 
     def fold(self, f:Callable[[D, D], D]) -> Optional[D]:
         """
-        ##### Reduce with `f`
+        **Reduce with f**
 
         * returns a value of the of type _T if self is not empty
         * returns None if self is empty
@@ -324,7 +314,8 @@ class SplitEnd(Generic[D, S]):
         return acc
 
     def fold1(self, f:Callable[[T, D], T], s: T) -> T:
-        """Reduce with f.
+        """
+        **Reduce with f**
 
         * returns a value of type ~T
         * type ~T can be same type as ~D
@@ -343,7 +334,7 @@ class SplitEnd(Generic[D, S]):
 
     def flatMap(self, f: Callable[[D], SplitEnd[T, S]], type: FM=FM.CONCAT) -> SplitEnd[T, S]:
         """
-        ##### Bind function to SplitEnd
+        **Bind function to SplitEnd**
 
         Bind function `f` to the SplitEnd.
 
@@ -364,7 +355,7 @@ class SplitEnd(Generic[D, S]):
 
     def map(self, f: Callable[[D], T]) -> SplitEnd[T, S]:
         """
-        ##### Map `f` over the SplitEnd
+        **Map f over the SplitEnd**
 
         Maps a function (or callable object) over the values on the SplitEnd Stack.
 

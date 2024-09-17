@@ -16,7 +16,7 @@ from __future__ import annotations
 from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
-from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
+from grscheller.datastructures.stacks import SplitEnd, SplitEnd as SE
 from grscheller.fp.iterables import FM
 from grscheller.fp.nada import Nada, nada
 

@@ -20,6 +20,12 @@
 * implemented in a "has-a" relationship with a Python list based circular array
 * these data structures will resize themselves larger as needed
 
+##### Queue types:
+
+* **FIFOQueue:** First-In-First-Out Queue
+* **LIFOQueue:** Last-In-First-Out Queue
+* **DoubleQueue:** Double-Ended Queue
+
 """
 
 from __future__ import annotations
@@ -43,12 +49,6 @@ class QueueBase(Generic[D, S]):
     #### Base class
 
     Primarily for DRY inheritance.
-
-    * each type of queue contains (has-a) a circular array based data structure
-    * each queue type limits grscheller.circular_array.ca capability
-    * len() returns the current number of elements in the queue
-    * in a boolean context, returns true if not empty
-    * resizes itself larger as needed
 
     """
     __slots__ = '_ca', '_sentinel'

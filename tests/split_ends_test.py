@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.split_ends import SplitEnd, SplitEnd as SE
+from grscheller.datastructures.stacks import SplitEnd, SplitEnd as SE
 from grscheller.fp.iterables import concat, FM
 from grscheller.fp.nada import Nada, nada
 
