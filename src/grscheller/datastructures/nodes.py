@@ -18,7 +18,7 @@
 Node classes used with graph-like data structures.
 
 * designed to be "tinker-toyed" together in a variety of ways
-* passive data structures manipulated by the classes containing them
+* passive data structures manipulated by the classes which contain them
 
 """
 from __future__ import annotations
@@ -30,12 +30,13 @@ T = TypeVar('T')
 
 class SL_Node(Generic[T]):
     """
-    #### Singularly Linked Node
+    **Singularly Linked Node^^
 
     Class implements singularly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
       * in a Boolean context always returns true
+      * "falsy" sentinels like `None` or `()` can be used to terminate
     * more than one node can point to the same node forming bush like graphs
     * circular graphs are possible
 
@@ -51,12 +52,13 @@ class SL_Node(Generic[T]):
 
 class DL_Node(Generic[T]):
     """
-    #### Doubly Linked Node
+    **Doubly Linked Node**
 
     Class implements doubly linked nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
       * in a Boolean context always returns true
+      * "falsy" sentinels like `None` or `()` can be used to terminate
     * recursive binary trees possible
     * doubly link lists possible
     * circular graphs are possible

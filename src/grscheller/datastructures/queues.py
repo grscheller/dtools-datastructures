@@ -326,7 +326,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def popL(self) -> D|S:
         """
-        **Pop Left**
+        **Pop Data from Left**
 
         Pop data off front (left side) of DoubleQueue. Return sentinel value if
         queue is empty.
@@ -339,7 +339,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def popR(self) -> D|S:
         """
-        **Pop Right**
+        **Pop Data from Right**
 
         Pop data off rear (right side) of DoubleQueue. Return sentinel value if
         queue is empty.
