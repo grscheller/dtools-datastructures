@@ -18,7 +18,7 @@
 * stateful queue data structures with amortized O(1) pushes and pops each end
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented in a "has-a" relationship with a Python list based circular array
-* these data structures will resize themselves as needed
+* these data structures will resize themselves larger as needed
 
 """
 
@@ -40,20 +40,15 @@ R = TypeVar('R')
 
 class QueueBase(Generic[D, S]):
     """
-    #### Base class for queues
+    **Base class**
 
-    ##### Base class for queues
+    Primarily for DRY inheritance.
 
-    ###### Base class for queues
-
-    *Base class for queues*
-
-    **Base class for queues**
-
-    * primarily for DRY implementation inheritance
-    * each queue object "has-a" (contains) a circular array to store its data
+    * each type of queue contains (has-a) a circular array based data structure
+    * each queue type limits grscheller.circular_array.ca capability
     * len() returns the current number of elements in the queue
     * in a boolean context, returns true if not empty
+    * resizes itself larger as needed
 
     """
     __slots__ = '_ca', '_sentinel'
@@ -81,11 +76,11 @@ class QueueBase(Generic[D, S]):
 
 class FIFOQueue(QueueBase[D, S]):
     """
-    #### FIFO Queue
+    **FIFO Queue**
 
-    * stateful First In First Out (FIFO) data structure.
-    * will resize itself larger as needed
-    * initial data pushed on in natural FIFO order
+    Stateful First-In-First-Out (FIFO) data structure. Initial data pushed on in
+    natural FIFO order.
+
     """
     __slots__ = ()
 
@@ -94,7 +89,7 @@ class FIFOQueue(QueueBase[D, S]):
 
     def copy(self) -> FIFOQueue[D, S]:
         """
-        ##### FIFOQueue Copy
+        **Copy FIFO Queue**
 
         Return shallow copy of the FIFOQueue.
 
@@ -106,18 +101,20 @@ class FIFOQueue(QueueBase[D, S]):
 
     def push(self, *ds: D) -> None:
         """
-        ##### Push Data
+        **Push Data**
 
-        Push data onto FIFOQueue. Like Python list, does not return
+        Push data onto queue in FIFO order. Like a Python list, does not return
         a reference to itself.
+
         """
         self._ca.pushR(*ds)
 
     def pop(self) -> D|S:
         """
-        ##### Pop Data
+        **Pop Data**
 
-        Pop data off of FIFOQueue. Return sentinel value if queue is empty.
+        Pop data off of FIFOQueue. Return the sentinel value if queue is empty.
+
         """
         if self._ca:
             return self._ca.popL()
@@ -126,7 +123,7 @@ class FIFOQueue(QueueBase[D, S]):
 
     def peak_last_in(self) -> D|S:
         """
-        ### Peak Last In
+        **Peak Last In**
 
         Without consuming it, if it is still in the queue, return last element
         pushed. If queue empty, return sentinel value.
@@ -138,10 +135,11 @@ class FIFOQueue(QueueBase[D, S]):
 
     def peak_next_out(self) -> D|S:
         """
-        ### Peak Next Out
+        **Peak Next Out**
 
         Without consuming it, if the queue is not empty, return the next item
         ready to be popped. Otherwise, return sentinel value.
+
         """
         if self._ca:
             return self._ca[0]
@@ -149,21 +147,16 @@ class FIFOQueue(QueueBase[D, S]):
             return self._sentinel
 
     @overload
-    def fold(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S:
-        ...
+    def fold(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S: ...
     @overload
-    def fold(self, f: Callable[[D, D], D]) -> D|S:
-        ...
+    def fold(self, f: Callable[[D, D], D]) -> D|S: ...
     @overload
-    def fold(self, f: Callable[[L, D], L], initial: L) -> L:
-        ...
+    def fold(self, f: Callable[[L, D], L], initial: L) -> L: ...
     @overload
-    def fold(self, f: Callable[[D, D], D], initial: D) -> D:
-        ...
-
+    def fold(self, f: Callable[[D, D], D], initial: D) -> D: ...
     def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L|S:
         """
-        ##### Fold in FIFO Order
+        **Fold in FIFO Order**
 
         * reduce with `f` using an optional initial value
         * folds in natural FIFO Order (oldest to newest)
@@ -180,7 +173,7 @@ class FIFOQueue(QueueBase[D, S]):
 
     def map(self, f: Callable[[D], U]) -> FIFOQueue[U, S]:
         """
-        ##### Map FIFOQueue
+        **Map Over FIFOQueue**
 
         Map the function `f` over the FIFOQueue, oldest to newest. Retain
         original order.
@@ -190,11 +183,10 @@ class FIFOQueue(QueueBase[D, S]):
 
 class LIFOQueue(QueueBase[D, S]):
     """
-    #### LIFO Queue
+    **LIFO Queue**
 
-    * Last In First Out (LIFO) stateful queue data structure.
-    * will resize itself larger as needed
-    * initial data pushed on in natural LIFO order
+    Stateful Last-In-First-Out (LIFO) data structure. Initial data pushed on in
+    natural LIFO order.
 
     """
     __slots__ = ()
@@ -204,9 +196,10 @@ class LIFOQueue(QueueBase[D, S]):
 
     def copy(self) -> LIFOQueue[D, S]:
         """
-        ##### LIFOQueue Copy
+        **Copy LIFO Queue**
 
         Return shallow copy of the LIFOQueue.
+
         """
         return LIFOQueue(*reversed(self._ca), s=self._sentinel)
 
@@ -215,18 +208,20 @@ class LIFOQueue(QueueBase[D, S]):
 
     def push(self, *ds: D) -> None:
         """
-        ##### Push Data
+        **Push Data**
 
-        Push data on LIFOQueue. Like Python list, does not return
+        Push data onto queue in LIFO order. Like a Python list, does not return
         a reference to itself.
+
         """
         self._ca.pushR(*ds)
 
     def pop(self) -> D|S:
         """
-        ##### Pop LIFO Queue
+        **Pop Data**
 
-        Pop data off of LIFOQueue. Return sentinel value if queue is empty.
+        Pop data off of LIFOQueue. Return the sentinel value if queue is empty.
+
         """
         if self._ca:
             return self._ca.popR()
@@ -235,7 +230,7 @@ class LIFOQueue(QueueBase[D, S]):
 
     def peak(self) -> D|S:
         """
-        ##### Peak Next Out
+        **Peak Next Out/Last In**
 
         Without consuming it, if the queue is not empty, return the next item
         ready to be popped. Otherwise, return sentinel value.
@@ -247,21 +242,16 @@ class LIFOQueue(QueueBase[D, S]):
             return self._sentinel
 
     @overload
-    def fold(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S:
-        ...
+    def fold(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S: ...
     @overload
-    def fold(self, f: Callable[[D, D], D]) -> D|S:
-        ...
+    def fold(self, f: Callable[[D, D], D]) -> D|S: ...
     @overload
-    def fold(self, f: Callable[[D, R], R], initial: R) -> R:
-        ...
+    def fold(self, f: Callable[[D, R], R], initial: R) -> R: ...
     @overload
-    def fold(self, f: Callable[[D, D], D], initial: D) -> D:
-        ...
-
+    def fold(self, f: Callable[[D, D], D], initial: D) -> D: ...
     def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R|S:
         """
-        ##### Fold in LIFO Order
+        **Fold in LIFO Order**
 
         * reduce with `f` using an optional initial value
         * folds in natural LIFO Order (newest to oldest)
@@ -278,7 +268,7 @@ class LIFOQueue(QueueBase[D, S]):
 
     def map(self, f: Callable[[D], U]) -> LIFOQueue[U, S]:
         """
-        ##### Map LIFOQueue
+        **Map Over LIFOQueue**
 
         Map the function `f` over the LIFOQueue, newest to oldest. Retain
         original order.
@@ -288,11 +278,10 @@ class LIFOQueue(QueueBase[D, S]):
 
 class DoubleQueue(QueueBase[D, S]):
     """
-    #### Double Ended Queue
+    **Double Ended Queue**
 
-    * double ended (DQueue) stateful queue data structure.
-    * will resize itself larger as needed
-    * initial data pushed on in natural LIFO order
+    Double-Ended (DEQueue) data structure. Initial data pushed on from front in
+    natural LIFO order.
 
     """
     __slots__ = ()
@@ -308,7 +297,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def copy(self) -> DoubleQueue[D, S]:
         """
-        ##### DoubleQueue Copy
+        **Copy Double Queue**
 
         Return shallow copy of the DoubleQueue.
 
@@ -317,9 +306,9 @@ class DoubleQueue(QueueBase[D, S]):
 
     def pushL(self, *ds: D) -> None:
         """
-        ##### Push Left
+        **Push Data Left**
 
-        Push data onto front (left side) of queue. Like Python list, does not
+        Push data onto front (left side) of queue. Like a Python list, does not
         return a reference to itself.
 
         """
@@ -327,7 +316,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def pushR(self, *ds: D) -> None:
         """
-        ##### Push Right
+        **Push Data Right**
 
         Push data onto rear (right side) of queue. Like Python list, does not
         return a reference to itself.
@@ -337,7 +326,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def popL(self) -> D|S:
         """
-        ##### Pop Left
+        **Pop Left**
 
         Pop data off front (left side) of DoubleQueue. Return sentinel value if
         queue is empty.
@@ -350,7 +339,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def popR(self) -> D|S:
         """
-        ##### Pop Right
+        **Pop Right**
 
         Pop data off rear (right side) of DoubleQueue. Return sentinel value if
         queue is empty.
@@ -363,7 +352,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def peakL(self) -> D|S:
         """
-        ##### Peak Left
+        **Peak Left Side**
 
         Return leftmost element of the DoubleQueue if it exists, otherwise
         return the sentinel value.
@@ -376,7 +365,7 @@ class DoubleQueue(QueueBase[D, S]):
 
     def peakR(self) -> D|S:
         """
-        ##### Peak Right
+        **Peak Right Side**
 
         Return rightmost element of the DoubleQueue if it exists, otherwise
         return the sentinel value.
@@ -388,62 +377,52 @@ class DoubleQueue(QueueBase[D, S]):
             return self._sentinel
 
     @overload
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S:
-        ...
+    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S: ...
     @overload
-    def foldL(self, f: Callable[[D, D], D]) -> D|S:
-        ...
+    def foldL(self, f: Callable[[D, D], D]) -> D|S: ...
     @overload
-    def foldL(self, f: Callable[[L, D], L], initial: L) -> L:
-        ...
+    def foldL(self, f: Callable[[L, D], L], initial: L) -> L: ...
     @overload
-    def foldL(self, f: Callable[[D, D], D], initial: D) -> D:
-        ...
-
+    def foldL(self, f: Callable[[D, D], D], initial: D) -> D: ...
     def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L|S:
         """
-        ##### Fold Left
+        **Fold Left to Right**
 
-        * reduce left with `f` using an optional initial value
+        Reduce left with `f` using an optional initial value.
+
         * note that ~S can be the same type as either ~L or ~D
         * note that when an initial value is not given then ~L = ~D
         * if iterable empty & no initial value given, return a sentinel value of type ~S
         * traditional FP type order given for function f
-        * folds in natural FIFO Order
 
         """
         return self._ca.foldL(f, initial=initial)
 
     @overload
-    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S:
-        ...
+    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S: ...
     @overload
-    def foldR(self, f: Callable[[D, D], D]) -> D|S:
-        ...
+    def foldR(self, f: Callable[[D, D], D]) -> D|S: ...
     @overload
-    def foldR(self, f: Callable[[D, R], R], initial: R) -> R:
-        ...
+    def foldR(self, f: Callable[[D, R], R], initial: R) -> R: ...
     @overload
-    def foldR(self, f: Callable[[D, D], D], initial: D) -> D:
-        ...
-
+    def foldR(self, f: Callable[[D, D], D], initial: D) -> D: ...
     def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R|S:
         """
-        ##### Fold Right
+        **Fold Right to Left**
 
-        * reduce right with `f` using an optional initial value
+        Reduce right with `f` using an optional initial value.
+
         * note that ~S can be the same type as either ~R or ~D
         * note that when an initial value is not given then ~R = ~D
         * if iterable empty & no initial value given, return a sentinel value of type ~S
         * traditional FP type order given for function f
-        * folds in natural FIFO Order
 
         """
         return self._ca.foldR(f, initial=initial)
 
     def map(self, f: Callable[[D], U]) -> DoubleQueue[U, S]:
         """
-        ##### Map DoubleQueue
+        **Map Over DoubleQueue**
 
         Map the function `f` over the DoubleQueue, oldest to newest. Retain
         original order.
