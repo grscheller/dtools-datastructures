@@ -40,7 +40,7 @@ R = TypeVar('R')
 
 class QueueBase(Generic[D, S]):
     """
-    **Base class**
+    #### Base class
 
     Primarily for DRY inheritance.
 
@@ -76,7 +76,7 @@ class QueueBase(Generic[D, S]):
 
 class FIFOQueue(QueueBase[D, S]):
     """
-    **FIFO Queue**
+    #### FIFO Queue
 
     Stateful First-In-First-Out (FIFO) data structure. Initial data pushed on in
     natural FIFO order.
@@ -183,7 +183,7 @@ class FIFOQueue(QueueBase[D, S]):
 
 class LIFOQueue(QueueBase[D, S]):
     """
-    **LIFO Queue**
+    #### LIFO Queue
 
     Stateful Last-In-First-Out (LIFO) data structure. Initial data pushed on in
     natural LIFO order.
@@ -278,7 +278,7 @@ class LIFOQueue(QueueBase[D, S]):
 
 class DoubleQueue(QueueBase[D, S]):
     """
-    **Double Ended Queue**
+    #### Double Ended Queue
 
     Double-Ended (DEQueue) data structure. Initial data pushed on from front in
     natural LIFO order.
