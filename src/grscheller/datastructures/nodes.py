@@ -30,9 +30,9 @@ T = TypeVar('T')
 
 class SL_Node(Generic[T]):
     """
-    **Singularly Linked Node^^
+    #### Singularly Linked Node
 
-    Class implements singularly link nodes for graph-like data structures.
+    Singularly link nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
       * in a Boolean context always returns true
@@ -52,9 +52,9 @@ class SL_Node(Generic[T]):
 
 class DL_Node(Generic[T]):
     """
-    **Doubly Linked Node**
+    #### Doubly Linked Node
 
-    Class implements doubly linked nodes for graph-like data structures.
+    Doubly linked nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
       * in a Boolean context always returns true
