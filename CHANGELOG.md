@@ -16,13 +16,12 @@ PyPI grscheller.datastructures project.
   * significant documentation updates
 * forth digit (development environment only)
   * commit count of "non-trivial" changes/regressions
-  * third digit now plays the role of the second
 
 ## Releases and other important milestones
 
 ### Version 0.21.1.0 - mostly docstring updates 2024-09-17
 
-* renamed module split\_ends -> stacks
+* renamed module `split_ends` -> `stacks`
 
 ### Version 0.21.0 - PyPI release date 2024-08-20
 
