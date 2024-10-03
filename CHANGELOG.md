@@ -19,6 +19,14 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.21.1.1 - BROKEN as of 2024-10-03
+
+* Does not work with either
+  * grscheller.fp 0.3.3 (version working for 0.21.0 release)
+  * grscheller.fp 0.4.0 (latest version of fp)
+* Needs an upgrade
+  * TODO: replace Nada with MB as was done for grscheller.fp.iterables
+
 ### Version 0.21.1.0 - mostly docstring updates 2024-09-17
 
 * renamed module `split_ends` -> `stacks`
