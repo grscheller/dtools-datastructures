@@ -23,7 +23,7 @@ Designed to be helpful when using and implementation algorithms.
 * module `grscheller.datastructures.queues`
 
 """
-__version__ = "0.21.2.1"
+__version__ = "0.21.2.2"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

@@ -46,8 +46,10 @@ R = TypeVar('R')
 class QueueBase(Generic[D]):
     """#### Base class for circular area based queues.
 
-    Primarily for DRY inheritance. Base class for queue based datastructures
-    implemented with a PyPI based grscheller.circular-array.
+    * primarily for DRY inheritance
+    * implemented with a grscheller.circular-array (has-a)
+    * order of initial data retained
+
     """
     __slots__ = '_ca'
 
@@ -74,8 +76,9 @@ class QueueBase(Generic[D]):
 class FIFOQueue(QueueBase[D]):
     """#### FIFO Queue
 
-    Stateful First-In-First-Out (FIFO) data structure. Initial data pushed on in
-    natural FIFO order.
+    * stateful First-In-First-Out (FIFO) data structure
+    * initial data pushed on in natural FIFO order
+
     """
     __slots__ = ()
 
@@ -83,12 +86,7 @@ class FIFOQueue(QueueBase[D]):
         return iter(list(self._ca))
 
     def copy(self) -> FIFOQueue[D]:
-        """
-        **Copy FIFO Queue**
-
-        Return shallow copy of the FIFOQueue.
-
-        """
+        """Return a shallow copy of the FIFOQueue."""
         return FIFOQueue(*self._ca)
 
     def __str__(self) -> str:
@@ -98,16 +96,14 @@ class FIFOQueue(QueueBase[D]):
         """Push data onto queue in FIFO order.
 
         * like a Python List, does not return a value
-          * like a reference to itself
-          * or the value pushed
 
         """
         self._ca.pushR(*ds)
 
     def pop(self) -> MB[D]:
-        """Pop Data from queue.
+        """Pop data from queue.
 
-        * pop data off queue, return data in a maybe monad
+        * pop item off FIFOQueue, return item in a maybe monad
         * returns an empty MB() if queue is empty
 
         """
@@ -117,11 +113,10 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def peak_last_in(self) -> MB[D]:
-        """
-        **Peak Last In**
+        """Peak last data in.
 
-        Without consuming it, if it is still in the queue, return last element
-        pushed. If queue empty, return sentinel value.
+        Return a maybe monad of the last item pushed to queue if not already
+        consumed. Do not consume it.
         """
         if self._ca:
             return MB(self._ca[-1])
@@ -129,12 +124,10 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def peak_next_out(self) -> MB[D]:
-        """
-        **Peak Next Out**
+        """Peak next data out.
 
-        Without consuming it, if the queue is not empty, return the next item
-        ready to be popped. Otherwise, return sentinel value.
-
+        Return a maybe monad of the next item to be popped from the queue.
+        Do not consume it.
         """
         if self._ca:
             return MB(self._ca[0])
@@ -142,15 +135,14 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
-        """
-        **Fold in FIFO Order**
+        """Fold in FIFO Order.
 
-        * reduce with `f` using an optional initial value
+        Reduce with `f` using an optional initial value.
+
         * folds in natural FIFO Order (oldest to newest)
-        * note that ~S can be the same type as either ~L or ~D
-        * note that when an initial value is not given then ~L = ~D
-        * if iterable empty & no initial value given, return a sentinel value of type ~S
-        * traditional FP type order given for function f
+        * note that when an initial value is not given then `~L = ~D`
+        * if iterable empty & no initial value given, return `MB()`
+        * traditional FP type order given for function `f`
 
         """
         if initial is None:
@@ -159,7 +151,7 @@ class FIFOQueue(QueueBase[D]):
         return MB(self._ca.foldL(f, initial=initial))
 
     def map(self, f: Callable[[D], U]) -> FIFOQueue[U]:
-        """Map Over the queue.
+        """Map over the queue.
 
         * map function `f` over the FIFOQueue
           * oldest to newest
@@ -172,8 +164,9 @@ class FIFOQueue(QueueBase[D]):
 class LIFOQueue(QueueBase[D]):
     """#### LIFO Queue
 
-    Stateful Last-In-First-Out (LIFO) data structure. Initial data pushed on in
-    natural LIFO order.
+    * stateful Last-In-First-Out (LIFO) data structure
+    * initial data pushed on in natural LIFO order
+
     """
     __slots__ = ()
 
@@ -181,12 +174,7 @@ class LIFOQueue(QueueBase[D]):
         return reversed(list(self._ca))
 
     def copy(self) -> LIFOQueue[D]:
-        """
-        **Copy LIFO Queue**
-
-        Return shallow copy of the LIFOQueue.
-
-        """
+        """Return a shallow copy of the LIFOQueue."""
         return LIFOQueue(*reversed(self._ca))
 
     def __str__(self) -> str:
@@ -196,17 +184,15 @@ class LIFOQueue(QueueBase[D]):
         """Push data onto queue in LIFO order.
 
         * like a Python List, does not return a value
-          * like a reference to itself
-          * or the value pushed
 
         """
         self._ca.pushR(*ds)
 
     def pop(self) -> MB[D]:
-        """
-        **Pop Data**
+        """Pop data from queue.
 
-        Pop data off of LIFOQueue. Return the sentinel value if queue is empty.
+        * pop item off of LIFOQueue, return item in a maybe monad
+        * returns an empty MB() if queue is empty
 
         """
         if self._ca:
@@ -215,12 +201,10 @@ class LIFOQueue(QueueBase[D]):
             return MB()
 
     def peak(self) -> MB[D]:
-        """
-        **Peak Next Out/Last In**
+        """Peak next data out.
 
-        Without consuming it, if the queue is not empty, return the next item
-        ready to be popped. Otherwise, return sentinel value.
-
+        Return a maybe monad of the next item to be popped from the queue.
+        Do not consume it.
         """
         if self._ca:
             return MB(self._ca[-1])
@@ -228,15 +212,14 @@ class LIFOQueue(QueueBase[D]):
             return MB()
 
     def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
-        """
-        **Fold in LIFO Order**
+        """Fold in LIFO Order.
 
-        * reduce with `f` using an optional initial value
+        Reduce with `f` using an optional initial value.
+
         * folds in natural LIFO Order (newest to oldest)
-        * note that ~S can be the same type as either ~L or ~D
-        * note that when an initial value is not given then ~L = ~D
-        * if iterable empty & no initial value given, return a sentinel value of type ~S
-        * traditional FP type order given for function f
+        * note that when an initial value is not given then `~R = ~D`
+        * if iterable empty & no initial value given, return `MB()`
+        * traditional FP type order given for function `f`
 
         """
         if initial is None:
@@ -245,11 +228,12 @@ class LIFOQueue(QueueBase[D]):
         return MB(self._ca.foldR(f, initial=initial))
 
     def map(self, f: Callable[[D], U]) -> LIFOQueue[U]:
-        """
-        **Map Over LIFOQueue**
+        """Map Over the queue.
 
-        Map the function `f` over the LIFOQueue, newest to oldest. Retain
-        original order.
+        * map the function `f` over the LIFOQueue
+          * newest to oldest
+          * retain original order
+        * returns a new instance
 
         """
         return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
@@ -257,8 +241,9 @@ class LIFOQueue(QueueBase[D]):
 class DoubleQueue(QueueBase[D]):
     """ #### Double Ended Queue
 
-    Double-Ended (DEQueue) data structure. Initial data pushed on from front in
-    natural LIFO order.
+    * stateful Double-Ended (DEQueue) data structure
+    * order of initial data retained
+
     """
     __slots__ = ()
 
@@ -272,20 +257,13 @@ class DoubleQueue(QueueBase[D]):
         return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DoubleQueue[D]:
-        """
-        **Copy Double Queue**
-
-        Return shallow copy of the DoubleQueue.
-
-        """
+        """Return a shallow copy of the DoubleQueue."""
         return DoubleQueue(*self._ca)
 
     def pushL(self, *ds: D) -> None:
         """Push data onto left side (front) of queue.
 
         * like a Python List, does not return a value
-          * like a reference to itself
-          * or the value pushed
 
         """
         self._ca.pushL(*ds)
@@ -294,8 +272,6 @@ class DoubleQueue(QueueBase[D]):
         """Push data onto right side (rear) of queue.
 
         * like a Python List, does not return a value
-          * like a reference to itself
-          * or the value pushed
 
         """
         self._ca.pushR(*ds)
@@ -325,7 +301,7 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def peakL(self) -> MB[D]:
-        """Peak left side of queue
+        """Peak left side of queue.
 
         * return left most value in a maybe monad
         * returns an empty MB() if queue is empty
@@ -337,11 +313,10 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def peakR(self) -> MB[D]:
-        """
-        **Peak Right Side**
+        """Peak right side of queue.
 
-        Return rightmost element of the DoubleQueue if it exists, otherwise
-        return the sentinel value.
+        * return right most value in a maybe monad
+        * returns an empty MB() if queue is empty
 
         """
         if self._ca:
@@ -350,15 +325,13 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
-        """
-        **Fold Left to Right**
+        """Fold Left to Right.
 
         Reduce left with `f` using an optional initial value.
 
-        * note that ~S can be the same type as either ~L or ~D
-        * note that when an initial value is not given then ~L = ~D
-        * if iterable empty & no initial value given, return a sentinel value of type ~S
-        * traditional FP type order given for function f
+        * note that when an initial value is not given then `~L = ~D`
+        * if iterable empty & no initial value given, return `MB()`
+        * traditional FP type order given for function `f`
 
         """
         if self._ca:
@@ -367,15 +340,13 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
-        """
-        **Fold Right to Left**
+        """Fold Right to Left.
 
         Reduce right with `f` using an optional initial value.
 
-        * note that ~S can be the same type as either ~R or ~D
-        * note that when an initial value is not given then ~R = ~D
-        * if iterable empty & no initial value given, return a sentinel value of type ~S
-        * traditional FP type order given for function f
+        * note that when an initial value is not given then `~R = ~D`
+        * if iterable empty & no initial value given, return `MB()`
+        * traditional FP type order given for function `f`
 
         """
         if self._ca:
@@ -387,8 +358,10 @@ class DoubleQueue(QueueBase[D]):
         """
         **Map Over DoubleQueue**
 
-        Map the function `f` over the DoubleQueue, oldest to newest. Retain
-        original order.
+        * map the function `f` over the DoubleQueue
+          * left to right
+          * retain original order
+        * returns a new instance
 
         """
         return DoubleQueue(*map(f, self._ca))
