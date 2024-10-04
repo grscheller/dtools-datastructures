@@ -18,7 +18,8 @@ from grscheller.datastructures.tuples import FTuple, FTuple as FT
 from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
 from grscheller.datastructures.stacks import SplitEnd, SplitEnd as SE
 from grscheller.fp.iterables import FM
-from grscheller.fp.nada import Nada, nada
+from grscheller.fp.nothingness import _NoValue, noValue
+from grscheller.fp.woException import MB
 
 D = TypeVar('D')
 T = TypeVar('T')
@@ -30,11 +31,11 @@ class Test_FP:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FIFOQueue[D, T], d: D) -> FIFOQueue[D, T]:
+        def pushFQfromL(q: FIFOQueue[D], d: D) -> FIFOQueue[D]:
             q.push(d)
             return q
 
-        def pushFQfromR(d: D, q: FIFOQueue[D, T]) -> FIFOQueue[D, T]:
+        def pushFQfromR(d: D, q: FIFOQueue[D]) -> FIFOQueue[D]:
             q.push(d)
             return q
 
@@ -43,7 +44,7 @@ class Test_FP:
             return x
 
         ft0: FT[int] = FT()
-        se0: SE[int, Nada] = SE()
+        se0: SE[int, _NoValue] = SE(s=noValue)
         ft1: FT[int] = FT(1,2,3,4,5)
         se1 = SE(1,2,3,4,5, s=())
 
@@ -64,23 +65,23 @@ class Test_FP:
         assert ft0 == FT()
         assert ft1 == FT(1,2,3,4,5)
 
-        fq1: FIFOQueue[int, tuple[()]] = FIFOQueue(s=())
-        fq2: FIFOQueue[int, None] = FIFOQueue(s=None)
-        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5, s=())
-        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue(s=None)
-        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1, s=())
-        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue(s=None)
+        fq1: FIFOQueue[int] = FIFOQueue()
+        fq2: FIFOQueue[int] = FIFOQueue()
+        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5)
+        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue()
+        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1)
+        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue()
 
-        fq5: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
-        fq6 = FIFOQueue[int, Nada](s=nada)
-        fq7: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
-        fq8 = FIFOQueue[int, Nada](s=nada)
-        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5, s=nada)
-        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5, s=nada)
-        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue(s=nada)
-        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue(s=nada)
-        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5, s=nada)
-        assert fq7 == fq8 == FIFOQueue(s=nada)
+        fq5: FIFOQueue[int] = FIFOQueue()
+        fq6 = FIFOQueue[int]()
+        fq7: FIFOQueue[int] = FIFOQueue()
+        fq8 = FIFOQueue[int]()
+        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5)
+        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5)
+        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue()
+        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue()
+        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5)
+        assert fq7 == fq8 == FIFOQueue()
 
         assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5, s=())'
         assert se1.fold(l1) == 15
