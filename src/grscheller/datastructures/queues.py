@@ -30,8 +30,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, Generic, Iterator, Optional, Self, TypeVar
-from typing import overload, cast
+from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
 from grscheller.circular_array.ca import CA
 from grscheller.fp.woException import MB
 
@@ -44,24 +43,22 @@ V = TypeVar('V')
 L = TypeVar('L')
 R = TypeVar('R')
 
-class QueueBase(Generic[D, S]):
+class QueueBase(Generic[D]):
+    """#### Base class for circular area based queues.
+
+    Primarily for DRY inheritance. Base class for queue based datastructures
+    implemented with a PyPI based grscheller.circular-array.
     """
-    #### Base class
+    __slots__ = '_ca'
 
-    Primarily for DRY inheritance.
-
-    """
-    __slots__ = '_ca', '_sentinel'
-
-    def __init__(self, *ds: D, s: S):
+    def __init__(self, *ds: D):
         self._ca = CA(*ds)
-        self._sentinel = s
 
     def __repr__(self) -> str:
         if len(self) == 0:
-            return type(self).__name__ + '(s=' + repr(self._sentinel)+ ')'
+            return type(self).__name__ + '()'
         else:
-            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ', s=' + repr(self._sentinel)+ ')'
+            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -74,54 +71,52 @@ class QueueBase(Generic[D, S]):
             return False
         return self._ca == other._ca
 
-class FIFOQueue(QueueBase[D, S]):
-    """
-    #### FIFO Queue
+class FIFOQueue(QueueBase[D]):
+    """#### FIFO Queue
 
     Stateful First-In-First-Out (FIFO) data structure. Initial data pushed on in
     natural FIFO order.
-
     """
     __slots__ = ()
 
     def __iter__(self) -> Iterator[D]:
         return iter(list(self._ca))
 
-    def copy(self) -> FIFOQueue[D, S]:
+    def copy(self) -> FIFOQueue[D]:
         """
         **Copy FIFO Queue**
 
         Return shallow copy of the FIFOQueue.
 
         """
-        return FIFOQueue(*self._ca, s=self._sentinel)
+        return FIFOQueue(*self._ca)
 
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
 
     def push(self, *ds: D) -> None:
-        """
-        **Push Data**
+        """Push data onto queue in FIFO order.
 
-        Push data onto queue in FIFO order. Like a Python list, does not return
-        a reference to itself.
+        * like a Python List, does not return a value
+          * like a reference to itself
+          * or the value pushed
 
         """
         self._ca.pushR(*ds)
 
-    def pop(self) -> D|S:
-        """
-        **Pop Data**
+    def pop(self) -> MB[D]:
+        """Pop Data from queue.
 
-        Pop data off of FIFOQueue. Return the sentinel value if queue is empty.
+        * pop data off queue, return data in a maybe monad
+        * returns an empty MB() if queue is empty
 
         """
         if self._ca:
-            return self._ca.popL()
+            return MB(self._ca.popL())
         else:
-            return self._sentinel
+            return MB()
 
-    def peak_last_in(self) -> D|S:
+    def peak_last_in(self) -> MB[D]:
         """
         **Peak Last In**
 
@@ -129,11 +124,11 @@ class FIFOQueue(QueueBase[D, S]):
         pushed. If queue empty, return sentinel value.
         """
         if self._ca:
-            return self._ca[-1]
+            return MB(self._ca[-1])
         else:
-            return self._sentinel
+            return MB()
 
-    def peak_next_out(self) -> D|S:
+    def peak_next_out(self) -> MB[D]:
         """
         **Peak Next Out**
 
@@ -142,19 +137,11 @@ class FIFOQueue(QueueBase[D, S]):
 
         """
         if self._ca:
-            return self._ca[0]
+            return MB(self._ca[0])
         else:
-            return self._sentinel
+            return MB()
 
-    @overload
-    def fold(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S: ...
-    @overload
-    def fold(self, f: Callable[[D, D], D]) -> D|S: ...
-    @overload
-    def fold(self, f: Callable[[L, D], L], initial: L) -> L: ...
-    @overload
-    def fold(self, f: Callable[[D, D], D], initial: D) -> D: ...
-    def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L|S:
+    def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
         """
         **Fold in FIFO Order**
 
@@ -168,55 +155,54 @@ class FIFOQueue(QueueBase[D, S]):
         """
         if initial is None:
             if not self:
-                return self._sentinel
-        return self._ca.foldL(f, initial=initial)
+                return MB()
+        return MB(self._ca.foldL(f, initial=initial))
 
-    def map(self, f: Callable[[D], U]) -> FIFOQueue[U, S]:
+    def map(self, f: Callable[[D], U]) -> FIFOQueue[U]:
+        """Map Over the queue.
+
+        * map function `f` over the FIFOQueue
+          * oldest to newest
+          * retain original order
+        * returns a new instance
+
         """
-        **Map Over FIFOQueue**
+        return FIFOQueue(*map(f, self._ca))
 
-        Map the function `f` over the FIFOQueue, oldest to newest. Retain
-        original order.
-
-        """
-        return FIFOQueue(*map(f, self._ca), s=self._sentinel)
-
-class LIFOQueue(QueueBase[D, S]):
-    """
-    #### LIFO Queue
+class LIFOQueue(QueueBase[D]):
+    """#### LIFO Queue
 
     Stateful Last-In-First-Out (LIFO) data structure. Initial data pushed on in
     natural LIFO order.
-
     """
     __slots__ = ()
 
     def __iter__(self) -> Iterator[D]:
         return reversed(list(self._ca))
 
-    def copy(self) -> LIFOQueue[D, S]:
+    def copy(self) -> LIFOQueue[D]:
         """
         **Copy LIFO Queue**
 
         Return shallow copy of the LIFOQueue.
 
         """
-        return LIFOQueue(*reversed(self._ca), s=self._sentinel)
+        return LIFOQueue(*reversed(self._ca))
 
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def push(self, *ds: D) -> None:
-        """
-        **Push Data**
+        """Push data onto queue in LIFO order.
 
-        Push data onto queue in LIFO order. Like a Python list, does not return
-        a reference to itself.
+        * like a Python List, does not return a value
+          * like a reference to itself
+          * or the value pushed
 
         """
         self._ca.pushR(*ds)
 
-    def pop(self) -> D|S:
+    def pop(self) -> MB[D]:
         """
         **Pop Data**
 
@@ -224,11 +210,11 @@ class LIFOQueue(QueueBase[D, S]):
 
         """
         if self._ca:
-            return self._ca.popR()
+            return MB(self._ca.popR())
         else:
-            return self._sentinel
+            return MB()
 
-    def peak(self) -> D|S:
+    def peak(self) -> MB[D]:
         """
         **Peak Next Out/Last In**
 
@@ -237,19 +223,11 @@ class LIFOQueue(QueueBase[D, S]):
 
         """
         if self._ca:
-            return self._ca[-1]
+            return MB(self._ca[-1])
         else:
-            return self._sentinel
+            return MB()
 
-    @overload
-    def fold(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S: ...
-    @overload
-    def fold(self, f: Callable[[D, D], D]) -> D|S: ...
-    @overload
-    def fold(self, f: Callable[[D, R], R], initial: R) -> R: ...
-    @overload
-    def fold(self, f: Callable[[D, D], D], initial: D) -> D: ...
-    def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R|S:
+    def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
         """
         **Fold in LIFO Order**
 
@@ -263,10 +241,10 @@ class LIFOQueue(QueueBase[D, S]):
         """
         if initial is None:
             if not self:
-                return self._sentinel
-        return self._ca.foldR(f, initial=initial)
+                return MB()
+        return MB(self._ca.foldR(f, initial=initial))
 
-    def map(self, f: Callable[[D], U]) -> LIFOQueue[U, S]:
+    def map(self, f: Callable[[D], U]) -> LIFOQueue[U]:
         """
         **Map Over LIFOQueue**
 
@@ -274,15 +252,13 @@ class LIFOQueue(QueueBase[D, S]):
         original order.
 
         """
-        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))), s=self._sentinel)
+        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
 
-class DoubleQueue(QueueBase[D, S]):
-    """
-    #### Double Ended Queue
+class DoubleQueue(QueueBase[D]):
+    """ #### Double Ended Queue
 
     Double-Ended (DEQueue) data structure. Initial data pushed on from front in
     natural LIFO order.
-
     """
     __slots__ = ()
 
@@ -295,75 +271,72 @@ class DoubleQueue(QueueBase[D, S]):
     def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
 
-    def copy(self) -> DoubleQueue[D, S]:
+    def copy(self) -> DoubleQueue[D]:
         """
         **Copy Double Queue**
 
         Return shallow copy of the DoubleQueue.
 
         """
-        return DoubleQueue(*self._ca, s=self._sentinel)
+        return DoubleQueue(*self._ca)
 
     def pushL(self, *ds: D) -> None:
-        """
-        **Push Data Left**
+        """Push data onto left side (front) of queue.
 
-        Push data onto front (left side) of queue. Like a Python list, does not
-        return a reference to itself.
+        * like a Python List, does not return a value
+          * like a reference to itself
+          * or the value pushed
 
         """
         self._ca.pushL(*ds)
 
     def pushR(self, *ds: D) -> None:
-        """
-        **Push Data Right**
+        """Push data onto right side (rear) of queue.
 
-        Push data onto rear (right side) of queue. Like Python list, does not
-        return a reference to itself.
+        * like a Python List, does not return a value
+          * like a reference to itself
+          * or the value pushed
 
         """
         self._ca.pushR(*ds)
 
-    def popL(self) -> D|S:
-        """
-        **Pop Data from Left**
+    def popL(self) -> MB[D]:
+        """Pop Data from left side (front) of queue.
 
-        Pop data off front (left side) of DoubleQueue. Return sentinel value if
-        queue is empty.
-
-        """
-        if self._ca:
-            return self._ca.popL()
-        else:
-            return self._sentinel
-
-    def popR(self) -> D|S:
-        """
-        **Pop Data from Right**
-
-        Pop data off rear (right side) of DoubleQueue. Return sentinel value if
-        queue is empty.
+        * return left most value in a maybe monad
+        * returns an empty MB() if queue is empty
 
         """
         if self._ca:
-            return self._ca.popR()
+            return MB(self._ca.popL())
         else:
-            return self._sentinel
+            return MB()
 
-    def peakL(self) -> D|S:
-        """
-        **Peak Left Side**
+    def popR(self) -> MB[D]:
+        """Pop Data from right side (rear) of queue.
 
-        Return leftmost element of the DoubleQueue if it exists, otherwise
-        return the sentinel value.
+        * return right most value in a maybe monad
+        * returns an empty MB() if queue is empty
 
         """
         if self._ca:
-            return self._ca[0]
+            return MB(self._ca.popR())
         else:
-            return self._sentinel
+            return MB()
 
-    def peakR(self) -> D|S:
+    def peakL(self) -> MB[D]:
+        """Peak left side of queue
+
+        * return left most value in a maybe monad
+        * returns an empty MB() if queue is empty
+
+        """
+        if self._ca:
+            return MB(self._ca[0])
+        else:
+            return MB()
+
+    def peakR(self) -> MB[D]:
         """
         **Peak Right Side**
 
@@ -372,19 +345,11 @@ class DoubleQueue(QueueBase[D, S]):
 
         """
         if self._ca:
-            return self._ca[-1]
+            return MB(self._ca[-1])
         else:
-            return self._sentinel
+            return MB()
 
-    @overload
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]) -> L|S: ...
-    @overload
-    def foldL(self, f: Callable[[D, D], D]) -> D|S: ...
-    @overload
-    def foldL(self, f: Callable[[L, D], L], initial: L) -> L: ...
-    @overload
-    def foldL(self, f: Callable[[D, D], D], initial: D) -> D: ...
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> L|S:
+    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
         """
         **Fold Left to Right**
 
@@ -396,17 +361,12 @@ class DoubleQueue(QueueBase[D, S]):
         * traditional FP type order given for function f
 
         """
-        return self._ca.foldL(f, initial=initial)
+        if self._ca:
+            return MB(self._ca.foldL(f, initial=initial))
+        else:
+            return MB()
 
-    @overload
-    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]) -> R|S: ...
-    @overload
-    def foldR(self, f: Callable[[D, D], D]) -> D|S: ...
-    @overload
-    def foldR(self, f: Callable[[D, R], R], initial: R) -> R: ...
-    @overload
-    def foldR(self, f: Callable[[D, D], D], initial: D) -> D: ...
-    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> R|S:
+    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
         """
         **Fold Right to Left**
 
@@ -418,9 +378,12 @@ class DoubleQueue(QueueBase[D, S]):
         * traditional FP type order given for function f
 
         """
-        return self._ca.foldR(f, initial=initial)
+        if self._ca:
+            return MB(self._ca.foldR(f, initial=initial))
+        else:
+            return MB()
 
-    def map(self, f: Callable[[D], U]) -> DoubleQueue[U, S]:
+    def map(self, f: Callable[[D], U]) -> DoubleQueue[U]:
         """
         **Map Over DoubleQueue**
 
@@ -428,4 +391,4 @@ class DoubleQueue(QueueBase[D, S]):
         original order.
 
         """
-        return DoubleQueue(*map(f, self._ca), s=self._sentinel)
+        return DoubleQueue(*map(f, self._ca))
