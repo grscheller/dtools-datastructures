@@ -25,8 +25,7 @@
 
 from __future__ import annotations
 
-from typing import Abstract, Callable, cast, Generic
-from typing import Hashable, Iterator, Optional, TypeVar
+from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
 from .nodes import SL_Node as Node
 
 __all__ = [ 'SplitEndBase', 'Roots',
@@ -36,7 +35,6 @@ __all__ = [ 'SplitEndBase', 'Roots',
 D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
-@Abstract
 class Roots(Generic[D]):
     """#### Base Class for SplitEnd & SplitEndMut root storage.
 
@@ -72,7 +70,6 @@ class SplitEndMutRoots(Roots[D]):
     """#### Class for SplitEndMut root storage."""
     __slots__ = ()
 
-@Abstract
 class SplitEndBase(Generic[D]):
     __slots__ = '_count', '_root_nodes', '_head', '_root'
 
@@ -149,7 +146,6 @@ class SplitEndBase(Generic[D]):
             acc = f(acc, node._data)
             node = node._next
         return acc
-
 
 class SplitEnd(SplitEndBase[D]):
     """#### SplitEnd
