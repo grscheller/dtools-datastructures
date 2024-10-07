@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-### Queue based datastructures.
+"""### Queue based datastructures.
 
 * stateful queue data structures with amortized O(1) pushes and pops each end
 * obtaining length (number of elements) of a queue is an O(1) operation
@@ -86,14 +85,14 @@ class FIFOQueue(QueueBase[D]):
         return iter(list(self._ca))
 
     def copy(self) -> FIFOQueue[D]:
-        """Return a shallow copy of the FIFOQueue."""
+        """Return a shallow copy of the `FIFOQueue`."""
         return FIFOQueue(*self._ca)
 
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
 
     def push(self, *ds: D) -> None:
-        """Push data onto queue in FIFO order.
+        """Push data onto `FIFOQueue`.
 
         * like a Python List, does not return a value
 
@@ -101,10 +100,10 @@ class FIFOQueue(QueueBase[D]):
         self._ca.pushR(*ds)
 
     def pop(self) -> MB[D]:
-        """Pop data from queue.
+        """Pop data from `FIFOQueue`.
 
-        * pop item off FIFOQueue, return item in a maybe monad
-        * returns an empty MB() if queue is empty
+        * pop item off queue, return item in a maybe monad
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -113,10 +112,12 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def peak_last_in(self) -> MB[D]:
-        """Peak last data in.
+        """Peak last data into `FIFOQueue`.
 
-        Return a maybe monad of the last item pushed to queue if not already
-        consumed. Do not consume it.
+        * return a maybe monad of the last item pushed to queue
+        * does not consume the data
+        * if item already popped, return `MB()`
+
         """
         if self._ca:
             return MB(self._ca[-1])
@@ -124,10 +125,12 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def peak_next_out(self) -> MB[D]:
-        """Peak next data out.
+        """Peak next data out of `FIFOQueue`.
 
-        Return a maybe monad of the next item to be popped from the queue.
-        Do not consume it.
+        * returns a maybe monad of the next item to be popped from the queue.
+        * does not consume it the item
+        * returns `MB()` if queue is empty
+
         """
         if self._ca:
             return MB(self._ca[0])
@@ -135,7 +138,7 @@ class FIFOQueue(QueueBase[D]):
             return MB()
 
     def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
-        """Fold in FIFO Order.
+        """Fold `FIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
 
@@ -146,14 +149,14 @@ class FIFOQueue(QueueBase[D]):
 
         """
         if initial is None:
-            if not self:
+            if not self._ca:
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
     def map(self, f: Callable[[D], U]) -> FIFOQueue[U]:
-        """Map over the queue.
+        """Map over the `FIFOQueue`.
 
-        * map function `f` over the FIFOQueue
+        * map function `f` over the queue
           * oldest to newest
           * retain original order
         * returns a new instance
@@ -173,15 +176,15 @@ class LIFOQueue(QueueBase[D]):
     def __iter__(self) -> Iterator[D]:
         return reversed(list(self._ca))
 
-    def copy(self) -> LIFOQueue[D]:
-        """Return a shallow copy of the LIFOQueue."""
-        return LIFOQueue(*reversed(self._ca))
-
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
+    def copy(self) -> LIFOQueue[D]:
+        """Return a shallow copy of the `LIFOQueue`."""
+        return LIFOQueue(*reversed(self._ca))
+
     def push(self, *ds: D) -> None:
-        """Push data onto queue in LIFO order.
+        """Push data onto `LIFOQueue`.
 
         * like a Python List, does not return a value
 
@@ -189,10 +192,10 @@ class LIFOQueue(QueueBase[D]):
         self._ca.pushR(*ds)
 
     def pop(self) -> MB[D]:
-        """Pop data from queue.
+        """Pop data from `LIFOQueue`.
 
-        * pop item off of LIFOQueue, return item in a maybe monad
-        * returns an empty MB() if queue is empty
+        * pop item off of queue, return item in a maybe monad
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -201,10 +204,12 @@ class LIFOQueue(QueueBase[D]):
             return MB()
 
     def peak(self) -> MB[D]:
-        """Peak next data out.
+        """Peak next data out of `LIFOQueue`.
 
-        Return a maybe monad of the next item to be popped from the queue.
-        Do not consume it.
+        * return a maybe monad of the next item to be popped from the queue
+        * does not consume the item
+        * returns `MB()` if queue is empty
+        
         """
         if self._ca:
             return MB(self._ca[-1])
@@ -212,7 +217,7 @@ class LIFOQueue(QueueBase[D]):
             return MB()
 
     def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
-        """Fold in LIFO Order.
+        """Fold `LIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
 
@@ -223,14 +228,14 @@ class LIFOQueue(QueueBase[D]):
 
         """
         if initial is None:
-            if not self:
+            if not self._ca:
                 return MB()
         return MB(self._ca.foldR(f, initial=initial))
 
     def map(self, f: Callable[[D], U]) -> LIFOQueue[U]:
-        """Map Over the queue.
+        """Map Over the `LIFOQueue`.
 
-        * map the function `f` over the LIFOQueue
+        * map the function `f` over the queue
           * newest to oldest
           * retain original order
         * returns a new instance
@@ -239,7 +244,7 @@ class LIFOQueue(QueueBase[D]):
         return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
 
 class DoubleQueue(QueueBase[D]):
-    """ #### Double Ended Queue
+    """#### Double Ended Queue
 
     * stateful Double-Ended (DEQueue) data structure
     * order of initial data retained
@@ -257,11 +262,11 @@ class DoubleQueue(QueueBase[D]):
         return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DoubleQueue[D]:
-        """Return a shallow copy of the DoubleQueue."""
+        """Return a shallow copy of the `DoubleQueue`."""
         return DoubleQueue(*self._ca)
 
     def pushL(self, *ds: D) -> None:
-        """Push data onto left side (front) of queue.
+        """Push data onto left side (front) of `DoubleQueue`.
 
         * like a Python List, does not return a value
 
@@ -269,7 +274,7 @@ class DoubleQueue(QueueBase[D]):
         self._ca.pushL(*ds)
 
     def pushR(self, *ds: D) -> None:
-        """Push data onto right side (rear) of queue.
+        """Push data onto right side (rear) of `DoubleQueue`.
 
         * like a Python List, does not return a value
 
@@ -277,10 +282,10 @@ class DoubleQueue(QueueBase[D]):
         self._ca.pushR(*ds)
 
     def popL(self) -> MB[D]:
-        """Pop Data from left side (front) of queue.
+        """Pop Data from left side (front) of `DoubleQueue`.
 
-        * return left most value in a maybe monad
-        * returns an empty MB() if queue is empty
+        * pop left most item off of queue, return item in a maybe monad
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -289,10 +294,10 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def popR(self) -> MB[D]:
-        """Pop Data from right side (rear) of queue.
+        """Pop Data from right side (rear) of `DoubleQueue`.
 
-        * return right most value in a maybe monad
-        * returns an empty MB() if queue is empty
+        * pop right most item off of queue, return item in a maybe monad
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -301,10 +306,11 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def peakL(self) -> MB[D]:
-        """Peak left side of queue.
+        """Peak left side of `DoubleQueue`.
 
         * return left most value in a maybe monad
-        * returns an empty MB() if queue is empty
+        * does not consume the item
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -313,10 +319,11 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def peakR(self) -> MB[D]:
-        """Peak right side of queue.
+        """Peak right side of `DoubleQueue`.
 
         * return right most value in a maybe monad
-        * returns an empty MB() if queue is empty
+        * does not consume the item
+        * returns an empty `MB()` if queue is empty
 
         """
         if self._ca:
@@ -325,7 +332,7 @@ class DoubleQueue(QueueBase[D]):
             return MB()
 
     def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
-        """Fold Left to Right.
+        """Fold `DoubleQueue` left to right.
 
         Reduce left with `f` using an optional initial value.
 
@@ -334,13 +341,13 @@ class DoubleQueue(QueueBase[D]):
         * traditional FP type order given for function `f`
 
         """
-        if self._ca:
-            return MB(self._ca.foldL(f, initial=initial))
-        else:
-            return MB()
+        if initial is None:
+            if not self._ca:
+                return MB()
+        return MB(self._ca.foldL(f, initial=initial))
 
     def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
-        """Fold Right to Left.
+        """Fold `DoubleQueue` right to left.
 
         Reduce right with `f` using an optional initial value.
 
@@ -349,16 +356,15 @@ class DoubleQueue(QueueBase[D]):
         * traditional FP type order given for function `f`
 
         """
-        if self._ca:
-            return MB(self._ca.foldR(f, initial=initial))
-        else:
-            return MB()
+        if initial is None:
+            if not self._ca:
+                return MB()
+        return MB(self._ca.foldR(f, initial=initial))
 
     def map(self, f: Callable[[D], U]) -> DoubleQueue[U]:
-        """
-        **Map Over DoubleQueue**
+        """`Map a function over `DoubleQueue`.
 
-        * map the function `f` over the DoubleQueue
+        * map the function `f` over the `DoubleQueue`
           * left to right
           * retain original order
         * returns a new instance

@@ -15,9 +15,8 @@
 from __future__ import annotations
 from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.stacks import SplitEnd
+from grscheller.datastructures.stacks import SplitEnd, SplitEndRoots
 from grscheller.datastructures.tuples import FTuple
-from grscheller.fp.nada import Nada, nada
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -25,23 +24,26 @@ def addLt42(x: int, y: int) -> int|None:
         return sum
     return None
 
+roots_int_str = SplitEndRoots[int|str]()
+roots_int = SplitEndRoots[int]()
+
 class Test_str:
     def test_SplitEnd(self) -> None:
-        s1: SplitEnd[int|str, Nada] = SplitEnd()
-        assert str(s1) == '><  ||'
+        s1: SplitEnd[int|str] = SplitEnd(roots_int_str, 0, 1, 2, 3)
+        assert str(s1) == '>< 3 -> 2 -> 1 -> 0 ||'
         s2 = s1.cons(42)
-        assert str(s1) == '><  ||'
-        assert str(s2) == '>< 42 ||'
+        assert str(s1) == '>< 3 -> 2 -> 1 -> 0 ||'
+        assert str(s2) == '>< 42 -> 3 -> 2 -> 1 -> 0 ||'
         assert s1 != s2
         s3 = s2.cons('Buggy the clown')
         s2.push('Buggy the clown')
         assert s2 == s3
         s4 = s2.cons(0)
-        assert str(s4) == '>< 0 -> Buggy the clown -> 42 ||'
+        assert str(s4) == '>< 0 -> Buggy the clown -> 42 -> 3 -> 2 -> 1 -> 0 ||'
         s5 = s3.tail().cons('wins!').cons('Buggy the clown')
-        assert str(s5) == ">< Buggy the clown -> wins! -> 42 ||"
+        assert str(s5) == ">< Buggy the clown -> wins! -> 42 -> 3 -> 2 -> 1 -> 0 ||"
 
-        foo: SplitEnd[int, Nada] = SplitEnd(1, 2)
+        foo: SplitEnd[int] = SplitEnd(roots_int, 1, 2)
         bar = foo.copy()
         assert bar.head() == 2
         foo = foo.cons(3).cons(4).cons(5)
@@ -50,24 +52,32 @@ class Test_str:
         assert str(baz) == '>< 5 -> 4 -> 3 -> 2 -> 1 ||'
         assert foo == baz
         assert foo is not baz
+        boz = SplitEnd(roots_int, 0, 1, 2, 3, 4 ,5)
+        buz = SplitEnd(roots_int, 1, 2, 2, 3, 4 ,5)
+        assert foo != boz
+        assert boz != foo
+        assert foo != buz
+        assert buz != foo
+        assert boz != buz
+        assert buz != boz
 
     def test_FIFOQueue(self) -> None:
-        q1: FIFOQueue[int, Nada] = FIFOQueue(s=nada)
+        q1: FIFOQueue[int] = FIFOQueue()
         assert str(q1) == '<<  <<'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '<< 2 < 3 < 42 <<'
 
     def test_LIFOQueue(self) -> None:
-        q1 = LIFOQueue[int, Nada](s=nada)    # TODO: ?????
+        q1 = LIFOQueue[int]()
         assert str(q1) == '||  ><'
         q1.push(1, 2, 3, 42)
         q1.pop()
         assert str(q1) == '|| 3 > 2 > 1 ><'
 
     def test_DQueue(self) -> None:
-        dq1: DoubleQueue[int, Nada] = DoubleQueue(s=nada)
-        dq2 = DoubleQueue[int, Nada](s=nada)
+        dq1: DoubleQueue[int] = DoubleQueue()
+        dq2 = DoubleQueue[int]()
         assert str(dq1) == '><  ><'
         dq1.pushL(1, 2, 3, 4, 5, 6)
         dq2.pushR(1, 2, 3, 4, 5, 6)

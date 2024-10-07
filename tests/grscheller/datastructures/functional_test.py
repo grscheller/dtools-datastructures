@@ -14,88 +14,94 @@
 
 from __future__ import annotations
 from typing import TypeVar
-from grscheller.datastructures.tuples import FTuple, FTuple as FT
-from grscheller.datastructures.queues import FIFOQueue, LIFOQueue
+from grscheller.datastructures.tuples import FTuple as FT
+from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
 from grscheller.datastructures.stacks import SplitEnd, SplitEnd as SE
+from grscheller.datastructures.stacks import SplitEndRoots as SE_Roots
 from grscheller.fp.iterables import FM
 from grscheller.fp.nothingness import _NoValue, noValue
 from grscheller.fp.woException import MB
 
 D = TypeVar('D')
-T = TypeVar('T')
 R = TypeVar('R')
 L = TypeVar('L')
+
+se_int_roots: SE_Roots[int] = SE_Roots()
+se_tuple_roots: SE_Roots[tuple[int, ...]] = SE_Roots(())
 
 class Test_FP:
     def test_fold(self) -> None:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FIFOQueue[D], d: D) -> FIFOQueue[D]:
+        def pushFQfromL(q: FQ[D], d: D) -> FQ[D]:
             q.push(d)
             return q
 
-        def pushFQfromR(d: D, q: FIFOQueue[D]) -> FIFOQueue[D]:
+        def pushFQfromR(d: D, q: FQ[D]) -> FQ[D]:
             q.push(d)
             return q
 
-        def pushSE(x: SE[D, tuple[int, ...]], y: D) -> SE[D, tuple[int, ...]]:
-            x.push(y)
-            return x
+        def pushSE(se: SE[D], d: D) -> SE[D]:
+            se.push(d)
+            return se
 
         ft0: FT[int] = FT()
-        se0: SE[int, _NoValue] = SE(s=noValue)
-        ft1: FT[int] = FT(1,2,3,4,5)
-        se1 = SE(1,2,3,4,5, s=())
+        ft1: FT[int] = FT(1)
+        ft5: FT[int] = FT(1, 2, 3, 4, 5)
+        se5 = SE(se_int_roots, 1, 2, 3, 4, 5)
 
-        assert repr(ft1) == 'FTuple(1, 2, 3, 4, 5)'
+        assert se5.head() == 5
+        assert se5.root() == 1
+        assert ft5[1] == 2
+        assert ft5[4] == 5
+
         assert ft0.foldL(l1, 42) == 42
         assert ft0.foldR(l1, 42) == 42
-        assert ft1.foldL(l1) == 15
-        assert ft1.foldL(l1, 0) == 15
-        assert ft1.foldL(l1, 10) == 25
-        assert ft1.foldL(l2, 1) == 120
-        assert ft1.foldL(l2, 10) == 1200
-        assert ft1.foldR(l1) == 15
-        assert ft1.foldR(l1, 0) == 15
-        assert ft1.foldR(l1, 10) == 25
-        assert ft1.foldR(l2, 1) == 120
-        assert ft1.foldR(l2, 10) == 1200
+        assert ft5.foldL(l1) == 15
+        assert ft5.foldL(l1, 0) == 15
+        assert ft5.foldL(l1, 10) == 25
+        assert ft5.foldL(l2, 1) == 120
+        assert ft5.foldL(l2, 10) == 1200
+        assert ft5.foldR(l1) == 15
+        assert ft5.foldR(l1, 0) == 15
+        assert ft5.foldR(l1, 10) == 25
+        assert ft5.foldR(l2, 1) == 120
+        assert ft5.foldR(l2, 10) == 1200
 
         assert ft0 == FT()
-        assert ft1 == FT(1,2,3,4,5)
+        assert ft5 == FT(1,2,3,4,5)
 
-        fq1: FIFOQueue[int] = FIFOQueue()
-        fq2: FIFOQueue[int] = FIFOQueue()
-        assert ft1.foldL(pushFQfromL, fq1.copy()) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL(pushFQfromL, fq2.copy()) == FIFOQueue()
-        assert ft1.foldR(pushFQfromR, fq1.copy()) == FIFOQueue(5,4,3,2,1)
-        assert ft0.foldR(pushFQfromR, fq2.copy()) == FIFOQueue()
+        fq1: FQ[int] = FQ()
+        fq2: FQ[int] = FQ()
+        assert ft5.foldL(pushFQfromL, fq1.copy()) == FQ(1,2,3,4,5)
+        assert ft0.foldL(pushFQfromL, fq2.copy()) == FQ()
+        assert ft5.foldR(pushFQfromR, fq1.copy()) == FQ(5,4,3,2,1)
+        assert ft0.foldR(pushFQfromR, fq2.copy()) == FQ()
 
-        fq5: FIFOQueue[int] = FIFOQueue()
-        fq6 = FIFOQueue[int]()
-        fq7: FIFOQueue[int] = FIFOQueue()
-        fq8 = FIFOQueue[int]()
-        assert ft1.foldL(pushFQfromL, fq5) == FIFOQueue(1,2,3,4,5)
-        assert ft1.foldL(pushFQfromL, fq6) == FIFOQueue(1,2,3,4,5)
-        assert ft0.foldL(pushFQfromL, fq7) == FIFOQueue()
-        assert ft0.foldL(pushFQfromL, fq8) == FIFOQueue()
-        assert fq5 == fq6 == FIFOQueue(1,2,3,4,5)
-        assert fq7 == fq8 == FIFOQueue()
+        fq5: FQ[int] = FQ()
+        fq6 = FQ[int]()
+        fq7: FQ[int] = FQ()
+        fq8 = FQ[int]()
+        assert ft5.foldL(pushFQfromL, fq5) == FQ(1,2,3,4,5)
+        assert ft5.foldL(pushFQfromL, fq6) == FQ(1,2,3,4,5)
+        assert ft0.foldL(pushFQfromL, fq7) == FQ()
+        assert ft0.foldL(pushFQfromL, fq8) == FQ()
+        assert fq5 == fq6 == FQ(1,2,3,4,5)
+        assert fq7 == fq8 == FQ()
 
-        assert repr(se1) == 'SplitEnd(1, 2, 3, 4, 5, s=())'
-        assert se1.fold(l1) == 15
-        assert se1.fold1(l1, 10) == 25
-        assert se1.fold(l2) == 120
-        assert se1.fold1(l2, 10) == 1200
-        assert se1.fold1(pushSE, SE[int, tuple[int, ...]](s=())) == SE(5,4,3,2,1,s=())
-        assert se0.fold(l1) == None
-        assert se0.fold1(l1, 10) == 10
-        assert se0.fold1(pushSE, SE[int, tuple[int, ...]](s=())) == SE(s=())
+        assert se5.fold(l1) == 15
+        assert se5.fold(l1, 10) == 25
+        assert se5.fold(l2) == 120
+        assert se5.fold(l2, 10) == 1200
+        se5Rev = se5.tail().fold(pushSE, SE(se_int_roots, se5.head()))
+        assert se5Rev == SE(se_int_roots,5,4,3,2,1)
+        assert se5.fold(l1) == 15
+        assert se5.fold(l1, 10) == 25
 
-        assert ft1.accummulate(l1) == FT(1,3,6,10,15)
-        assert ft1.accummulate(l1, 10) == FT(10,11,13,16,20,25)
-        assert ft1.accummulate(l2) == FT(1,2,6,24,120)
+        assert ft5.accummulate(l1) == FT(1,3,6,10,15)
+        assert ft5.accummulate(l1, 10) == FT(10,11,13,16,20,25)
+        assert ft5.accummulate(l2) == FT(1,2,6,24,120)
         assert ft0.accummulate(l1) == FT()
         assert ft0.accummulate(l2) == FT()
 

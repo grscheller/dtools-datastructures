@@ -12,33 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-### Stack type Data Structures
+"""### Stack type Data Structures
 
 ##### Stack types:
 
 * **SplitEnd:** Singularly linked stack with shareable data nodes
-
----
+  * **SplitEndRoots:** Stores common root nodes for a collection of SplitEnds
 
 """
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Iterator, Optional, overload, TypeVar
-from grscheller.fp.iterables import FM, concat, exhaust, merge
-from grscheller.fp.nada import Nada, nada
+from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
 from .nodes import SL_Node as Node
 
-__all__ = ['SplitEnd']
+__all__ = ['SplitEnd', 'SplitEndRoots']
 
-D = TypeVar('D')
-S = TypeVar('S')
+D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
-class SplitEnd(Generic[D, S]):
+class SplitEndRoots(Generic[D]):
+    """#### Class for SplitEnd root storage.
+
+    * allows multiple 
+
     """
-    #### SplitEnd
+    __slots__ = '_roots', 'permit_new_roots',
+
+    def __init__(self, *roots: D, permit_new_roots: bool=True) -> None:
+        self.permit_new_roots = permit_new_roots
+        self._roots: dict[D, Node[D]] = {}
+        for root in roots:
+            self._roots[root] = Node(root, None)
+
+    def get_root_node(self, root: D) -> Node[D]:
+        if root not in self._roots:
+            if self.permit_new_roots:
+                self._roots[root] = Node(root, None)
+            else:
+                msg = "SplitEnd: permit_new_roots set to False"
+                raise ValueError(msg)
+        return self._roots[root]
+
+    def new_root_node(self, root: D) -> None:
+        if root not in self._roots:
+            self._roots[root] = Node(root, None)
+
+class SplitEnd(Generic[D]):
+    """#### SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
 
@@ -51,72 +72,36 @@ class SplitEnd(Generic[D, S]):
     * in a boolean context, return `True` if SplitEnd is not empty
 
     """
-    __slots__ = '_head', '_count', '_sentinel'
+    __slots__ = '_count', '_head', '_root', '_root_nodes',
 
-    @overload
-    def __init__(self, *ds: D, s: S) -> None:
-        ...
-    @overload
-    def __init__(self, *ds: D, s: Nada) -> None:
-        ...
-    @overload
-    def __init__(self, *ds: D) -> None:
-        ...
-    def __init__(self, *ds: D, s: S|Nada=nada) -> None:
-        self._head: Optional[Node[D]] = None
-        self._count: int = 0
-        self._sentinel = s
+    def __init__(self, root_nodes: SplitEndRoots[D], root: D, *ds: D) -> None:
+        self._head: Node[D] = root_nodes.get_root_node(root)
+        self._root_nodes, self._root = root_nodes, self._head
+        self._count: int = 1
         for d in ds:
             node: Node[D] = Node(d, self._head)
             self._head = node
             self._count += 1
 
     def __iter__(self) -> Iterator[D]:
-        node = self._head
-        while node:
+        node: Node[D]|None = self._head
+        while node is not None:
             yield node._data
             node = node._next
 
-    def reverse(self) -> SplitEnd[D, S]:
-        """
-        **Reversed SplitEnd**
-
-        Return shallow reversed copy of a SplitEnd.
-
-        * Returns a new Stack object with shallow copied new data
-        * creates all new nodes
-        * O(n) space & time complexity
-
-        """
-        return SplitEnd(*self, s=self._sentinel)
-
     def __reversed__(self) -> Iterator[D]:
-        return iter(self.reverse())
+        data = list(self)
+        return reversed(data)
 
     def __repr__(self) -> str:
-        if self._sentinel is nada:
-            return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
-        elif self:
-            return ('SplitEnd('
-                    + ', '.join(map(repr, reversed(self)))
-                    + ', s=' + repr(self._sentinel) + ')')
-        else:
-            return ('SplitEnd('
-                    + 's=' + repr(self._sentinel) + ')')
-
+        return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
-        if self._sentinel is nada:
-            return ('>< '
-                    + ' -> '.join(map(str, self))
-                    + ' ||')
-        else:
-            return ('>< '
-                    + ' -> '.join(map(str, self))
-                    + ' |' + repr(self._sentinel) + '|')
+        return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
 
     def __bool__(self) -> bool:
-        return self._count > 0
+        # Returns true if not a root node
+        return self._head is not self._root
 
     def __len__(self) -> int:
         return self._count
@@ -127,12 +112,9 @@ class SplitEnd(Generic[D, S]):
 
         if self._count != other._count:
             return False
-        if self._sentinel is not other._sentinel:
-            if self._sentinel != other._sentinel:
-                return False
 
-        left = self._head
-        right = other._head
+        left: Optional[Node[D]] = self._head
+        right: Optional[Node[D]] = other._head
         nn = self._count
         while nn > 0:
             if left is right:
@@ -146,222 +128,84 @@ class SplitEnd(Generic[D, S]):
             nn -= 1
         return True
 
-    def copy(self) -> SplitEnd[D, S]:
-        """
-        **Shallow Copy**
+    def copy(self) -> SplitEnd[D]:
+        """Return a swallow copy of the SplitEnd.
 
-        Return a swallow copy of the SplitEnd in O(1) space & time complexity.
+        * O(1) space & time complexity.
 
         """
-        stack: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
+        stack: SplitEnd[D] = SplitEnd(self._root_nodes, self._root)
         stack._head, stack._count = self._head, self._count
         return stack
 
     def push(self, *ds: D) -> None:
-        """
-        **Push Data**
-
-        Push data onto top of the SplitEnd. Ignores "non-existent" Nada()
-        values pushed on the stack.
-
-        """
+        """Push data onto the top of the SplitEnd."""
         for d in ds:
-            if d is not nada:
-                node = Node(d, self._head)
-                self._head, self._count = node, self._count+1
+            node = Node(d, self._head)
+            self._head, self._count = node, self._count+1
 
-    @overload
-    def pop(self, default: D) -> D|S: ...
-    @overload
-    def pop(self) -> D|S: ...
-    def pop(self, default: D|Nada=nada) -> D|S|Nada:
-        """
-        **Pop Data**
+    def pop(self) -> D:
+        """Pop data off of the top of the SplitEnd.
 
-        Pop data off of the top of the SplitEnd.
-
-        * if empty, return a default value
-        * if empty and a default value not given, return the sentinel value
+        * removes the data if not at the root
+        * just returns the data if at the root
 
         """
-        if self._head is None:
-            if default is nada:
-                return self._sentinel
-            else:
-                return default
+        data = self._head._data
+        if (next_node := self._head._next) is not None:
+            self._head, self._count = next_node, self._count-1
+        return data
+
+    def head(self) -> D:
+        """Return the data at the top of the SplitEnd, does not consume it."""
+        return self._head._data
+
+    def root(self) -> D:
+        """Return the data at the root of the SplitEnd."""
+        return self._root._data
+
+    def tail(self) -> SplitEnd[D]:
+        """Get tail of the SplitEnd, where the tail of a root is itself.
+
+        * SplitEnds must always contain a root
+          * to make this method total, a tail of a root is itself
+
+        """
+        if self._head is self._root:
+            return self
         else:
-            data = self._head._data
-            self._head, self._count = self._head._next, self._count-1
-            return data
-
-    @overload
-    def peak(self, default: D) -> D: ...
-    @overload
-    def peak(self) -> D|S: ...
-    def peak(self, default: D|Nada=nada) -> D|S|Nada:
-        """
-        **Peak at top of stack**
-
-        Returns the data at the top of the SplitEnd.
-
-        * does not consume the data
-        * if empty, data does not exist, so in that case return default
-        * if empty and no default given, return nada: Nada
-
-        """
-        if self._head is None:
-            return default
-        return self._head._data
-
-    @overload
-    def head(self, default: D|S) -> D|S: ...
-    @overload
-    def head(self) -> D|S: ...
-    def head(self, default: D|S|Nada=nada) -> D|S|Nada:
-        """
-        ##### Head of SplitEnd
-
-        Returns the data at the top of the SplitEnd.
-
-        * does not consume the data
-        * for an empty SplitEnd, head does not exist, so return default
-        * otherwise return the sentinel value
-        * the sentinel value cannot be overridden by nada
-          * of course self._sentinel can always be set to nada
-
-        """
-        if self._head is None:
-            if default is nada:
-                return self._sentinel
-            else:
-                return default
-        return self._head._data
-
-    @overload
-    def tail(self, default: S) -> SplitEnd[D, S]|S: ...
-    @overload
-    def tail(self) -> SplitEnd[D, S]|S: ...
-    def tail(self, default: S|Nada=nada) -> SplitEnd[D, S]|S|Nada:
-        """
-        **Tail of SplitEnd**
-
-        Returns the tail of the SplitEnd if it exists, otherwise returns the
-        sentinel value, or a default value of the same type as the sentinel
-        value.
-
-        * optional default needs to be of the same type as the sentinel value
-          * example:
-            * sentinel: tuple(int) = (0,)
-            * default: tuple(int) = (42,)
-          * decided not to let default: SplitEnd[D, S] as a return option
-            * made end code more confusing to reason about
-              * not worth cognitive overload when used in client code
-              * tended to hide the occurrence of an unusual event occurring
-        * the sentinel value cannot be overridden by nada
-          * of course self._sentinel can always be set to nada
-
-        """
-        if self._head:
-            se: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
-            se._head = self._head._next
-            se._count = self._count - 1
+            se: SplitEnd[D] = SplitEnd(self._root_nodes, self._root._data)
+            se._head, se._count = cast(Node[D], self._head._next), self._count-1
             return se
-        else:
-            return default
 
-    @overload
-    def cons(self, d: D) -> SplitEnd[D, S]:
-        ...
-    @overload
-    def cons(self, d: Nada) -> Nada:
-        ...
-    def cons(self, d: D|Nada) -> SplitEnd[D, S]|Nada:
-        """
-        **Cons SplitEnd with a Head**
+    def cons(self, head: D) -> SplitEnd[D]:
+        """Cons SplitEnd with a head.
 
-        Return a new SplitEnd with data as head and self as tail.
-
-        Constructing a SplitEnd using a non-existent value as head results in
-        a non-existent SplitEnd. In that case, return sentinel: _S.
+        * return a new SplitEnd instance by appending head to itself
+        * does not mutate original SplitEnd
 
         """
-        if d is nada:
-            return nada
-        else:
-            stack: SplitEnd[D, S] = SplitEnd(s=self._sentinel)
-            stack._head = Node(cast(D, d), self._head)
-            stack._count = self._count + 1
-            return stack
+        se: SplitEnd[D] = SplitEnd(self._root_nodes, self._root._data)
+        se._head, se._count = Node(head, self._head), self._count + 1
+        return se
 
-    def fold(self, f:Callable[[D, D], D]) -> Optional[D]:
-        """
-        **Reduce with f**
+    def fold(self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
+        """Reduce with a function.**
 
-        * returns a value of the of type _T if self is not empty
-        * returns None if self is empty
         * folds in natural LIFO Order
-        * TODO: consolidate fold & fold1
 
         """
-        node: Optional[Node[D]] = self._head
-        if not node:
-            return None
-        acc: D = node._data
-        while node:
-            if (node := node._next) is None:
-                break
-            acc = f(acc, node._data)
-        return acc
+        acc: T
+        node: Optional[Node[D]]
+        top: Node[D] = self._head
+        if init is None:
+            acc = cast(T, top._data)
+            node = top._next
+        else:
+            acc = init
+            node = top
 
-    def fold1(self, f:Callable[[T, D], T], s: T) -> T:
-        """
-        **Reduce with f**
-
-        * returns a value of type ~T
-        * type ~T can be same type as ~D
-        * folds in natural LIFO Order
-        * TODO: consolidate fold & fold1
-
-        """
-        node: Optional[Node[D]] = self._head
-        if not node:
-            return s
-        acc: T = s
         while node:
             acc = f(acc, node._data)
             node = node._next
         return acc
-
-    def flatMap(self, f: Callable[[D], SplitEnd[T, S]], type: FM=FM.CONCAT) -> SplitEnd[T, S]:
-        """
-        **Bind function to SplitEnd**
-
-        Bind function `f` to the SplitEnd.
-
-        * type = CONCAT: sequentially concatenate iterables one after the other
-        * type = MERGE: merge iterables together until one is exhausted
-        * type = Exhaust: merge iterables together until all are exhausted
-
-        """
-        match type:
-            case FM.CONCAT:
-                return SplitEnd(*concat(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
-            case FM.MERGE:
-                return SplitEnd(*merge(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
-            case FM.EXHAUST:
-                return SplitEnd(*exhaust(*map(lambda x: iter(x), map(f, self))), s=self._sentinel)
-            case '*':
-                raise ValueError('Unknown FM type')
-
-    def map(self, f: Callable[[D], T]) -> SplitEnd[T, S]:
-        """
-        **Map f over the SplitEnd**
-
-        Maps a function (or callable object) over the values on the SplitEnd Stack.
-
-        * TODO: Redo in "natural" order?
-        * Returns a new Stack object with shallow copied new data
-        * O(n) complexity
-
-        """
-        return self.flatMap(lambda a: SplitEnd(f(a)))

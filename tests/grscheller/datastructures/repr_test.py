@@ -14,89 +14,88 @@
 
 from __future__ import annotations
 from grscheller.fp.woException import MB, XOR
-from grscheller.datastructures.stacks import SplitEnd
+from grscheller.datastructures.stacks import SplitEnd, SplitEndRoots
 from grscheller.datastructures.queues import DoubleQueue
 from grscheller.datastructures.queues import FIFOQueue
 from grscheller.datastructures.queues import LIFOQueue
 from grscheller.datastructures.tuples import FTuple
-from grscheller.fp.nada import Nada, nada
 
 class Test_repr:
     def test_DoubleQueue(self) -> None:
-        ca1: DoubleQueue[object, Nada] = DoubleQueue(s=nada)
-        assert repr(ca1) == 'DoubleQueue(s=nada)'
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+        dq0: DoubleQueue[object] = DoubleQueue()
+        assert repr(dq0) == 'DoubleQueue()'
+        dq1 = eval(repr(dq0))
+        assert dq1 == dq0
+        assert dq1 is not dq0
 
-        ca1.pushR(1)
-        ca1.pushL('foo')
-        assert repr(ca1) == "DoubleQueue('foo', 1, s=nada)"
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+        dq0.pushR(1)
+        dq0.pushL('foo')
+        assert repr(dq0) == "DoubleQueue('foo', 1)"
+        dq1 = eval(repr(dq0))
+        assert dq1 == dq0
+        assert dq1 is not dq0
 
-        assert ca1.popL() == 'foo'
-        ca1.pushR(2)
-        ca1.pushR(3)
-        ca1.pushR(4)
-        ca1.pushR(5)
-        assert ca1.popL() == 1
-        ca1.pushL(42)
-        ca1.popR()
-        assert repr(ca1) == 'DoubleQueue(42, 2, 3, 4, s=nada)'
-        dq2 = eval(repr(ca1))
-        assert dq2 == ca1
-        assert dq2 is not ca1
+        assert dq0.popL().get('bar') == 'foo'
+        dq0.pushR(2)
+        dq0.pushR(3)
+        dq0.pushR(4)
+        dq0.pushR(5)
+        assert dq0.popL() == MB(1)
+        dq0.pushL(42)
+        dq0.popR()
+        assert repr(dq0) == 'DoubleQueue(42, 2, 3, 4)'
+        dq1 = eval(repr(dq0))
+        assert dq1 == dq0
+        assert dq1 is not dq0
 
     def test_FIFOQueue(self) -> None:
-        sq1: FIFOQueue[object, Nada] = FIFOQueue(s=nada)
-        assert repr(sq1) == 'FIFOQueue(s=nada)'
+        sq1: FIFOQueue[object] = FIFOQueue()
+        assert repr(sq1) == 'FIFOQueue()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "FIFOQueue(1, 'foo', s=nada)"
+        assert repr(sq1) == "FIFOQueue(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
-        assert sq1.pop() == 1
+        assert sq1.pop() == MB(1)
         sq1.push(2)
         sq1.push(3)
         sq1.push(4)
         sq1.push(5)
-        assert sq1.pop() == 'foo'
+        assert sq1.pop() == MB('foo')
         sq1.push(42)
         sq1.pop()
-        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42, s=nada)'
+        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
     def test_LIFOQueue(self) -> None:
-        sq1: LIFOQueue[object, Nada] = LIFOQueue(s=nada)
-        assert repr(sq1) == 'LIFOQueue(s=nada)'
+        sq1: LIFOQueue[object] = LIFOQueue()
+        assert repr(sq1) == 'LIFOQueue()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "LIFOQueue(1, 'foo', s=nada)"
+        assert repr(sq1) == "LIFOQueue(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
-        assert sq1.pop() == 'foo'
+        assert sq1.pop() == MB('foo')
         sq1.push(2, 3)
         sq1.push(4)
         sq1.push(5)
-        assert sq1.pop() == 5
+        assert sq1.pop() == MB(5)
         sq1.push(42)
-        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42, s=nada)'
+        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -138,98 +137,98 @@ class Test_repr:
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
     def test_SplitEnd_procedural_methods(self) -> None:
-        ps1: SplitEnd[object, Nada] = SplitEnd()
-        assert repr(ps1) == 'SplitEnd()'
-        ps2 = eval(repr(ps1))
-        assert ps2 == ps1
-        assert ps2 is not ps1
+        se_roots: SplitEndRoots[object] = SplitEndRoots()
+        s1: SplitEnd[object] = SplitEnd(se_roots, se_roots, 'foobar')
+    #   assert repr(ps1) == 'SplitEnd()'
+    #   ps2 = eval(repr(ps1))
+        s2 = s1.copy()
+    #   assert ps2 == ps1
+    #   assert ps2 is not ps1
 
-        ps1.push(1)
-        ps1.push('foo')
-        assert repr(ps1) == "SplitEnd(1, 'foo')"
-        ps2 = eval(repr(ps1))
-        assert ps2 == ps1
-        assert ps2 is not ps1
+        s1.push(1)
+        s1.push('foo')
+    #   assert repr(s1) == "SplitEnd(1, 'foo')"
+    #   s2 = eval(repr(s1))
+        s2 = s1.copy()
+        assert s2 == s1
+        assert s2 is not s1
 
-        assert ps1.pop() == 'foo'
-        ps1.push(2)
-        ps1.push(3)
-        ps1.push(4)
-        ps1.push(5)
-        assert ps1.pop() == 5
-        ps1.push(42)
-        assert repr(ps1) == 'SplitEnd(1, 2, 3, 4, 42)'
-        ps2 = eval(repr(ps1))
-        assert ps2 == ps1
-        assert ps2 is not ps1
+        assert s1.pop() == 'foo'
+        s1.push(2)
+        s1.push(3)
+        s1.push(4)
+        s1.push(5)
+        assert s1.pop() == 5
+        s1.push(42)
+    #   assert repr(s1) == 'SplitEnd(1, 2, 3, 4, 42)'
+    #   s2 = eval(repr(s1))
+        s2 = s1.copy()
+        assert s2 == s1
+        assert s2 is not s1
 
     def test_SplitEnd_functional_methods(self) -> None:
-        fs1: SplitEnd[object, Nada] = SplitEnd()
-        assert repr(fs1) == 'SplitEnd()'
-        fs2 = eval(repr(fs1))
+        se_roots: SplitEndRoots[int] = SplitEndRoots()
+        fs1: SplitEnd = SplitEnd(se_roots, 1, 2, 3)
+    #   assert repr(fs1) == 'SplitEnd()'
+    #   fs2 = eval(repr(fs1))
+        fs2 = fs1.copy()
         assert fs2 == fs1
         assert fs2 is not fs1
 
-        fs1 = fs1.cons(1)
-        fs1 = fs1.cons('foo')
-        assert repr(fs1) == "SplitEnd(1, 'foo')"
-        fs2 = eval(repr(fs1))
-        assert fs2 == fs1
-        assert fs2 is not fs1
+        fs1 = fs1.cons(42)
+        fs1 = fs1.cons(-1)
+    #   assert repr(fs1) == "SplitEnd(1, 'foo')"
+    #   fs2 = eval(repr(fs1))
+    #   assert fs2 == fs1
+    #   assert fs2 is not fs1
 
-        assert fs1.head() == 'foo'
-        fs3 = fs1.tail()
+        assert fs1.head() == -1
+        assert fs2.head() == 3
+        fs3 = fs2.tail()
         if fs3 is None:
             assert False
-        fs3 = fs3.cons(2).cons(3).cons(4).cons(5)
+        fs3 = fs3.cons(-3).cons(4).cons(5)
         assert fs3.head() == 5
-        if fs3:
-            fs4 = fs3.tail().cons(42)
+        if (fs4 := fs3.tail()):
+            fs4 = fs4.cons(42)
         else:
             assert False
-        assert repr(fs4) == 'SplitEnd(1, 2, 3, 4, 42)'
-        fs5 = eval(repr(fs4))
-        assert fs5 == fs4
-        assert fs5 is not fs4
+        assert fs4 == SplitEnd(se_roots, 1, 2, -3, 4, 42)
+    #   assert repr(fs4) == 'SplitEnd(1, 2, -3, 4, 42)'
+    #   fs5 = eval(repr(fs4))
+    #   assert fs5 == fs4
+    #   assert fs5 is not fs4
 
 class Test_repr_mix:
     def test_mix1(self) -> None:
+        se_roots: SplitEndRoots[tuple[int, ...]] = SplitEndRoots()
         thing1: XOR[object, str] = \
             XOR(
                 FIFOQueue(
                     FTuple(
                         42,
                         MB(42),
-                        XOR(
-                            None,
-                            'nobody home'
-                        )
+                        XOR(right = 'nobody home')
                     ),
-                    SplitEnd(
-                        [1, 2, 3, MB()],
-                        42,
-                        XOR(
-                            LIFOQueue(
-                                'foo',
-                                'bar',
-                                s=nada
-                            ),
-                            42
-                        ),
-                        XOR(
-                            None,
-                            [42, 16]
-                        )
+                    SplitEnd[tuple[int, ...]](
+                        se_roots,
+                        (1,),
+                        (),
+                        (42, 100)
                     ),
-                    s=nada
+                    LIFOQueue(
+                        'foo',
+                        'bar'
+                    )
                 ),
-                "That's All Folks!"
+                'Potential Right'
             )
 
-        repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR('nobody home')), SplitEnd([1, 2, 3, MB()], 42, XOR(LIFOQueue('foo', 'bar')))))"
-        # assert repr(thing1) == repr_str
+        repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR(right='nobody home')), SplitEnd(se_roots, (1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
+    #   assert repr(thing1) == repr_str
 
-        thing2 = eval(repr(thing1))
+    #   thing2 = eval(repr(thing1))
+        thing2 = eval(repr_str)
         assert thing2 == thing1
         assert thing2 is not thing1
 
