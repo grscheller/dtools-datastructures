@@ -17,7 +17,9 @@
 ##### Stack types:
 
 * **SplitEnd:** Singularly linked stack with shareable data nodes
-  * **SplitEndRoots:** Stores common root nodes for a collection of SplitEnds
+  * **SplitEndRoots:** Common root nodes for a collection of SplitEnds
+* **SplitEndMut:** Singularly linked stack with shareable data nodes
+  * **SplitEndRootsMut:** Common root nodes for a collection of SplitEndMuts
 
 """
 
@@ -31,23 +33,19 @@ __all__ = ['SplitEnd', 'SplitEndRoots']
 D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
-class SplitEndRoots(Generic[D]):
-    """#### Class for SplitEnd root storage.
-
-    * allows multiple 
-
-    """
-    __slots__ = '_roots', 'permit_new_roots',
+class _BaseRoots(Generic[D]):
+    """#### Class for SplitEnd & SplitEndMut root storage."""
+    __slots__ = '_roots', '_permit_new_roots'
 
     def __init__(self, *roots: D, permit_new_roots: bool=True) -> None:
-        self.permit_new_roots = permit_new_roots
+        self._permit_new_roots = permit_new_roots
         self._roots: dict[D, Node[D]] = {}
         for root in roots:
             self._roots[root] = Node(root, None)
 
     def get_root_node(self, root: D) -> Node[D]:
         if root not in self._roots:
-            if self.permit_new_roots:
+            if self._permit_new_roots:
                 self._roots[root] = Node(root, None)
             else:
                 msg = "SplitEnd: permit_new_roots set to False"
@@ -58,25 +56,29 @@ class SplitEndRoots(Generic[D]):
         if root not in self._roots:
             self._roots[root] = Node(root, None)
 
-class SplitEnd(Generic[D]):
-    """#### SplitEnd
+class SplitEndRoots(_BaseRoots[D]):
+    """#### Class for SplitEnd root storage.
 
-    LIFO stacks which can safely share immutable data between themselves.
-
-    * each *split end* is a very simple stateful LIFO stack
-    * contains a count of nodes & reference to first node of a linked list
-    * different *split ends* can safely share the same *tail*
-    * each *split end* sees itself as a singularly linked list
-    * bush-like datastructures can be formed using multiple *split ends*
-    * len() returns the number of elements on the stack
-    * in a boolean context, return `True` if SplitEnd is not empty
+    * allows multiple SplitEnds to share a collection of roots
 
     """
-    __slots__ = '_count', '_head', '_root', '_root_nodes',
+    __slots__ = ()
 
-    def __init__(self, root_nodes: SplitEndRoots[D], root: D, *ds: D) -> None:
-        self._head: Node[D] = root_nodes.get_root_node(root)
-        self._root_nodes, self._root = root_nodes, self._head
+class SplitEndMutRoots(_BaseRoots[D]):
+    """#### Class for SplitEndMut root storage.
+
+    * allows multiple SplitEndsMut to share a collection of roots
+
+    """
+    __slots__ = ()
+
+class _SplitEndBase(Generic[D]):
+    __slots__ = '_count', '_root_nodes', '_head', '_root'
+
+    def __init__(self, root_nodes: _BaseRoots[D], root: D, *ds: D) -> None:
+        self._root_nodes = root_nodes
+        self._root: Node[D] = root_nodes.get_root_node(root)
+        self._head = self._root
         self._count: int = 1
         for d in ds:
             node: Node[D] = Node(d, self._head)
@@ -92,12 +94,6 @@ class SplitEnd(Generic[D]):
     def __reversed__(self) -> Iterator[D]:
         data = list(self)
         return reversed(data)
-
-    def __repr__(self) -> str:
-        return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
-
-    def __str__(self) -> str:
-        return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
 
     def __bool__(self) -> bool:
         # Returns true if not a root node
@@ -128,15 +124,119 @@ class SplitEnd(Generic[D]):
             nn -= 1
         return True
 
-    def copy(self) -> SplitEnd[D]:
-        """Return a swallow copy of the SplitEnd.
+    def root(self) -> D:
+        """Return the data at the root of the SplitEnd."""
+        return self._root._data
 
-        * O(1) space & time complexity.
+    def fold(self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
+        """Reduce with a function.
+
+        * folds in natural LIFO Order
 
         """
-        stack: SplitEnd[D] = SplitEnd(self._root_nodes, self._root)
-        stack._head, stack._count = self._head, self._count
-        return stack
+        acc: T
+        node: Optional[Node[D]]
+        top: Node[D] = self._head
+        if init is None:
+            acc = cast(T, top._data)
+            node = top._next
+        else:
+            acc = init
+            node = top
+
+        while node:
+            acc = f(acc, node._data)
+            node = node._next
+        return acc
+
+
+class SplitEnd(_SplitEndBase[D]):
+    """#### SplitEnd
+
+    LIFO stacks which can safely share immutable data between themselves.
+
+    * each `SplitEnd` is an immutable reference to the top of a LIFO stack
+      * top of the stack is the "head"
+      * bottom of the stack is the "root" which cannot be removed
+    * different `SplitEnds` can safely share the same "tail"
+    * each split end sees itself as a singularly linked list
+    * bush-like datastructures can be formed using multiple split ends
+    * len() returns the number of elements on the stack
+    * in boolean context,
+      * return false if split end consists of just a root
+      * otherwise return true
+
+    """
+    __slots__ = '_root_nodes',
+
+    def __init__(self, root_nodes: SplitEndRoots[D], root: D, *ds: D) -> None:
+        super().__init__(root_nodes, root, *ds)
+
+    def __repr__(self) -> str:
+        return 'SplitEnd(' + ', '.join(map(repr, reversed(self))) + ')'
+
+    def __str__(self) -> str:
+        return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
+
+    def head(self) -> D:
+        """Return the data at the top of the SplitEnd, does not consume it."""
+        return self._head._data
+
+    def tail(self) -> SplitEnd[D]:
+        """Get tail of the SplitEnd, where the tail of a root is itself.
+
+        * SplitEnds must always contain a root
+          * to make this method total, a tail of a root is itself
+
+        """
+        if self._head is self._root:
+            return self
+        else:
+            root_nodes = cast(SplitEndRoots[D], self._root_nodes)
+            se: SplitEnd[D] = SplitEnd(root_nodes, self._root._data)
+            se._head, se._count = cast(Node[D], self._head._next), self._count-1
+            return se
+
+    def cons(self, head: D) -> SplitEnd[D]:
+        """Cons SplitEnd with a head.
+
+        * return a new SplitEnd instance by appending head to itself
+        * does not mutate original SplitEnd
+
+        """
+        root_nodes = cast(SplitEndRoots[D], self._root_nodes)
+        se: SplitEnd[D] = SplitEnd(root_nodes, self._root._data)
+        se._head, se._count = Node(head, self._head), self._count + 1
+        return se
+
+class SplitEndMut(_SplitEndBase[D]):
+    """#### SplitEndMut
+
+    LIFO stacks which can safely share immutable data between themselves.
+
+    * each `SplitEndMut` is a very simple stateful (mutable) LIFO stack
+      * top of the stack is the "top"
+      * bottom of the stack is the "root" which cannot be removed
+    * data can be pushed and popped to the stack
+    * different mutable split ends can safely share the same "tail"
+    * each split end sees itself as a singularly linked list
+    * bush-like datastructures can be formed using multiple split ends
+    * len() returns the number of elements on the stack
+    * in boolean context,
+      * return false if split end consists of just a root
+      * otherwise return true
+
+    """
+    __slots__ = ()
+
+    def __init__(self, root_nodes: SplitEndMutRoots[D], root: D, *ds: D) -> None:
+        super().__init__(root_nodes, root, *ds)
+
+    def __repr__(self) -> str:
+        return 'SplitEndMut(' + ', '.join(map(repr, reversed(self))) + ')'
+
+    def __str__(self) -> str:
+        return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
@@ -156,56 +256,17 @@ class SplitEnd(Generic[D]):
             self._head, self._count = next_node, self._count-1
         return data
 
-    def head(self) -> D:
+    def peak(self) -> D:
         """Return the data at the top of the SplitEnd, does not consume it."""
         return self._head._data
 
-    def root(self) -> D:
-        """Return the data at the root of the SplitEnd."""
-        return self._root._data
+    def copy(self) -> SplitEndMut[D]:
+        """Return a swallow copy of the SplitEnd.
 
-    def tail(self) -> SplitEnd[D]:
-        """Get tail of the SplitEnd, where the tail of a root is itself.
-
-        * SplitEnds must always contain a root
-          * to make this method total, a tail of a root is itself
+        * O(1) space & time complexity.
 
         """
-        if self._head is self._root:
-            return self
-        else:
-            se: SplitEnd[D] = SplitEnd(self._root_nodes, self._root._data)
-            se._head, se._count = cast(Node[D], self._head._next), self._count-1
-            return se
-
-    def cons(self, head: D) -> SplitEnd[D]:
-        """Cons SplitEnd with a head.
-
-        * return a new SplitEnd instance by appending head to itself
-        * does not mutate original SplitEnd
-
-        """
-        se: SplitEnd[D] = SplitEnd(self._root_nodes, self._root._data)
-        se._head, se._count = Node(head, self._head), self._count + 1
+        root_nodes = cast(SplitEndMutRoots[D], self._root_nodes)
+        se: SplitEndMut[D] = SplitEndMut(root_nodes, self._root._data)
+        se._head, se._count = self._head, self._count
         return se
-
-    def fold(self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
-        """Reduce with a function.**
-
-        * folds in natural LIFO Order
-
-        """
-        acc: T
-        node: Optional[Node[D]]
-        top: Node[D] = self._head
-        if init is None:
-            acc = cast(T, top._data)
-            node = top._next
-        else:
-            acc = init
-            node = top
-
-        while node:
-            acc = f(acc, node._data)
-            node = node._next
-        return acc
