@@ -25,16 +25,24 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
+from typing import Abstract, Callable, cast, Generic
+from typing import Hashable, Iterator, Optional, TypeVar
 from .nodes import SL_Node as Node
 
-__all__ = ['SplitEnd', 'SplitEndRoots']
+__all__ = [ 'SplitEndBase', 'Roots',
+            'SplitEnd', 'SplitEndRoots',
+            'SplitEndMut', 'SplitEndMutRoots' ]
 
 D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
-class _BaseRoots(Generic[D]):
-    """#### Class for SplitEnd & SplitEndMut root storage."""
+@Abstract
+class Roots(Generic[D]):
+    """#### Base Class for SplitEnd & SplitEndMut root storage.
+
+    * allows multiple SplitEnds to share a collection of roots
+
+    """
     __slots__ = '_roots', '_permit_new_roots'
 
     def __init__(self, *roots: D, permit_new_roots: bool=True) -> None:
@@ -56,26 +64,19 @@ class _BaseRoots(Generic[D]):
         if root not in self._roots:
             self._roots[root] = Node(root, None)
 
-class SplitEndRoots(_BaseRoots[D]):
-    """#### Class for SplitEnd root storage.
-
-    * allows multiple SplitEnds to share a collection of roots
-
-    """
+class SplitEndRoots(Roots[D]):
+    """#### Class for SplitEnd root storage."""
     __slots__ = ()
 
-class SplitEndMutRoots(_BaseRoots[D]):
-    """#### Class for SplitEndMut root storage.
-
-    * allows multiple SplitEndsMut to share a collection of roots
-
-    """
+class SplitEndMutRoots(Roots[D]):
+    """#### Class for SplitEndMut root storage."""
     __slots__ = ()
 
-class _SplitEndBase(Generic[D]):
+@Abstract
+class SplitEndBase(Generic[D]):
     __slots__ = '_count', '_root_nodes', '_head', '_root'
 
-    def __init__(self, root_nodes: _BaseRoots[D], root: D, *ds: D) -> None:
+    def __init__(self, root_nodes: Roots[D], root: D, *ds: D) -> None:
         self._root_nodes = root_nodes
         self._root: Node[D] = root_nodes.get_root_node(root)
         self._head = self._root
@@ -150,7 +151,7 @@ class _SplitEndBase(Generic[D]):
         return acc
 
 
-class SplitEnd(_SplitEndBase[D]):
+class SplitEnd(SplitEndBase[D]):
     """#### SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
@@ -209,7 +210,7 @@ class SplitEnd(_SplitEndBase[D]):
         se._head, se._count = Node(head, self._head), self._count + 1
         return se
 
-class SplitEndMut(_SplitEndBase[D]):
+class SplitEndMut(SplitEndBase[D]):
     """#### SplitEndMut
 
     LIFO stacks which can safely share immutable data between themselves.
