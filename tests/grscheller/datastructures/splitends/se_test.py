@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.stacks import SplitEnd as SE
-from grscheller.datastructures.stacks import SplitEndRoots as SER
+from grscheller.datastructures.splitends.se import SE, Roots as SER
 from grscheller.fp.iterables import concat, FM
 
 roots_int = SER[int]()
@@ -24,7 +23,7 @@ roots_int_none = SER[int|None]()
 roots_tuple = SER[tuple[str, ...]]((), permit_new_roots=False)
 roots_float = SER[float]()
 
-class Test_FSplitEnds:
+class Test_SplitEnds:
     def test_mutate_returns_none(self) -> None:
         ps = SE[int](roots_int, 41)
         ret = ps.push(1,2,3) # type: ignore # my[py] warning what is being tested
@@ -51,11 +50,11 @@ class Test_FSplitEnds:
         nums.add(s2.pop())             # now pop from the root
         assert nums == {2, 1, 42, 3}   # anyone home?
         assert not s2
-        assert s2.head() is 1
+        assert s2.peak() is 1
         s2.push(42)
-        assert s2.head() == 40+2
+        assert s2.peak() == 40+2
         assert s2.pop() == 42
-        assert s2.head() == 1
+        assert s2.peak() == 1
 
     def test_SplitEndPushPop(self) -> None:
         s1 = SE(roots_int, 101)
@@ -72,108 +71,101 @@ class Test_FSplitEnds:
         assert s1.pop() == 101
         assert s1.pop() == 101
 
-    def test_consHeadTail(self) -> None:
-        s1: SE[int] = SE(roots_int, 1)
-        s2 = s1.cons(100)
-        head = s2.head()
-        assert head == 100
-        head = s1.head()
-        assert head == 1
-        s3 = s2.cons(1).cons(2).cons(3)
-        s4 = s3.tail()
-        assert s4 == SE(roots_int, 1, 100, 1, 2)
-        assert s1 == SE(roots_int, 1)
-        s5 = s1.cons(42).cons(0)
-        assert s5 == SE(roots_int, 1, 42, 0)
-        assert s5.tail() == SE(roots_int, 1, 42)
+#    def test_consHeadTail(self) -> None:
+#        s1: SE[int] = SE(roots_int, 1)
+#        s2 = s1.cons(100)
+#        head = s2.head()
+#        assert head == 100
+#        head = s1.head()
+#        assert head == 1
+#        s3 = s2.cons(1).cons(2).cons(3)
+#        s4 = s3.tail()
+#        assert s4 == SE(roots_int, 1, 100, 1, 2)
+#        assert s1 == SE(roots_int, 1)
+#        s5 = s1.cons(42).cons(0)
+#        assert s5 == SE(roots_int, 1, 42, 0)
+#        assert s5.tail() == SE(roots_int, 1, 42)
 
     def test_RootSplitEnd(self) -> None:
         s1 = SE(roots_int, 0)
         assert s1.pop() == 0
-        assert s1.head() == 0
+        assert s1.peak() == 0
         s2= SE(roots_int, 0)
-        assert s1.tail() == s2
-        assert s1.tail() is not s2
+#       assert s1.tail() == s2
+#       assert s1.tail() is not s2
 
         s3: SE[int|tuple[()]] = SE(roots_int_tuple, (), 1, 2, 3, 42)
         assert len(s3) == 5
         while s3:
-            assert s3.head() is not ()
-            s3 = s3.tail()
+            assert s3.peak() is not ()
+            s3.pop()
         assert len(s3) == 1
         assert not s3
-        assert s3.head() is ()
+        assert s3.peak() is ()
         s3.push(42)
         assert s3.pop() == 42
         assert s3 == SE(roots_int_tuple, ())
-        assert s3.head() == ()
-        assert s3.tail() == SE(roots_int_tuple, ())
-        s4 = s3.tail()  # returned self here TODO: more data sharing or less?
+        assert s3.peak() == ()
+        assert s3.pop() == ()
+        assert s3 == SE(roots_int_tuple, ())
+        s4 = s3.copy()
+
         assert s4 == s3
-        assert s4 is s3
-        assert s4.head() is ()
-        s5 = s4.cons(42)
-        assert s5 == s4.cons(42)
-        assert s5.pop() == 42
+        assert s4 is not s3
+        assert s4.peak() is ()
+        s5 = s4  # careful!
+        s5.push(42)
+        s6 = s4.copy()
+        assert s5 == s6
+        assert s4 == s6
         assert s4 == s5
+        assert s4 is s5
+        assert s6.pop() == 42
+        assert s6 == s3
 
     def test_SplitEnd_len(self) -> None:
         s1: SE[int|None] = SE(roots_int_none, None)
         s2: SE[int|None] = SE(roots_int_none, None, 42)
-        s2001: SE[int|None] = SE(roots_int_none, None, *range(1,2000))
+        s2001: SE[int|None] = SE(roots_int_none, None, *range(1,2001))
 
         assert len(s1) == 1
         if s2001:
-            assert len(s2001) == 2000
+            assert len(s2001) == 2001
+        else:
+            assert False
         if s1:
             assert False
-        s3 = s1.tail()
+        s3 = s1.copy()
+        assert s3.pop() == None
         s4: SE[int|None]|None = s3 if s3 else None
-        s2001 = s2001.tail()
-        s2001 = s2001.tail()
+        assert s4 is None
+        assert s2001.pop() == 2000
+        assert s2001.pop() == 1999
         assert len(s1) == 1
         assert len(s2) == 2
+        assert len(s2001) == 1999
+        assert s2001.pop() == 1998
         assert len(s2001) == 1998
-        s2001.pop()
-        assert len(s2001) == 1997
+        assert s2001.peak() == 1997
 
-    def test_tailcons(self) -> None:
-        s1: SE[str] = SE(roots_str, "fum")
-        s1 = s1.cons("fo").cons("fi").cons("fe")
-        assert type(s1) == SE
-        s2 = s1.tail()
-        if s2 is None:
-            assert False
-        s3 = s2.cons("fe")
-        assert s3 == s1
-        while s1:
-            s1 = s1.tail()
-        assert s1.head() == "fum"
-    #   assert s1.tail().cons('foo') is SE(roots_str, "fum").cons('foo') # TODO: Drop mutating methods and make this true???
-        assert s1.tail() == SE(roots_str, "fum")
-
-    def test_tailConsNot(self) -> None:
-        s1: SE[int|None] = SE(roots_int_none, None)
-        s1.push(10)
-        s1.push(20)
-        s1.push(30)
-        s1.push(40)
-        s2 = s1.copy()
-        assert s2.pop() == 40
-        if s2 is None:
-            assert False
-        s3 = s2.copy()
-        s3.push(40)
-        assert s3 == s1
-        while s1:
-            s1.pop()
-        assert s1.pop() is None
-        assert s1.pop() is None
+#   def test_tailcons(self) -> None:
+#       s1: SE[str] = SE(roots_str, "fum")
+#       s1 = s1.cons("fo").cons("fi").cons("fe")
+#       assert type(s1) == SE
+#       s2 = s1.tail()
+#       if s2 is None:
+#           assert False
+#       s3 = s2.cons("fe")
+#       assert s3 == s1
+#       while s1:
+#           s1 = s1.tail()
+#       assert s1.head() == "fum"
+#   #   assert s1.tail().cons('foo') is SE(roots_str, "fum").cons('foo') # TODO: Drop mutating methods and make this true???
+#       assert s1.tail() == SE(roots_str, "fum")
 
     def test_stackIter(self) -> None:
         giantSplitEnd: SE[str] = SE(roots_str, *[' Fum', ' Fo', ' Fi', 'Fe'])
-        giantTalk = giantSplitEnd.head()
-        giantSplitEnd = giantSplitEnd.tail()
+        giantTalk = giantSplitEnd.pop()
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
             giantTalk += giantWord
@@ -186,57 +178,54 @@ class Test_FSplitEnds:
 
     def test_equality(self) -> None:
         s1 = SE(roots_int, *range(3))
-        s2 = s1.cons(42)
+        s2 = s1.copy()
+        s2.push(42)
         assert s1 is not s2
-        assert s1 is not s2.tail()
         assert s1 != s2
-        assert s1 == s2.tail()
+        assert s2.pop() == 42
+        assert s1 == s2
+        assert s2 is not s1
+        assert s2.peak() == 2
 
-        assert s2.head() == 42
-
-        s3: SE[int] = SE(roots_int, *range(10000))
+        s3 = SE(roots_int, *range(1, 10001))
         s4 = s3.copy()
         assert s3 is not s4
         assert s3 == s4
 
-        s3 = s3.cons(s4.head())
-        s3.head() != 42
-        s4 = s4.tail()
-        assert s3 is not s4
-        assert s3 != s4
-        assert s3 is not None
-        s3 = s3.tail().tail()
+        s3.push(s4.pop())
+        assert s3.pop() == 10000
+        assert s3.pop() == 10000
         assert s3 == s4
+        assert s3 is not s4
 
         s5 = SE(roots_int, 1,2,3,4)
         s6 = SE(roots_int, 1,2,3,42)
         assert s5 != s6
-        for aa in range(10):
-            s5 = s5.cons(aa)
-            s6 = s6.cons(aa)
+        for ii in range(10):
+            s5.push(ii)
+            s6.push(ii)
         assert s5 != s6
 
         ducks: tuple[str, ...] = ("Huey", "Dewey")
         s7 = SE(roots_tuple, (), ducks)
         s8 = SE(roots_tuple, (), ducks)
-        s9 = s8.cons(("Huey", "Dewey", "Louie"))
+        s9 = s8.copy()
+        s9.push(("Huey", "Dewey", "Louie"))
         assert s7 == s8
         assert s7 != s9
-        assert s7.head() == s8.head()
-        assert s7.head() is s8.head()
-        assert s7.head() != s9.head()
-        assert s7.head() is not s9.head()
+        assert s7.peak() == s8.peak()
+        assert s7.peak() != s9.peak()
         ducks = ducks + ("Louie",)
         s7.push(ducks)
         assert s7 != s8
         assert s7 == s9
         stouges = ('Moe', 'Larry', 'Curlie')
-        s7 = s7.cons(stouges)
+        s7.push(stouges)
         assert s7 != s9
         s9.push(('Moe', 'Larry', 'Curlie'))
         assert s7 == s9
         assert s7 is not s9
-        assert s7.head() == s9.head()
+        assert s7.peak() == s9.peak()
 
     def test_storeNones(self) -> None:
         s0: SE[int|None] = SE(roots_int_none, 100)
@@ -252,22 +241,24 @@ class Test_FSplitEnds:
         assert not s0
 
         s1: SE[int|None] = SE(roots_int_none, None)
-        s2 = s1.cons(24)
+        s1.push(24)
+        s2 = s1.copy()
         s2.push(42)
-        s3 = s2.cons(None)
-        assert s3.head() is None
+        s1.push(42)
+        s3 = s2.copy()
+        s3.push(None)
+        assert s3.peak() is None
         assert len(s3) == 4
         assert s3
-        s3 = s3.tail()
+        assert s3.pop() == None
         assert s3.pop() == 42
         assert s3.pop() == 24
         assert s3.pop() is None
+        assert s3.pop() is None
+        assert s3.pop() is None
         s3.push(None)
-        s4 = s3.cons(None)
-        assert (s5 := s4.tail()).pop() is None
-        assert len(s5) == 1
-        assert s5.pop() is None
-        assert s5.pop() is None
+        s4 = SE(roots_int_none, None, None)
+        assert s3 == s4
 
     def test_reversing(self) -> None:
         s1 = SE(roots_str, 'a', 'b', 'c', 'd')
@@ -290,7 +281,7 @@ class Test_FSplitEnds:
         assert lf == l_s1
         assert lr == l_r_s1
         s2 = SE(roots_float, *lf)
-        while s2:
-            assert s2.head() == lf.pop()
-            s2 = s2.tail()
-        assert len(s2) == 1
+        for x in s2:
+            assert x == lf.pop()
+        assert len(lf) == 0       # test iteration gets all values
+        assert len(s2) == 4       # s2 not consumed

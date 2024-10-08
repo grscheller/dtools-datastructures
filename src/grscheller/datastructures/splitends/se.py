@@ -106,7 +106,7 @@ class SE(Generic[D]):
         return self._count
 
     def __repr__(self) -> str:
-        return 'SplitEndMut(' + ', '.join(map(repr, reversed(self))) + ')'
+        return 'SE(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
         return ('>< ' + ' -> '.join(map(str, self)) + ' ||')

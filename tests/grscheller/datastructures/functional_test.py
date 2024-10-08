@@ -16,8 +16,7 @@ from __future__ import annotations
 from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple as FT
 from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
-from grscheller.datastructures.stacks import SplitEnd, SplitEnd as SE
-from grscheller.datastructures.stacks import SplitEndRoots as SE_Roots
+from grscheller.datastructures.splitends.se import SE, Roots
 from grscheller.fp.iterables import FM
 from grscheller.fp.nothingness import _NoValue, noValue
 from grscheller.fp.woException import MB
@@ -26,8 +25,8 @@ D = TypeVar('D')
 R = TypeVar('R')
 L = TypeVar('L')
 
-se_int_roots: SE_Roots[int] = SE_Roots()
-se_tuple_roots: SE_Roots[tuple[int, ...]] = SE_Roots(())
+se_int_roots: Roots[int] = Roots()
+se_tuple_roots: Roots[tuple[int, ...]] = Roots(())
 
 class Test_FP:
     def test_fold(self) -> None:
@@ -51,7 +50,7 @@ class Test_FP:
         ft5: FT[int] = FT(1, 2, 3, 4, 5)
         se5 = SE(se_int_roots, 1, 2, 3, 4, 5)
 
-        assert se5.head() == 5
+        assert se5.peak() == 5
         assert se5.root() == 1
         assert ft5[1] == 2
         assert ft5[4] == 5
@@ -94,7 +93,9 @@ class Test_FP:
         assert se5.fold(l1, 10) == 25
         assert se5.fold(l2) == 120
         assert se5.fold(l2, 10) == 1200
-        se5Rev = se5.tail().fold(pushSE, SE(se_int_roots, se5.head()))
+        se_temp = se5.copy()
+        se_temp.pop()
+        se5Rev = se_temp.fold(pushSE, SE(se_int_roots, se5.peak()))
         assert se5Rev == SE(se_int_roots,5,4,3,2,1)
         assert se5.fold(l1) == 15
         assert se5.fold(l1, 10) == 25
