@@ -43,7 +43,7 @@ class SL_Node[D]():
         self._next = next
 
     def __bool__(self) -> bool:
-        return True
+        return self._next != MB()
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
@@ -56,6 +56,13 @@ class SL_Node[D]():
         elif self._data == other._data:
             return True
 
+        return False
+
+    def data_eq(self, other: SL_Node[D]) -> bool:
+        if self._data is other._data:
+            return True
+        if self._data == other._data:
+            return True
         return False
 
 class DL_Node[D]():

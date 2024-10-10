@@ -23,43 +23,13 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
+from typing import Callable, cast, Generic, Iterator, Optional
 from ..nodes import SL_Node as Node
 from grscheller.fp.woException import MB
 
 __all__ = [ 'SE', 'Roots' ]
 
-D = TypeVar('D', bound=Hashable)
-T = TypeVar('T')
-
-class Roots(Generic[D]):
-    """#### Class for SplitEnd root storage.
-
-    * allows multiple SplitEnds to share a collection of roots
-
-    """
-    __slots__ = '_roots', '_permit_new_roots'
-
-    def __init__(self, *roots: D, permit_new_roots: bool=True) -> None:
-        self._permit_new_roots = permit_new_roots
-        self._roots: dict[D, Node[D]] = {}
-        for root in roots:
-            self._roots[root] = Node(root, MB())
-
-    def get_root_node(self, root: D) -> Node[D]:
-        if root not in self._roots:
-            if self._permit_new_roots:
-                self._roots[root] = Node(root, MB())
-            else:
-                msg = "SplitEnd: permit_new_roots set to False"
-                raise ValueError(msg)
-        return self._roots[root]
-
-    def new_root_node(self, root: D) -> None:
-        if root not in self._roots:
-            self._roots[root] = Node(root, MB())
-
-class SE(Generic[D]):
+class SE[D]():
     """#### Class SE - SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
@@ -77,31 +47,28 @@ class SE(Generic[D]):
       * otherwise return true
 
     """
-    __slots__ = '_count', '_root_nodes', '_head', '_root'
+    __slots__ = '_count', '_head'
 
-    def __init__(self, root_nodes: Roots[D], root: D, *ds: D) -> None:
-        self._root_nodes = root_nodes
-        self._root: Node[D] = root_nodes.get_root_node(root)
-        self._head = self._root
+    def __init__(self, d: D, *ds: D) -> None:
+        self._head = Node(d, MB())
         self._count: int = 1
         for d in ds:
             node: Node[D] = Node(d, MB(self._head))
-            self._head = node
-            self._count += 1
+            self._head, self._count = node, (self._count + 1)
 
     def __iter__(self) -> Iterator[D]:
-        node: Node[D]|None = self._head
-        while node is not None:
+        node: Node[D] = self._head
+        while node:
             yield node._data
             node = node._next.get()
+        yield node._data
 
     def __reversed__(self) -> Iterator[D]:
-        data = list(self)
-        return reversed(data)
+        return reversed(list(self))
 
     def __bool__(self) -> bool:
         # Returns true if not a root node
-        return self._head is not self._root
+        return bool(self._head)
 
     def __len__(self) -> int:
         return self._count
@@ -119,19 +86,16 @@ class SE(Generic[D]):
         if self._count != other._count:
             return False
 
-        left: Node[D] = self._head
-        right: Node[D] = other._head
-        nn = self._count
-        while nn > 0:
+        left = self._head
+        right = other._head
+        for _ in range(self._count):
             if left is right:
                 return True
-            if left == MB() or right == MB():
-                return True
-            if left._data != right._data:
+            if not left.data_eq(right):
                 return False
             left = left._next.get()
             right = right._next.get()
-            nn -= 1
+
         return True
 
     def push(self, *ds: D) -> None:
@@ -156,11 +120,7 @@ class SE(Generic[D]):
         """Return the data at the top of the SplitEnd, does not consume it."""
         return self._head._data
 
-    def root(self) -> D:
-        """Return the data at the root of the SplitEnd."""
-        return self._root._data
-
-    def fold(self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
+    def fold[T](self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
         """Reduce with a function.
 
         * folds in natural LIFO Order
@@ -188,6 +148,6 @@ class SE(Generic[D]):
         * returns a new instance
 
         """
-        se = SE(self._root_nodes, self._root._data)
+        se = SE(self.peak())
         se._head, se._count = self._head, self._count
         return se
