@@ -24,7 +24,7 @@
 from __future__ import annotations
 
 from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
-from .nodes import SL_Node as Node
+from ..nodes import SL_Node as Node
 
 __all__ = [ 'FSE', 'FRoots' ]
 

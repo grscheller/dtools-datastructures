@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from typing import Callable, cast, Generic, Hashable, Iterator, Optional, TypeVar
 from ..nodes import SL_Node as Node
+from grscheller.fp.woException import MB
 
 __all__ = [ 'SE', 'Roots' ]
 
@@ -43,12 +44,12 @@ class Roots(Generic[D]):
         self._permit_new_roots = permit_new_roots
         self._roots: dict[D, Node[D]] = {}
         for root in roots:
-            self._roots[root] = Node(root, None)
+            self._roots[root] = Node(root, MB())
 
     def get_root_node(self, root: D) -> Node[D]:
         if root not in self._roots:
             if self._permit_new_roots:
-                self._roots[root] = Node(root, None)
+                self._roots[root] = Node(root, MB())
             else:
                 msg = "SplitEnd: permit_new_roots set to False"
                 raise ValueError(msg)
@@ -56,7 +57,7 @@ class Roots(Generic[D]):
 
     def new_root_node(self, root: D) -> None:
         if root not in self._roots:
-            self._roots[root] = Node(root, None)
+            self._roots[root] = Node(root, MB())
 
 class SE(Generic[D]):
     """#### Class SE - SplitEnd
@@ -84,7 +85,7 @@ class SE(Generic[D]):
         self._head = self._root
         self._count: int = 1
         for d in ds:
-            node: Node[D] = Node(d, self._head)
+            node: Node[D] = Node(d, MB(self._head))
             self._head = node
             self._count += 1
 
@@ -92,7 +93,7 @@ class SE(Generic[D]):
         node: Node[D]|None = self._head
         while node is not None:
             yield node._data
-            node = node._next
+            node = node._next.get()
 
     def __reversed__(self) -> Iterator[D]:
         data = list(self)
@@ -118,25 +119,25 @@ class SE(Generic[D]):
         if self._count != other._count:
             return False
 
-        left: Optional[Node[D]] = self._head
-        right: Optional[Node[D]] = other._head
+        left: Node[D] = self._head
+        right: Node[D] = other._head
         nn = self._count
         while nn > 0:
             if left is right:
                 return True
-            if left is None or right is None:
+            if left == MB() or right == MB():
                 return True
             if left._data != right._data:
                 return False
-            left = left._next
-            right = right._next
+            left = left._next.get()
+            right = right._next.get()
             nn -= 1
         return True
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
-            node = Node(d, self._head)
+            node = Node(d, MB(self._head))
             self._head, self._count = node, self._count+1
 
     def pop(self) -> D:
@@ -147,8 +148,8 @@ class SE(Generic[D]):
 
         """
         data = self._head._data
-        if (next_node := self._head._next) is not None:
-            self._head, self._count = next_node, self._count-1
+        if (next_node := self._head._next) != MB():
+            self._head, self._count = next_node.get(), self._count-1
         return data
 
     def peak(self) -> D:
@@ -166,18 +167,18 @@ class SE(Generic[D]):
 
         """
         acc: T
-        node: Optional[Node[D]]
+        node: Node[D]
         top: Node[D] = self._head
         if init is None:
             acc = cast(T, top._data)
-            node = top._next
+            node = top._next.get()
         else:
             acc = init
             node = top
 
         while node:
             acc = f(acc, node._data)
-            node = node._next
+            node = node._next.get()
         return acc
 
     def copy(self) -> SE[D]:
