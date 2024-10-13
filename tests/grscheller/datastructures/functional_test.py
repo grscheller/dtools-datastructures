@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from __future__ import annotations
-from typing import TypeVar
 from grscheller.datastructures.tuples import FTuple as FT
 from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
 from grscheller.datastructures.splitends.se import SE
@@ -21,24 +20,20 @@ from grscheller.fp.iterables import FM
 from grscheller.fp.nothingness import _NoValue, noValue
 from grscheller.fp.woException import MB
 
-D = TypeVar('D')
-R = TypeVar('R')
-L = TypeVar('L')
-
 class Test_FP:
-    def test_fold[D](self) -> None:
+    def test_fold[S](self) -> None:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FQ[D], d: D) -> FQ[D]:
+        def pushFQfromL(q: FQ[S], d: S) -> FQ[S]:
             q.push(d)
             return q
 
-        def pushFQfromR(d: D, q: FQ[D]) -> FQ[D]:
+        def pushFQfromR(d: S, q: FQ[S]) -> FQ[S]:
             q.push(d)
             return q
 
-        def pushSE(se: SE[D], d: D) -> SE[D]:
+        def pushSE(se: SE[S], d: S) -> SE[S]:
             se.push(d)
             return se
 

@@ -19,7 +19,7 @@ Node classes used with graph-like data structures.
 
 """
 from __future__ import annotations
-from typing import Callable, cast, Generic, Hashable, Iterator, Optional
+from typing import Callable, cast, Iterator, Optional
 from grscheller.fp.woException import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']

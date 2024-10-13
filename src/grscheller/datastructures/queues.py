@@ -29,20 +29,13 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Iterator, Optional, TypeVar
+from typing import Callable, cast, Iterator, Optional
 from grscheller.circular_array.ca import CA
 from grscheller.fp.woException import MB
 
 __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
 
-D = TypeVar('D')
-S = TypeVar('S')
-U = TypeVar('U')
-V = TypeVar('V')
-L = TypeVar('L')
-R = TypeVar('R')
-
-class QueueBase(Generic[D]):
+class QueueBase[D]():
     """#### Base class for circular area based queues.
 
     * primarily for DRY inheritance
@@ -72,7 +65,7 @@ class QueueBase(Generic[D]):
             return False
         return self._ca == other._ca
 
-class FIFOQueue(QueueBase[D]):
+class FIFOQueue[D](QueueBase[D]):
     """#### FIFO Queue
 
     * stateful First-In-First-Out (FIFO) data structure
@@ -137,7 +130,7 @@ class FIFOQueue(QueueBase[D]):
         else:
             return MB()
 
-    def fold(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
+    def fold[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
         """Fold `FIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -153,7 +146,7 @@ class FIFOQueue(QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def map(self, f: Callable[[D], U]) -> FIFOQueue[U]:
+    def map[U](self, f: Callable[[D], U]) -> FIFOQueue[U]:
         """Map over the `FIFOQueue`.
 
         * map function `f` over the queue
@@ -164,7 +157,7 @@ class FIFOQueue(QueueBase[D]):
         """
         return FIFOQueue(*map(f, self._ca))
 
-class LIFOQueue(QueueBase[D]):
+class LIFOQueue[D](QueueBase[D]):
     """#### LIFO Queue
 
     * stateful Last-In-First-Out (LIFO) data structure
@@ -216,7 +209,7 @@ class LIFOQueue(QueueBase[D]):
         else:
             return MB()
 
-    def fold(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
+    def fold[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
         """Fold `LIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -232,7 +225,7 @@ class LIFOQueue(QueueBase[D]):
                 return MB()
         return MB(self._ca.foldR(f, initial=initial))
 
-    def map(self, f: Callable[[D], U]) -> LIFOQueue[U]:
+    def map[U](self, f: Callable[[D], U]) -> LIFOQueue[U]:
         """Map Over the `LIFOQueue`.
 
         * map the function `f` over the queue
@@ -243,7 +236,7 @@ class LIFOQueue(QueueBase[D]):
         """
         return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
 
-class DoubleQueue(QueueBase[D]):
+class DoubleQueue[D](QueueBase[D]):
     """#### Double Ended Queue
 
     * stateful Double-Ended (DEQueue) data structure
@@ -331,7 +324,7 @@ class DoubleQueue(QueueBase[D]):
         else:
             return MB()
 
-    def foldL(self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
+    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
         """Fold `DoubleQueue` left to right.
 
         Reduce left with `f` using an optional initial value.
@@ -346,7 +339,7 @@ class DoubleQueue(QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def foldR(self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
+    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
         """Fold `DoubleQueue` right to left.
 
         Reduce right with `f` using an optional initial value.
@@ -361,7 +354,7 @@ class DoubleQueue(QueueBase[D]):
                 return MB()
         return MB(self._ca.foldR(f, initial=initial))
 
-    def map(self, f: Callable[[D], U]) -> DoubleQueue[U]:
+    def map[U](self, f: Callable[[D], U]) -> DoubleQueue[U]:
         """`Map a function over `DoubleQueue`.
 
         * map the function `f` over the `DoubleQueue`

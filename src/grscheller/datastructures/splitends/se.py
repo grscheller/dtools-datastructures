@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Iterator, Never, Optional
+from typing import Callable, cast, Iterator, Never, Optional
 from ..nodes import SL_Node as Node
 from grscheller.fp.woException import MB
 

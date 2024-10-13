@@ -25,17 +25,12 @@ Tuple-like object with FP behaviors.
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterator, Generic, Optional, TypeVar
+from typing import Callable, cast, Iterator, Optional
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple']
 
-D = TypeVar('D')
-T = TypeVar('T')
-R = TypeVar('R')
-L = TypeVar('L')
-
-class FTuple(Generic[D]):
+class FTuple[D]():
     """
     #### Functional Tuple
 
@@ -83,7 +78,7 @@ class FTuple(Generic[D]):
             item = None
         return item
 
-    def foldL(self,
+    def foldL[L](self,
               f: Callable[[L, D], L],
               start: Optional[L]=None,
               default: Optional[L]=None) -> Optional[L]:
@@ -109,7 +104,7 @@ class FTuple(Generic[D]):
             acc = f(acc, v)
         return acc
 
-    def foldR(self,
+    def foldR[R](self,
               f: Callable[[D, R], R],
               start: Optional[R]=None,
               default: Optional[R]=None) -> Optional[R]:
@@ -144,9 +139,6 @@ class FTuple(Generic[D]):
         """
         return FTuple(*self)
 
-    def map(self, f: Callable[[D], T]) -> FTuple[T]:
-        return FTuple(*map(f, self))
-
     def __add__(self, other: FTuple[D]) -> FTuple[D]:
         return FTuple(*concat(iter(self), other))
 
@@ -168,7 +160,10 @@ class FTuple(Generic[D]):
         else:
             return FTuple(*accumulate(self, f, s))
 
-    def flatMap(self, f: Callable[[D], FTuple[T]], type: FM=FM.CONCAT) -> FTuple[T]:
+    def map[T](self, f: Callable[[D], T]) -> FTuple[T]:
+        return FTuple(*map(f, self))
+
+    def flatMap[T](self, f: Callable[[D], FTuple[T]], type: FM=FM.CONCAT) -> FTuple[T]:
         """
         **Bind function to FTuple**
 
