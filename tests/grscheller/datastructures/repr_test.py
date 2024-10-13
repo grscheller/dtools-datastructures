@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 from grscheller.fp.woException import MB, XOR
-from grscheller.datastructures.splitends.se import SE, Roots
+from grscheller.datastructures.splitends.se import SE
 from grscheller.datastructures.queues import DoubleQueue
 from grscheller.datastructures.queues import FIFOQueue
 from grscheller.datastructures.queues import LIFOQueue
@@ -137,31 +137,29 @@ class Test_repr:
         assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
 
     def test_SplitEnd_procedural_methods(self) -> None:
-        se_roots: Roots[object] = Roots()
-        s1: SE[object] = SE(se_roots, se_roots, 'foobar')
-    #   assert repr(ps1) == 'SplitEnd()'
-    #   ps2 = eval(repr(ps1))
-        s2 = s1.copy()
-    #   assert ps2 == ps1
-    #   assert ps2 is not ps1
+        s1: SE[object] = SE('foobar')
+        assert repr(s1) == "SE('foobar')"
+        s2 = eval(repr(s1))
+        assert s2 == s1
+        assert s2 is not s1
 
         s1.push(1)
         s1.push('foo')
-    #   assert repr(s1) == "SplitEnd(1, 'foo')"
-    #   s2 = eval(repr(s1))
-        s2 = s1.copy()
+        assert repr(s1) == "SE('foobar', 1, 'foo')"
+        s2 = eval(repr(s1))
         assert s2 == s1
         assert s2 is not s1
 
         assert s1.pop() == 'foo'
+        assert s1.pop() == 1
+        assert s1.pop() == 'foobar'
         s1.push(2)
         s1.push(3)
         s1.push(4)
         s1.push(5)
         assert s1.pop() == 5
         s1.push(42)
-    #   assert repr(s1) == 'SplitEnd(1, 2, 3, 4, 42)'
-    #   s2 = eval(repr(s1))
+        assert repr(s1) == 'SE(2, 3, 4, 42)'
         s2 = s1.copy()
         assert s2 == s1
         assert s2 is not s1
@@ -201,7 +199,6 @@ class Test_repr:
 
 class Test_repr_mix:
     def test_mix1(self) -> None:
-        roots: Roots[tuple[int, ...]] = Roots()
         thing1: XOR[object, str] = \
             XOR(
                 FIFOQueue(
@@ -211,7 +208,6 @@ class Test_repr_mix:
                         XOR(right = 'nobody home')
                     ),
                     SE[tuple[int, ...]](
-                        roots,
                         (1,),
                         (),
                         (42, 100)
@@ -224,17 +220,15 @@ class Test_repr_mix:
                 'Potential Right'
             )
 
-        repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR(right='nobody home')), SE(roots, (1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
-    #   assert repr(thing1) == repr_str
+        repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
+        assert repr(thing1) == repr_str
 
-    #   thing2 = eval(repr(thing1))
-        thing2 = eval(repr_str)
-        assert thing2 == thing1
+        thing2 = eval(repr(thing1))
+        thing3 = eval(repr_str)
+        assert thing2 == thing1 == thing3
         assert thing2 is not thing1
 
         repr_thing1 = repr(thing1)
         repr_thing2 = repr(thing2)
-        assert repr_thing2 == repr_thing1
-
-        # assert repr_thing1 == repr_str
-        # assert repr_thing2 == repr_str
+        repr_thing3 = repr(thing3)
+        assert repr_thing2 == repr_thing1 == repr_thing3 == repr_str

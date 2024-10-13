@@ -36,6 +36,15 @@
                         <li>
                                 <a class="function" href="#SL_Node.__init__">SL_Node</a>
                         </li>
+                        <li>
+                                <a class="function" href="#SL_Node.data_eq">data_eq</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#SL_Node.get_data">get_data</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#SL_Node.fold">fold</a>
+                        </li>
                 </ul>
 
             </li>
@@ -44,6 +53,24 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#DL_Node.__init__">DL_Node</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DL_Node.has_left">has_left</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DL_Node.has_right">has_right</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Tree_Node">Tree_Node</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Tree_Node.__init__">Tree_Node</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Tree_Node.is_top">is_top</a>
                         </li>
                 </ul>
 
@@ -67,92 +94,171 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
                         <div class="docstring"><h3 id="nodes-for-graphs">Nodes for Graphs</h3>
 
 <p>Node classes used with graph-like data structures.</p>
-
-<ul>
-<li>designed to be "tinker-toyed" together in a variety of ways</li>
-<li>passive data structures manipulated by the classes which contain them</li>
-</ul>
 </div>
 
                         <input id="mod-nodes-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-nodes-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="c1"># Copyright 2023-2024 Geoffrey R. Scheller</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="c1">#</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="c1"># you may not use this file except in compliance with the License.</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="c1"># You may obtain a copy of the License at</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="c1">#</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="c1">#</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="c1"># See the License for the specific language governing permissions and</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="c1"># limitations under the License.</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">### Nodes for Graphs</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">Node classes used with graph-like data structures.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">* designed to be &quot;tinker-toyed&quot; together in a variety of ways</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">* passive data structures manipulated by the classes which contain them</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SL_Node&#39;</span><span class="p">,</span> <span class="s1">&#39;DL_Node&#39;</span><span class="p">]</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="k">class</span> <span class="nc">SL_Node</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    #### Singularly Linked Node</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    Singularly link nodes for graph-like data structures.</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">      * in a Boolean context always returns true</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">      * &quot;falsy&quot; sentinels like `None` or `()` can be used to terminate</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    * more than one node can point to the same node forming bush like graphs</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    * circular graphs are possible</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_next&#39;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">=</span> <span class="nb">next</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="k">class</span> <span class="nc">DL_Node</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">    #### Doubly Linked Node</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">    Doubly linked nodes for graph-like data structures.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">      * in a Boolean context always returns true</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">      * &quot;falsy&quot; sentinels like `None` or `()` can be used to terminate</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">    * recursive binary trees possible</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">    * doubly link lists possible</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">    * circular graphs are possible</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="kc">True</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="c1"># Copyright 2023-2024 Geoffrey R. Scheller</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="c1">#</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="c1"># you may not use this file except in compliance with the License.</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="c1"># You may obtain a copy of the License at</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="c1">#</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="c1">#</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="c1"># See the License for the specific language governing permissions and</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="c1"># limitations under the License.</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">### Nodes for Graphs</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="sd">Node classes used with graph-like data structures.</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span> <span class="nn">grscheller.fp.woException</span> <span class="kn">import</span> <span class="n">MB</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SL_Node&#39;</span><span class="p">,</span> <span class="s1">&#39;DL_Node&#39;</span><span class="p">,</span> <span class="s1">&#39;Tree_Node&#39;</span><span class="p">]</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="k">class</span> <span class="nc">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    #### Singularly Linked Node</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    Singularly link nodes for graph-like data structures.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    * this type of node always contain data and optionally a previous Node</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">      * in a Boolean context return false only if there is no previous Node</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    * two nodes compare as equal if both</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">      * their previous Nodes are the same</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">      * their data compares as equal</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    * more than one node can point to the same node forming bush like graphs</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_prev&#39;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">prev</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="n">prev</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">D</span><span class="p">]:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>            <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">other</span><span class="o">.</span><span class="n">_prev</span><span class="p">:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="k">def</span> <span class="nf">data_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">fold</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span>  <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">],</span> <span class="n">T</span><span class="p">],</span> <span class="n">init</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce data across linked nodes</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        * with a function and an optional starting value</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        * reduces in natural LIFO order</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">          * from self to the root</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>            <span class="n">acc</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">init</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="k">return</span> <span class="n">acc</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="k">class</span> <span class="nc">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    #### Doubly Linked Node</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    Doubly linked nodes for graph-like data structures.</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">      * in a Boolean context return true if not at the start or end node</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    * doubly link lists possible</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    * circular graphs are possible</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    * binary trees possible</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">==</span> <span class="n">MB</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">==</span> <span class="n">MB</span><span class="p">():</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">def</span> <span class="nf">has_left</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="k">def</span> <span class="nf">has_right</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="k">class</span> <span class="nc">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">    #### Binary Tree Node</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">    Nodes useful for walking binary trees</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">      * in a Boolean context return true if not at the top of the tree</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span><span class="p">,</span> <span class="s1">&#39;_up&#39;</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>                 <span class="n">up</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>                 <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>                 <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">=</span> <span class="n">up</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">==</span> <span class="n">MB</span><span class="p">():</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="k">def</span> <span class="nf">is_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">==</span> <span class="n">MB</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -162,33 +268,85 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">SL_Node</span><wbr>(<span class="base">typing.Generic[~T]</span>):
+    <span class="name">SL_Node</span><wbr>(<span class="base">typing.Generic[D]</span>):
 
                 <label class="view-source-button" for="SL_Node-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SL_Node"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node-32"><a href="#SL_Node-32"><span class="linenos">32</span></a><span class="k">class</span> <span class="nc">SL_Node</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="SL_Node-33"><a href="#SL_Node-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="SL_Node-34"><a href="#SL_Node-34"><span class="linenos">34</span></a><span class="sd">    #### Singularly Linked Node</span>
-</span><span id="SL_Node-35"><a href="#SL_Node-35"><span class="linenos">35</span></a>
-</span><span id="SL_Node-36"><a href="#SL_Node-36"><span class="linenos">36</span></a><span class="sd">    Singularly link nodes for graph-like data structures.</span>
-</span><span id="SL_Node-37"><a href="#SL_Node-37"><span class="linenos">37</span></a>
-</span><span id="SL_Node-38"><a href="#SL_Node-38"><span class="linenos">38</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
-</span><span id="SL_Node-39"><a href="#SL_Node-39"><span class="linenos">39</span></a><span class="sd">      * in a Boolean context always returns true</span>
-</span><span id="SL_Node-40"><a href="#SL_Node-40"><span class="linenos">40</span></a><span class="sd">      * &quot;falsy&quot; sentinels like `None` or `()` can be used to terminate</span>
-</span><span id="SL_Node-41"><a href="#SL_Node-41"><span class="linenos">41</span></a><span class="sd">    * more than one node can point to the same node forming bush like graphs</span>
-</span><span id="SL_Node-42"><a href="#SL_Node-42"><span class="linenos">42</span></a><span class="sd">    * circular graphs are possible</span>
-</span><span id="SL_Node-43"><a href="#SL_Node-43"><span class="linenos">43</span></a>
-</span><span id="SL_Node-44"><a href="#SL_Node-44"><span class="linenos">44</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="SL_Node-45"><a href="#SL_Node-45"><span class="linenos">45</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_next&#39;</span>
-</span><span id="SL_Node-46"><a href="#SL_Node-46"><span class="linenos">46</span></a>
-</span><span id="SL_Node-47"><a href="#SL_Node-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="SL_Node-48"><a href="#SL_Node-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="SL_Node-49"><a href="#SL_Node-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">=</span> <span class="nb">next</span>
-</span><span id="SL_Node-50"><a href="#SL_Node-50"><span class="linenos">50</span></a>
-</span><span id="SL_Node-51"><a href="#SL_Node-51"><span class="linenos">51</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="SL_Node-52"><a href="#SL_Node-52"><span class="linenos">52</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node-28"><a href="#SL_Node-28"><span class="linenos"> 28</span></a><span class="k">class</span> <span class="nc">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="SL_Node-29"><a href="#SL_Node-29"><span class="linenos"> 29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="SL_Node-30"><a href="#SL_Node-30"><span class="linenos"> 30</span></a><span class="sd">    #### Singularly Linked Node</span>
+</span><span id="SL_Node-31"><a href="#SL_Node-31"><span class="linenos"> 31</span></a>
+</span><span id="SL_Node-32"><a href="#SL_Node-32"><span class="linenos"> 32</span></a><span class="sd">    Singularly link nodes for graph-like data structures.</span>
+</span><span id="SL_Node-33"><a href="#SL_Node-33"><span class="linenos"> 33</span></a>
+</span><span id="SL_Node-34"><a href="#SL_Node-34"><span class="linenos"> 34</span></a><span class="sd">    * this type of node always contain data and optionally a previous Node</span>
+</span><span id="SL_Node-35"><a href="#SL_Node-35"><span class="linenos"> 35</span></a><span class="sd">      * in a Boolean context return false only if there is no previous Node</span>
+</span><span id="SL_Node-36"><a href="#SL_Node-36"><span class="linenos"> 36</span></a><span class="sd">    * two nodes compare as equal if both</span>
+</span><span id="SL_Node-37"><a href="#SL_Node-37"><span class="linenos"> 37</span></a><span class="sd">      * their previous Nodes are the same</span>
+</span><span id="SL_Node-38"><a href="#SL_Node-38"><span class="linenos"> 38</span></a><span class="sd">      * their data compares as equal</span>
+</span><span id="SL_Node-39"><a href="#SL_Node-39"><span class="linenos"> 39</span></a><span class="sd">    * more than one node can point to the same node forming bush like graphs</span>
+</span><span id="SL_Node-40"><a href="#SL_Node-40"><span class="linenos"> 40</span></a>
+</span><span id="SL_Node-41"><a href="#SL_Node-41"><span class="linenos"> 41</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="SL_Node-42"><a href="#SL_Node-42"><span class="linenos"> 42</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_prev&#39;</span>
+</span><span id="SL_Node-43"><a href="#SL_Node-43"><span class="linenos"> 43</span></a>
+</span><span id="SL_Node-44"><a href="#SL_Node-44"><span class="linenos"> 44</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">prev</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SL_Node-45"><a href="#SL_Node-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="SL_Node-46"><a href="#SL_Node-46"><span class="linenos"> 46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="n">prev</span>
+</span><span id="SL_Node-47"><a href="#SL_Node-47"><span class="linenos"> 47</span></a>
+</span><span id="SL_Node-48"><a href="#SL_Node-48"><span class="linenos"> 48</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">D</span><span class="p">]:</span>
+</span><span id="SL_Node-49"><a href="#SL_Node-49"><span class="linenos"> 49</span></a>        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="SL_Node-50"><a href="#SL_Node-50"><span class="linenos"> 50</span></a>        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+</span><span id="SL_Node-51"><a href="#SL_Node-51"><span class="linenos"> 51</span></a>            <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="SL_Node-52"><a href="#SL_Node-52"><span class="linenos"> 52</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="SL_Node-53"><a href="#SL_Node-53"><span class="linenos"> 53</span></a>        <span class="k">yield</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="SL_Node-54"><a href="#SL_Node-54"><span class="linenos"> 54</span></a>
+</span><span id="SL_Node-55"><a href="#SL_Node-55"><span class="linenos"> 55</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SL_Node-56"><a href="#SL_Node-56"><span class="linenos"> 56</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span><span id="SL_Node-57"><a href="#SL_Node-57"><span class="linenos"> 57</span></a>
+</span><span id="SL_Node-58"><a href="#SL_Node-58"><span class="linenos"> 58</span></a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SL_Node-59"><a href="#SL_Node-59"><span class="linenos"> 59</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+</span><span id="SL_Node-60"><a href="#SL_Node-60"><span class="linenos"> 60</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="SL_Node-61"><a href="#SL_Node-61"><span class="linenos"> 61</span></a>
+</span><span id="SL_Node-62"><a href="#SL_Node-62"><span class="linenos"> 62</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">other</span><span class="o">.</span><span class="n">_prev</span><span class="p">:</span>
+</span><span id="SL_Node-63"><a href="#SL_Node-63"><span class="linenos"> 63</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="SL_Node-64"><a href="#SL_Node-64"><span class="linenos"> 64</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node-65"><a href="#SL_Node-65"><span class="linenos"> 65</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node-66"><a href="#SL_Node-66"><span class="linenos"> 66</span></a>        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node-67"><a href="#SL_Node-67"><span class="linenos"> 67</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node-68"><a href="#SL_Node-68"><span class="linenos"> 68</span></a>
+</span><span id="SL_Node-69"><a href="#SL_Node-69"><span class="linenos"> 69</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="SL_Node-70"><a href="#SL_Node-70"><span class="linenos"> 70</span></a>
+</span><span id="SL_Node-71"><a href="#SL_Node-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">data_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SL_Node-72"><a href="#SL_Node-72"><span class="linenos"> 72</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node-73"><a href="#SL_Node-73"><span class="linenos"> 73</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node-74"><a href="#SL_Node-74"><span class="linenos"> 74</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node-75"><a href="#SL_Node-75"><span class="linenos"> 75</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node-76"><a href="#SL_Node-76"><span class="linenos"> 76</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="SL_Node-77"><a href="#SL_Node-77"><span class="linenos"> 77</span></a>
+</span><span id="SL_Node-78"><a href="#SL_Node-78"><span class="linenos"> 78</span></a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+</span><span id="SL_Node-79"><a href="#SL_Node-79"><span class="linenos"> 79</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="SL_Node-80"><a href="#SL_Node-80"><span class="linenos"> 80</span></a>
+</span><span id="SL_Node-81"><a href="#SL_Node-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">fold</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span>  <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">],</span> <span class="n">T</span><span class="p">],</span> <span class="n">init</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span id="SL_Node-82"><a href="#SL_Node-82"><span class="linenos"> 82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce data across linked nodes</span>
+</span><span id="SL_Node-83"><a href="#SL_Node-83"><span class="linenos"> 83</span></a>
+</span><span id="SL_Node-84"><a href="#SL_Node-84"><span class="linenos"> 84</span></a><span class="sd">        * with a function and an optional starting value</span>
+</span><span id="SL_Node-85"><a href="#SL_Node-85"><span class="linenos"> 85</span></a><span class="sd">        * reduces in natural LIFO order</span>
+</span><span id="SL_Node-86"><a href="#SL_Node-86"><span class="linenos"> 86</span></a><span class="sd">          * from self to the root</span>
+</span><span id="SL_Node-87"><a href="#SL_Node-87"><span class="linenos"> 87</span></a>
+</span><span id="SL_Node-88"><a href="#SL_Node-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SL_Node-89"><a href="#SL_Node-89"><span class="linenos"> 89</span></a>        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SL_Node-90"><a href="#SL_Node-90"><span class="linenos"> 90</span></a>            <span class="n">acc</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node-91"><a href="#SL_Node-91"><span class="linenos"> 91</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="SL_Node-92"><a href="#SL_Node-92"><span class="linenos"> 92</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="SL_Node-93"><a href="#SL_Node-93"><span class="linenos"> 93</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">init</span>
+</span><span id="SL_Node-94"><a href="#SL_Node-94"><span class="linenos"> 94</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="SL_Node-95"><a href="#SL_Node-95"><span class="linenos"> 95</span></a>
+</span><span id="SL_Node-96"><a href="#SL_Node-96"><span class="linenos"> 96</span></a>        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+</span><span id="SL_Node-97"><a href="#SL_Node-97"><span class="linenos"> 97</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node-98"><a href="#SL_Node-98"><span class="linenos"> 98</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="SL_Node-99"><a href="#SL_Node-99"><span class="linenos"> 99</span></a>        <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node-100"><a href="#SL_Node-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="n">acc</span>
 </span></pre></div>
 
 
@@ -197,13 +355,16 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
 <p>Singularly link nodes for graph-like data structures.</p>
 
 <ul>
-<li>this type of node always contain data, even if that data is None
+<li>this type of node always contain data and optionally a previous Node
 <ul>
-<li>in a Boolean context always returns true</li>
-<li>"falsy" sentinels like <code>None</code> or <code>()</code> can be used to terminate</li>
+<li>in a Boolean context return false only if there is no previous Node</li>
+</ul></li>
+<li>two nodes compare as equal if both
+<ul>
+<li>their previous Nodes are the same</li>
+<li>their data compares as equal</li>
 </ul></li>
 <li>more than one node can point to the same node forming bush like graphs</li>
-<li>circular graphs are possible</li>
 </ul>
 </div>
 
@@ -212,19 +373,108 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
                                         <input id="SL_Node.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">SL_Node</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="o">~</span><span class="n">T</span>,</span><span class="param">	<span class="nb">next</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#SL_Node">SL_Node</a></span><span class="p">[</span><span class="o">~</span><span class="n">T</span><span class="p">]]</span></span>)</span>
+        <span class="name">SL_Node</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">data</span><span class="p">:</span> <span class="s1">&#39;D&#39;</span>, </span><span class="param"><span class="n">prev</span><span class="p">:</span> <span class="s1">&#39;MB[SL_Node[D]]&#39;</span></span>)</span>
 
                 <label class="view-source-button" for="SL_Node.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SL_Node.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node.__init__-47"><a href="#SL_Node.__init__-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="SL_Node.__init__-48"><a href="#SL_Node.__init__-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="SL_Node.__init__-49"><a href="#SL_Node.__init__-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">=</span> <span class="nb">next</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node.__init__-44"><a href="#SL_Node.__init__-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">prev</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SL_Node.__init__-45"><a href="#SL_Node.__init__-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="SL_Node.__init__-46"><a href="#SL_Node.__init__-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="n">prev</span>
 </span></pre></div>
 
 
     
+
+                            </div>
+                            <div id="SL_Node.data_eq" class="classattr">
+                                        <input id="SL_Node.data_eq-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">data_eq</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">other</span><span class="p">:</span> <span class="s1">&#39;SL_Node[D]&#39;</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="SL_Node.data_eq-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#SL_Node.data_eq"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node.data_eq-71"><a href="#SL_Node.data_eq-71"><span class="linenos">71</span></a>    <span class="k">def</span> <span class="nf">data_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">SL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SL_Node.data_eq-72"><a href="#SL_Node.data_eq-72"><span class="linenos">72</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node.data_eq-73"><a href="#SL_Node.data_eq-73"><span class="linenos">73</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node.data_eq-74"><a href="#SL_Node.data_eq-74"><span class="linenos">74</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+</span><span id="SL_Node.data_eq-75"><a href="#SL_Node.data_eq-75"><span class="linenos">75</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SL_Node.data_eq-76"><a href="#SL_Node.data_eq-76"><span class="linenos">76</span></a>        <span class="k">return</span> <span class="kc">False</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="SL_Node.get_data" class="classattr">
+                                        <input id="SL_Node.get_data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_data</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="s1">&#39;D&#39;</span>:</span></span>
+
+                <label class="view-source-button" for="SL_Node.get_data-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#SL_Node.get_data"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node.get_data-78"><a href="#SL_Node.get_data-78"><span class="linenos">78</span></a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">D</span><span class="p">:</span>
+</span><span id="SL_Node.get_data-79"><a href="#SL_Node.get_data-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="SL_Node.fold" class="classattr">
+                                        <input id="SL_Node.fold-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">fold</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">f</span><span class="p">:</span> <span class="s1">&#39;Callable[[T, D], T]&#39;</span>, </span><span class="param"><span class="n">init</span><span class="p">:</span> <span class="s1">&#39;Optional[T]&#39;</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="s1">&#39;T&#39;</span>:</span></span>
+
+                <label class="view-source-button" for="SL_Node.fold-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#SL_Node.fold"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SL_Node.fold-81"><a href="#SL_Node.fold-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">fold</span><span class="p">[</span><span class="n">T</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span>  <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">],</span> <span class="n">T</span><span class="p">],</span> <span class="n">init</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span id="SL_Node.fold-82"><a href="#SL_Node.fold-82"><span class="linenos"> 82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce data across linked nodes</span>
+</span><span id="SL_Node.fold-83"><a href="#SL_Node.fold-83"><span class="linenos"> 83</span></a>
+</span><span id="SL_Node.fold-84"><a href="#SL_Node.fold-84"><span class="linenos"> 84</span></a><span class="sd">        * with a function and an optional starting value</span>
+</span><span id="SL_Node.fold-85"><a href="#SL_Node.fold-85"><span class="linenos"> 85</span></a><span class="sd">        * reduces in natural LIFO order</span>
+</span><span id="SL_Node.fold-86"><a href="#SL_Node.fold-86"><span class="linenos"> 86</span></a><span class="sd">          * from self to the root</span>
+</span><span id="SL_Node.fold-87"><a href="#SL_Node.fold-87"><span class="linenos"> 87</span></a>
+</span><span id="SL_Node.fold-88"><a href="#SL_Node.fold-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SL_Node.fold-89"><a href="#SL_Node.fold-89"><span class="linenos"> 89</span></a>        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SL_Node.fold-90"><a href="#SL_Node.fold-90"><span class="linenos"> 90</span></a>            <span class="n">acc</span><span class="p">:</span> <span class="n">T</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node.fold-91"><a href="#SL_Node.fold-91"><span class="linenos"> 91</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="SL_Node.fold-92"><a href="#SL_Node.fold-92"><span class="linenos"> 92</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="SL_Node.fold-93"><a href="#SL_Node.fold-93"><span class="linenos"> 93</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">init</span>
+</span><span id="SL_Node.fold-94"><a href="#SL_Node.fold-94"><span class="linenos"> 94</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="SL_Node.fold-95"><a href="#SL_Node.fold-95"><span class="linenos"> 95</span></a>
+</span><span id="SL_Node.fold-96"><a href="#SL_Node.fold-96"><span class="linenos"> 96</span></a>        <span class="k">while</span> <span class="n">node</span><span class="p">:</span>
+</span><span id="SL_Node.fold-97"><a href="#SL_Node.fold-97"><span class="linenos"> 97</span></a>            <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node.fold-98"><a href="#SL_Node.fold-98"><span class="linenos"> 98</span></a>            <span class="n">node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">_prev</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="SL_Node.fold-99"><a href="#SL_Node.fold-99"><span class="linenos"> 99</span></a>        <span class="n">acc</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
+</span><span id="SL_Node.fold-100"><a href="#SL_Node.fold-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="n">acc</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Reduce data across linked nodes</p>
+
+<ul>
+<li>with a function and an optional starting value</li>
+<li>reduces in natural LIFO order
+<ul>
+<li>from self to the root</li>
+</ul></li>
+</ul>
+</div>
+
 
                             </div>
                 </section>
@@ -233,35 +483,42 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">DL_Node</span><wbr>(<span class="base">typing.Generic[~T]</span>):
+    <span class="name">DL_Node</span><wbr>(<span class="base">typing.Generic[D]</span>):
 
                 <label class="view-source-button" for="DL_Node-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DL_Node"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node-54"><a href="#DL_Node-54"><span class="linenos">54</span></a><span class="k">class</span> <span class="nc">DL_Node</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-</span><span id="DL_Node-55"><a href="#DL_Node-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="DL_Node-56"><a href="#DL_Node-56"><span class="linenos">56</span></a><span class="sd">    #### Doubly Linked Node</span>
-</span><span id="DL_Node-57"><a href="#DL_Node-57"><span class="linenos">57</span></a>
-</span><span id="DL_Node-58"><a href="#DL_Node-58"><span class="linenos">58</span></a><span class="sd">    Doubly linked nodes for graph-like data structures.</span>
-</span><span id="DL_Node-59"><a href="#DL_Node-59"><span class="linenos">59</span></a>
-</span><span id="DL_Node-60"><a href="#DL_Node-60"><span class="linenos">60</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
-</span><span id="DL_Node-61"><a href="#DL_Node-61"><span class="linenos">61</span></a><span class="sd">      * in a Boolean context always returns true</span>
-</span><span id="DL_Node-62"><a href="#DL_Node-62"><span class="linenos">62</span></a><span class="sd">      * &quot;falsy&quot; sentinels like `None` or `()` can be used to terminate</span>
-</span><span id="DL_Node-63"><a href="#DL_Node-63"><span class="linenos">63</span></a><span class="sd">    * recursive binary trees possible</span>
-</span><span id="DL_Node-64"><a href="#DL_Node-64"><span class="linenos">64</span></a><span class="sd">    * doubly link lists possible</span>
-</span><span id="DL_Node-65"><a href="#DL_Node-65"><span class="linenos">65</span></a><span class="sd">    * circular graphs are possible</span>
-</span><span id="DL_Node-66"><a href="#DL_Node-66"><span class="linenos">66</span></a>
-</span><span id="DL_Node-67"><a href="#DL_Node-67"><span class="linenos">67</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="DL_Node-68"><a href="#DL_Node-68"><span class="linenos">68</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span>
-</span><span id="DL_Node-69"><a href="#DL_Node-69"><span class="linenos">69</span></a>
-</span><span id="DL_Node-70"><a href="#DL_Node-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="DL_Node-71"><a href="#DL_Node-71"><span class="linenos">71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="DL_Node-72"><a href="#DL_Node-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
-</span><span id="DL_Node-73"><a href="#DL_Node-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
-</span><span id="DL_Node-74"><a href="#DL_Node-74"><span class="linenos">74</span></a>
-</span><span id="DL_Node-75"><a href="#DL_Node-75"><span class="linenos">75</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="DL_Node-76"><a href="#DL_Node-76"><span class="linenos">76</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node-102"><a href="#DL_Node-102"><span class="linenos">102</span></a><span class="k">class</span> <span class="nc">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="DL_Node-103"><a href="#DL_Node-103"><span class="linenos">103</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="DL_Node-104"><a href="#DL_Node-104"><span class="linenos">104</span></a><span class="sd">    #### Doubly Linked Node</span>
+</span><span id="DL_Node-105"><a href="#DL_Node-105"><span class="linenos">105</span></a>
+</span><span id="DL_Node-106"><a href="#DL_Node-106"><span class="linenos">106</span></a><span class="sd">    Doubly linked nodes for graph-like data structures.</span>
+</span><span id="DL_Node-107"><a href="#DL_Node-107"><span class="linenos">107</span></a>
+</span><span id="DL_Node-108"><a href="#DL_Node-108"><span class="linenos">108</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
+</span><span id="DL_Node-109"><a href="#DL_Node-109"><span class="linenos">109</span></a><span class="sd">      * in a Boolean context return true if not at the start or end node</span>
+</span><span id="DL_Node-110"><a href="#DL_Node-110"><span class="linenos">110</span></a><span class="sd">    * doubly link lists possible</span>
+</span><span id="DL_Node-111"><a href="#DL_Node-111"><span class="linenos">111</span></a><span class="sd">    * circular graphs are possible</span>
+</span><span id="DL_Node-112"><a href="#DL_Node-112"><span class="linenos">112</span></a><span class="sd">    * binary trees possible</span>
+</span><span id="DL_Node-113"><a href="#DL_Node-113"><span class="linenos">113</span></a>
+</span><span id="DL_Node-114"><a href="#DL_Node-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="DL_Node-115"><a href="#DL_Node-115"><span class="linenos">115</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span>
+</span><span id="DL_Node-116"><a href="#DL_Node-116"><span class="linenos">116</span></a>
+</span><span id="DL_Node-117"><a href="#DL_Node-117"><span class="linenos">117</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="DL_Node-118"><a href="#DL_Node-118"><span class="linenos">118</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="DL_Node-119"><a href="#DL_Node-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="DL_Node-120"><a href="#DL_Node-120"><span class="linenos">120</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span><span id="DL_Node-121"><a href="#DL_Node-121"><span class="linenos">121</span></a>
+</span><span id="DL_Node-122"><a href="#DL_Node-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="DL_Node-123"><a href="#DL_Node-123"><span class="linenos">123</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">==</span> <span class="n">MB</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">==</span> <span class="n">MB</span><span class="p">():</span>
+</span><span id="DL_Node-124"><a href="#DL_Node-124"><span class="linenos">124</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="DL_Node-125"><a href="#DL_Node-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="DL_Node-126"><a href="#DL_Node-126"><span class="linenos">126</span></a>
+</span><span id="DL_Node-127"><a href="#DL_Node-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="nf">has_left</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="DL_Node-128"><a href="#DL_Node-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span><span id="DL_Node-129"><a href="#DL_Node-129"><span class="linenos">129</span></a>
+</span><span id="DL_Node-130"><a href="#DL_Node-130"><span class="linenos">130</span></a>    <span class="k">def</span> <span class="nf">has_right</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="DL_Node-131"><a href="#DL_Node-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -272,12 +529,11 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
 <ul>
 <li>this type of node always contain data, even if that data is None
 <ul>
-<li>in a Boolean context always returns true</li>
-<li>"falsy" sentinels like <code>None</code> or <code>()</code> can be used to terminate</li>
+<li>in a Boolean context return true if not at the start or end node</li>
 </ul></li>
-<li>recursive binary trees possible</li>
 <li>doubly link lists possible</li>
 <li>circular graphs are possible</li>
+<li>binary trees possible</li>
 </ul>
 </div>
 
@@ -286,16 +542,153 @@ grscheller<wbr>.<a href="./../datastructures.html">datastructures</a><wbr>.nodes
                                         <input id="DL_Node.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">DL_Node</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#DL_Node">DL_Node</a></span><span class="p">[</span><span class="o">~</span><span class="n">T</span><span class="p">]]</span>,</span><span class="param">	<span class="n">data</span><span class="p">:</span> <span class="o">~</span><span class="n">T</span>,</span><span class="param">	<span class="n">right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#DL_Node">DL_Node</a></span><span class="p">[</span><span class="o">~</span><span class="n">T</span><span class="p">]]</span></span>)</span>
+        <span class="name">DL_Node</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">left</span><span class="p">:</span> <span class="s1">&#39;MB[DL_Node[D]]&#39;</span>, </span><span class="param"><span class="n">data</span><span class="p">:</span> <span class="s1">&#39;D&#39;</span>, </span><span class="param"><span class="n">right</span><span class="p">:</span> <span class="s1">&#39;MB[DL_Node[D]]&#39;</span></span>)</span>
 
                 <label class="view-source-button" for="DL_Node.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DL_Node.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node.__init__-70"><a href="#DL_Node.__init__-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">T</span><span class="p">]]):</span>
-</span><span id="DL_Node.__init__-71"><a href="#DL_Node.__init__-71"><span class="linenos">71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="DL_Node.__init__-72"><a href="#DL_Node.__init__-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
-</span><span id="DL_Node.__init__-73"><a href="#DL_Node.__init__-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node.__init__-117"><a href="#DL_Node.__init__-117"><span class="linenos">117</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">DL_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="DL_Node.__init__-118"><a href="#DL_Node.__init__-118"><span class="linenos">118</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="DL_Node.__init__-119"><a href="#DL_Node.__init__-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="DL_Node.__init__-120"><a href="#DL_Node.__init__-120"><span class="linenos">120</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="DL_Node.has_left" class="classattr">
+                                        <input id="DL_Node.has_left-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">has_left</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="DL_Node.has_left-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DL_Node.has_left"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node.has_left-127"><a href="#DL_Node.has_left-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="nf">has_left</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="DL_Node.has_left-128"><a href="#DL_Node.has_left-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="DL_Node.has_right" class="classattr">
+                                        <input id="DL_Node.has_right-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">has_right</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="DL_Node.has_right-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DL_Node.has_right"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DL_Node.has_right-130"><a href="#DL_Node.has_right-130"><span class="linenos">130</span></a>    <span class="k">def</span> <span class="nf">has_right</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="DL_Node.has_right-131"><a href="#DL_Node.has_right-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">!=</span> <span class="n">MB</span><span class="p">()</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="Tree_Node">
+                            <input id="Tree_Node-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">Tree_Node</span><wbr>(<span class="base">typing.Generic[D]</span>):
+
+                <label class="view-source-button" for="Tree_Node-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Tree_Node"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tree_Node-133"><a href="#Tree_Node-133"><span class="linenos">133</span></a><span class="k">class</span> <span class="nc">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]():</span>
+</span><span id="Tree_Node-134"><a href="#Tree_Node-134"><span class="linenos">134</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Tree_Node-135"><a href="#Tree_Node-135"><span class="linenos">135</span></a><span class="sd">    #### Binary Tree Node</span>
+</span><span id="Tree_Node-136"><a href="#Tree_Node-136"><span class="linenos">136</span></a>
+</span><span id="Tree_Node-137"><a href="#Tree_Node-137"><span class="linenos">137</span></a><span class="sd">    Nodes useful for walking binary trees</span>
+</span><span id="Tree_Node-138"><a href="#Tree_Node-138"><span class="linenos">138</span></a>
+</span><span id="Tree_Node-139"><a href="#Tree_Node-139"><span class="linenos">139</span></a><span class="sd">    * this type of node always contain data, even if that data is None</span>
+</span><span id="Tree_Node-140"><a href="#Tree_Node-140"><span class="linenos">140</span></a><span class="sd">      * in a Boolean context return true if not at the top of the tree</span>
+</span><span id="Tree_Node-141"><a href="#Tree_Node-141"><span class="linenos">141</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Tree_Node-142"><a href="#Tree_Node-142"><span class="linenos">142</span></a>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_left&#39;</span><span class="p">,</span> <span class="s1">&#39;_right&#39;</span><span class="p">,</span> <span class="s1">&#39;_up&#39;</span>
+</span><span id="Tree_Node-143"><a href="#Tree_Node-143"><span class="linenos">143</span></a>
+</span><span id="Tree_Node-144"><a href="#Tree_Node-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span>
+</span><span id="Tree_Node-145"><a href="#Tree_Node-145"><span class="linenos">145</span></a>                 <span class="n">up</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="Tree_Node-146"><a href="#Tree_Node-146"><span class="linenos">146</span></a>                 <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="Tree_Node-147"><a href="#Tree_Node-147"><span class="linenos">147</span></a>                 <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="Tree_Node-148"><a href="#Tree_Node-148"><span class="linenos">148</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="Tree_Node-149"><a href="#Tree_Node-149"><span class="linenos">149</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">=</span> <span class="n">up</span>
+</span><span id="Tree_Node-150"><a href="#Tree_Node-150"><span class="linenos">150</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="Tree_Node-151"><a href="#Tree_Node-151"><span class="linenos">151</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span><span id="Tree_Node-152"><a href="#Tree_Node-152"><span class="linenos">152</span></a>
+</span><span id="Tree_Node-153"><a href="#Tree_Node-153"><span class="linenos">153</span></a>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Tree_Node-154"><a href="#Tree_Node-154"><span class="linenos">154</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">==</span> <span class="n">MB</span><span class="p">():</span>
+</span><span id="Tree_Node-155"><a href="#Tree_Node-155"><span class="linenos">155</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="Tree_Node-156"><a href="#Tree_Node-156"><span class="linenos">156</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Tree_Node-157"><a href="#Tree_Node-157"><span class="linenos">157</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="Tree_Node-158"><a href="#Tree_Node-158"><span class="linenos">158</span></a>
+</span><span id="Tree_Node-159"><a href="#Tree_Node-159"><span class="linenos">159</span></a>    <span class="k">def</span> <span class="nf">is_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Tree_Node-160"><a href="#Tree_Node-160"><span class="linenos">160</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">==</span> <span class="n">MB</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><h4 id="binary-tree-node">Binary Tree Node</h4>
+
+<p>Nodes useful for walking binary trees</p>
+
+<ul>
+<li>this type of node always contain data, even if that data is None
+<ul>
+<li>in a Boolean context return true if not at the top of the tree</li>
+</ul></li>
+</ul>
+</div>
+
+
+                            <div id="Tree_Node.__init__" class="classattr">
+                                        <input id="Tree_Node.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">Tree_Node</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="s1">&#39;D&#39;</span>,</span><span class="param">	<span class="n">up</span><span class="p">:</span> <span class="s1">&#39;MB[Tree_Node[D]]&#39;</span>,</span><span class="param">	<span class="n">left</span><span class="p">:</span> <span class="s1">&#39;MB[Tree_Node[D]]&#39;</span>,</span><span class="param">	<span class="n">right</span><span class="p">:</span> <span class="s1">&#39;MB[Tree_Node[D]]&#39;</span></span>)</span>
+
+                <label class="view-source-button" for="Tree_Node.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Tree_Node.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tree_Node.__init__-144"><a href="#Tree_Node.__init__-144"><span class="linenos">144</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">D</span><span class="p">,</span>
+</span><span id="Tree_Node.__init__-145"><a href="#Tree_Node.__init__-145"><span class="linenos">145</span></a>                 <span class="n">up</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="Tree_Node.__init__-146"><a href="#Tree_Node.__init__-146"><span class="linenos">146</span></a>                 <span class="n">left</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]],</span>
+</span><span id="Tree_Node.__init__-147"><a href="#Tree_Node.__init__-147"><span class="linenos">147</span></a>                 <span class="n">right</span><span class="p">:</span> <span class="n">MB</span><span class="p">[</span><span class="n">Tree_Node</span><span class="p">[</span><span class="n">D</span><span class="p">]]):</span>
+</span><span id="Tree_Node.__init__-148"><a href="#Tree_Node.__init__-148"><span class="linenos">148</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="Tree_Node.__init__-149"><a href="#Tree_Node.__init__-149"><span class="linenos">149</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">=</span> <span class="n">up</span>
+</span><span id="Tree_Node.__init__-150"><a href="#Tree_Node.__init__-150"><span class="linenos">150</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_left</span> <span class="o">=</span> <span class="n">left</span>
+</span><span id="Tree_Node.__init__-151"><a href="#Tree_Node.__init__-151"><span class="linenos">151</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_right</span> <span class="o">=</span> <span class="n">right</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="Tree_Node.is_top" class="classattr">
+                                        <input id="Tree_Node.is_top-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">is_top</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="Tree_Node.is_top-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Tree_Node.is_top"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Tree_Node.is_top-159"><a href="#Tree_Node.is_top-159"><span class="linenos">159</span></a>    <span class="k">def</span> <span class="nf">is_top</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Tree_Node.is_top-160"><a href="#Tree_Node.is_top-160"><span class="linenos">160</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up</span> <span class="o">==</span> <span class="n">MB</span><span class="p">()</span>
 </span></pre></div>
 
 

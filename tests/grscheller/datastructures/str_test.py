@@ -15,7 +15,7 @@
 from __future__ import annotations
 from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.splitends.se import SE, Roots
+from grscheller.datastructures.splitends.se import SE
 from grscheller.datastructures.tuples import FTuple
 
 def addLt42(x: int, y: int) -> int|None:
@@ -24,12 +24,9 @@ def addLt42(x: int, y: int) -> int|None:
         return sum
     return None
 
-roots_int_str = Roots[int|str]()
-roots_int = Roots[int]()
-
 class Test_str:
     def test_SplitEnds(self) -> None:
-        s1: SE[int|str] = SE(roots_int_str, 0, 1, 2, 3)
+        s1: SE[int|str] = SE(0, 1, 2, 3)
         assert str(s1) == '>< 3 -> 2 -> 1 -> 0 ||'
         s2 = s1.copy()
         s2.push(42)
@@ -49,7 +46,7 @@ class Test_str:
         s5.push('Buggy the clown')
         assert str(s5) == ">< Buggy the clown -> wins! -> 42 -> 3 -> 2 -> 1 -> 0 ||"
 
-        foo: SE[int] = SE(roots_int, 1, 2)
+        foo: SE[int] = SE(1, 2)
         baz = foo.copy()
         assert baz.peak() == 2
         foo.push(3)
@@ -62,8 +59,8 @@ class Test_str:
         assert str(baz) == '>< 5 -> 4 -> 3 -> 2 -> 1 ||'
         assert foo == baz
         assert foo is not baz
-        boz = SE(roots_int, 0, 1, 2, 3, 4 ,5)
-        buz = SE(roots_int, 0, 1, 2, 2, 4 ,5)
+        boz = SE(0, 1, 2, 3, 4 ,5)
+        buz = SE(0, 1, 2, 2, 4 ,5)
         assert foo != boz
         assert boz != foo
         assert foo != buz

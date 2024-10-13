@@ -19,10 +19,10 @@ Node classes used with graph-like data structures.
 
 """
 from __future__ import annotations
-from typing import Generic, Hashable, Optional
+from typing import Callable, cast, Generic, Hashable, Iterator, Optional
 from grscheller.fp.woException import MB
 
-__all__ = ['SL_Node', 'DL_Node']
+__all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 
 class SL_Node[D]():
     """
@@ -30,26 +30,35 @@ class SL_Node[D]():
 
     Singularly link nodes for graph-like data structures.
 
-    * this type of node always contain data, even if that data is None
-      * in a Boolean context return true if not last node
+    * this type of node always contain data and optionally a previous Node
+      * in a Boolean context return false only if there is no previous Node
+    * two nodes compare as equal if both
+      * their previous Nodes are the same
+      * their data compares as equal
     * more than one node can point to the same node forming bush like graphs
-    * circular graphs are possible
 
     """
-    __slots__ = '_data', '_next'
+    __slots__ = '_data', '_prev'
 
-    def __init__(self, data: D, next: MB[SL_Node[D]]):
+    def __init__(self, data: D, prev: MB[SL_Node[D]]) -> None:
         self._data = data
-        self._next = next
+        self._prev = prev
+
+    def __iter__(self) -> Iterator[D]:
+        node = self
+        while node:
+            yield node._data
+            node = node._prev.get()
+        yield node._data
 
     def __bool__(self) -> bool:
-        return self._next != MB()
+        return self._prev != MB()
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
 
-        if self._next is not other._next:
+        if self._prev is not other._prev:
             return False
         if self._data is other._data:
             return True
@@ -65,6 +74,30 @@ class SL_Node[D]():
             return True
         return False
 
+    def get_data(self) -> D:
+        return self._data
+
+    def fold[T](self,  f: Callable[[T, D], T], init: Optional[T]=None) -> T:
+        """Reduce data across linked nodes
+
+        * with a function and an optional starting value
+        * reduces in natural LIFO order
+          * from self to the root
+
+        """
+        if init is None:
+            acc: T = cast(T, self._data)
+            node = self._prev.get()
+        else:
+            acc = init
+            node = self
+
+        while node:
+            acc = f(acc, node._data)
+            node = node._prev.get()
+        acc = f(acc, node._data)
+        return acc
+
 class DL_Node[D]():
     """
     #### Doubly Linked Node
@@ -75,28 +108,26 @@ class DL_Node[D]():
       * in a Boolean context return true if not at the start or end node
     * doubly link lists possible
     * circular graphs are possible
-    * recursive binary trees possible
+    * binary trees possible
 
     """
-    __slots__ = '_data', '_next', '_prev'
+    __slots__ = '_left', '_data', '_right'
 
-    def __init__(self, data: D,
-                 prev_node: MB[DL_Node[D]],
-                 next_node: MB[DL_Node[D]]):
+    def __init__(self, left: MB[DL_Node[D]], data: D, right: MB[DL_Node[D]]):
+        self._left = left
         self._data = data
-        self._prev = prev_node
-        self._next = next_node
+        self._right = right
 
     def __bool__(self) -> bool:
-        if self._next == MB() or self._prev == MB():
+        if self._left == MB() or self._right == MB():
             return False
         return True
 
-    def is_start(self) -> bool:
-        return self._prev == MB()
+    def has_left(self) -> bool:
+        return self._left != MB()
 
-    def is_end(self) -> bool:
-        return self._next == MB()
+    def has_right(self) -> bool:
+        return self._right != MB()
 
 class Tree_Node[D]():
     """

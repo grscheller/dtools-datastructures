@@ -17,17 +17,16 @@
 ##### SplitEnd Stack types:
 
 * **SE:** Singularly linked stack with shareable data nodes
-* **Roots:** Common root nodes for a collection of SplitEnds
 
 """
 
 from __future__ import annotations
 
-from typing import Callable, cast, Generic, Iterator, Optional
+from typing import Callable, cast, Generic, Iterator, Never, Optional
 from ..nodes import SL_Node as Node
 from grscheller.fp.woException import MB
 
-__all__ = [ 'SE', 'Roots' ]
+__all__ = [ 'SE' ]
 
 class SE[D]():
     """#### Class SE - SplitEnd
@@ -36,39 +35,35 @@ class SE[D]():
 
     * each SplitEnd is a very simple stateful (mutable) LIFO stack
       * top of the stack is the "top"
-      * bottom of the stack is the "root" which cannot be removed
     * data can be pushed and popped to the stack
     * different mutable split ends can safely share the same "tail"
     * each SplitEnd sees itself as a singularly linked list
     * bush-like datastructures can be formed using multiple SplitEnds
     * len() returns the number of elements on the SplitEnd stack
-    * in boolean context,
-      * return false if split end consists of just a root
-      * otherwise return true
+    * in boolean context, return true if split end is not empty
 
     """
-    __slots__ = '_count', '_head'
+    __slots__ = '_count', '_tip'
 
-    def __init__(self, d: D, *ds: D) -> None:
-        self._head = Node(d, MB())
-        self._count: int = 1
+    def __init__(self, *ds: D) -> None:
+        self._tip: MB[Node[D]] = MB()
+        self._count: int = 0
         for d in ds:
-            node: Node[D] = Node(d, MB(self._head))
-            self._head, self._count = node, (self._count + 1)
+            node: Node[D] = Node(d, self._tip)
+            self._tip, self._count = MB(node), (self._count + 1)
 
     def __iter__(self) -> Iterator[D]:
-        node: Node[D] = self._head
-        while node:
-            yield node._data
-            node = node._next.get()
-        yield node._data
+        if self._tip == MB():
+            empty: tuple[D, ...] = ()
+            return iter(empty)
+        return iter(self._tip.get())
 
     def __reversed__(self) -> Iterator[D]:
         return reversed(list(self))
 
     def __bool__(self) -> bool:
         # Returns true if not a root node
-        return bool(self._head)
+        return bool(self._tip)
 
     def __len__(self) -> int:
         return self._count
@@ -85,61 +80,52 @@ class SE[D]():
 
         if self._count != other._count:
             return False
+        if self._count == 0:
+            return True
 
-        left = self._head
-        right = other._head
+        left = self._tip.get()
+        right = other._tip.get()
         for _ in range(self._count):
             if left is right:
                 return True
             if not left.data_eq(right):
                 return False
-            left = left._next.get()
-            right = right._next.get()
+            if left:
+                left = left._prev.get()
+                right = right._prev.get()
 
         return True
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
-            node = Node(d, MB(self._head))
-            self._head, self._count = node, self._count+1
+            node = Node(d, self._tip)
+            self._tip, self._count = MB(node), self._count+1
 
     def pop(self) -> D:
         """Pop data off of the top of the SplitEnd.
 
         * removes the data if not at the root
-        * just returns the data if at the root
+        * raises ValueError if popping from an empty SplitEnd
 
         """
-        data = self._head._data
-        if (next_node := self._head._next) != MB():
-            self._head, self._count = next_node.get(), self._count-1
+        if self._count == 0:
+            raise ValueError('SE: Popping from an empty SplitEnd')
+
+        data = self._tip.get()._data
+        self._tip, self._count = self._tip.get()._prev, self._count-1
         return data
 
-    def peak(self) -> D:
-        """Return the data at the top of the SplitEnd, does not consume it."""
-        return self._head._data
+    def peak(self) -> D|Never:
+        """Return the data at the top of the SplitEnd.
 
-    def fold[T](self, f:Callable[[T, D], T], init: Optional[T]=None) -> T:
-        """Reduce with a function.
-
-        * folds in natural LIFO Order
+        * does not consume the data
+        * raises ValueError if peaking at an empty SplitEnd
 
         """
-        acc: T
-        node: Node[D]
-        top: Node[D] = self._head
-        if init is None:
-            acc = cast(T, top._data)
-            node = top._next.get()
-        else:
-            acc = init
-            node = top
-
-        while node:
-            acc = f(acc, node._data)
-            node = node._next.get()
-        return acc
+        if self._count == 0:
+            raise ValueError('SE: Popping from an empty SplitEnd')
+        return self._tip.get()._data
 
     def copy(self) -> SE[D]:
         """Return a copy of the SplitEnd.
@@ -148,6 +134,20 @@ class SE[D]():
         * returns a new instance
 
         """
-        se = SE(self.peak())
-        se._head, se._count = self._head, self._count
+        se: SE[D] = SE()
+        se._tip, se._count = self._tip, self._count
         return se
+
+    def fold[T](self, f:Callable[[T, D], T], init: Optional[T]=None) -> T|Never:
+        """Reduce with a function.
+
+        * folds in natural LIFO Order
+
+        """
+        if self._tip != MB():
+            return self._tip.get().fold(f, init)
+        elif init is not None:
+            return init
+        else:
+            msg = 'SE: Folding empty SplitEnd but no initial value supplied'
+            raise ValueError(msg)

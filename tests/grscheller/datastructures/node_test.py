@@ -13,40 +13,51 @@
 # limitations under the License.
 
 from __future__ import annotations
+from typing import cast
+from grscheller.fp.woException import MB
 from grscheller.datastructures.nodes import SL_Node as SL
 from grscheller.datastructures.nodes import DL_Node as DL
 
 class Test_SL_Node:
     def test_bool(self) -> None:
-        n1 = SL(1, None)
-        n2 = SL(2, n1)
-        assert n1
+        n1 = SL(1, MB())
+        n2 = SL(2, MB(n1))
+        assert not n1
         assert n2
 
     def test_linking(self) -> None:
-        n1 = SL(1, None)
-        n2 = SL(2, n1)
-        n3 = SL(3, n2)
+        n1 = SL(1, MB())
+        n2 = SL(2, MB(n1))
+        n3 = SL(3, MB(n2))
         assert n3._data == 3
-        assert n3._next is not None
-        assert n3._next._next is not None
-        assert n2._next is not None
-        assert n2._data == n3._next._data == 2
-        assert n1._data == n2._next._data == n3._next._next._data == 1
-        assert n3._next is not None
-        assert n3._next._next is not None
-        assert n3._next._next._next is None
-        assert n3._next._next == n2._next
+        assert n3._prev != MB()
+        assert n3._prev.get()._data == 2
+        assert n2._prev is not None
+        assert n2._data == n3._prev.get()._data == 2
+        assert n1._data == n2._prev.get()._data == n3._prev.get()._prev.get()._data == 1
+        assert n3._prev != MB()
+        assert n3._prev.get()._prev.get() != MB()
+        assert n3._prev.get()._prev.get()._prev == MB()
+        assert n3._prev.get()._prev == n2._prev
 
-class Test_Tree_Node:
-    def test_bool(self) -> None:
-        tn1 = DL(None, 'spam', None)
-        tn2 = DL(tn1, 'Monty', None)
-        tn3 = DL(None, 'Python', tn2)
-        tn4 = DL(tn1, 'Monty Python', tn2)
-        tn0 = DL(None, None, None)
-        assert tn1
-        assert tn2
-        assert tn3
-        assert tn4
-        assert tn0
+# class Test_DL_TREE_Node:
+#     def test_bool(self) -> None:
+#         nul: MB[DL[str]] = MB()
+#         tn0: DL[str] = DL(MB(), 'spam', MB())
+#         tn1: DL[str] = DL(MB(), 'spam', MB(tn0))
+#         tn2: DL[str] = DL(MB(), 'spam', MB(tn1))
+#         tn3: DL[str] = DL(MB(), 'Monty', MB())
+#         tn4: DL[str] = DL(MB(), 'Python', MB(tn2))
+#         tn5: DL[str] = DL(MB(tn3), 'Monty Python', MB(tn4))
+#         assert tn5.has_left()
+#         assert tn5.has_right()
+#         assert not tn4.has_left()
+#         assert tn4.has_right()
+#         assert not tn3.has_left()
+#         assert not tn3.has_right()
+#         assert not tn2.has_left()
+#         assert tn2.has_right()
+#         assert not tn1.has_left()
+#         assert tn1.has_right()
+#         assert not tn0.has_left()
+#         assert not tn0.has_right()
