@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 from typing import Callable, cast, Iterator, Never, Optional
-from ..nodes import SL_Node as Node
+from ..nodes import SL_Node
 from grscheller.fp.woException import MB
 
 __all__ = [ 'SE' ]
@@ -46,11 +46,9 @@ class SE[D]():
     __slots__ = '_count', '_tip'
 
     def __init__(self, *ds: D) -> None:
-        self._tip: MB[Node[D]] = MB()
+        self._tip: MB[SL_Node[D]] = MB()
         self._count: int = 0
-        for d in ds:
-            node: Node[D] = Node(d, self._tip)
-            self._tip, self._count = MB(node), (self._count + 1)
+        self.push(*ds)
 
     def __iter__(self) -> Iterator[D]:
         if self._tip == MB():
@@ -99,24 +97,27 @@ class SE[D]():
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
-            node = Node(d, self._tip)
+            node = SL_Node(d, self._tip)
             self._tip, self._count = MB(node), self._count+1
 
-    def pop(self) -> D:
+    def pop(self, default: Optional[D] = None) -> D|Never:
         """Pop data off of the top of the SplitEnd.
 
-        * removes the data if not at the root
-        * raises ValueError if popping from an empty SplitEnd
+        * raises ValueError if
+          * popping from an empty SplitEnd
+          * and no default value was given
 
         """
         if self._count == 0:
-            raise ValueError('SE: Popping from an empty SplitEnd')
+            if default is None:
+                raise ValueError('SE: Popping from an empty SplitEnd')
+            else:
+                return default
 
-        data = self._tip.get()._data
-        self._tip, self._count = self._tip.get()._prev, self._count-1
+        data, self._tip, self._count = self._tip.get().pop2() + (self._count-1,)
         return data
 
-    def peak(self) -> D|Never:
+    def peak(self, default: Optional[D] = None) -> D:
         """Return the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -124,8 +125,12 @@ class SE[D]():
 
         """
         if self._count == 0:
-            raise ValueError('SE: Popping from an empty SplitEnd')
-        return self._tip.get()._data
+            if default is None:
+                raise ValueError('SE: Popping from an empty SplitEnd')
+            else:
+                return default
+
+        return self._tip.get().get_data()
 
     def copy(self) -> SE[D]:
         """Return a copy of the SplitEnd.
@@ -138,7 +143,7 @@ class SE[D]():
         se._tip, se._count = self._tip, self._count
         return se
 
-    def fold[T](self, f:Callable[[T, D], T], init: Optional[T]=None) -> T|Never:
+    def fold[T](self, f:Callable[[T, D], T], init: Optional[T] = None) -> T|Never:
         """Reduce with a function.
 
         * folds in natural LIFO Order

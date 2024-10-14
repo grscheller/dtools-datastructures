@@ -15,7 +15,8 @@
 """
 ### Nodes for Graphs
 
-Node classes used with graph-like data structures.
+Node classes used with graph-like data structures. API designed to be used by
+other data structures which contain these data structures.
 
 """
 from __future__ import annotations
@@ -26,14 +27,17 @@ __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 
 class SL_Node[D]():
     """
-    #### Singularly Linked Node
+    Data node for rearward Pointing (tip-to-root) singularly linked graphs.
 
-    Singularly link nodes for graph-like data structures.
-
+    * for mutable and immutable linear data structures
+    * designed so multiple instances can safely share the same data
     * this type of node always contain data and optionally a previous Node
-      * in a Boolean context return false only if there is no previous Node
-    * two nodes compare as equal if both
-      * their previous Nodes are the same
+    * nodes point towards a unique "root node" with no predecessor
+      * in a Boolean context return false only if only at a root
+      * multiple root nodes can exist
+      * empty data structures can be "re-rooted"
+    * two nodes compare as equal if
+      * both their previous Nodes are the same
       * their data compares as equal
     * more than one node can point to the same node forming bush like graphs
 
@@ -54,30 +58,27 @@ class SL_Node[D]():
     def __bool__(self) -> bool:
         return self._prev != MB()
 
+    def data_eq(self, other: SL_Node[D]) -> bool:
+        if self._data is other._data:
+            return True
+        elif self._data == other._data:
+            return True
+        else:
+            return False
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
 
         if self._prev is not other._prev:
             return False
-        if self._data is other._data:
-            return True
-        elif self._data == other._data:
-            return True
-
-        return False
-
-    def data_eq(self, other: SL_Node[D]) -> bool:
-        if self._data is other._data:
-            return True
-        if self._data == other._data:
-            return True
-        return False
+        else:
+            return self.data_eq(other)
 
     def get_data(self) -> D:
         return self._data
 
-    def fold[T](self,  f: Callable[[T, D], T], init: Optional[T]=None) -> T:
+    def fold[T](self,  f: Callable[[T, D], T], init: Optional[T] = None) -> T:
         """Reduce data across linked nodes
 
         * with a function and an optional starting value
@@ -98,6 +99,14 @@ class SL_Node[D]():
         acc = f(acc, node._data)
         return acc
 
+    def pop2(self) -> tuple[D, MB[SL_Node[D]]]:
+        """Return the *head* and, if it exists, the top node of the *tail*."""
+        return self._data, self._prev
+
+    def push_data(self, data: D) -> SL_Node[D]:
+        """Push data onto the stack and return a new node containing the data"""
+        return SL_Node(data, MB(self))
+
 class DL_Node[D]():
     """
     #### Doubly Linked Node
@@ -105,10 +114,11 @@ class DL_Node[D]():
     Doubly linked nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
-      * in a Boolean context return true if not at the start or end node
+      * in a Boolean context return true if both left and right nodes exist
+    * not __iter__ method provided, too application specific
     * doubly link lists possible
     * circular graphs are possible
-    * binary trees possible
+    * simple recursive binary trees possible
 
     """
     __slots__ = '_left', '_data', '_right'
@@ -123,27 +133,43 @@ class DL_Node[D]():
             return False
         return True
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+
+        if self._left is not other._left:
+            return False
+        if self._right is not other._right:
+            return False
+        if self._data is other._data:
+            return True
+        elif self._data == other._data:
+            return True
+
+        return False
+
     def has_left(self) -> bool:
         return self._left != MB()
 
     def has_right(self) -> bool:
         return self._right != MB()
 
-class Tree_Node[D]():
-    """
-    #### Binary Tree Node
+class Tree_Node[D, M]():
+    """Binary Tree Node with metadata.
 
-    Nodes useful for walking binary trees
+    Nodes useful for binary trees
 
     * this type of node always contain data, even if that data is None
-      * in a Boolean context return true if not at the top of the tree
+    * in a Boolean context return true if not at the top of the tree
+    * potential uses of metadata can be for re-balancing or repeat counts
     """
     __slots__ = '_data', '_left', '_right', '_up'
 
     def __init__(self, data: D,
-                 up: MB[Tree_Node[D]],
-                 left: MB[Tree_Node[D]],
-                 right: MB[Tree_Node[D]]):
+                 up: MB[Tree_Node[D,M]],
+                 left: MB[Tree_Node[D,M]],
+                 right: MB[Tree_Node[D,M]],
+                 meta: tuple[M, ...] = ()):
         self._data = data
         self._up = up
         self._left = left
