@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Callable, cast, Iterator, Never, Optional
 from ..nodes import SL_Node
-from grscheller.fp.woException import MB
+from grscheller.fp.err_handling import MB
 
 __all__ = [ 'SE' ]
 

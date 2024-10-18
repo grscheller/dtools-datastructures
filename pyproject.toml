@@ -20,8 +20,8 @@ classifiers = [
     "Typing :: Typed"
 ]
 dependencies = [
-    "grscheller.circular-array >= 3.6.0, < 3.7",
-    "grscheller.fp >= 0.3.3, < 0.4"
+    "grscheller.circular-array >= 3.6.1, < 3.7",
+    "grscheller.fp >= 1.0.0, < 1.1"
 ]
 dynamic = ["version", "description"]
 keywords = [
@@ -30,7 +30,7 @@ keywords = [
 ] 
 
 [project.optional-dependencies]
-test = ["pytest >=7.4"]
+test = ["pytest >=8.3"]
 
 [project.urls]
 Source = "https://github.com/grscheller/datastructures"
@@ -48,6 +48,10 @@ report_progress = true
 
 [tool.mypy]
 enable_incomplete_feature = ["NewGenericSyntax"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+consider_namespace_packages = true
 
 [tool.ruff]
 target-version = "py313"

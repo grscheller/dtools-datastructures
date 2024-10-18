@@ -13,12 +13,12 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.fp.woException import MB, XOR
 from grscheller.datastructures.splitends.se import SE
 from grscheller.datastructures.queues import DoubleQueue
 from grscheller.datastructures.queues import FIFOQueue
 from grscheller.datastructures.queues import LIFOQueue
 from grscheller.datastructures.tuples import FTuple
+from grscheller.fp.err_handling import MB, XOR
 
 class Test_repr:
     def test_DoubleQueue(self) -> None:

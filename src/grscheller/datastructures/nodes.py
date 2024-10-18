@@ -21,7 +21,7 @@ other data structures which contain these data structures.
 """
 from __future__ import annotations
 from typing import Callable, cast, Iterator, Optional
-from grscheller.fp.woException import MB
+from grscheller.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 

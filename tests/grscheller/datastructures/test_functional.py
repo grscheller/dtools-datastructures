@@ -18,7 +18,7 @@ from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
 from grscheller.datastructures.splitends.se import SE
 from grscheller.fp.iterables import FM
 from grscheller.fp.nothingness import _NoValue, noValue
-from grscheller.fp.woException import MB
+from grscheller.fp.err_handling import MB
 
 class Test_FP:
     def test_fold[S](self) -> None:

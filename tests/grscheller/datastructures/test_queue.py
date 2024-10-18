@@ -19,7 +19,7 @@ from grscheller.datastructures.queues import DoubleQueue as DQ
 from grscheller.datastructures.queues import FIFOQueue as FQ
 from grscheller.datastructures.queues import LIFOQueue as LQ
 from grscheller.datastructures.tuples import FTuple as FT
-from grscheller.fp.woException import MB
+from grscheller.fp.err_handling import MB
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:

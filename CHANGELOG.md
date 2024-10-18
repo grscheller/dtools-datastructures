@@ -19,6 +19,19 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.22.0 - PyPI release date 2024-10-18
+
+* Major refactoring of SplitEnd class
+  * splitends is now a subpackage containing the se module
+  * removed supporting classes
+  * can now be empty
+* grscheller.datastructures no longer uses nada as a sentinel value
+  * replaced with grscheller.fp.nothingness.noValue
+* made classes in nodes module less passive with better encapsulation
+* compatible with:
+  * grscheller.fp >= 1.0.0 < 1.01
+  * grscheller.circular-array >= 3.6.1 < 3.7
+
 ### Version 0.21.1.1 - BROKEN as of 2024-10-03
 
 * Does not work with either

@@ -14,9 +14,9 @@
 
 from __future__ import annotations
 from typing import cast
-from grscheller.fp.woException import MB
 from grscheller.datastructures.nodes import SL_Node as SL
 from grscheller.datastructures.nodes import DL_Node as DL
+from grscheller.fp.err_handling import MB
 
 class Test_SL_Node:
     def test_bool(self) -> None:
