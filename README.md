@@ -38,4 +38,4 @@ yourself.
 
 [1]: https://pypi.org/project/grscheller.datastructures/
 [2]: https://github.com/grscheller/datastructures/
-[3]: https://grscheller.github.io/datastructures/
+[3]: https://grscheller.github.io/grscheller-pypi-namespace-docs/datastructures/
