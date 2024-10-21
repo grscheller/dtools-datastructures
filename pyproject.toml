@@ -35,7 +35,7 @@ test = ["pytest >=8.3"]
 [project.urls]
 Source = "https://github.com/grscheller/datastructures"
 Changelog = "https://github.com/grscheller/datastructures/blob/main/CHANGELOG.md"
-Documentation = "https://grscheller.github.io/datastructures/"
+Documentation = "https://grscheller.github.io/grscheller-pypi-namespace-docs/datastructures"
 
 [tool.flit.sdist]
 exclude = ["dist", "docs", ".gitignore", ".mypy_cache"]
