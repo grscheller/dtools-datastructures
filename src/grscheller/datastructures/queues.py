@@ -29,7 +29,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterator, Optional
+from typing import Callable, cast, Iterable, Iterator, Optional
 from grscheller.circular_array.ca import CA
 from grscheller.fp.err_handling import MB
 
