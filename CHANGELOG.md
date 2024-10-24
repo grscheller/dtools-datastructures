@@ -11,6 +11,13 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.22.3.0 - Preparing for a 0.23.0 PyPI release
+
+* renamed class FTuple -> ftuple
+  * ftuple now takes 0 or 1 iterables, like list and tuple do
+* created factory function for original constructor use case
+  * FT[D](*ds: D) -> ftuple[D]
+
 ### Version 0.22.1 - PyPI release date 2024-10-20
 
 * removed docs from repo

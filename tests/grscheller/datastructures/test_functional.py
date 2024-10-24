@@ -13,11 +13,11 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.tuples import FTuple as FT
+from grscheller.datastructures.tuples import ftuple, FT
 from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
 from grscheller.datastructures.splitends.se import SE
 from grscheller.fp.iterables import FM
-from grscheller.fp.nothingness import _NoValue, noValue
+from grscheller.fp.singletons import NoValue, noValue
 from grscheller.fp.err_handling import MB
 
 class Test_FP:

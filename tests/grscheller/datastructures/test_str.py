@@ -16,7 +16,7 @@ from __future__ import annotations
 from typing import Optional
 from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
 from grscheller.datastructures.splitends.se import SE
-from grscheller.datastructures.tuples import FTuple
+from grscheller.datastructures.tuples import ftuple, FT
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
@@ -104,7 +104,7 @@ class Test_str:
         assert str(dq2) == '>< 2 | 3 | 4 | 5 ><'
 
     def test_ftuple(self) -> None:
-        ft1 = FTuple(1,2,3,4,5)
-        ft2: FTuple[int] = ft1.flatMap(lambda x: FTuple(*range(1, x)))
+        ft1 = FT(1,2,3,4,5)
+        ft2: FT[int] = ft1.flatMap(lambda x: FT(*range(1, x)))
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'

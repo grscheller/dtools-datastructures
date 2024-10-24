@@ -19,32 +19,36 @@ Tuple-like object with FP behaviors.
 
 ##### Tuple Types
 
-* **FTuple:** Tuple-like object with FP behaviors
+* **ftuple:** Tuple-like object with FP behaviors
 
 """
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterator, Optional
+from typing import Callable, cast, Iterable, Iterator, Optional
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
-__all__ = ['FTuple']
+__all__ = ['ftuple', 'FT']
 
-class FTuple[D]():
+class ftuple[D]():
     """
     #### Functional Tuple
 
     * immutable tuple-like data structure with a functional interface
     * supports both indexing and slicing
-    * FTuple addition & int multiplication supported
+    * `ftuple` addition & `int` multiplication supported
       * addition concatenates results, types must agree
       * both left and right multiplication supported
 
     """
     __slots__ = '_ds'
 
-    def __init__(self, *ds: D):
-        self._ds = ds
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if len(dss) < 2:
+            self._ds: tuple[D, ...] = tuple(*dss)
+        else:
+            msg = f'ftuple expected at most 1 argument, got {len(dss)}'
+            raise TypeError(msg)
 
     def __iter__(self) -> Iterator[D]:
         return iter(self._ds)
@@ -59,19 +63,21 @@ class FTuple[D]():
         return len(self._ds)
 
     def __repr__(self) -> str:
-        return 'FTuple(' + ', '.join(map(repr, self)) + ')'
+        return 'FT(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
         return "((" + ", ".join(map(repr, self)) + "))"
 
     def __eq__(self, other: object) -> bool:
+        if self is other:
+            return True
         if not isinstance(other, type(self)):
             return False
         return self._ds == other._ds
 
-    def __getitem__(self, sl: slice|int) -> FTuple[D]|Optional[D]:
+    def __getitem__(self, sl: slice|int) -> ftuple[D]|Optional[D]:
         if isinstance(sl, slice):
-            return FTuple(*self._ds[sl])
+            return ftuple(self._ds[sl])
         try:
             item = self._ds[sl]
         except IndexError:
@@ -87,7 +93,7 @@ class FTuple[D]():
 
         * fold left with an optional starting value
         * first argument of function `f` is for the accumulated value
-        * throws `ValueError` when FTuple empty and a start value not given
+        * throws `ValueError` when `ftuple` empty and a start value not given
 
         """
         it = iter(self._ds)
@@ -97,8 +103,8 @@ class FTuple[D]():
             acc = cast(L, next(it))  # L = D in this case
         else:
             if default is None:
-                msg = 'Both start and default cannot be None for an empty FTuple'
-                raise ValueError('FTuple.foldL - ' + msg)
+                msg = 'Both start and default cannot be None for an empty ftuple'
+                raise ValueError('ftuple.foldL - ' + msg)
             acc = default
         for v in it:
             acc = f(acc, v)
@@ -113,7 +119,7 @@ class FTuple[D]():
 
         * fold right with an optional starting value
         * second argument of function `f` is for the accumulated value
-        * throws `ValueError` when FTuple empty and a start value not given
+        * throws `ValueError` when `ftuple` empty and a start value not given
 
         """
         it = reversed(self._ds)
@@ -123,51 +129,51 @@ class FTuple[D]():
             acc = cast(R, next(it))  # R = D in this case
         else:
             if default is None:
-                msg = 'Both start and default cannot be None for an empty FTuple'
-                raise ValueError('FTuple.foldR - ' + msg)
+                msg = 'Both start and default cannot be None for an empty ftuple'
+                raise ValueError('ftuple.foldR - ' + msg)
             acc = default
         for v in it:
             acc = f(v, acc)
         return acc
 
-    def copy(self) -> FTuple[D]:
+    def copy(self) -> ftuple[D]:
         """
         **Copy**
 
-        Return a shallow copy of the FTuple in O(1) time & space complexity.
+        Return a shallow copy of the ftuple in O(1) time & space complexity.
 
         """
-        return FTuple(*self)
+        return ftuple(self)
 
-    def __add__(self, other: FTuple[D]) -> FTuple[D]:
-        return FTuple(*concat(iter(self), other))
+    def __add__(self, other: ftuple[D]) -> ftuple[D]:
+        return ftuple(concat(iter(self), other))
 
-    def __mul__(self, num: int) -> FTuple[D]:
-        return FTuple(*self._ds.__mul__(num if num > 0 else 0))
+    def __mul__(self, num: int) -> ftuple[D]:
+        return ftuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def __rmul__(self, num: int) -> FTuple[D]:
-        return FTuple(*self._ds.__mul__(num if num > 0 else 0))
+    def __rmul__(self, num: int) -> ftuple[D]:
+        return ftuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def accummulate(self, f: Callable[[L, D], L], s: Optional[L]=None) -> FTuple[L]:
+    def accummulate[L](self, f: Callable[[L, D], L], s: Optional[L]=None) -> ftuple[L]:
         """
         **Accumulate partial folds**
 
-        Accumulate partial fold results in an FTuple with an optional starting value.
+        Accumulate partial fold results in an ftuple with an optional starting value.
 
         """
         if s is None:
-            return FTuple(*accumulate(self, f))
+            return ftuple(accumulate(self, f))
         else:
-            return FTuple(*accumulate(self, f, s))
+            return ftuple(accumulate(self, f, s))
 
-    def map[T](self, f: Callable[[D], T]) -> FTuple[T]:
-        return FTuple(*map(f, self))
+    def map[U](self, f: Callable[[D], U]) -> ftuple[U]:
+        return ftuple(map(f, self))
 
-    def flatMap[T](self, f: Callable[[D], FTuple[T]], type: FM=FM.CONCAT) -> FTuple[T]:
+    def flatMap[U](self, f: Callable[[D], ftuple[U]], type: FM=FM.CONCAT) -> ftuple[U]:
         """
-        **Bind function to FTuple**
+        **Bind function to ftuple**
 
-        Bind function `f` to the FTuple.
+        Bind function `f` to the `ftuple`.
 
         * type = CONCAT: sequentially concatenate iterables one after the other
         * type = MERGE: merge iterables together until one is exhausted
@@ -176,10 +182,14 @@ class FTuple[D]():
         """
         match type:
             case FM.CONCAT:
-                return FTuple(*concat(*map(lambda x: iter(x), map(f, self))))
+                return ftuple(concat(*map(lambda x: iter(x), map(f, self))))
             case FM.MERGE:
-                return FTuple(*merge(*map(lambda x: iter(x), map(f, self))))
+                return ftuple(merge(*map(lambda x: iter(x), map(f, self))))
             case FM.EXHAUST:
-                return FTuple(*exhaust(*map(lambda x: iter(x), map(f, self))))
+                return ftuple(exhaust(*map(lambda x: iter(x), map(f, self))))
             case '*':
                 raise ValueError('Unknown FM type')
+
+def FT[U](*ds: U) -> ftuple[U]:
+    return ftuple(ds)
+

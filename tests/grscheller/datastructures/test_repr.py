@@ -17,7 +17,7 @@ from grscheller.datastructures.splitends.se import SE
 from grscheller.datastructures.queues import DoubleQueue
 from grscheller.datastructures.queues import FIFOQueue
 from grscheller.datastructures.queues import LIFOQueue
-from grscheller.datastructures.tuples import FTuple
+from grscheller.datastructures.tuples import ftuple, FT
 from grscheller.fp.err_handling import MB, XOR
 
 class Test_repr:
@@ -101,14 +101,14 @@ class Test_repr:
         assert sq2 is not sq1
 
     def test_ftuple(self) -> None:
-        ft1:FTuple[object] = FTuple()
-        assert repr(ft1) == 'FTuple()'
+        ft1:ftuple[object] = ftuple()
+        assert repr(ft1) == 'FT()'
         ft2 = eval(repr(ft1))
         assert ft2 == ft1
         assert ft2 is not ft1
 
-        ft1 = FTuple(42, 'foo', [10, 22])
-        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
+        ft1 = FT(42, 'foo', [10, 22])
+        assert repr(ft1) == "FT(42, 'foo', [10, 22])"
         ft2 = eval(repr(ft1))
         assert ft2 == ft1
         assert ft2 is not ft1
@@ -118,23 +118,23 @@ class Test_repr:
             list_ref.append(42)
         else:
             assert False
-        assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
-        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+        assert repr(ft1) == "FT(42, 'foo', [10, 22, 42])"
+        assert repr(ft2) == "FT(42, 'foo', [10, 22])"
         popped = ft1[2].pop()                                     # type: ignore
         assert popped == 42
-        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
-        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+        assert repr(ft1) == "FT(42, 'foo', [10, 22])"
+        assert repr(ft2) == "FT(42, 'foo', [10, 22])"
 
         # beware immutable collections of mutable objects
-        ft1 = FTuple(42, 'foo', [10, 22])
+        ft1 = FT(42, 'foo', [10, 22])
         ft2 = ft1.copy()
         ft1[2].append(42)                                         # type: ignore
-        assert repr(ft1) == "FTuple(42, 'foo', [10, 22, 42])"
-        assert repr(ft2) == "FTuple(42, 'foo', [10, 22, 42])"
+        assert repr(ft1) == "FT(42, 'foo', [10, 22, 42])"
+        assert repr(ft2) == "FT(42, 'foo', [10, 22, 42])"
         popped = ft2[2].pop()
         assert popped == 42
-        assert repr(ft1) == "FTuple(42, 'foo', [10, 22])"
-        assert repr(ft2) == "FTuple(42, 'foo', [10, 22])"
+        assert repr(ft1) == "FT(42, 'foo', [10, 22])"
+        assert repr(ft2) == "FT(42, 'foo', [10, 22])"
 
     def test_SplitEnd_procedural_methods(self) -> None:
         s1: SE[object] = SE('foobar')
@@ -202,7 +202,7 @@ class Test_repr_mix:
         thing1: XOR[object, str] = \
             XOR(
                 FIFOQueue(
-                    FTuple(
+                    FT(
                         42,
                         MB(42),
                         XOR(right = 'nobody home')
@@ -220,7 +220,7 @@ class Test_repr_mix:
                 'Potential Right'
             )
 
-        repr_str = "XOR(FIFOQueue(FTuple(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
+        repr_str = "XOR(FIFOQueue(FT(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
         assert repr(thing1) == repr_str
 
         thing2 = eval(repr(thing1))

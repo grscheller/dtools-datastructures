@@ -18,7 +18,7 @@ from grscheller.circular_array.ca import CA
 from grscheller.datastructures.queues import DoubleQueue as DQ
 from grscheller.datastructures.queues import FIFOQueue as FQ
 from grscheller.datastructures.queues import LIFOQueue as LQ
-from grscheller.datastructures.tuples import FTuple as FT
+from grscheller.datastructures.tuples import ftuple, FT
 from grscheller.fp.err_handling import MB
 
 class TestQueueTypes:
