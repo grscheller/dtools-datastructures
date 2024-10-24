@@ -30,7 +30,7 @@
 from __future__ import annotations
 
 from typing import Callable, cast, Iterable, Iterator, Optional
-from grscheller.circular_array.ca import CA
+from grscheller.circular_array.ca import ca, CA
 from grscheller.fp.err_handling import MB
 
 __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
@@ -46,7 +46,7 @@ class QueueBase[D]():
     __slots__ = '_ca'
 
     def __init__(self, *ds: D):
-        self._ca = CA(*ds)
+        self._ca = ca(ds)
 
     def __repr__(self) -> str:
         if len(self) == 0:
