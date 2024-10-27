@@ -45,7 +45,7 @@ class Test_SplitEnds:
         nums: set[int] = set()
         while s2:
             nums.add(s2.pop())         # pop until empty
-        assert nums == {2, 1, 42, 3}   # anyone home?
+        assert nums == {2, 1, 42, 3}
         assert not s2
         s2.push(42)
         try:
@@ -53,7 +53,7 @@ class Test_SplitEnds:
             assert s2.pop() == 42
             assert s2.peak() == 1
             assert False
-        except ValueError as ve:
+        except ValueError:
             assert True
         else:
             assert False

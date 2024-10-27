@@ -33,7 +33,8 @@ from typing import Callable, cast, Iterable, Iterator, Optional
 from grscheller.circular_array.ca import ca, CA
 from grscheller.fp.err_handling import MB
 
-__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase' ]
+__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
+            'DQ', 'FQ', 'LQ' ]
 
 class QueueBase[D]():
     """#### Base class for circular area based queues.
@@ -45,14 +46,13 @@ class QueueBase[D]():
     """
     __slots__ = '_ca'
 
-    def __init__(self, *ds: D):
-        self._ca = ca(ds)
-
-    def __repr__(self) -> str:
-        if len(self) == 0:
-            return type(self).__name__ + '()'
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if len(dss) < 2:
+            self._ca = ca(*dss)
         else:
-            return type(self).__name__ + '(' + ', '.join(map(repr, self._ca)) + ')'
+            msg1 = f'{type(self).__name__} expected at most 1 '
+            msg2 = f'iterable argument, got {len(dss)}'
+            raise TypeError(msg1+msg2)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -77,12 +77,18 @@ class FIFOQueue[D](QueueBase[D]):
     def __iter__(self) -> Iterator[D]:
         return iter(list(self._ca))
 
-    def copy(self) -> FIFOQueue[D]:
-        """Return a shallow copy of the `FIFOQueue`."""
-        return FIFOQueue(*self._ca)
+    def __repr__(self) -> str:
+        if len(self) == 0:
+            return 'FQ()'
+        else:
+            return 'FQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
         return "<< " + " < ".join(map(str, self)) + " <<"
+
+    def copy(self) -> FIFOQueue[D]:
+        """Return a shallow copy of the `FIFOQueue`."""
+        return FIFOQueue(self._ca)
 
     def push(self, *ds: D) -> None:
         """Push data onto `FIFOQueue`.
@@ -155,7 +161,7 @@ class FIFOQueue[D](QueueBase[D]):
         * returns a new instance
 
         """
-        return FIFOQueue(*map(f, self._ca))
+        return FIFOQueue(map(f, self._ca))
 
 class LIFOQueue[D](QueueBase[D]):
     """#### LIFO Queue
@@ -169,12 +175,18 @@ class LIFOQueue[D](QueueBase[D]):
     def __iter__(self) -> Iterator[D]:
         return reversed(list(self._ca))
 
+    def __repr__(self) -> str:
+        if len(self) == 0:
+            return 'LQ()'
+        else:
+            return 'LQ(' + ', '.join(map(repr, self._ca)) + ')'
+
     def __str__(self) -> str:
         return "|| " + " > ".join(map(str, self)) + " ><"
 
     def copy(self) -> LIFOQueue[D]:
         """Return a shallow copy of the `LIFOQueue`."""
-        return LIFOQueue(*reversed(self._ca))
+        return LIFOQueue(reversed(self._ca))
 
     def push(self, *ds: D) -> None:
         """Push data onto `LIFOQueue`.
@@ -234,7 +246,7 @@ class LIFOQueue[D](QueueBase[D]):
         * returns a new instance
 
         """
-        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
+        return LIFOQueue(reversed(CA(*map(f, reversed(self._ca)))))
 
 class DoubleQueue[D](QueueBase[D]):
     """#### Double Ended Queue
@@ -251,12 +263,18 @@ class DoubleQueue[D](QueueBase[D]):
     def __reversed__(self) -> Iterator[D]:
         return reversed(list(self._ca))
 
+    def __repr__(self) -> str:
+        if len(self) == 0:
+            return 'DQ()'
+        else:
+            return 'DQ(' + ', '.join(map(repr, self._ca)) + ')'
+
     def __str__(self) -> str:
         return ">< " + " | ".join(map(str, self)) + " ><"
 
     def copy(self) -> DoubleQueue[D]:
         """Return a shallow copy of the `DoubleQueue`."""
-        return DoubleQueue(*self._ca)
+        return DoubleQueue(self._ca)
 
     def pushL(self, *ds: D) -> None:
         """Push data onto left side (front) of `DoubleQueue`.
@@ -363,4 +381,17 @@ class DoubleQueue[D](QueueBase[D]):
         * returns a new instance
 
         """
-        return DoubleQueue(*map(f, self._ca))
+        return DoubleQueue(map(f, self._ca))
+
+def FQ[D](*ds: D) -> FIFOQueue[D]:
+    """Return a FIFOQueue where data is pushed on in natural FIFO order."""
+    return FIFOQueue(ds)
+
+def LQ[D](*ds: D) -> LIFOQueue[D]:
+    """Return a LIFOQueue where data is pushed on in natural LIFO order."""
+    return LIFOQueue(ds)
+
+def DQ[D](*ds: D) -> DoubleQueue[D]:
+    """Return a DoubleQueue whose data is pushed on from the right."""
+    return DoubleQueue(ds)
+

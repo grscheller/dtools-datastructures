@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.tuples import ftuple as ft, FT
+from grscheller.datastructures.tuples import FTuple as ft, FT
 from grscheller.fp.iterables import FM
 
 class TestFT:
@@ -34,7 +34,7 @@ class TestFT:
         assert len(ft1) == 0
         assert len(ft2) == 0
         ft3 = ft1 + ft2
-        assert ft3 == ft2 == ft3
+        assert ft3 == ft2 == ft1
         assert ft3 is not ft1
         assert ft3 is not ft2
         assert not ft3

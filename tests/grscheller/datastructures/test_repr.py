@@ -14,23 +14,23 @@
 
 from __future__ import annotations
 from grscheller.datastructures.splitends.se import SE
-from grscheller.datastructures.queues import DoubleQueue
-from grscheller.datastructures.queues import FIFOQueue
-from grscheller.datastructures.queues import LIFOQueue
-from grscheller.datastructures.tuples import ftuple, FT
+from grscheller.datastructures.queues import DoubleQueue, DQ
+from grscheller.datastructures.queues import FIFOQueue, FQ
+from grscheller.datastructures.queues import LIFOQueue, LQ
+from grscheller.datastructures.tuples import FTuple, FT
 from grscheller.fp.err_handling import MB, XOR
 
 class Test_repr:
     def test_DoubleQueue(self) -> None:
         dq0: DoubleQueue[object] = DoubleQueue()
-        assert repr(dq0) == 'DoubleQueue()'
+        assert repr(dq0) == 'DQ()'
         dq1 = eval(repr(dq0))
         assert dq1 == dq0
         assert dq1 is not dq0
 
         dq0.pushR(1)
         dq0.pushL('foo')
-        assert repr(dq0) == "DoubleQueue('foo', 1)"
+        assert repr(dq0) == "DQ('foo', 1)"
         dq1 = eval(repr(dq0))
         assert dq1 == dq0
         assert dq1 is not dq0
@@ -43,21 +43,21 @@ class Test_repr:
         assert dq0.popL() == MB(1)
         dq0.pushL(42)
         dq0.popR()
-        assert repr(dq0) == 'DoubleQueue(42, 2, 3, 4)'
+        assert repr(dq0) == 'DQ(42, 2, 3, 4)'
         dq1 = eval(repr(dq0))
         assert dq1 == dq0
         assert dq1 is not dq0
 
     def test_FIFOQueue(self) -> None:
-        sq1: FIFOQueue[object] = FIFOQueue()
-        assert repr(sq1) == 'FIFOQueue()'
+        sq1: FIFOQueue[object] = FQ()
+        assert repr(sq1) == 'FQ()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "FIFOQueue(1, 'foo')"
+        assert repr(sq1) == "FQ(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -70,21 +70,21 @@ class Test_repr:
         assert sq1.pop() == MB('foo')
         sq1.push(42)
         sq1.pop()
-        assert repr(sq1) == 'FIFOQueue(3, 4, 5, 42)'
+        assert repr(sq1) == 'FQ(3, 4, 5, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
     def test_LIFOQueue(self) -> None:
         sq1: LIFOQueue[object] = LIFOQueue()
-        assert repr(sq1) == 'LIFOQueue()'
+        assert repr(sq1) == 'LQ()'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
         sq1.push(1)
         sq1.push('foo')
-        assert repr(sq1) == "LIFOQueue(1, 'foo')"
+        assert repr(sq1) == "LQ(1, 'foo')"
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
@@ -95,13 +95,13 @@ class Test_repr:
         sq1.push(5)
         assert sq1.pop() == MB(5)
         sq1.push(42)
-        assert repr(sq1) == 'LIFOQueue(1, 2, 3, 4, 42)'
+        assert repr(sq1) == 'LQ(1, 2, 3, 4, 42)'
         sq2 = eval(repr(sq1))
         assert sq2 == sq1
         assert sq2 is not sq1
 
     def test_ftuple(self) -> None:
-        ft1:ftuple[object] = ftuple()
+        ft1:FTuple[object] = FTuple()
         assert repr(ft1) == 'FT()'
         ft2 = eval(repr(ft1))
         assert ft2 == ft1
@@ -201,7 +201,7 @@ class Test_repr_mix:
     def test_mix1(self) -> None:
         thing1: XOR[object, str] = \
             XOR(
-                FIFOQueue(
+                FQ(
                     FT(
                         42,
                         MB(42),
@@ -212,7 +212,7 @@ class Test_repr_mix:
                         (),
                         (42, 100)
                     ),
-                    LIFOQueue(
+                    LQ(
                         'foo',
                         'bar'
                     )
@@ -220,7 +220,7 @@ class Test_repr_mix:
                 'Potential Right'
             )
 
-        repr_str = "XOR(FIFOQueue(FT(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LIFOQueue('foo', 'bar')), 'Potential Right')"
+        repr_str = "XOR(FQ(FT(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LQ('foo', 'bar')), 'Potential Right')"
         assert repr(thing1) == repr_str
 
         thing2 = eval(repr(thing1))

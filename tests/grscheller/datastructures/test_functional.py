@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.tuples import ftuple, FT
-from grscheller.datastructures.queues import FIFOQueue as FQ, LIFOQueue as LQ
+from grscheller.datastructures.tuples import FTuple, FT
+from grscheller.datastructures.queues import FIFOQueue, FQ, LIFOQueue, LQ
 from grscheller.datastructures.splitends.se import SE
 from grscheller.fp.iterables import FM
 from grscheller.fp.singletons import NoValue, noValue
@@ -25,11 +25,11 @@ class Test_FP:
         l1 = lambda x, y: x + y
         l2 = lambda x, y: x * y
 
-        def pushFQfromL(q: FQ[S], d: S) -> FQ[S]:
+        def pushFQfromL(q: FIFOQueue[S], d: S) -> FIFOQueue[S]:
             q.push(d)
             return q
 
-        def pushFQfromR(d: S, q: FQ[S]) -> FQ[S]:
+        def pushFQfromR(d: S, q: FIFOQueue[S]) -> FIFOQueue[S]:
             q.push(d)
             return q
 
@@ -37,9 +37,9 @@ class Test_FP:
             se.push(d)
             return se
 
-        ft0: FT[int] = FT()
-        ft1: FT[int] = FT(1)
-        ft5: FT[int] = FT(1, 2, 3, 4, 5)
+        ft0: FTuple[int] = FT()
+        ft1: FTuple[int] = FT(1)
+        ft5: FTuple[int] = FT(1, 2, 3, 4, 5)
         se5 = SE(1, 2, 3, 4, 5)
 
         assert se5.peak() == 5
@@ -62,17 +62,17 @@ class Test_FP:
         assert ft0 == FT()
         assert ft5 == FT(1,2,3,4,5)
 
-        fq1: FQ[int] = FQ()
-        fq2: FQ[int] = FQ()
+        fq1: FIFOQueue[int] = FQ()
+        fq2: FIFOQueue[int] = FQ()
         assert ft5.foldL(pushFQfromL, fq1.copy()) == FQ(1,2,3,4,5)
         assert ft0.foldL(pushFQfromL, fq2.copy()) == FQ()
         assert ft5.foldR(pushFQfromR, fq1.copy()) == FQ(5,4,3,2,1)
         assert ft0.foldR(pushFQfromR, fq2.copy()) == FQ()
 
-        fq5: FQ[int] = FQ()
-        fq6 = FQ[int]()
-        fq7: FQ[int] = FQ()
-        fq8 = FQ[int]()
+        fq5: FIFOQueue[int] = FQ()
+        fq6 = FIFOQueue[int]()
+        fq7: FIFOQueue[int] = FQ()
+        fq8 = FIFOQueue[int]()
         assert ft5.foldL(pushFQfromL, fq5) == FQ(1,2,3,4,5)
         assert ft5.foldL(pushFQfromL, fq6) == FQ(1,2,3,4,5)
         assert ft0.foldL(pushFQfromL, fq7) == FQ()
@@ -98,9 +98,9 @@ class Test_FP:
         assert ft0.accummulate(l2) == FT()
 
     def test_ftuple_flatMap(self) -> None:
-        ft:FT[int] = FT(*range(3, 101))
+        ft = FTuple(range(3, 101))
         l1 = lambda x: 2*x + 1
-        l2 = lambda x: FT(*range(2, x+1)).accummulate(lambda x, y: x+y)
+        l2 = lambda x: FTuple(range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
         ft2 = ft.flatMap(l2, type=FM.CONCAT)
         ft3 = ft.flatMap(l2, type=FM.MERGE)
