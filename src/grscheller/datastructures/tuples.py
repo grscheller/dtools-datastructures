@@ -28,7 +28,7 @@ from __future__ import annotations
 from typing import Callable, cast, Iterable, Iterator, Optional
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
-__all__ = ['Ftuple', 'FT']
+__all__ = ['FTuple', 'FT']
 
 class FTuple[D]():
     """
