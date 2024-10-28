@@ -15,11 +15,11 @@
 """
 ### Tuple based datastructures:
 
-Tuple-like object with FP behaviors.
+Tuple-like objects.
 
 ##### Tuple Types
 
-* **ftuple:** Tuple-like object with FP behaviors
+* **FTuple:** Wrapped tuple with a Functional Programming API
 
 """
 
@@ -36,7 +36,7 @@ class FTuple[D]():
 
     * immutable tuple-like data structure with a functional interface
     * supports both indexing and slicing
-    * `ftuple` addition & `int` multiplication supported
+    * `FTuple` addition & `int` multiplication supported
       * addition concatenates results, types must agree
       * both left and right multiplication supported
 
@@ -47,7 +47,7 @@ class FTuple[D]():
         if len(dss) < 2:
             self._ds: tuple[D, ...] = tuple(*dss)
         else:
-            msg = f'ftuple expected at most 1 iterable argument, got {len(dss)}'
+            msg = f'FTuple expected at most 1 iterable argument, got {len(dss)}'
             raise TypeError(msg)
 
     def __iter__(self) -> Iterator[D]:
@@ -93,7 +93,7 @@ class FTuple[D]():
 
         * fold left with an optional starting value
         * first argument of function `f` is for the accumulated value
-        * throws `ValueError` when `ftuple` empty and a start value not given
+        * throws `ValueError` when `FTuple` empty and a start value not given
 
         """
         it = iter(self._ds)
@@ -103,8 +103,8 @@ class FTuple[D]():
             acc = cast(L, next(it))  # L = D in this case
         else:
             if default is None:
-                msg = 'Both start and default cannot be None for an empty ftuple'
-                raise ValueError('ftuple.foldL - ' + msg)
+                msg = 'Both start and default cannot be None for an empty FTuple'
+                raise ValueError('FTuple.foldL - ' + msg)
             acc = default
         for v in it:
             acc = f(acc, v)
@@ -119,7 +119,7 @@ class FTuple[D]():
 
         * fold right with an optional starting value
         * second argument of function `f` is for the accumulated value
-        * throws `ValueError` when `ftuple` empty and a start value not given
+        * throws `ValueError` when `FTuple` empty and a start value not given
 
         """
         it = reversed(self._ds)
@@ -129,8 +129,8 @@ class FTuple[D]():
             acc = cast(R, next(it))  # R = D in this case
         else:
             if default is None:
-                msg = 'Both start and default cannot be None for an empty ftuple'
-                raise ValueError('ftuple.foldR - ' + msg)
+                msg = 'Both start and default cannot be None for an empty FTuple'
+                raise ValueError('FTuple.foldR - ' + msg)
             acc = default
         for v in it:
             acc = f(v, acc)
@@ -140,7 +140,7 @@ class FTuple[D]():
         """
         **Copy**
 
-        Return a shallow copy of the ftuple in O(1) time & space complexity.
+        Return a shallow copy of the FTuple in O(1) time & space complexity.
 
         """
         return FTuple(self)
@@ -158,7 +158,8 @@ class FTuple[D]():
         """
         **Accumulate partial folds**
 
-        Accumulate partial fold results in an ftuple with an optional starting value.
+        Accumulate partial fold results in an FTuple with an optional starting
+        value.
 
         """
         if s is None:
@@ -171,8 +172,6 @@ class FTuple[D]():
 
     def flatMap[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT) -> FTuple[U]:
         """
-        **Bind function to FTuple**
-
         Bind function `f` to the `FTuple`.
 
         * type = CONCAT: sequentially concatenate iterables one after the other
