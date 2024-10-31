@@ -25,12 +25,13 @@ Tuple-like objects.
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator, Optional
+from typing import Callable, cast, Iterable, Iterator
+from typing import Optional, overload, Sequence
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple', 'FT']
 
-class FTuple[D]():
+class FTuple[D](Sequence[D]):
     """
     #### Functional Tuple
 
@@ -75,14 +76,16 @@ class FTuple[D]():
             return False
         return self._ds == other._ds
 
-    def __getitem__(self, sl: slice|int) -> FTuple[D]|Optional[D]:
-        if isinstance(sl, slice):
-            return FTuple(self._ds[sl])
-        try:
-            item = self._ds[sl]
-        except IndexError:
-            item = None
-        return item
+    @overload
+    def __getitem__(self, idx: int) -> D: ...
+    @overload
+    def __getitem__(self, idx: slice) -> FTuple[D]: ...
+
+    def __getitem__(self, idx: slice|int) -> FTuple[D]|D:
+        if isinstance(idx, slice):
+            return FTuple(self._ds[idx])
+        else:
+            return self._ds[idx]
 
     def foldL[L](self,
               f: Callable[[L, D], L],

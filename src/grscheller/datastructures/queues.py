@@ -29,14 +29,14 @@
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator, Optional
+from typing import Callable, cast, Iterable, Iterator, Optional, Sequence
 from grscheller.circular_array.ca import ca, CA
 from grscheller.fp.err_handling import MB
 
 __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
             'DQ', 'FQ', 'LQ' ]
 
-class QueueBase[D]():
+class QueueBase[D](Sequence[D]):
     """#### Base class for circular area based queues.
 
     * primarily for DRY inheritance
@@ -64,6 +64,9 @@ class QueueBase[D]():
         if not isinstance(other, type(self)):
             return False
         return self._ca == other._ca
+
+    def __getitem__(self, idx: int) -> D:
+        return self._ca[idx]
 
 class FIFOQueue[D](QueueBase[D]):
     """#### FIFO Queue
@@ -214,7 +217,7 @@ class LIFOQueue[D](QueueBase[D]):
         * return a maybe monad of the next item to be popped from the queue
         * does not consume the item
         * returns `MB()` if queue is empty
-        
+
         """
         if self._ca:
             return MB(self._ca[-1])

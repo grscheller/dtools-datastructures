@@ -17,7 +17,6 @@ from grscheller.datastructures.tuples import FTuple, FT
 from grscheller.datastructures.queues import FIFOQueue, FQ, LIFOQueue, LQ
 from grscheller.datastructures.splitends.se import SE
 from grscheller.fp.iterables import FM
-from grscheller.fp.singletons import NoValue, noValue
 from grscheller.fp.err_handling import MB
 
 class Test_FP:
