@@ -15,6 +15,7 @@
 from __future__ import annotations
 from grscheller.datastructures.tuples import FTuple as ft, FT
 from grscheller.fp.iterables import FM
+from grscheller.fp.err_handling import MB, XOR
 
 class TestFT:
     def test_method_returns_copy(self) -> None:
@@ -43,8 +44,9 @@ class TestFT:
         ft4 = ft3.copy()
         assert ft4 == ft3
         assert ft4 is not ft3
-        assert ft1[0] is None
-        assert ft2[42] is None
+        assert MB.mk(lambda ii: ft1[ii], 0).get(42) == 42
+        assert XOR.mk(lambda ii: ft2[ii], 42, 'ft2[42]') == XOR(right='ft2[42]')
+        assert XOR.mk(lambda ii: ft2[ii], 42, 'ft2[42]').getRight() == 'ft2[42]'
 
     def test_indexing(self) -> None:
         ft0: ft[str] = FT()
@@ -54,8 +56,9 @@ class TestFT:
         assert ft1[-1] == "Mary"
         assert ft1[1] == "Rachel"
         assert ft1[-2] == "Rebekah"
-        assert ft1[42] == None
-        assert ft0[0] == None
+        assert MB.mk(lambda ii: ft1[ii], -2).get('Buggy') == 'Rebekah'
+        assert MB.mk(lambda ii: ft1[ii], 42).get('Buggy') == 'Buggy'
+        assert MB.mk(lambda ii: ft0[ii], 0).get('Buggy') == 'Buggy'
 
     def test_slicing(self) -> None:
         ft0: ft[int] = FT()

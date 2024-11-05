@@ -109,14 +109,14 @@ class Test_FP:
         assert (ft2[2], ft2[3], ft2[4])  == (2, 5, 9)
         assert (ft2[5], ft2[6], ft2[7], ft2[8])  == (2, 5, 9, 14)
         assert ft2[-1] == ft2[4948] == 5049
-        assert ft2[4949] is None
+        assert MB.idx(ft2, -1).get(42) == ft2[4948] == 5049
+        assert MB.idx(ft2, 4949) == MB()
         assert (ft3[0], ft3[1]) == (2, 2)
         assert (ft3[2], ft3[3]) == (2, 2)
         assert (ft3[4], ft3[5]) == (2, 2)
         assert (ft3[96], ft3[97]) == (2, 2)
         assert (ft3[98], ft3[99]) == (5, 5)
-        assert (ft3[194], ft3[195]) == (5, 5)
-        assert ft3[196] == None
+        assert MB.idx(ft3, 196) == MB()
         assert (ft4[0], ft4[1], ft4[2]) == (2, 2, 2)
         assert (ft4[95], ft4[96], ft4[97]) == (2, 2, 2)
         assert (ft4[98], ft4[99], ft4[100]) == (5, 5, 5)
@@ -124,4 +124,4 @@ class Test_FP:
         assert (ft4[293], ft4[294], ft4[295]) == (14, 14, 14)
         assert (ft4[-4], ft4[-3], ft4[-2], ft4[-1]) == (4850, 4949, 4949, 5049)
         assert ft4[-1] == ft4[4948] == 5049
-        assert ft2[4949] is None
+        assert MB.idx(ft2, 4949) == MB()

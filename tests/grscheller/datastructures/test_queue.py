@@ -49,13 +49,13 @@ class TestQueueTypes:
         lq1.push(MB(1), MB(2), MB(3))
         lq1.push(MB(4), MB(), MB(5))
         lq2 = lq1.map(lambda mb: mb.flatmap(lambda n: MB(2*n)))
-        last = lq2.pop().get(MB(42))
-        assert last == MB(10)
+        last = lq2.pop().get(42)
+        assert last == 10
         pop_out = lq2.pop()
-        assert pop_out == MB(MB())
-        assert pop_out.get(MB(42)) == MB()
-        assert lq2.peak() == MB(MB(8))
-        assert lq2.peak().get(MB(42)) == MB(8)
+        assert pop_out == MB(MB()) == MB()
+        assert pop_out.get(666) == 666
+        assert lq2.peak() == MB(MB(8)) == MB(8)
+        assert lq2.peak().get(42) == 8
 
     def test_push_then_pop(self) -> None:
         dq1 = DoubleQueue[int]()
