@@ -17,9 +17,9 @@
 
 Tuple-like objects.
 
-##### Tuple Types
+#### Tuple Types
 
-* **FTuple:** Wrapped tuple with a Functional Programming API
+* class **FTuple:** Wrapped tuple with a Functional Programming API
 
 """
 

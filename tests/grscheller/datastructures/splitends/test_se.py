@@ -13,24 +13,24 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.splitends.se import SE
+from grscheller.datastructures.splitends.se import SplitEnd, SE
 from grscheller.fp.iterables import concat, FM
 
 class Test_SplitEnds:
     def test_mutate_returns_none(self) -> None:
-        ps = SE[int](41)
+        ps = SE(41)
         ret = ps.push(1,2,3) # type: ignore # my[py] warning what is being tested
         assert ret is None
 
     def test_pushThenPop(self) -> None:
-        s1: SE[int] = SE(42)
+        s1 = SE(42)
         pushed = 21
         s1.push(pushed)
         popped = s1.pop()
         assert pushed == popped == 21
 
     def test_popFromEmptySplitEnd(self) -> None:
-        s1: SE[int] = SE(-42)
+        s1 = SE(-42)
         popped = s1.pop()
         assert popped == -42
         try:
@@ -59,7 +59,7 @@ class Test_SplitEnds:
             assert False
 
     def test_SplitEndPushPop(self) -> None:
-        s0: SE[int] = SE()
+        s0: SplitEnd[int] = SE()
         s1 = SE(101)
         s2 = SE(*range(0,2000))
 

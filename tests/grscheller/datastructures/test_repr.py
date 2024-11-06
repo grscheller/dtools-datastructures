@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.splitends.se import SE
+from grscheller.datastructures.splitends.se import SplitEnd, SE
 from grscheller.datastructures.queues import DoubleQueue, DQ
 from grscheller.datastructures.queues import FIFOQueue, FQ
 from grscheller.datastructures.queues import LIFOQueue, LQ
@@ -137,7 +137,7 @@ class Test_repr:
         assert repr(ft2) == "FT(42, 'foo', [10, 22])"
 
     def test_SplitEnd_procedural_methods(self) -> None:
-        s1: SE[object] = SE('foobar')
+        s1: SplitEnd[object] = SE('foobar')
         assert repr(s1) == "SE('foobar')"
         s2 = eval(repr(s1))
         assert s2 == s1
@@ -207,7 +207,7 @@ class Test_repr_mix:
                         MB(42),
                         XOR(right = 'nobody home')
                     ),
-                    SE[tuple[int, ...]](
+                    SplitEnd[tuple[int, ...]](
                         (1,),
                         (),
                         (42, 100)

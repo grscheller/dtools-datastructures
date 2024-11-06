@@ -17,8 +17,9 @@
 
 Singularly linked datastructures that can safely share data between themselves.
 
-* module `grscheller.datastructures.splitends.se`
-* module `grscheller.datastructures.splitends.fse`
+#### Package splitend modules
+
+* module **grscheller.datastructures.splitends.se: Basic SplitEnd data structure
 
 """
 __author__ = "Geoffrey R. Scheller"

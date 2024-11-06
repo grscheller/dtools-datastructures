@@ -19,14 +19,16 @@
 * implemented in a "has-a" relationship with a Python list based circular array
 * these data structures will resize themselves larger as needed
 
-##### Queue types:
+#### Queue types and factory functions:
 
-* **FIFOQueue:** First-In-First-Out Queue
-* **LIFOQueue:** Last-In-First-Out Queue
-* **DoubleQueue:** Double-Ended Queue
+* class **FIFOQueue:** First-In-First-Out Queue
+  * function **FO:** Factory function taking variable arg number
+* class **LIFOQueue:** Last-In-First-Out Queue
+  * function **LQ:** Factory function taking variable arg number
+* class **DoubleQueue:** Double-Ended Queue
+  * function **DQ:** Factory function taking variable arg number
 
 """
-
 from __future__ import annotations
 
 from typing import Callable, cast, Iterable, Iterator, Optional, Sequence
@@ -37,7 +39,7 @@ __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
             'DQ', 'FQ', 'LQ' ]
 
 class QueueBase[D](Sequence[D]):
-    """#### Base class for circular area based queues.
+    """Base class for circular area based queues.
 
     * primarily for DRY inheritance
     * implemented with a grscheller.circular-array (has-a)
@@ -50,8 +52,8 @@ class QueueBase[D](Sequence[D]):
         if len(dss) < 2:
             self._ca = ca(*dss)
         else:
-            msg1 = f'{type(self).__name__} expected at most 1 '
-            msg2 = f'iterable argument, got {len(dss)}'
+            msg1 = f'{type(self).__name__}: expected at most 1 '
+            msg2 = f'iterable argument, got {len(dss)}.'
             raise TypeError(msg1+msg2)
 
     def __bool__(self) -> bool:
@@ -69,7 +71,7 @@ class QueueBase[D](Sequence[D]):
         return self._ca[idx]
 
 class FIFOQueue[D](QueueBase[D]):
-    """#### FIFO Queue
+    """FIFO Queue
 
     * stateful First-In-First-Out (FIFO) data structure
     * initial data pushed on in natural FIFO order
@@ -167,7 +169,7 @@ class FIFOQueue[D](QueueBase[D]):
         return FIFOQueue(map(f, self._ca))
 
 class LIFOQueue[D](QueueBase[D]):
-    """#### LIFO Queue
+    """LIFO Queue
 
     * stateful Last-In-First-Out (LIFO) data structure
     * initial data pushed on in natural LIFO order
@@ -252,7 +254,7 @@ class LIFOQueue[D](QueueBase[D]):
         return LIFOQueue(reversed(CA(*map(f, reversed(self._ca)))))
 
 class DoubleQueue[D](QueueBase[D]):
-    """#### Double Ended Queue
+    """Double Ended Queue
 
     * stateful Double-Ended (DEQueue) data structure
     * order of initial data retained

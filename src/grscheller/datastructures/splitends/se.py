@@ -12,24 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Stack type Data Structures
+"""### SplitEnd stack type data structure
 
-##### SplitEnd Stack types:
+#### SplitEnd Stack type and factory function:
 
-* **SE:** Singularly linked stack with shareable data nodes
+* class **SplitEndE:** Singularly linked stack with shareable data nodes
+  * function **SE:** Factory function taking variable arg number
 
 """
-
 from __future__ import annotations
 
-from typing import Callable, cast, Iterator, Never, Optional
+from typing import Callable, cast, Iterable, Iterator, Never, Optional
 from ..nodes import SL_Node
 from grscheller.fp.err_handling import MB
 
 __all__ = [ 'SE' ]
 
-class SE[D]():
-    """#### Class SE - SplitEnd
+class SplitEnd[D]():
+    """Class SE - SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
 
@@ -45,10 +45,16 @@ class SE[D]():
     """
     __slots__ = '_count', '_tip'
 
-    def __init__(self, *ds: D) -> None:
-        self._tip: MB[SL_Node[D]] = MB()
-        self._count: int = 0
-        self.push(*ds)
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if length:=len(dss) < 2:
+            self._tip: MB[SL_Node[D]] = MB()
+            self._count: int = 0
+            if length == 1:
+                self.pushI(*dss)
+        else:
+            msg1 = 'SplitEnd: expected at most 1 '
+            msg2 = f'iterable argument, got {length}.'
+            raise TypeError(msg1+msg2)
 
     def __iter__(self) -> Iterator[D]:
         if self._tip == MB():
@@ -94,6 +100,12 @@ class SE[D]():
 
         return True
 
+    def pushI(self, ds: Iterable[D]) -> None:
+        """Push data onto the top of the SplitEnd."""
+        for d in ds:
+            node = SL_Node(d, self._tip)
+            self._tip, self._count = MB(node), self._count+1
+
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
@@ -132,14 +144,14 @@ class SE[D]():
 
         return self._tip.get().get_data()
 
-    def copy(self) -> SE[D]:
+    def copy(self) -> SplitEnd[D]:
         """Return a copy of the SplitEnd.
 
         * O(1) space & time complexity.
         * returns a new instance
 
         """
-        se: SE[D] = SE()
+        se: SplitEnd[D] = SE()
         se._tip, se._count = self._tip, self._count
         return se
 
@@ -156,3 +168,6 @@ class SE[D]():
         else:
             msg = 'SE: Folding empty SplitEnd but no initial value supplied'
             raise ValueError(msg)
+
+def SE[D](*ds: D) -> SplitEnd[D]:
+    return SplitEnd(ds)

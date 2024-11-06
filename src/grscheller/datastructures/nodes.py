@@ -18,6 +18,12 @@
 Node classes used with graph-like data structures. API designed to be used by
 other data structures which contain these data structures.
 
+#### Node types
+
+* class **SL_Node:**
+* class **DL_Node:**
+* class **Tree_Node:**
+
 """
 from __future__ import annotations
 from typing import Callable, cast, Iterator, Optional
@@ -26,8 +32,7 @@ from grscheller.fp.err_handling import MB
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 
 class SL_Node[D]():
-    """
-    Data node for rearward Pointing (tip-to-root) singularly linked graphs.
+    """Data node for rearward Pointing (tip-to-root) singularly linked graphs.
 
     * for mutable and immutable linear data structures
     * designed so multiple instances can safely share the same data
@@ -104,18 +109,16 @@ class SL_Node[D]():
         return self._data, self._prev
 
     def push_data(self, data: D) -> SL_Node[D]:
-        """Push data onto the stack and return a new node containing the data"""
+        """Push data onto the stack and return a new node containing the data."""
         return SL_Node(data, MB(self))
 
 class DL_Node[D]():
-    """
-    #### Doubly Linked Node
+    """Doubly Linked Node.
 
     Doubly linked nodes for graph-like data structures.
 
     * this type of node always contain data, even if that data is None
       * in a Boolean context return true if both left and right nodes exist
-    * not __iter__ method provided, too application specific
     * doubly link lists possible
     * circular graphs are possible
     * simple recursive binary trees possible
@@ -157,7 +160,7 @@ class DL_Node[D]():
 class Tree_Node[D, M]():
     """Binary Tree Node with metadata.
 
-    Nodes useful for binary trees
+    Nodes useful for binary trees.
 
     * this type of node always contain data, even if that data is None
     * in a Boolean context return true if not at the top of the tree

@@ -17,13 +17,15 @@
 
 Designed to be helpful when using and implementation algorithms.
 
-* module `grscheller.datastructures.nodes`
-* package `grscheller.datastructures.splitends`
-* module `grscheller.datastructures.tuples`
-* module `grscheller.datastructures.queues`
+#### Modules and sub-packages
+
+* module **grscheller.datastructures.nodes:**
+* package **grscheller.datastructures.splitends:**
+* module **grscheller.datastructures.tuples:**
+* module **grscheller.datastructures.queues:**
 
 """
-__version__ = "0.22.4.0"
+__version__ = "0.22.4.1"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"
