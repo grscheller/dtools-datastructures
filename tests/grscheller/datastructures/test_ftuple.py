@@ -44,9 +44,9 @@ class TestFT:
         ft4 = ft3.copy()
         assert ft4 == ft3
         assert ft4 is not ft3
-        assert MB.mk(lambda ii: ft1[ii], 0).get(42) == 42
-        assert XOR.mk(lambda ii: ft2[ii], 42, 'ft2[42]') == XOR(right='ft2[42]')
-        assert XOR.mk(lambda ii: ft2[ii], 42, 'ft2[42]').getRight() == 'ft2[42]'
+        assert MB.idx(ft1, 0).get(42) == 42
+        assert str(XOR.idx(ft2, 42)) == str(XOR(right=MB(IndexError('tuple index out of range'))))
+        assert str(XOR.idx(ft2, 42).getRight().get()) == 'tuple index out of range'
 
     def test_indexing(self) -> None:
         ft0: ft[str] = FT()
@@ -56,9 +56,10 @@ class TestFT:
         assert ft1[-1] == "Mary"
         assert ft1[1] == "Rachel"
         assert ft1[-2] == "Rebekah"
-        assert MB.mk(lambda ii: ft1[ii], -2).get('Buggy') == 'Rebekah'
-        assert MB.mk(lambda ii: ft1[ii], 42).get('Buggy') == 'Buggy'
-        assert MB.mk(lambda ii: ft0[ii], 0).get('Buggy') == 'Buggy'
+        assert MB.idx(ft1, -2).get('Buggy') == 'Rebekah'
+        assert MB.idx(ft1, 42).get('Buggy') == 'Buggy'
+        assert MB.idx(ft1, 0).get('Buggy') == 'Emily'
+        assert MB.idx(ft0, 0).get('Buggy') == 'Buggy'
 
     def test_slicing(self) -> None:
         ft0: ft[int] = FT()

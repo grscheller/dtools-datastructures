@@ -41,8 +41,7 @@ __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
 class QueueBase[D](Sequence[D]):
     """Base class for circular area based queues.
 
-    * primarily for DRY inheritance
-    * implemented with a grscheller.circular-array (has-a)
+    * implemented with a grscheller.circular-array in a "has-a" relationship
     * order of initial data retained
 
     """

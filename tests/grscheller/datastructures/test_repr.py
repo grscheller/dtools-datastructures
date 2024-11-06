@@ -207,7 +207,7 @@ class Test_repr_mix:
                         MB(42),
                         XOR(right = 'nobody home')
                     ),
-                    SplitEnd[tuple[int, ...]](
+                    SE(
                         (1,),
                         (),
                         (42, 100)

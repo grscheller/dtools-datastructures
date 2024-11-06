@@ -92,27 +92,23 @@ class TestQueueTypes:
         assert len(dq2) == 0
 
         fq: FIFOQueue[MB[int|str]] = FQ()
-        pushed: MB[int|str] = MB(42)
-        fq.push(pushed)
-        popget = fq.pop().get(MB())
-        assert pushed.get('foo') == popget.get('foo') != 'foo'
+        fq.push(MB(42))
+        fq.push(MB('bar'))
+        assert fq.pop().get('foo') == 42
+        assert fq.pop().get('foo') == 'bar'
+        assert fq.pop().get('foo') == 'foo'
         assert len(fq) == 0
-        pushed = MB(0)
-        fq.push(pushed)
-        popped = fq.pop()
-        assert pushed == popped.get() == MB(0)
+        fq.push(MB(0))
+        assert fq.pop() == MB(0)
         assert not fq
-        pushed = MB(0)
-        fq.push(pushed)
-        popped = fq.pop()
-        assert popped != MB()
-        assert MB(pushed) == popped
+        assert fq.pop() == MB()
         assert len(fq) == 0
-        val: MB[int|str] = MB('bob' + 'by')
+        val: MB[int|str] = MB('Bob' + 'by')
         fq.push(val)
-        popped = fq.pop()
-        assert val == popped.get(MB('foobar'))
+        assert fq
+        assert val.get('Robert') == fq.pop().get('Bob') == 'Bobby'
         assert len(fq) == 0
+        assert fq.pop().get('Robert') == 'Robert'
         fq.push(MB('first'))
         fq.push(MB('second'))
         fq.push(MB('last'))
@@ -120,43 +116,44 @@ class TestQueueTypes:
         if poppedMB == MB():
             assert False
         else:
-            assert poppedMB.get() == MB('first')
-        assert fq.pop().get(MB()) == MB('second')
+            assert poppedMB.get('impossible') == 'first'
+        assert fq.pop().get(MB()) == 'second'
         assert fq
         fq.pop()
         assert len(fq) == 0
         assert not fq
 
-        lq: LIFOQueue[object] = LQ()
-        pushed2: int|str = 42
-        lq.push(pushed2)
-        popped2 = lq.pop()
-        assert pushed2 == popped2.get()
+        lq: LIFOQueue[MB[int|str]] = LQ()
+        lq.push(MB(42))
+        lq.push(MB('bar'))
+        assert lq.pop().get('foo') == 'bar'
+        assert lq.pop().get('foo') == 42
+        assert lq.pop().get('foo') == 'foo'
         assert len(lq) == 0
-        pushed2 = 0
-        lq.push(pushed2)
-        popped2 = lq.pop()
-        assert pushed2 == popped2.get() == 0
+        lq.push(MB(0))
+        assert lq.pop() == MB(0)
         assert not lq
-        pushed2 = 0
-        lq.push(pushed2)
-        popped2 = lq.pop()
-        assert popped2 != MB()
-        assert pushed2 == popped2.get()
+        assert lq.pop() == MB()
         assert len(lq) == 0
-        pushed2 = ''
-        lq.push(pushed2)
-        popped2 = lq.pop()
-        assert pushed2 == popped2.get(42)
+        val: MB[int|str] = MB('Bob' + 'by')
+        lq.push(val)
+        assert lq
+        assert val.get('Robert') == lq.pop().get('Bob') == 'Bobby'
         assert len(lq) == 0
-        lq.push('first')
-        lq.push('second')
-        lq.push('last')
-        assert lq.pop().get('foo') == 'last'
-        assert lq.pop().get('bar') == 'second'
+        assert lq.pop().get('Robert') == 'Robert'
+        lq.push(MB('first'))
+        lq.push(MB('second'))
+        lq.push(MB('last'))
+        poppedMB = lq.pop()
+        if poppedMB == MB():
+            assert False
+        else:
+            assert poppedMB.get() == 'last'
+        assert lq.pop().get('impossible') == 'second'
         assert lq
         lq.pop()
         assert len(lq) == 0
+        assert not lq
 
         def is42(ii: int) -> Optional[int]:
             return None if ii == 42 else ii
@@ -320,9 +317,9 @@ class TestQueueTypes:
         dq1.pushL(MB(True))
         dq1.pushR(MB(True))
         dq1.pushL(MB(False))
-        assert not dq1.popL().get(MB(True)).get(True)
+        assert not dq1.popL().get(True)
         while dq1:
-            assert dq1.popL().get(MB(False))
+            assert dq1.popL().get(False)
         assert dq1.popR() == MB()
 
         def wrapMB(x: int) -> MB[int]:
@@ -374,7 +371,7 @@ class TestQueueTypes:
         dq2.pushR((7, 11, 'foobar'))
         assert dq1 == dq2
 
-        tup = dq2.popR()
+        tup = dq2.popR().get(tuple(range(42)))
         assert dq1 != dq2
 
         dq2.pushR((42, 'foofoo'))
