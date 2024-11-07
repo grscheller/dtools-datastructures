@@ -205,7 +205,7 @@ class Test_repr_mix:
                     FT(
                         42,
                         MB(42),
-                        XOR(right = 'nobody home')
+                        XOR(MB[int](), 'nobody home'),
                     ),
                     SE(
                         (1,),
@@ -220,7 +220,7 @@ class Test_repr_mix:
                 'Potential Right'
             )
 
-        repr_str = "XOR(FQ(FT(42, MB(42), XOR(right='nobody home')), SE((1,), (), (42, 100)), LQ('foo', 'bar')), 'Potential Right')"
+        repr_str = "XOR(FQ(FT(42, MB(42), XOR(MB(), 'nobody home')), SE((1,), (), (42, 100)), LQ('foo', 'bar')), 'Potential Right')"
         assert repr(thing1) == repr_str
 
         thing2 = eval(repr(thing1))
