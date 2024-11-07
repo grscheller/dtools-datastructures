@@ -22,11 +22,11 @@
 #### Queue types and factory functions:
 
 * class **FIFOQueue:** First-In-First-Out Queue
-  * function **FO:** Factory function taking variable arg number
 * class **LIFOQueue:** Last-In-First-Out Queue
-  * function **LQ:** Factory function taking variable arg number
 * class **DoubleQueue:** Double-Ended Queue
-  * function **DQ:** Factory function taking variable arg number
+* function **FQ:** Constructs a FIFOQueue from a variable number of arguments
+* function **LQ:** Constructs a LIFOQueue from a variable number of arguments
+* function **DQ:** Constructs a DoubleQueue from a variable number of arguments
 
 """
 from __future__ import annotations
