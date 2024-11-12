@@ -26,7 +26,7 @@ from typing import Callable, cast, Iterable, Iterator, Never, Optional
 from ..nodes import SL_Node
 from grscheller.fp.err_handling import MB
 
-__all__ = [ 'SE' ]
+__all__ = [ 'SplitEnd', 'SE' ]
 
 class SplitEnd[D]():
     """Class SE - SplitEnd
@@ -78,7 +78,7 @@ class SplitEnd[D]():
     def __str__(self) -> str:
         return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         if not isinstance(other, type(self)):
             return False
 
@@ -100,7 +100,7 @@ class SplitEnd[D]():
 
         return True
 
-    def pushI(self, ds: Iterable[D]) -> None:
+    def pushI(self, ds: Iterable[D], /) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
             node = SL_Node(d, self._tip)
@@ -112,7 +112,7 @@ class SplitEnd[D]():
             node = SL_Node(d, self._tip)
             self._tip, self._count = MB(node), self._count+1
 
-    def pop(self, default: Optional[D] = None) -> D|Never:
+    def pop(self, default: Optional[D] = None, /) -> D|Never:
         """Pop data off of the top of the SplitEnd.
 
         * raises ValueError if
@@ -129,7 +129,7 @@ class SplitEnd[D]():
         data, self._tip, self._count = self._tip.get().pop2() + (self._count-1,)
         return data
 
-    def peak(self, default: Optional[D] = None) -> D:
+    def peak(self, default: Optional[D] = None, /) -> D:
         """Return the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -155,7 +155,7 @@ class SplitEnd[D]():
         se._tip, se._count = self._tip, self._count
         return se
 
-    def fold[T](self, f:Callable[[T, D], T], init: Optional[T] = None) -> T|Never:
+    def fold[T](self, f:Callable[[T, D], T], init: Optional[T] = None, /) -> T|Never:
         """Reduce with a function.
 
         * folds in natural LIFO Order

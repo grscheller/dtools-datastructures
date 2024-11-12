@@ -15,7 +15,7 @@
 from __future__ import annotations
 from grscheller.datastructures.tuples import FTuple, FT
 from grscheller.datastructures.queues import FIFOQueue, FQ, LIFOQueue, LQ
-from grscheller.datastructures.splitends.se import SE
+from grscheller.datastructures.splitends.se import SplitEnd, SE
 from grscheller.fp.iterables import FM
 from grscheller.fp.err_handling import MB
 
@@ -32,7 +32,7 @@ class Test_FP:
             q.push(d)
             return q
 
-        def pushSE(se: SE[S], d: S) -> SE[S]:
+        def pushSE(se: SplitEnd[S], d: S) -> SplitEnd[S]:
             se.push(d)
             return se
 
@@ -101,9 +101,9 @@ class Test_FP:
         l1 = lambda x: 2*x + 1
         l2 = lambda x: FTuple(range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
-        ft2 = ft.flatMap(l2, type=FM.CONCAT)
-        ft3 = ft.flatMap(l2, type=FM.MERGE)
-        ft4 = ft.flatMap(l2, type=FM.EXHAUST)
+        ft2 = ft.flatMap(l2, FM.CONCAT)
+        ft3 = ft.flatMap(l2, FM.MERGE)
+        ft4 = ft.flatMap(l2, FM.EXHAUST)
         assert (ft1[0], ft1[1], ft1[2], ft1[-1]) == (7, 9, 11, 201)
         assert (ft2[0], ft2[1]) == (2, 5)
         assert (ft2[2], ft2[3], ft2[4])  == (2, 5, 9)

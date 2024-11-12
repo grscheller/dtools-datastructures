@@ -84,7 +84,7 @@ class SL_Node[D]():
         return self._data
 
     def fold[T](self,  f: Callable[[T, D], T], init: Optional[T] = None) -> T:
-        """Reduce data across linked nodes
+        """Reduce data across linked nodes.
 
         * with a function and an optional starting value
         * reduces in natural LIFO order

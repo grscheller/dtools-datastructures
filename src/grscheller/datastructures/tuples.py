@@ -69,7 +69,7 @@ class FTuple[D](Sequence[D]):
     def __str__(self) -> str:
         return "((" + ", ".join(map(repr, self)) + "))"
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         if self is other:
             return True
         if not isinstance(other, type(self)):
@@ -77,18 +77,18 @@ class FTuple[D](Sequence[D]):
         return self._ds == other._ds
 
     @overload
-    def __getitem__(self, idx: int) -> D: ...
+    def __getitem__(self, idx: int, /) -> D: ...
     @overload
-    def __getitem__(self, idx: slice) -> FTuple[D]: ...
+    def __getitem__(self, idx: slice, /) -> FTuple[D]: ...
 
-    def __getitem__(self, idx: slice|int) -> FTuple[D]|D:
+    def __getitem__(self, idx: slice|int, /) -> FTuple[D]|D:
         if isinstance(idx, slice):
             return FTuple(self._ds[idx])
         else:
             return self._ds[idx]
 
     def foldL[L](self,
-              f: Callable[[L, D], L],
+              f: Callable[[L, D], L], /,
               start: Optional[L]=None,
               default: Optional[L]=None) -> Optional[L]:
         """
@@ -114,7 +114,7 @@ class FTuple[D](Sequence[D]):
         return acc
 
     def foldR[R](self,
-              f: Callable[[D, R], R],
+              f: Callable[[D, R], R], /,
               start: Optional[R]=None,
               default: Optional[R]=None) -> Optional[R]:
         """
@@ -148,16 +148,16 @@ class FTuple[D](Sequence[D]):
         """
         return FTuple(self)
 
-    def __add__(self, other: FTuple[D]) -> FTuple[D]:
+    def __add__(self, other: FTuple[D], /) -> FTuple[D]:
         return FTuple(concat(self, other))
 
-    def __mul__(self, num: int) -> FTuple[D]:
+    def __mul__(self, num: int, /) -> FTuple[D]:
         return FTuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def __rmul__(self, num: int) -> FTuple[D]:
+    def __rmul__(self, num: int, /) -> FTuple[D]:
         return FTuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def accummulate[L](self, f: Callable[[L, D], L], s: Optional[L]=None) -> FTuple[L]:
+    def accummulate[L](self, f: Callable[[L, D], L], s: Optional[L]=None, /) -> FTuple[L]:
         """
         **Accumulate partial folds**
 
@@ -170,10 +170,10 @@ class FTuple[D](Sequence[D]):
         else:
             return FTuple(accumulate(self, f, s))
 
-    def map[U](self, f: Callable[[D], U]) -> FTuple[U]:
+    def map[U](self, f: Callable[[D], U], /) -> FTuple[U]:
         return FTuple(map(f, self))
 
-    def flatMap[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT) -> FTuple[U]:
+    def flatMap[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT, /) -> FTuple[U]:
         """
         Bind function `f` to the `FTuple`.
 

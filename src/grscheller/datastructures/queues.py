@@ -31,7 +31,7 @@
 """
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator, Optional, Sequence
+from typing import Callable, cast, Iterable, Iterator, Never, Optional, overload, Sequence
 from grscheller.circular_array.ca import ca, CA
 from grscheller.fp.err_handling import MB
 
@@ -43,6 +43,7 @@ class QueueBase[D](Sequence[D]):
 
     * implemented with a grscheller.circular-array in a "has-a" relationship
     * order of initial data retained
+    * slicing not yet implemented
 
     """
     __slots__ = '_ca'
@@ -61,12 +62,19 @@ class QueueBase[D](Sequence[D]):
     def __len__(self) -> int:
         return len(self._ca)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         if not isinstance(other, type(self)):
             return False
         return self._ca == other._ca
 
-    def __getitem__(self, idx: int) -> D:
+    @overload
+    def __getitem__(self, idx: int, /) -> D: ...
+    @overload
+    def __getitem__(self, idx: slice, /) -> Sequence[D]: ...
+
+    def __getitem__(self, idx: int|slice, /) -> D|Sequence[D]|Never:
+        if isinstance(idx, slice):
+            raise NotImplementedError
         return self._ca[idx]
 
 class FIFOQueue[D](QueueBase[D]):
@@ -140,7 +148,7 @@ class FIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
+    def fold[L](self, f: Callable[[L, D], L], initial: Optional[L]=None, /) -> MB[L]:
         """Fold `FIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -156,7 +164,7 @@ class FIFOQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def map[U](self, f: Callable[[D], U]) -> FIFOQueue[U]:
+    def map[U](self, f: Callable[[D], U], /) -> FIFOQueue[U]:
         """Map over the `FIFOQueue`.
 
         * map function `f` over the queue
@@ -168,7 +176,7 @@ class FIFOQueue[D](QueueBase[D]):
         return FIFOQueue(map(f, self._ca))
 
 class LIFOQueue[D](QueueBase[D]):
-    """LIFO Queue
+    """LIFO Queue.
 
     * stateful Last-In-First-Out (LIFO) data structure
     * initial data pushed on in natural LIFO order
@@ -225,7 +233,7 @@ class LIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
+    def fold[R](self, f: Callable[[D, R], R], initial: Optional[R]=None, /) -> MB[R]:
         """Fold `LIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -241,7 +249,7 @@ class LIFOQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldR(f, initial=initial))
 
-    def map[U](self, f: Callable[[D], U]) -> LIFOQueue[U]:
+    def map[U](self, f: Callable[[D], U], /) -> LIFOQueue[U]:
         """Map Over the `LIFOQueue`.
 
         * map the function `f` over the queue
@@ -346,7 +354,7 @@ class DoubleQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None) -> MB[L]:
+    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None, /) -> MB[L]:
         """Fold `DoubleQueue` left to right.
 
         Reduce left with `f` using an optional initial value.
@@ -361,7 +369,7 @@ class DoubleQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None) -> MB[R]:
+    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None, /) -> MB[R]:
         """Fold `DoubleQueue` right to left.
 
         Reduce right with `f` using an optional initial value.
@@ -376,7 +384,7 @@ class DoubleQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldR(f, initial=initial))
 
-    def map[U](self, f: Callable[[D], U]) -> DoubleQueue[U]:
+    def map[U](self, f: Callable[[D], U], /) -> DoubleQueue[U]:
         """`Map a function over `DoubleQueue`.
 
         * map the function `f` over the `DoubleQueue`

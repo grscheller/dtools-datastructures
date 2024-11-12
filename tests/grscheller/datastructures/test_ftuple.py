@@ -137,16 +137,16 @@ class TestFT:
             return ft(range(n))
 
         fm = ft1.flatMap(ff)
-        mm = ft1.flatMap(ff, type=FM.MERGE)
-        em = ft1.flatMap(ff, type=FM.EXHAUST)
+        mm = ft1.flatMap(ff, FM.MERGE)
+        em = ft1.flatMap(ff, FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2, 0, 1, 2, 3, 4)
         assert mm == FT(0, 0, 0, 0, 1, 1, 1, 1)
         assert em == FT(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4)
 
-        fm = ft2.flatMap(ff, type=FM.CONCAT)
-        mm = ft2.flatMap(ff, type=FM.MERGE)
-        em = ft2.flatMap(ff, type=FM.EXHAUST)
+        fm = ft2.flatMap(ff, FM.CONCAT)
+        mm = ft2.flatMap(ff, FM.MERGE)
+        em = ft2.flatMap(ff, FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2)
         assert mm == FT()
