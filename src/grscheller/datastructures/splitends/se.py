@@ -17,19 +17,22 @@
 #### SplitEnd Stack type and factory function:
 
 * class **SplitEndE:** Singularly linked stack with shareable data nodes
-  * function **SE:** Factory function taking variable arg number
+* function **SE:** Factory function
+  * takes variable number of args
+  * returns a SpltEnd instance
 
 """
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator, Never, Optional
+from collections.abc import Callable, Iterable, Iterator
+from typing import cast, Never
 from ..nodes import SL_Node
 from grscheller.fp.err_handling import MB
 
 __all__ = [ 'SplitEnd', 'SE' ]
 
 class SplitEnd[D]():
-    """Class SE - SplitEnd
+    """Class SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
 
@@ -112,7 +115,7 @@ class SplitEnd[D]():
             node = SL_Node(d, self._tip)
             self._tip, self._count = MB(node), self._count+1
 
-    def pop(self, default: Optional[D] = None, /) -> D|Never:
+    def pop(self, default: D|None = None, /) -> D|Never:
         """Pop data off of the top of the SplitEnd.
 
         * raises ValueError if
@@ -129,7 +132,7 @@ class SplitEnd[D]():
         data, self._tip, self._count = self._tip.get().pop2() + (self._count-1,)
         return data
 
-    def peak(self, default: Optional[D] = None, /) -> D:
+    def peak(self, default: D|None = None, /) -> D:
         """Return the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -155,7 +158,7 @@ class SplitEnd[D]():
         se._tip, se._count = self._tip, self._count
         return se
 
-    def fold[T](self, f:Callable[[T, D], T], init: Optional[T] = None, /) -> T|Never:
+    def fold[T](self, f:Callable[[T, D], T], init: T|None = None, /) -> T|Never:
         """Reduce with a function.
 
         * folds in natural LIFO Order

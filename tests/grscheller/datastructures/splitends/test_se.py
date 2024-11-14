@@ -19,8 +19,7 @@ from grscheller.fp.iterables import concat, FM
 class Test_SplitEnds:
     def test_mutate_returns_none(self) -> None:
         ps = SE(41)
-        ret = ps.push(1,2,3) # type: ignore # my[py] warning what is being tested
-        assert ret is None
+        assert ps.push(1,2,3) is None  # type: ignore # thing I am testing for
 
     def test_pushThenPop(self) -> None:
         s1 = SE(42)

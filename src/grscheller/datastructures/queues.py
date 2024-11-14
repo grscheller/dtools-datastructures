@@ -31,7 +31,8 @@
 """
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator, Never, Optional, overload, Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import Never, overload
 from grscheller.circular_array.ca import ca, CA
 from grscheller.fp.err_handling import MB
 
@@ -148,7 +149,7 @@ class FIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[L](self, f: Callable[[L, D], L], initial: Optional[L]=None, /) -> MB[L]:
+    def fold[L](self, f: Callable[[L, D], L], initial: L|None=None, /) -> MB[L]:
         """Fold `FIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -233,7 +234,7 @@ class LIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[R](self, f: Callable[[D, R], R], initial: Optional[R]=None, /) -> MB[R]:
+    def fold[R](self, f: Callable[[D, R], R], initial: R|None=None, /) -> MB[R]:
         """Fold `LIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -354,7 +355,7 @@ class DoubleQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def foldL[L](self, f: Callable[[L, D], L], initial: Optional[L]=None, /) -> MB[L]:
+    def foldL[L](self, f: Callable[[L, D], L], initial: L|None=None, /) -> MB[L]:
         """Fold `DoubleQueue` left to right.
 
         Reduce left with `f` using an optional initial value.
@@ -369,7 +370,7 @@ class DoubleQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def foldR[R](self, f: Callable[[D, R], R], initial: Optional[R]=None, /) -> MB[R]:
+    def foldR[R](self, f: Callable[[D, R], R], initial: R|None=None, /) -> MB[R]:
         """Fold `DoubleQueue` right to left.
 
         Reduce right with `f` using an optional initial value.

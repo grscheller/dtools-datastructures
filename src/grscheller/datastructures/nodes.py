@@ -26,7 +26,8 @@ other data structures which contain these data structures.
 
 """
 from __future__ import annotations
-from typing import Callable, cast, Iterator, Optional
+from collections.abc import Callable, Iterator
+from typing import Callable, cast, Iterator
 from grscheller.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
@@ -83,7 +84,7 @@ class SL_Node[D]():
     def get_data(self) -> D:
         return self._data
 
-    def fold[T](self,  f: Callable[[T, D], T], init: Optional[T] = None) -> T:
+    def fold[T](self,  f: Callable[[T, D], T], init: T|None=None) -> T:
         """Reduce data across linked nodes.
 
         * with a function and an optional starting value

@@ -25,8 +25,8 @@ Tuple-like objects.
 
 from __future__ import annotations
 
-from typing import Callable, cast, Iterable, Iterator
-from typing import Optional, overload, Sequence
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import overload
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple', 'FT']
@@ -89,8 +89,8 @@ class FTuple[D](Sequence[D]):
 
     def foldL[L](self,
               f: Callable[[L, D], L], /,
-              start: Optional[L]=None,
-              default: Optional[L]=None) -> Optional[L]:
+              start: L|None=None,
+              default: L|None=None) -> L|None:
         """
         **Fold Left**
 
@@ -115,8 +115,8 @@ class FTuple[D](Sequence[D]):
 
     def foldR[R](self,
               f: Callable[[D, R], R], /,
-              start: Optional[R]=None,
-              default: Optional[R]=None) -> Optional[R]:
+              start: R|None=None,
+              default: R|None=None) -> R|None:
         """
         **Fold Right**
 
@@ -157,7 +157,7 @@ class FTuple[D](Sequence[D]):
     def __rmul__(self, num: int, /) -> FTuple[D]:
         return FTuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def accummulate[L](self, f: Callable[[L, D], L], s: Optional[L]=None, /) -> FTuple[L]:
+    def accummulate[L](self, f: Callable[[L, D], L], s: L|None=None, /) -> FTuple[L]:
         """
         **Accumulate partial folds**
 
