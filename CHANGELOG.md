@@ -11,6 +11,14 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.23.0 - PyPI release date 2024-11-18
+
+* publishing previous change and grscheller consistency changes
+  * suspect SplitEnd class needs more work, not just clean up
+    * not prepared to wrap my brain around it right now
+    * don't want to delay PyPI releases for other repos
+    * once splitends under control, will consider a 1.0.0 release
+
 ### Version 0.22.3.0 - Preparing for a 0.23.0 PyPI release
 
 * renamed class FTuple -> ftuple
