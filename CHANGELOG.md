@@ -11,6 +11,11 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.23.1 - PyPI release date 2024-11-18
+
+* Fixed bug with datastructures.tuple module
+  * forgot to import std lib typing.cast into tuples.py
+
 ### Version 0.23.0 - PyPI release date 2024-11-18
 
 * publishing previous change and grscheller consistency changes

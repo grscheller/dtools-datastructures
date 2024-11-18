@@ -26,7 +26,7 @@ Tuple-like objects.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import overload
+from typing import overload, cast
 from grscheller.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple', 'FT']
