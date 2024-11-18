@@ -19,10 +19,10 @@ Designed to be helpful when using and implementation algorithms.
 
 #### Modules and sub-packages
 
-* module **grscheller.datastructures.nodes:**
-* package **grscheller.datastructures.splitends:**
-* module **grscheller.datastructures.tuples:**
-* module **grscheller.datastructures.queues:**
+* module grscheller.datastructures.nodes: "tinker toys" for graph-like data structures
+* package grscheller.datastructures.splitends: data sharing between mutable objects
+* module grscheller.datastructures.tuples: tuple-like data structures
+* module grscheller.datastructures.queues: queue data structures
 
 """
 __version__ = "0.23.0"
