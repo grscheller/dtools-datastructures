@@ -12,14 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-### Tuple based datastructures:
+"""### Tuple based data structures
 
-Tuple-like objects.
+Only example here is the ftuple, basically an FP interface wrapping a tuple.
+Originally it inherited from tuple, but I found containing the tuple in a 
+"has-a" relationship makes for a faster implementation. Buried in the git
+history is another example called a "process array" (parray) which I might
+return to someday. The idea of the parray is a fixed length sequence with
+sentinel values. 
 
-#### Tuple Types
+#### FTuple and FT factory function.
 
-* class **FTuple:** Wrapped tuple with a Functional Programming API
+* class FTuple: Wrapped tuple with a Functional Programming API
+* function FE: 
 
 """
 
@@ -38,8 +43,8 @@ class FTuple[D](Sequence[D]):
     * immutable tuple-like data structure with a functional interface
     * supports both indexing and slicing
     * `FTuple` addition & `int` multiplication supported
-      * addition concatenates results, types must agree
-      * both left and right multiplication supported
+      * addition concatenates results, resulting type a Union type
+      * both left and right int multiplication supported
 
     """
     __slots__ = '_ds'
@@ -148,7 +153,7 @@ class FTuple[D](Sequence[D]):
         """
         return FTuple(self)
 
-    def __add__(self, other: FTuple[D], /) -> FTuple[D]:
+    def __add__[E](self, other: FTuple[E], /) -> FTuple[D|E]:
         return FTuple(concat(self, other))
 
     def __mul__(self, num: int, /) -> FTuple[D]:

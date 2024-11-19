@@ -12,20 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Queue based datastructures.
+"""### Queue based data structures
 
 * stateful queue data structures with amortized O(1) pushes and pops each end
 * obtaining length (number of elements) of a queue is an O(1) operation
 * implemented in a "has-a" relationship with a Python list based circular array
 * these data structures will resize themselves larger as needed
 
-#### Queue types and factory functions:
+#### FIFOQueue
 
 * class **FIFOQueue:** First-In-First-Out Queue
-* class **LIFOQueue:** Last-In-First-Out Queue
-* class **DoubleQueue:** Double-Ended Queue
 * function **FQ:** Constructs a FIFOQueue from a variable number of arguments
+
+---
+
+#### LIFOQueue
+
+* class **LIFOQueue:** Last-In-First-Out Queue
 * function **LQ:** Constructs a LIFOQueue from a variable number of arguments
+
+---
+
+#### DoubleQueue
+
+* class **DoubleQueue:** Double-Ended Queue
 * function **DQ:** Constructs a DoubleQueue from a variable number of arguments
 
 """

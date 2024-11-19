@@ -12,14 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### SplitEnd stack type data structure
+"""### SplitEnd stack related data structures
 
-#### SplitEnd Stack type and factory function:
+With use I am finding this data structure needs some sort of supporting
+infrastructure. Hence I split the original splitend module out to be its own
+subpackage.
 
-* class **SplitEndE:** Singularly linked stack with shareable data nodes
-* function **SE:** Factory function
-  * takes variable number of args
-  * returns a SpltEnd instance
+#### SplitEnd Stack type and SE factory function
+
+* class SplitEnd: Singularly linked stack with shareable data nodes
+* function SE: create SplitEnd from a variable number of arguments
 
 """
 from __future__ import annotations
@@ -174,3 +176,4 @@ class SplitEnd[D]():
 
 def SE[D](*ds: D) -> SplitEnd[D]:
     return SplitEnd(ds)
+
