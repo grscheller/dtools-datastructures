@@ -49,13 +49,14 @@ class TestQueueTypes:
         lq1.push(MB(1), MB(2), MB(3))
         lq1.push(MB(4), MB(), MB(5))
         lq2 = lq1.map(lambda mb: mb.flatmap(lambda n: MB(2*n)))
-        last = lq2.pop().get(42)
-        assert last == 10
+        last = lq2.pop()
+        assert last.get(42) == 10
         pop_out = lq2.pop()
         assert pop_out == MB(MB()) == MB()
-        assert pop_out.get(666) == 666
+        assert pop_out.get(42) == 42
         assert lq2.peak() == MB(MB(8)) == MB(8)
-        assert lq2.peak().get(42) == 8
+        assert lq2.peak().get(MB(3)) == 8
+        assert lq2.peak().get(3) == 8
 
     def test_push_then_pop(self) -> None:
         dq1 = DoubleQueue[int]()
@@ -94,9 +95,9 @@ class TestQueueTypes:
         fq: FIFOQueue[MB[int|str]] = FQ()
         fq.push(MB(42))
         fq.push(MB('bar'))
-        assert fq.pop().get('foo') == 42
-        assert fq.pop().get('foo') == 'bar'
-        assert fq.pop().get('foo') == 'foo'
+        assert fq.pop().get() == 42
+        assert fq.pop().get('foo') == 'bar'  # correct execution but
+        assert fq.pop().get('foo') == 'foo'  # type hints are off
         assert len(fq) == 0
         fq.push(MB(0))
         assert fq.pop() == MB(0)
@@ -135,10 +136,10 @@ class TestQueueTypes:
         assert not lq
         assert lq.pop() == MB()
         assert len(lq) == 0
-        val: MB[int|str] = MB('Bob' + 'by')
+        val2: MB[int|str] = MB('Bob' + 'by')
         lq.push(val)
         assert lq
-        assert val.get('Robert') == lq.pop().get('Bob') == 'Bobby'
+        assert val2.get('Robert') == lq.pop().get('Bob') == 'Bobby'
         assert len(lq) == 0
         assert lq.pop().get('Robert') == 'Robert'
         lq.push(MB('first'))
@@ -149,9 +150,8 @@ class TestQueueTypes:
             assert False
         else:
             assert poppedMB.get() == 'last'
-        assert lq.pop().get('impossible') == 'second'
-        assert lq
-        lq.pop()
+        assert lq.pop().get(MB('impossible')) == 'second'  # the type hits are not exposing
+        assert lq.pop().get('impossible') == 'first'       # the self flattening nature of MB
         assert len(lq) == 0
         assert not lq
 

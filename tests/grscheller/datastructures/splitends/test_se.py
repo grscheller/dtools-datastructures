@@ -82,25 +82,10 @@ class Test_SplitEnds:
         assert s1.pop() == 12
         assert len(s1) == 0
 
-#    def test_consHeadTail(self) -> None:
-#        s1: SE[int] = SE(roots_int, 1)
-#        s2 = s1.cons(100)
-#        head = s2.head()
-#        assert head == 100
-#        head = s1.head()
-#        assert head == 1
-#        s3 = s2.cons(1).cons(2).cons(3)
-#        s4 = s3.tail()
-#        assert s4 == SE(roots_int, 1, 100, 1, 2)
-#        assert s1 == SE(roots_int, 1)
-#        s5 = s1.cons(42).cons(0)
-#        assert s5 == SE(roots_int, 1, 42, 0)
-#        assert s5.tail() == SE(roots_int, 1, 42)
-
     def test_SplitEnd_len(self) -> None:
-        s1: SE[int|None] = SE(None)
-        s2: SE[int|None] = SE(None, 42)
-        s2001: SE[int|None] = SE(None, *range(1,2001))
+        s1: SplitEnd[int|None] = SE(None)
+        s2: SplitEnd[int|None] = SE(None, 42)
+        s2001: SplitEnd[int|None] = SE(None, *range(1,2001))
 
         assert len(s1) == 1
         if s2001:
@@ -116,7 +101,7 @@ class Test_SplitEnds:
         assert len(s3) == 1
         assert s3.pop() == None
         assert len(s3) == 0
-        s4: SE[int|None]|None = s3 if s3 else None
+        s4: SplitEnd[int|None]|None = s3 if s3 else None
         assert s4 is None
         assert s2001.pop() == 2000
         assert s2001.pop() == 1999
@@ -143,7 +128,7 @@ class Test_SplitEnds:
 #       assert s1.tail() == SE(roots_str, "fum")
 
     def test_stackIter(self) -> None:
-        giantSplitEnd: SE[str] = SE(*[' Fum', ' Fo', ' Fi', 'Fe'])
+        giantSplitEnd: SplitEnd[str] = SE(*[' Fum', ' Fo', ' Fi', 'Fe'])
         giantTalk = giantSplitEnd.pop()
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
@@ -207,7 +192,7 @@ class Test_SplitEnds:
         assert s7.peak() == s9.peak()
 
     def test_storeNones(self) -> None:
-        s0: SE[int|None] = SE(100)
+        s0: SplitEnd[int|None] = SE(100)
         s0.push(None)
         s0.push(42)
         s0.push(None)
@@ -219,7 +204,7 @@ class Test_SplitEnds:
             s0.pop()
         assert not s0
 
-        s1: SE[int|None] = SE(None)
+        s1: SplitEnd[int|None] = SE(None)
         s1.push(24)
         s2 = s1.copy()
         s2.push(42)
@@ -243,12 +228,12 @@ class Test_SplitEnds:
 
     def test_reversing(self) -> None:
         s1 = SE('a', 'b', 'c', 'd')
-        s2: SE[str] = SE('d', 'c', 'b', 'a')
+        s2 = SE('d', 'c', 'b', 'a')
         assert s1 != s2
         assert s2 == SE(*iter(s1))
-        s0: SE[str] = SE('z')
+        s0 = SE('z')
         assert s0 == SE(*iter(s0))
-        s3: SE[int] = SE(*concat(iter(range(1, 100)), iter(range(98, 0, -1))))
+        s3 = SE(*concat(iter(range(1, 100)), iter(range(98, 0, -1))))
         s4 = SE(*s3)
         assert s3 == s4
         assert s3 is not s4
@@ -256,7 +241,7 @@ class Test_SplitEnds:
     def test_reversed(self) -> None:
         lf = [1.0, 2.0, 3.0, 4.0]
         lr = [4.0, 3.0, 2.0, 1.0]
-        s1: SE[float] = SE(*lr)
+        s1: SplitEnd[float] = SE(*lr)
         l_s1 = list(s1)
         l_r_s1 = list(reversed(s1))
         assert lf == l_s1
