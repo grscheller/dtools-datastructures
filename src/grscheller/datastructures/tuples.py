@@ -178,7 +178,7 @@ class FTuple[D](Sequence[D]):
     def map[U](self, f: Callable[[D], U], /) -> FTuple[U]:
         return FTuple(map(f, self))
 
-    def flatMap[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT, /) -> FTuple[U]:
+    def bind[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT, /) -> FTuple[U]:
         """
         Bind function `f` to the `FTuple`.
 

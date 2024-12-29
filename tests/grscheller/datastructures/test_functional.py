@@ -96,14 +96,14 @@ class Test_FP:
         assert ft0.accummulate(l1) == FT()
         assert ft0.accummulate(l2) == FT()
 
-    def test_ftuple_flatMap(self) -> None:
+    def test_ftuple_bind(self) -> None:
         ft = FTuple(range(3, 101))
         l1 = lambda x: 2*x + 1
         l2 = lambda x: FTuple(range(2, x+1)).accummulate(lambda x, y: x+y)
         ft1 = ft.map(l1)
-        ft2 = ft.flatMap(l2, FM.CONCAT)
-        ft3 = ft.flatMap(l2, FM.MERGE)
-        ft4 = ft.flatMap(l2, FM.EXHAUST)
+        ft2 = ft.bind(l2, FM.CONCAT)
+        ft3 = ft.bind(l2, FM.MERGE)
+        ft4 = ft.bind(l2, FM.EXHAUST)
         assert (ft1[0], ft1[1], ft1[2], ft1[-1]) == (7, 9, 11, 201)
         assert (ft2[0], ft2[1]) == (2, 5)
         assert (ft2[2], ft2[3], ft2[4])  == (2, 5, 9)

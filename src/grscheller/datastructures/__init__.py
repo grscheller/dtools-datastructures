@@ -25,7 +25,7 @@ Designed to be helpful when using and implementation algorithms.
 * module grscheller.datastructures.queues: queue data structures
 
 """
-__version__ = "0.23.2.1"
+__version__ = "0.23.3.0"
 __author__ = "Geoffrey R. Scheller"
 __copyright__ = "Copyright (c) 2023-2024 Geoffrey R. Scheller"
 __license__ = "Apache License 2.0"

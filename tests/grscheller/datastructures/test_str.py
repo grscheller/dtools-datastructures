@@ -105,6 +105,6 @@ class Test_str:
 
     def test_ftuple(self) -> None:
         ft1 = FT(1,2,3,4,5)
-        ft2: FTuple[int] = ft1.flatMap(lambda x: FTuple(range(1, x)))
+        ft2: FTuple[int] = ft1.bind(lambda x: FTuple(range(1, x)))
         assert str(ft1) == '((1, 2, 3, 4, 5))'
         assert str(ft2) == '((1, 1, 2, 1, 2, 3, 1, 2, 3, 4))'

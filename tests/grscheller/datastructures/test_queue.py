@@ -48,7 +48,7 @@ class TestQueueTypes:
         lq1: LIFOQueue[MB[int]] = LQ()  # not really a canonical way to use MB
         lq1.push(MB(1), MB(2), MB(3))
         lq1.push(MB(4), MB(), MB(5))
-        lq2 = lq1.map(lambda mb: mb.flatmap(lambda n: MB(2*n)))
+        lq2 = lq1.map(lambda mb: mb.bind(lambda n: MB(2*n)))
         last = lq2.pop()
         assert last.get(42) == 10
         pop_out = lq2.pop()

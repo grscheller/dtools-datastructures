@@ -128,7 +128,7 @@ class TestFT:
         assert ft1.accummulate(lambda x, y: x+y, 1) == FT(1, 2, 4, 7, 11, 16)
         assert ft0.accummulate(lambda x, y: x+y, 1) == FT(1)
 
-    def test_flatmap(self) -> None:
+    def test_bind(self) -> None:
         ft0: ft[int] = FT()
         ft1 = FT(4, 2, 3, 5)
         ft2 = FT(4, 2, 0, 3)
@@ -136,25 +136,25 @@ class TestFT:
         def ff(n: int) -> ft[int]:
             return ft(range(n))
 
-        fm = ft1.flatMap(ff)
-        mm = ft1.flatMap(ff, FM.MERGE)
-        em = ft1.flatMap(ff, FM.EXHAUST)
+        fm = ft1.bind(ff)
+        mm = ft1.bind(ff, FM.MERGE)
+        em = ft1.bind(ff, FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2, 0, 1, 2, 3, 4)
         assert mm == FT(0, 0, 0, 0, 1, 1, 1, 1)
         assert em == FT(0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4)
 
-        fm = ft2.flatMap(ff, FM.CONCAT)
-        mm = ft2.flatMap(ff, FM.MERGE)
-        em = ft2.flatMap(ff, FM.EXHAUST)
+        fm = ft2.bind(ff, FM.CONCAT)
+        mm = ft2.bind(ff, FM.MERGE)
+        em = ft2.bind(ff, FM.EXHAUST)
 
         assert fm == FT(0, 1, 2, 3, 0, 1, 0, 1, 2)
         assert mm == FT()
         assert em == FT(0, 0, 0, 1, 1, 1, 2, 2, 3)
 
-        fm = ft0.flatMap(ff, FM.CONCAT)
-        mm = ft0.flatMap(ff, FM.MERGE)
-        em = ft0.flatMap(ff, FM.EXHAUST)
+        fm = ft0.bind(ff, FM.CONCAT)
+        mm = ft0.bind(ff, FM.MERGE)
+        em = ft0.bind(ff, FM.EXHAUST)
 
         assert fm == FT()
         assert mm == FT()
