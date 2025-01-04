@@ -11,6 +11,10 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.24.0 - PyPI release date 2024-11-18
+
+* Changed flatMap to bind thru out project
+
 ### Version 0.23.1 - PyPI release date 2024-11-18
 
 * Fixed bug with datastructures.tuple module
