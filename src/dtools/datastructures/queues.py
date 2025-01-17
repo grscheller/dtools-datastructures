@@ -43,8 +43,8 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload
-from grscheller.circular_array.ca import ca, CA
-from grscheller.fp.err_handling import MB
+from dtools.circular_array.ca import ca, CA
+from dtools.fp.err_handling import MB
 
 __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
             'DQ', 'FQ', 'LQ' ]
@@ -52,7 +52,7 @@ __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
 class QueueBase[D](Sequence[D]):
     """Base class for circular area based queues.
 
-    * implemented with a grscheller.circular-array in a "has-a" relationship
+    * implemented with a dtools.circular-array in a "has-a" relationship
     * order of initial data retained
     * slicing not yet implemented
 

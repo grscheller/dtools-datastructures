@@ -29,7 +29,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator
 from typing import cast, Never
 from ..nodes import SL_Node
-from grscheller.fp.err_handling import MB
+from dtools.fp.err_handling import MB
 
 __all__ = [ 'SplitEnd', 'SE' ]
 

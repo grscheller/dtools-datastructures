@@ -28,7 +28,7 @@ other data structures which contain these data structures.
 from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Callable, cast, Iterator
-from grscheller.fp.err_handling import MB
+from dtools.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 

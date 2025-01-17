@@ -13,11 +13,11 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.tuples import FTuple, FT
-from grscheller.datastructures.queues import FIFOQueue, FQ, LIFOQueue, LQ
-from grscheller.datastructures.splitends.se import SplitEnd, SE
-from grscheller.fp.iterables import FM
-from grscheller.fp.err_handling import MB
+from dtools.datastructures.tuples import FTuple, FT
+from dtools.datastructures.queues import FIFOQueue, FQ, LIFOQueue, LQ
+from dtools.datastructures.splitends.se import SplitEnd, SE
+from dtools.fp.iterables import FM
+from dtools.fp.err_handling import MB
 
 class Test_FP:
     def test_fold[S](self) -> None:

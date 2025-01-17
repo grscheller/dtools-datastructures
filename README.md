@@ -4,7 +4,7 @@ Python package of data structures which support the use and
 implementation of algorithms.
 
 * **Repositories**
-  * [grscheller.datastructures][1] project on *PyPI*
+  * [dtools.datastructures][1] project on *PyPI*
   * [Source code][2] on *GitHub*
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
@@ -36,6 +36,6 @@ yourself.
 
 ---
 
-[1]: https://pypi.org/project/grscheller.datastructures/
-[2]: https://github.com/grscheller/datastructures/
-[3]: https://grscheller.github.io/grscheller-pypi-namespace-docs/datastructures/
+[1]: https://pypi.org/project/grscheller.dtools-datastructures/
+[2]: https://github.com/grscheller/dtools-datastructures/
+[3]: https://grscheller.github.io/dtools-docs/datastructures/

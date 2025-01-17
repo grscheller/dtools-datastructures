@@ -13,8 +13,8 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.splitends.se import SplitEnd, SE
-from grscheller.fp.iterables import concat, FM
+from dtools.datastructures.splitends.se import SplitEnd, SE
+from dtools.fp.iterables import concat, FM
 
 class Test_SplitEnds:
     def test_mutate_returns_none(self) -> None:

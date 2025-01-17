@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from __future__ import annotations
-from grscheller.datastructures.tuples import FTuple as ft, FT
-from grscheller.fp.iterables import FM
-from grscheller.fp.err_handling import MB, XOR
+from dtools.datastructures.tuples import FTuple as ft, FT
+from dtools.fp.iterables import FM
+from dtools.fp.err_handling import MB, XOR
 
 class TestFT:
     def test_method_returns_copy(self) -> None:

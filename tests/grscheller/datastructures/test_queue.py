@@ -14,12 +14,12 @@
 
 from __future__ import annotations
 from typing import Optional
-from grscheller.circular_array.ca import CA
-from grscheller.datastructures.queues import DoubleQueue, DQ
-from grscheller.datastructures.queues import FIFOQueue, FQ
-from grscheller.datastructures.queues import LIFOQueue, LQ
-from grscheller.datastructures.tuples import FT
-from grscheller.fp.err_handling import MB
+from dtools.circular_array.ca import CA
+from dtools.datastructures.queues import DoubleQueue, DQ
+from dtools.datastructures.queues import FIFOQueue, FQ
+from dtools.datastructures.queues import LIFOQueue, LQ
+from dtools.datastructures.tuples import FT
+from dtools.fp.err_handling import MB
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:

@@ -14,9 +14,9 @@
 
 from __future__ import annotations
 from typing import Optional
-from grscheller.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
-from grscheller.datastructures.splitends.se import SE
-from grscheller.datastructures.tuples import FTuple, FT
+from dtools.datastructures.queues import DoubleQueue, FIFOQueue, LIFOQueue
+from dtools.datastructures.splitends.se import SE
+from dtools.datastructures.tuples import FTuple, FT
 
 def addLt42(x: int, y: int) -> int|None:
     sum = x + y
