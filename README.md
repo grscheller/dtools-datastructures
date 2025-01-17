@@ -1,4 +1,4 @@
-# Python Datastructures Useful for Algorithms
+# Developer Tools - Datastructures Useful for Algorithms
 
 Python package of data structures which support the use and
 implementation of algorithms.
@@ -8,7 +8,6 @@ implementation of algorithms.
   * [Source code][2] on *GitHub*
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
-
 
 ### Overview
 
@@ -36,6 +35,7 @@ yourself.
 
 ---
 
-[1]: https://pypi.org/project/grscheller.dtools-datastructures/
+[1]: https://pypi.org/project/dtools.datastructures/
 [2]: https://github.com/grscheller/dtools-datastructures/
 [3]: https://grscheller.github.io/dtools-docs/datastructures/
+
