@@ -9,6 +9,9 @@ implementation of algorithms.
 * **Detailed documentation**
   * [Detailed API documentation][3] on *GH-Pages*
 
+This project is part of the
+[Developer Tools for Python][4] **dtools.** namespace project.
++
 ### Overview
 
 Data structures allowing developers to focus on the algorithms they are
@@ -38,4 +41,5 @@ yourself.
 [1]: https://pypi.org/project/dtools.datastructures/
 [2]: https://github.com/grscheller/dtools-datastructures/
 [3]: https://grscheller.github.io/dtools-docs/datastructures/
+[4]: https://github.com/grscheller/dtools-docs
 
