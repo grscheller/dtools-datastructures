@@ -11,7 +11,7 @@ implementation of algorithms.
 
 This project is part of the
 [Developer Tools for Python][4] **dtools.** namespace project.
-+
+
 ### Overview
 
 Data structures allowing developers to focus on the algorithms they are
