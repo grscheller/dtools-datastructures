@@ -11,6 +11,10 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.25.0 - PyPI release date 2025-01-17
+
+* First release under dtools.datastructures name
+
 ### Version 0.24.0 - PyPI release date 2024-11-18
 
 * Changed flatMap to bind thru out project
