@@ -1,4 +1,4 @@
-# Developer Tools - Datastructures Useful for Algorithms
+# Developer Tools - data structures useful for algorithms
 
 Python package of data structures which support the use and
 implementation of algorithms.

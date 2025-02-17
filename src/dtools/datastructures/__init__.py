@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-### package datastructures
+### Developer tools - data structures for algorithms
 
 Designed to be helpful when using and implementation algorithms.
 
