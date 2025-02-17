@@ -11,6 +11,12 @@ PyPI grscheller.datastructures project.
 
 ## Releases and other important milestones
 
+### Version 0.25.1 - PyPI release date 2025-01-16
+
+* Fixed pdoc issues with new typing notation
+  * updated docstrings
+  * had to add TypeVars
+
 ### Version 0.25.0 - PyPI release date 2025-01-17
 
 * First release under dtools.datastructures name

@@ -27,11 +27,14 @@ subpackage.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator
-from typing import cast, Never
+from typing import cast, Never, TypeVar
 from ..nodes import SL_Node
 from dtools.fp.err_handling import MB
 
 __all__ = [ 'SplitEnd', 'SE' ]
+
+D = TypeVar('D')
+T = TypeVar('T')
 
 class SplitEnd[D]():
     """Class SplitEnd

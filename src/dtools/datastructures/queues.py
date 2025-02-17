@@ -21,33 +21,38 @@
 
 #### FIFOQueue
 
-* class **FIFOQueue:** First-In-First-Out Queue
-* function **FQ:** Constructs a FIFOQueue from a variable number of arguments
+* class FIFOQueue: First-In-First-Out Queue
+* function FQ: Constructs a FIFOQueue from a variable number of arguments
 
 ---
 
 #### LIFOQueue
 
-* class **LIFOQueue:** Last-In-First-Out Queue
-* function **LQ:** Constructs a LIFOQueue from a variable number of arguments
+* class LIFOQueue: Last-In-First-Out Queue
+* function LQ: Constructs a LIFOQueue from a variable number of arguments
 
 ---
 
 #### DoubleQueue
 
-* class **DoubleQueue:** Double-Ended Queue
-* function **DQ:** Constructs a DoubleQueue from a variable number of arguments
+* class DoubleQueue: Double-Ended Queue
+* function DQ: Constructs a DoubleQueue from a variable number of arguments
 
 """
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Never, overload
+from typing import Never, overload, TypeVar
 from dtools.circular_array.ca import ca, CA
 from dtools.fp.err_handling import MB
 
 __all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
             'DQ', 'FQ', 'LQ' ]
+
+D = TypeVar('D')
+L = TypeVar('L')
+R = TypeVar('R')
+U = TypeVar('U')
 
 class QueueBase[D](Sequence[D]):
     """Base class for circular area based queues.

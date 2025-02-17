@@ -31,10 +31,16 @@ sentinel values.
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import cast, overload
+from typing import cast, overload, TypeVar
 from dtools.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple', 'FT']
+
+D = TypeVar('D')
+E = TypeVar('E')
+L = TypeVar('L')
+R = TypeVar('L')
+U = TypeVar('U')
 
 class FTuple[D](Sequence[D]):
     """

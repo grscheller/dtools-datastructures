@@ -27,10 +27,14 @@ other data structures which contain these data structures.
 """
 from __future__ import annotations
 from collections.abc import Callable, Iterator
-from typing import Callable, cast, Iterator
+from typing import Callable, cast, Iterator, TypeVar
 from dtools.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
+
+D = TypeVar('D')
+M = TypeVar('M')
+T = TypeVar('T')
 
 class SL_Node[D]():
     """Data node for rearward Pointing (tip-to-root) singularly linked graphs.
@@ -187,3 +191,4 @@ class Tree_Node[D, M]():
 
     def is_top(self) -> bool:
         return self._up == MB()
+
