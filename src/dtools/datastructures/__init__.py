@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-### Developer tools - data structures for algorithms
+### Developer Tools - data structures for algorithms
 
 Designed to be helpful when using and implementation algorithms.
 
