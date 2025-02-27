@@ -25,9 +25,10 @@ other data structures which contain these data structures.
 * class **Tree_Node:**
 
 """
+
 from __future__ import annotations
 from collections.abc import Callable, Iterator
-from typing import Callable, cast, Iterator, TypeVar
+from typing import cast, TypeVar
 from dtools.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
@@ -36,7 +37,8 @@ D = TypeVar('D')
 M = TypeVar('M')
 T = TypeVar('T')
 
-class SL_Node[D]():
+
+class SL_Node[D]:
     """Data node for rearward Pointing (tip-to-root) singularly linked graphs.
 
     * for mutable and immutable linear data structures
@@ -52,6 +54,7 @@ class SL_Node[D]():
     * more than one node can point to the same node forming bush like graphs
 
     """
+
     __slots__ = '_data', '_prev'
 
     def __init__(self, data: D, prev: MB[SL_Node[D]]) -> None:
@@ -88,7 +91,7 @@ class SL_Node[D]():
     def get_data(self) -> D:
         return self._data
 
-    def fold[T](self,  f: Callable[[T, D], T], init: T|None=None) -> T:
+    def fold[T](self, f: Callable[[T, D], T], init: T | None = None) -> T:
         """Reduce data across linked nodes.
 
         * with a function and an optional starting value
@@ -117,7 +120,8 @@ class SL_Node[D]():
         """Push data onto the stack and return a new node containing the data."""
         return SL_Node(data, MB(self))
 
-class DL_Node[D]():
+
+class DL_Node[D]:
     """Doubly Linked Node.
 
     Doubly linked nodes for graph-like data structures.
@@ -129,6 +133,7 @@ class DL_Node[D]():
     * simple recursive binary trees possible
 
     """
+
     __slots__ = '_left', '_data', '_right'
 
     def __init__(self, left: MB[DL_Node[D]], data: D, right: MB[DL_Node[D]]):
@@ -162,7 +167,8 @@ class DL_Node[D]():
     def has_right(self) -> bool:
         return self._right != MB()
 
-class Tree_Node[D, M]():
+
+class Tree_Node[D, M]:
     """Binary Tree Node with metadata.
 
     Nodes useful for binary trees.
@@ -171,13 +177,17 @@ class Tree_Node[D, M]():
     * in a Boolean context return true if not at the top of the tree
     * potential uses of metadata can be for re-balancing or repeat counts
     """
+
     __slots__ = '_data', '_left', '_right', '_up'
 
-    def __init__(self, data: D,
-                 up: MB[Tree_Node[D,M]],
-                 left: MB[Tree_Node[D,M]],
-                 right: MB[Tree_Node[D,M]],
-                 meta: tuple[M, ...] = ()):
+    def __init__(
+        self,
+        data: D,
+        up: MB[Tree_Node[D, M]],
+        left: MB[Tree_Node[D, M]],
+        right: MB[Tree_Node[D, M]],
+        meta: tuple[M, ...] = (),
+    ):
         self._data = data
         self._up = up
         self._left = left
@@ -191,4 +201,3 @@ class Tree_Node[D, M]():
 
     def is_top(self) -> bool:
         return self._up == MB()
-

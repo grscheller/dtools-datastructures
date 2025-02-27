@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Queue based data structures
+"""
+### Queue based data structures
 
 * stateful queue data structures with amortized O(1) pushes and pops each end
 * obtaining length (number of elements) of a queue is an O(1) operation
@@ -39,6 +40,7 @@
 * function DQ: Constructs a DoubleQueue from a variable number of arguments
 
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
@@ -46,13 +48,13 @@ from typing import Never, overload, TypeVar
 from dtools.circular_array.ca import ca, CA
 from dtools.fp.err_handling import MB
 
-__all__ = [ 'DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase',
-            'DQ', 'FQ', 'LQ' ]
+__all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase', 'DQ', 'FQ', 'LQ']
 
 D = TypeVar('D')
 L = TypeVar('L')
 R = TypeVar('R')
 U = TypeVar('U')
+
 
 class QueueBase[D](Sequence[D]):
     """Base class for circular area based queues.
@@ -62,6 +64,7 @@ class QueueBase[D](Sequence[D]):
     * slicing not yet implemented
 
     """
+
     __slots__ = '_ca'
 
     def __init__(self, *dss: Iterable[D]) -> None:
@@ -70,7 +73,7 @@ class QueueBase[D](Sequence[D]):
         else:
             msg1 = f'{type(self).__name__}: expected at most 1 '
             msg2 = f'iterable argument, got {len(dss)}.'
-            raise TypeError(msg1+msg2)
+            raise TypeError(msg1 + msg2)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -88,10 +91,11 @@ class QueueBase[D](Sequence[D]):
     @overload
     def __getitem__(self, idx: slice, /) -> Sequence[D]: ...
 
-    def __getitem__(self, idx: int|slice, /) -> D|Sequence[D]|Never:
+    def __getitem__(self, idx: int | slice, /) -> D | Sequence[D] | Never:
         if isinstance(idx, slice):
             raise NotImplementedError
         return self._ca[idx]
+
 
 class FIFOQueue[D](QueueBase[D]):
     """FIFO Queue
@@ -100,6 +104,7 @@ class FIFOQueue[D](QueueBase[D]):
     * initial data pushed on in natural FIFO order
 
     """
+
     __slots__ = ()
 
     def __iter__(self) -> Iterator[D]:
@@ -112,7 +117,7 @@ class FIFOQueue[D](QueueBase[D]):
             return 'FQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
-        return "<< " + " < ".join(map(str, self)) + " <<"
+        return '<< ' + ' < '.join(map(str, self)) + ' <<'
 
     def copy(self) -> FIFOQueue[D]:
         """Return a shallow copy of the `FIFOQueue`."""
@@ -164,7 +169,7 @@ class FIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[L](self, f: Callable[[L, D], L], initial: L|None=None, /) -> MB[L]:
+    def fold[L](self, f: Callable[[L, D], L], initial: L | None = None, /) -> MB[L]:
         """Fold `FIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -191,6 +196,7 @@ class FIFOQueue[D](QueueBase[D]):
         """
         return FIFOQueue(map(f, self._ca))
 
+
 class LIFOQueue[D](QueueBase[D]):
     """LIFO Queue.
 
@@ -198,6 +204,7 @@ class LIFOQueue[D](QueueBase[D]):
     * initial data pushed on in natural LIFO order
 
     """
+
     __slots__ = ()
 
     def __iter__(self) -> Iterator[D]:
@@ -210,7 +217,7 @@ class LIFOQueue[D](QueueBase[D]):
             return 'LQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
-        return "|| " + " > ".join(map(str, self)) + " ><"
+        return '|| ' + ' > '.join(map(str, self)) + ' ><'
 
     def copy(self) -> LIFOQueue[D]:
         """Return a shallow copy of the `LIFOQueue`."""
@@ -249,7 +256,7 @@ class LIFOQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def fold[R](self, f: Callable[[D, R], R], initial: R|None=None, /) -> MB[R]:
+    def fold[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> MB[R]:
         """Fold `LIFOQueue` in natural order.
 
         Reduce with `f` using an optional initial value.
@@ -276,6 +283,7 @@ class LIFOQueue[D](QueueBase[D]):
         """
         return LIFOQueue(reversed(CA(*map(f, reversed(self._ca)))))
 
+
 class DoubleQueue[D](QueueBase[D]):
     """Double Ended Queue
 
@@ -283,6 +291,7 @@ class DoubleQueue[D](QueueBase[D]):
     * order of initial data retained
 
     """
+
     __slots__ = ()
 
     def __iter__(self) -> Iterator[D]:
@@ -298,7 +307,7 @@ class DoubleQueue[D](QueueBase[D]):
             return 'DQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
-        return ">< " + " | ".join(map(str, self)) + " ><"
+        return '>< ' + ' | '.join(map(str, self)) + ' ><'
 
     def copy(self) -> DoubleQueue[D]:
         """Return a shallow copy of the `DoubleQueue`."""
@@ -370,7 +379,7 @@ class DoubleQueue[D](QueueBase[D]):
         else:
             return MB()
 
-    def foldL[L](self, f: Callable[[L, D], L], initial: L|None=None, /) -> MB[L]:
+    def foldL[L](self, f: Callable[[L, D], L], initial: L | None = None, /) -> MB[L]:
         """Fold `DoubleQueue` left to right.
 
         Reduce left with `f` using an optional initial value.
@@ -385,7 +394,7 @@ class DoubleQueue[D](QueueBase[D]):
                 return MB()
         return MB(self._ca.foldL(f, initial=initial))
 
-    def foldR[R](self, f: Callable[[D, R], R], initial: R|None=None, /) -> MB[R]:
+    def foldR[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> MB[R]:
         """Fold `DoubleQueue` right to left.
 
         Reduce right with `f` using an optional initial value.
@@ -411,15 +420,17 @@ class DoubleQueue[D](QueueBase[D]):
         """
         return DoubleQueue(map(f, self._ca))
 
+
 def FQ[D](*ds: D) -> FIFOQueue[D]:
     """Return a FIFOQueue where data is pushed on in natural FIFO order."""
     return FIFOQueue(ds)
+
 
 def LQ[D](*ds: D) -> LIFOQueue[D]:
     """Return a LIFOQueue where data is pushed on in natural LIFO order."""
     return LIFOQueue(ds)
 
+
 def DQ[D](*ds: D) -> DoubleQueue[D]:
     """Return a DoubleQueue whose data is pushed on from the right."""
     return DoubleQueue(ds)
-

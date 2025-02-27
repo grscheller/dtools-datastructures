@@ -12,19 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### Tuple based data structures
+"""
+### Tuple based data structures
 
 Only example here is the ftuple, basically an FP interface wrapping a tuple.
-Originally it inherited from tuple, but I found containing the tuple in a 
+Originally it inherited from tuple, but I found containing the tuple in a
 "has-a" relationship makes for a faster implementation. Buried in the git
 history is another example called a "process array" (parray) which I might
 return to someday. The idea of the parray is a fixed length sequence with
-sentinel values. 
+sentinel values.
 
 #### FTuple and FT factory function.
 
 * class FTuple: Wrapped tuple with a Functional Programming API
-* function FE: 
+* function FE:
 
 """
 
@@ -39,8 +40,9 @@ __all__ = ['FTuple', 'FT']
 D = TypeVar('D')
 E = TypeVar('E')
 L = TypeVar('L')
-R = TypeVar('L')
+R = TypeVar('R')
 U = TypeVar('U')
+
 
 class FTuple[D](Sequence[D]):
     """
@@ -53,6 +55,7 @@ class FTuple[D](Sequence[D]):
       * both left and right int multiplication supported
 
     """
+
     __slots__ = '_ds'
 
     def __init__(self, *dss: Iterable[D]) -> None:
@@ -78,7 +81,7 @@ class FTuple[D](Sequence[D]):
         return 'FT(' + ', '.join(map(repr, self)) + ')'
 
     def __str__(self) -> str:
-        return "((" + ", ".join(map(repr, self)) + "))"
+        return '((' + ', '.join(map(repr, self)) + '))'
 
     def __eq__(self, other: object, /) -> bool:
         if self is other:
@@ -92,16 +95,19 @@ class FTuple[D](Sequence[D]):
     @overload
     def __getitem__(self, idx: slice, /) -> FTuple[D]: ...
 
-    def __getitem__(self, idx: slice|int, /) -> FTuple[D]|D:
+    def __getitem__(self, idx: slice | int, /) -> FTuple[D] | D:
         if isinstance(idx, slice):
             return FTuple(self._ds[idx])
         else:
             return self._ds[idx]
 
-    def foldL[L](self,
-              f: Callable[[L, D], L], /,
-              start: L|None=None,
-              default: L|None=None) -> L|None:
+    def foldL[L](
+        self,
+        f: Callable[[L, D], L],
+        /,
+        start: L | None = None,
+        default: L | None = None,
+    ) -> L | None:
         """
         **Fold Left**
 
@@ -124,10 +130,13 @@ class FTuple[D](Sequence[D]):
             acc = f(acc, v)
         return acc
 
-    def foldR[R](self,
-              f: Callable[[D, R], R], /,
-              start: R|None=None,
-              default: R|None=None) -> R|None:
+    def foldR[R](
+        self,
+        f: Callable[[D, R], R],
+        /,
+        start: R | None = None,
+        default: R | None = None,
+    ) -> R | None:
         """
         **Fold Right**
 
@@ -159,7 +168,7 @@ class FTuple[D](Sequence[D]):
         """
         return FTuple(self)
 
-    def __add__[E](self, other: FTuple[E], /) -> FTuple[D|E]:
+    def __add__[E](self, other: FTuple[E], /) -> FTuple[D | E]:
         return FTuple(concat(self, other))
 
     def __mul__(self, num: int, /) -> FTuple[D]:
@@ -168,7 +177,9 @@ class FTuple[D](Sequence[D]):
     def __rmul__(self, num: int, /) -> FTuple[D]:
         return FTuple(self._ds.__mul__(num if num > 0 else 0))
 
-    def accummulate[L](self, f: Callable[[L, D], L], s: L|None=None, /) -> FTuple[L]:
+    def accummulate[L](
+        self, f: Callable[[L, D], L], s: L | None = None, /
+    ) -> FTuple[L]:
         """
         **Accumulate partial folds**
 
@@ -184,7 +195,9 @@ class FTuple[D](Sequence[D]):
     def map[U](self, f: Callable[[D], U], /) -> FTuple[U]:
         return FTuple(map(f, self))
 
-    def bind[U](self, f: Callable[[D], FTuple[U]], type: FM=FM.CONCAT, /) -> FTuple[U]:
+    def bind[U](
+        self, f: Callable[[D], FTuple[U]], type: FM = FM.CONCAT, /
+    ) -> FTuple[U]:
         """
         Bind function `f` to the `FTuple`.
 
@@ -203,7 +216,7 @@ class FTuple[D](Sequence[D]):
             case '*':
                 raise ValueError('Unknown FM type')
 
+
 def FT[D](*ds: D) -> FTuple[D]:
     """Return an FTuple whose values are the function arguments."""
     return FTuple(ds)
-

@@ -22,7 +22,7 @@ Singularly linked datastructures that can safely share data between themselves.
 * module **dtools.datastructures.splitends.se: Basic SplitEnd data structure
 
 """
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2024-2025 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
 
+__author__ = 'Geoffrey R. Scheller'
+__copyright__ = 'Copyright (c) 2024-2025 Geoffrey R. Scheller'
+__license__ = 'Apache License 2.0'

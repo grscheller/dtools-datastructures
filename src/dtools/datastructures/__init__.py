@@ -25,8 +25,8 @@ Designed to be helpful when using and implementation algorithms.
 * module dtools.datastructures.queues: queue data structures
 
 """
-__version__ = "0.25.1"
-__author__ = "Geoffrey R. Scheller"
-__copyright__ = "Copyright (c) 2023-2025 Geoffrey R. Scheller"
-__license__ = "Apache License 2.0"
 
+__version__ = '0.25.1.1'
+__author__ = 'Geoffrey R. Scheller'
+__copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
+__license__ = 'Apache License 2.0'

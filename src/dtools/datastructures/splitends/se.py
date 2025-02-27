@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""### SplitEnd stack related data structures
+"""
+### SplitEnd stack related data structures
 
 With use I am finding this data structure needs some sort of supporting
 infrastructure. Hence I split the original splitend module out to be its own
@@ -24,19 +25,21 @@ subpackage.
 * function SE: create SplitEnd from a variable number of arguments
 
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator
-from typing import cast, Never, TypeVar
-from ..nodes import SL_Node
+from typing import Never, TypeVar
 from dtools.fp.err_handling import MB
+from ..nodes import SL_Node
 
-__all__ = [ 'SplitEnd', 'SE' ]
+__all__ = ['SplitEnd', 'SE']
 
 D = TypeVar('D')
 T = TypeVar('T')
 
-class SplitEnd[D]():
+
+class SplitEnd[D]:
     """Class SplitEnd
 
     LIFO stacks which can safely share immutable data between themselves.
@@ -51,10 +54,11 @@ class SplitEnd[D]():
     * in boolean context, return true if split end is not empty
 
     """
+
     __slots__ = '_count', '_tip'
 
     def __init__(self, *dss: Iterable[D]) -> None:
-        if length:=len(dss) < 2:
+        if length := len(dss) < 2:
             self._tip: MB[SL_Node[D]] = MB()
             self._count: int = 0
             if length == 1:
@@ -62,7 +66,7 @@ class SplitEnd[D]():
         else:
             msg1 = 'SplitEnd: expected at most 1 '
             msg2 = f'iterable argument, got {length}.'
-            raise TypeError(msg1+msg2)
+            raise TypeError(msg1 + msg2)
 
     def __iter__(self) -> Iterator[D]:
         if self._tip == MB():
@@ -84,7 +88,7 @@ class SplitEnd[D]():
         return 'SE(' + ', '.join(map(repr, reversed(self))) + ')'
 
     def __str__(self) -> str:
-        return ('>< ' + ' -> '.join(map(str, self)) + ' ||')
+        return '>< ' + ' -> '.join(map(str, self)) + ' ||'
 
     def __eq__(self, other: object, /) -> bool:
         if not isinstance(other, type(self)):
@@ -112,15 +116,15 @@ class SplitEnd[D]():
         """Push data onto the top of the SplitEnd."""
         for d in ds:
             node = SL_Node(d, self._tip)
-            self._tip, self._count = MB(node), self._count+1
+            self._tip, self._count = MB(node), self._count + 1
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
         for d in ds:
             node = SL_Node(d, self._tip)
-            self._tip, self._count = MB(node), self._count+1
+            self._tip, self._count = MB(node), self._count + 1
 
-    def pop(self, default: D|None = None, /) -> D|Never:
+    def pop(self, default: D | None = None, /) -> D | Never:
         """Pop data off of the top of the SplitEnd.
 
         * raises ValueError if
@@ -134,10 +138,10 @@ class SplitEnd[D]():
             else:
                 return default
 
-        data, self._tip, self._count = self._tip.get().pop2() + (self._count-1,)
+        data, self._tip, self._count = self._tip.get().pop2() + (self._count - 1,)
         return data
 
-    def peak(self, default: D|None = None, /) -> D:
+    def peak(self, default: D | None = None, /) -> D:
         """Return the data at the top of the SplitEnd.
 
         * does not consume the data
@@ -163,7 +167,7 @@ class SplitEnd[D]():
         se._tip, se._count = self._tip, self._count
         return se
 
-    def fold[T](self, f:Callable[[T, D], T], init: T|None = None, /) -> T|Never:
+    def fold[T](self, f: Callable[[T, D], T], init: T | None = None, /) -> T | Never:
         """Reduce with a function.
 
         * folds in natural LIFO Order
@@ -177,6 +181,6 @@ class SplitEnd[D]():
             msg = 'SE: Folding empty SplitEnd but no initial value supplied'
             raise ValueError(msg)
 
+
 def SE[D](*ds: D) -> SplitEnd[D]:
     return SplitEnd(ds)
-
