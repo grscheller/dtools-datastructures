@@ -50,7 +50,7 @@ from dtools.fp.err_handling import MB
 
 __all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase', 'DQ', 'FQ', 'LQ']
 
-D = TypeVar('D')
+D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 L = TypeVar('L')
 R = TypeVar('R')
 U = TypeVar('U')
@@ -65,7 +65,7 @@ class QueueBase[D](Sequence[D]):
 
     """
 
-    __slots__ = '_ca'
+    __slots__ = ('_ca',)
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
@@ -213,8 +213,7 @@ class LIFOQueue[D](QueueBase[D]):
     def __repr__(self) -> str:
         if len(self) == 0:
             return 'LQ()'
-        else:
-            return 'LQ(' + ', '.join(map(repr, self._ca)) + ')'
+        return 'LQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
         return '|| ' + ' > '.join(map(str, self)) + ' ><'
@@ -240,8 +239,7 @@ class LIFOQueue[D](QueueBase[D]):
         """
         if self._ca:
             return MB(self._ca.popR())
-        else:
-            return MB()
+        return MB()
 
     def peak(self) -> MB[D]:
         """Peak next data out of `LIFOQueue`.
@@ -253,8 +251,7 @@ class LIFOQueue[D](QueueBase[D]):
         """
         if self._ca:
             return MB(self._ca[-1])
-        else:
-            return MB()
+        return MB()
 
     def fold[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> MB[R]:
         """Fold `LIFOQueue` in natural order.
@@ -303,8 +300,7 @@ class DoubleQueue[D](QueueBase[D]):
     def __repr__(self) -> str:
         if len(self) == 0:
             return 'DQ()'
-        else:
-            return 'DQ(' + ', '.join(map(repr, self._ca)) + ')'
+        return 'DQ(' + ', '.join(map(repr, self._ca)) + ')'
 
     def __str__(self) -> str:
         return '>< ' + ' | '.join(map(str, self)) + ' ><'
@@ -350,8 +346,7 @@ class DoubleQueue[D](QueueBase[D]):
         """
         if self._ca:
             return MB(self._ca.popR())
-        else:
-            return MB()
+        return MB()
 
     def peakL(self) -> MB[D]:
         """Peak left side of `DoubleQueue`.
@@ -363,8 +358,7 @@ class DoubleQueue[D](QueueBase[D]):
         """
         if self._ca:
             return MB(self._ca[0])
-        else:
-            return MB()
+        return MB()
 
     def peakR(self) -> MB[D]:
         """Peak right side of `DoubleQueue`.
@@ -376,8 +370,7 @@ class DoubleQueue[D](QueueBase[D]):
         """
         if self._ca:
             return MB(self._ca[-1])
-        else:
-            return MB()
+        return MB()
 
     def foldL[L](self, f: Callable[[L, D], L], initial: L | None = None, /) -> MB[L]:
         """Fold `DoubleQueue` left to right.

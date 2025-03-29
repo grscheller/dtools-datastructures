@@ -37,7 +37,7 @@ from dtools.fp.iterables import FM, accumulate, concat, exhaust, merge
 
 __all__ = ['FTuple', 'FT']
 
-D = TypeVar('D')
+D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 E = TypeVar('E')
 L = TypeVar('L')
 R = TypeVar('R')
@@ -56,7 +56,7 @@ class FTuple[D](Sequence[D]):
 
     """
 
-    __slots__ = '_ds'
+    __slots__ = ('_ds',)
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if len(dss) < 2:
@@ -72,7 +72,7 @@ class FTuple[D](Sequence[D]):
         return reversed(self._ds)
 
     def __bool__(self) -> bool:
-        return bool(len(self._ds))
+        return bool(self._ds)
 
     def __len__(self) -> int:
         return len(self._ds)
@@ -98,8 +98,7 @@ class FTuple[D](Sequence[D]):
     def __getitem__(self, idx: slice | int, /) -> FTuple[D] | D:
         if isinstance(idx, slice):
             return FTuple(self._ds[idx])
-        else:
-            return self._ds[idx]
+        return self._ds[idx]
 
     def foldL[L](
         self,
@@ -189,8 +188,7 @@ class FTuple[D](Sequence[D]):
         """
         if s is None:
             return FTuple(accumulate(self, f))
-        else:
-            return FTuple(accumulate(self, f, s))
+        return FTuple(accumulate(self, f, s))
 
     def map[U](self, f: Callable[[D], U], /) -> FTuple[U]:
         return FTuple(map(f, self))
@@ -208,11 +206,11 @@ class FTuple[D](Sequence[D]):
         """
         match type:
             case FM.CONCAT:
-                return FTuple(concat(*map(lambda x: iter(x), map(f, self))))
+                return FTuple(concat(*map(f, self)))
             case FM.MERGE:
-                return FTuple(merge(*map(lambda x: iter(x), map(f, self))))
+                return FTuple(merge(*map(f, self)))
             case FM.EXHAUST:
-                return FTuple(exhaust(*map(lambda x: iter(x), map(f, self))))
+                return FTuple(exhaust(*map(f, self)))
             case '*':
                 raise ValueError('Unknown FM type')
 

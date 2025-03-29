@@ -33,7 +33,7 @@ from dtools.fp.err_handling import MB
 
 __all__ = ['SL_Node', 'DL_Node', 'Tree_Node']
 
-D = TypeVar('D')
+D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 M = TypeVar('M')
 T = TypeVar('T')
 
@@ -72,12 +72,14 @@ class SL_Node[D]:
         return self._prev != MB()
 
     def data_eq(self, other: SL_Node[D]) -> bool:
+        """Return true if other has same or equal data."""
         if self._data is other._data:
             return True
-        elif self._data == other._data:
+
+        if self._data == other._data:
             return True
-        else:
-            return False
+
+        return False
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
@@ -85,10 +87,11 @@ class SL_Node[D]:
 
         if self._prev is not other._prev:
             return False
-        else:
-            return self.data_eq(other)
+
+        return self.data_eq(other)
 
     def get_data(self) -> D:
+        """Return contained data"""
         return self._data
 
     def fold[T](self, f: Callable[[T, D], T], init: T | None = None) -> T:
@@ -168,14 +171,13 @@ class DL_Node[D]:
         return self._right != MB()
 
 
-class Tree_Node[D, M]:
-    """Binary Tree Node with metadata.
+class Tree_Node[D]:
+    """Binary Tree Node.
 
     Nodes useful for binary trees.
 
     * this type of node always contain data, even if that data is None
     * in a Boolean context return true if not at the top of the tree
-    * potential uses of metadata can be for re-balancing or repeat counts
     """
 
     __slots__ = '_data', '_left', '_right', '_up'
@@ -183,10 +185,9 @@ class Tree_Node[D, M]:
     def __init__(
         self,
         data: D,
-        up: MB[Tree_Node[D, M]],
-        left: MB[Tree_Node[D, M]],
-        right: MB[Tree_Node[D, M]],
-        meta: tuple[M, ...] = (),
+        up: MB[Tree_Node[D]],
+        left: MB[Tree_Node[D]],
+        right: MB[Tree_Node[D]]
     ):
         self._data = data
         self._up = up
@@ -194,10 +195,8 @@ class Tree_Node[D, M]:
         self._right = right
 
     def __bool__(self) -> bool:
-        if self._up == MB():
-            return False
-        else:
-            return True
+        return bool(self)
 
     def is_top(self) -> bool:
+        """Return true if top node"""
         return self._up == MB()

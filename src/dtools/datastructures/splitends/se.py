@@ -135,8 +135,7 @@ class SplitEnd[D]:
         if self._count == 0:
             if default is None:
                 raise ValueError('SE: Popping from an empty SplitEnd')
-            else:
-                return default
+            return default
 
         data, self._tip, self._count = self._tip.get().pop2() + (self._count - 1,)
         return data
@@ -151,8 +150,7 @@ class SplitEnd[D]:
         if self._count == 0:
             if default is None:
                 raise ValueError('SE: Popping from an empty SplitEnd')
-            else:
-                return default
+            return default
 
         return self._tip.get().get_data()
 
@@ -175,11 +173,12 @@ class SplitEnd[D]:
         """
         if self._tip != MB():
             return self._tip.get().fold(f, init)
-        elif init is not None:
+
+        if init is not None:
             return init
-        else:
-            msg = 'SE: Folding empty SplitEnd but no initial value supplied'
-            raise ValueError(msg)
+
+        msg = 'SE: Folding empty SplitEnd but no initial value supplied'
+        raise ValueError(msg)
 
 
 def SE[D](*ds: D) -> SplitEnd[D]:

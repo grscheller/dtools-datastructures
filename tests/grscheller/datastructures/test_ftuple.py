@@ -102,14 +102,14 @@ class TestFT:
         assert ft0.foldR(lambda t, s: s*s - t, 5) == 5
 
         try:
-            result = ft0.foldR(lambda t, s: 5*t + 6*s)
+            _ = ft0.foldR(lambda t, s: 5*t + 6*s)
         except ValueError:
             assert True
         else:
             assert False
 
         try:
-            result = ft0.foldL(lambda t, s: 5*t + 6*s)
+            _ = ft0.foldL(lambda t, s: 5*t + 6*s)
         except ValueError:
             assert True
         else:
