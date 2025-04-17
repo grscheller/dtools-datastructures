@@ -19,18 +19,20 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed"
 ]
-dependencies = [
-    "dtools.circular-array >= 3.9.0, < 3.10",
-    "dtools.fp >= 1.4.0, < 1.5"
-]
 dynamic = ["version", "description"]
 keywords = [
     "datastructures", "data structures",
     "fifo", "lifo", "stack", "queue", "SplitEnd"
 ] 
+dependencies = [
+    "dtools.circular-array >= 3.9.0, < 3.10",
+    "dtools.fp >= 1.4.0, < 1.5",
+]
 
 [project.optional-dependencies]
-test = ["pytest >=8.3.2"]
+test = [
+    "pytest >=8.3.2",
+]
 
 [project.urls]
 Source = "https://github.com/grscheller/dtools-datastructures"
