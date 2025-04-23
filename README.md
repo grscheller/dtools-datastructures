@@ -1,5 +1,11 @@
 # Developer Tools - data structures useful for algorithms
 
+**DEPRECATED** This project was broken up into separate projects.
+
+* package dtools.datastructures.splitends `->` dtools.splitends
+* module dtools.datastructures.tuples `->` dtools.tuples
+* module dtools.datastructures.queues `->` dtools.queues
+
 Python package of data structures which support the use and
 implementation of algorithms.
 

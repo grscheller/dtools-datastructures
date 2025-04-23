@@ -13,20 +13,20 @@
 # limitations under the License.
 
 """
-### Developer Tools - data structures for algorithms
+### Developer Tools - data structures for algorithms **DEPRICATED**
 
 Designed to be helpful when using and implementation algorithms.
 
 #### Modules and sub-packages
 
-* module dtools.datastructures.nodes: nodes for graph-like data structures
-* package dtools.datastructures.splitends: data sharing between mutable objects
-* module dtools.datastructures.tuples: tuple-like data structures
-* module dtools.datastructures.queues: queue data structures
+* module dtools.datastructures.nodes: partly incorporated into dtools.splitends
+* package dtools.datastructures.splitends: now dtools.splitends
+* module dtools.datastructures.tuples: now dtools.tuples
+* module dtools.datastructures.queues: now dtools.queues
 
 """
 
-__version__ = '0.25.1.2'
+__version__ = '0.25.2'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'
